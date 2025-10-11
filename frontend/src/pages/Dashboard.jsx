@@ -1,7 +1,7 @@
 import { DollarSign, Users, FileText, Scale, TrendingUp, Flame } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
-import { reparStatistics, tokenAllocation, historicalData } from '../data/statistics';
+import { reparStatistics, coinAllocation, historicalData } from '../data/statistics';
 import { defendants } from '../data/defendants';
 
 export default function Dashboard() {
@@ -66,7 +66,7 @@ export default function Dashboard() {
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-2xl font-bold mb-4 flex items-center">
               <TrendingUp className="mr-2 text-indigo-600" />
-              $REPAR Token Economics
+              $REPAR Coinomics
             </h2>
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="bg-indigo-50 p-4 rounded-lg">
@@ -96,7 +96,7 @@ export default function Dashboard() {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={tokenAllocation}
+                  data={coinAllocation}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
@@ -105,7 +105,7 @@ export default function Dashboard() {
                   fill="#8884d8"
                   dataKey="amount"
                 >
-                  {tokenAllocation.map((entry, index) => (
+                  {coinAllocation.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>

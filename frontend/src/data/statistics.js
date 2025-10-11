@@ -12,10 +12,10 @@ export const reparStatistics = {
   evidenceDocuments: 1000000,
   enforcementJurisdictions: 172,
   totalRecovered: 0,
-  tokensBurned: 0
+  coinsBurned: 0
 };
 
-export const tokenAllocation = [
+export const coinAllocation = [
   { name: 'Community & Descendant Fund', percentage: 43, amount: 56330000000000, color: '#3b82f6' },
   { name: 'Claims & Compensation Fund', percentage: 25, amount: 32750000000000, color: '#10b981' },
   { name: 'Ecosystem & Enforcement Treasury', percentage: 10, amount: 13100000000000, color: '#f59e0b' },
