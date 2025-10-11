@@ -17,9 +17,12 @@ const WalletConnect = ({ onWalletConnected }) => {
     const coinbaseWalletSDK = new CoinbaseWalletSDK({
       appName: APP_NAME,
       appLogoUrl: APP_LOGO_URL,
-      darkMode: true,
     });
-    const provider = coinbaseWalletSDK.makeWeb3Provider(RPC_URL, CHAIN_ID);
+    const provider = coinbaseWalletSDK.makeWeb3Provider({
+      options: 'smartWalletOnly',
+      chainId: CHAIN_ID,
+      jsonRpcUrl: RPC_URL
+    });
     setSdk(provider);
   }, []);
 

@@ -64,9 +64,12 @@ export const queryDefendantDetails = async (defendantId) => {
   }
 };
 
-export default {
+export const cosmosClient = {
   queryTotalLiability,
   queryActiveDefendants,
   queryDefendantDetails,
-  getStargateClient
+  getStargateClient,
+  getTotalOwed: queryTotalLiability // Alias for compatibility
 };
+
+export default cosmosClient;
