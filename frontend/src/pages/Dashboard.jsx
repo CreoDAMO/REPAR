@@ -1,10 +1,17 @@
+import { useState, useEffect } from 'react';
 import { DollarSign, Users, FileText, Scale, TrendingUp, Flame } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { reparStatistics, coinAllocation, historicalData } from '../data/statistics';
 import { defendants } from '../data/defendants';
+import WalletConnect from '../components/WalletConnect';
+import { cosmosClient } from '../utils/cosmosClient';
 
 export default function Dashboard() {
+  const [walletAddress, setWalletAddress] = useState(null);
+  const [chainData, setChainData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
   const formatCurrency = (value) => {
     if (value >= 1000000000000) return `$${(value / 1000000000000).toFixed(2)}T`;
     if (value >= 1000000000) return `$${(value / 1000000000).toFixed(2)}B`;
@@ -18,15 +25,45 @@ export default function Dashboard() {
     return value.toLocaleString();
   };
 
+  // Fetch on-chain data
+  useEffect(() => {
+    const fetchChainData = async () => {
+      setIsLoading(true);
+      try {
+        const totalOwed = await cosmosClient.getTotalOwed();
+        setChainData({ totalOwed: totalOwed / 1e9 }); // Convert to billions
+      } catch (error) {
+        console.error('Error fetching chain data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchChainData();
+  }, []);
+
+  const handleWalletConnected = (address) => {
+    setWalletAddress(address);
+  };
+
   const topDefendants = [...defendants].sort((a, b) => b.slaveryDerivedWealth - a.slaveryDerivedWealth).slice(0, 5);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Aequitas Protocol Dashboard</h1>
-          <p className="text-xl text-indigo-200">Decentralized Justice for the $131 Trillion Debt</p>
-          <p className="text-sm text-amber-300 mt-2 italic">"Justice delayed is justice denied, but mathematics is eternal."</p>
+          <div className="mb-8">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h1 className="text-4xl font-bold text-white mb-2">Aequitas Protocol Dashboard</h1>
+                <p className="text-xl text-indigo-200">Decentralized Justice for the $131 Trillion Debt</p>
+                <p className="text-sm text-amber-300 mt-2 italic">"Justice delayed is justice denied, but mathematics is eternal."</p>
+              </div>
+              <div className="w-80">
+                <WalletConnect onWalletConnected={handleWalletConnected} />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -34,8 +71,8 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Liability"
-            value={formatCurrency(reparStatistics.totalLiability)}
-            subtitle="Documented Harm (Brattle Group)"
+            value={isLoading ? 'Loading...' : formatCurrency(chainData.totalOwed * 1e9 || reparStatistics.totalLiability)}
+            subtitle={walletAddress ? 'On-Chain Data' : 'Documented Harm (Brattle Group)'}
             icon={DollarSign}
             color="indigo"
           />
