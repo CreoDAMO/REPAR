@@ -697,7 +697,7 @@ export const defendants = [
     currentAssets: 56000000000,
     status: "Active Defendant",
     evidence: "Managed wealth from Brazilian coffee plantations using enslaved labor. Original deposits: CHF 8.5M from slave-grown commodities.",
-    filingJurisdications: ["Switzerland", "Brazil"],
+    filingJurisdictions: ["Switzerland", "Brazil"],
     descendantsImpacted: 295000
   },
   {
