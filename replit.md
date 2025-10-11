@@ -22,7 +22,7 @@ This platform serves as the operational interface for:
 - **Routing**: React Router DOM
 - **Charts**: Recharts
 - **Icons**: Lucide React
-- **Wallet Integration**: Coinbase Wallet SDK (planned)
+- **Wallet Integration**: Coming Soon (Keplr/Ethermint planned)
 
 ### Key Components
 - `pages/Dashboard.jsx` - Main dashboard with statistics and $REPAR coinomics
@@ -145,6 +145,108 @@ The platform implements a multi-layered legal strategy:
 - 10% - Founder's Allocation (1% immediate, 9% vested over 5 years)
 - 8% - Development Fund
 - 4% - Foundation Treasury & Reserves
+
+## Founder Wallet Strategy & Options
+
+### Allocation Details
+- **Total Founder Allocation**: 10% (13.1T $REPAR = ~$240B at $18.33 initial price)
+- **Immediate Release**: 1% (1.31T $REPAR for operational security)
+- **Vesting Schedule**: 9% (11.79T $REPAR) vested over 5 years with 1-year cliff
+
+### Wallet Integration Options
+
+#### Option 1: Keplr Wallet (Recommended for Cosmos Native)
+**Best For**: Full Cosmos ecosystem integration
+- ✅ Native Cosmos SDK support with IBC transfers
+- ✅ Staking, governance, and delegation built-in
+- ✅ Hardware wallet support (Ledger)
+- ✅ Multi-chain management
+- ❌ Requires separate integration from Coinbase SDK
+
+**Implementation**: Add Keplr integration alongside Coinbase for dual wallet support
+
+#### Option 2: Coinbase Wallet (Requires Ethermint)
+**Best For**: User accessibility and fiat on/off ramps (when EVM-compatible)
+- ✅ Excellent UX for mainstream adoption
+- ✅ Built-in fiat on/off ramps
+- ✅ Mobile app support
+- ❌ **Incompatible with native Cosmos SDK** - requires Ethereum JSON-RPC
+- ❌ Requires Ethermint or EVM-compatible layer for Aequitas Zone
+
+**Current Status**: 
+- **NOT IMPLEMENTED** - Shows "Coming Soon" button with informational modal
+- WalletConnect component displays modal explaining Cosmos/EVM incompatibility
+- No SDK integration until Ethermint layer is added
+- **Recommendation**: Implement Keplr for native Cosmos functionality first
+
+**To Enable Coinbase Wallet** (Future Work):
+1. Add Ethermint module to Aequitas Zone (provides EVM compatibility)
+2. Configure Ethereum JSON-RPC endpoint (different from Tendermint RPC :26657)
+3. Install Coinbase Wallet SDK v4.3.7+ in WalletConnect component
+4. Configure makeWeb3Provider with Ethermint RPC and proper chainId
+5. Test eth_requestAccounts compatibility
+
+#### Option 3: Multi-Signature Treasury (Recommended for Security)
+**Best For**: Founder allocation security and governance
+- ✅ Requires multiple signatures for large transactions
+- ✅ Prevents single point of failure
+- ✅ Transparent on-chain governance
+- ✅ Compatible with both Keplr and Cosmos SDK
+
+**Recommended Setup**:
+- 3-of-5 multi-sig for immediate 1% release
+- 2-of-3 multi-sig for vesting contract management
+- Integration with Cosmos SDK's native multi-sig module
+
+#### Option 4: Hardware Wallet Integration (Maximum Security)
+**Best For**: Long-term cold storage of vested tokens
+- ✅ Ledger Nano S/X support via Keplr
+- ✅ Air-gapped security for large holdings
+- ✅ Compatible with Cosmos app on Ledger
+- ⚠️ Requires physical device management
+
+### Recommended Implementation Strategy
+
+**Phase 1 - Current (Replit Development)**:
+- ✅ Wallet button UI implemented ("Coming Soon" with informational modal)
+- ⏳ Awaiting blockchain testnet launch
+- ⏳ Keplr Wallet integration (next priority)
+
+**Phase 2 - Testnet Launch**:
+1. Integrate Keplr Wallet as primary option
+2. Keep Coinbase as secondary option for accessibility
+3. Set up 3-of-5 multi-sig for founder immediate allocation
+4. Configure vesting contract with 2-of-3 multi-sig control
+
+**Phase 3 - Mainnet & Security**:
+1. Transfer vested tokens to hardware-backed multi-sig
+2. Implement governance module for allocation decisions
+3. Enable staking from multi-sig wallet (4.5-15% APY)
+4. Set up automated vesting distribution via smart contracts
+
+### Security Best Practices
+
+1. **Never store private keys in code or environment variables**
+2. **Use hardware wallets for founder allocation management**
+3. **Implement time-locks on vesting contract**
+4. **Enable 2FA on all wallet interfaces**
+5. **Regular security audits of wallet integration code**
+6. **Use testnet extensively before mainnet deployment**
+
+### Integration Priority for Replit
+
+For the current Replit environment:
+1. ✅ **Wallet UI placeholder** - "Coming Soon" button implemented with info modal
+2. 📋 **Add Keplr SDK** - For Cosmos native functionality (PRIORITY)
+3. 📋 **Implement Ethermint** - If EVM compatibility needed for Coinbase
+4. 📋 **Create multi-sig documentation** - For founder allocation security
+5. 📋 **Test with testnet** - Once Aequitas Zone testnet is live
+
+**Decision Point**: The founder can choose between:
+- **Coinbase** for simplicity and mainstream adoption
+- **Keplr** for native Cosmos functionality and staking
+- **Multi-sig** for maximum security (recommended for founder allocation)
+- **Combination** of all three for different use cases
 
 ## Documentation
 

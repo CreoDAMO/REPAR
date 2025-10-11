@@ -1,86 +1,53 @@
+import { useState } from 'react';
+import { Wallet, Info, AlertCircle } from 'lucide-react';
 
-import { useState, useEffect, useCallback } from 'react';
-import { CoinbaseWalletSDK } from '@coinbase/wallet-sdk';
-import { LogOut, Wallet, CheckCircle, XCircle } from 'lucide-react';
-
-const APP_NAME = 'Aequitas Protocol';
-const APP_LOGO_URL = 'https://raw.githubusercontent.com/CreoDAMO/REPAR/main/frontend/public/favicon.ico';
-const CHAIN_ID = 9000;
-const RPC_URL = 'http://0.0.0.0:26657';
+// Coinbase Wallet requires Ethereum-compatible JSON-RPC endpoint
+// Aequitas Protocol is a native Cosmos SDK blockchain (not EVM-compatible)
+// Wallet integration requires either:
+// 1. Keplr Wallet (Cosmos native) - RECOMMENDED
+// 2. Ethermint module + EVM compatibility layer for Coinbase support
 
 const WalletConnect = ({ onWalletConnected }) => {
-  const [sdk, setSdk] = useState(null);
-  const [address, setAddress] = useState(null);
-  const [error, setError] = useState('');
+  const [showInfo, setShowInfo] = useState(false);
 
-  useEffect(() => {
-    const coinbaseWalletSDK = new CoinbaseWalletSDK({
-      appName: APP_NAME,
-      appLogoUrl: APP_LOGO_URL,
-    });
-    const provider = coinbaseWalletSDK.makeWeb3Provider({
-      options: 'smartWalletOnly',
-      chainId: CHAIN_ID,
-      jsonRpcUrl: RPC_URL
-    });
-    setSdk(provider);
-  }, []);
-
-  const connectWallet = useCallback(async () => {
-    if (!sdk) return;
-    try {
-      setError('');
-      const accounts = await sdk.request({ method: 'eth_requestAccounts' });
-      const userAddress = accounts[0];
-      setAddress(userAddress);
-      if (onWalletConnected) {
-        onWalletConnected(userAddress);
-      }
-    } catch (err) {
-      console.error("Wallet connection failed:", err);
-      setError("Connection failed. Please try again.");
-    }
-  }, [sdk, onWalletConnected]);
-
-  const disconnectWallet = () => {
-    if (sdk?.close) {
-      sdk.close();
-    }
-    setAddress(null);
-    if (onWalletConnected) {
-      onWalletConnected(null);
-    }
+  const handleWalletClick = () => {
+    setShowInfo(true);
   };
 
-  if (address) {
-    return (
-      <div className="flex items-center space-x-3 bg-slate-700 p-2 rounded-lg">
-        <div className="flex items-center space-x-2 bg-green-500/20 text-green-300 px-3 py-1 rounded-md">
-          <Wallet size={16} />
-          <span className="font-mono text-sm">
-            {`${address.substring(0, 6)}...${address.substring(address.length - 4)}`}
-          </span>
-        </div>
-        <button onClick={disconnectWallet} className="p-2 hover:bg-slate-600 rounded-md transition-colors">
-          <LogOut size={18} className="text-slate-300" />
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-slate-800 rounded-lg p-4 border border-slate-700">
+    <div className="relative">
       <button
-        onClick={connectWallet}
-        className="w-full bg-orange-600 hover:bg-orange-500 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
+        onClick={handleWalletClick}
+        className="bg-slate-700 text-slate-400 px-4 py-2 rounded-md font-semibold flex items-center space-x-2 cursor-help border-2 border-slate-600 transition-all hover:border-amber-500/50"
       >
-        <Wallet size={20} />
-        Connect Coinbase Wallet
+        <Wallet className="h-4 w-4" />
+        <span>Wallet (Coming Soon)</span>
+        <Info className="h-4 w-4" />
       </button>
-      {error && (
-        <div className="mt-3 flex items-center gap-2 text-red-400 text-sm">
-          <XCircle size={16} />
-          <span>{error}</span>
+      
+      {showInfo && (
+        <div className="absolute right-0 top-full mt-2 bg-slate-800 border border-amber-500/50 rounded-lg p-4 shadow-xl z-50 w-80">
+          <div className="flex items-start gap-2 mb-3">
+            <AlertCircle className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-semibold text-white mb-1">Wallet Integration Status</h4>
+              <p className="text-sm text-slate-300 mb-2">
+                Aequitas Protocol is a <span className="text-amber-400">native Cosmos SDK blockchain</span>, not EVM-compatible.
+              </p>
+              <div className="text-xs text-slate-400 space-y-1">
+                <p><strong className="text-white">Coming Soon:</strong></p>
+                <p>• Keplr Wallet (Cosmos native)</p>
+                <p>• Ethermint integration for EVM wallets</p>
+                <p>• Coinbase Wallet support</p>
+              </div>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowInfo(false)}
+            className="w-full bg-slate-700 hover:bg-slate-600 text-white text-sm py-2 rounded-md transition-colors"
+          >
+            Close
+          </button>
         </div>
       )}
     </div>
