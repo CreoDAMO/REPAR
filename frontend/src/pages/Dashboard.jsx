@@ -25,6 +25,16 @@ export default function Dashboard() {
     return value.toLocaleString();
   };
 
+  // Helper function to format liability for the header
+  const formatLiability = (value) => {
+    if (value === undefined || value === null) return '131 Trillion'; // Fallback value
+    if (value >= 1000000000000) return `$${(value / 1000000000000).toFixed(0)}T`;
+    if (value >= 1000000000) return `$${(value / 1000000000).toFixed(0)}B`;
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(0)}M`;
+    return `$${value.toLocaleString()}`;
+  };
+
+
   // Fetch on-chain data
   useEffect(() => {
     const fetchChainData = async () => {
@@ -32,6 +42,10 @@ export default function Dashboard() {
       try {
         const totalOwed = await cosmosClient.getTotalOwed();
         setChainData({ totalOwed: totalOwed / 1e9 }); // Convert to billions
+        // Also fetch totalLiability if available from cosmosClient or other source
+        // For now, using a placeholder or static value if not directly available
+        const totalLiability = reparStatistics.totalLiability; // Placeholder or actual fetch
+        setChainData(prevData => ({ ...prevData, totalLiability: totalLiability }));
       } catch (error) {
         console.error('Error fetching chain data:', error);
       } finally {
@@ -54,14 +68,12 @@ export default function Dashboard() {
         <div className="container mx-auto px-4">
           <div className="mb-8">
             <div className="flex items-start justify-between">
-              <div className="flex-1">
+              <div>
                 <h1 className="text-4xl font-bold text-white mb-2">Aequitas Protocol Dashboard</h1>
-                <p className="text-xl text-indigo-200">Decentralized Justice for the $131 Trillion Debt</p>
+                <p className="text-xl text-indigo-200">Decentralized Justice for the {formatLiability(chainData.totalLiability)} Debt</p>
                 <p className="text-sm text-amber-300 mt-2 italic">"Justice delayed is justice denied, but mathematics is eternal."</p>
               </div>
-              <div className="w-80">
-                <WalletConnect onWalletConnected={handleWalletConnected} />
-              </div>
+              <WalletConnect onWalletConnected={handleWalletConnected} />
             </div>
           </div>
         </div>

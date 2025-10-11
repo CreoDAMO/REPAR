@@ -1,119 +1,72 @@
+import { StargateClient } from "@cosmjs/stargate";
+import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
-// Cosmos SDK Client Utilities
-// This will connect to your Cosmos chain once it's deployed
+const RPC_ENDPOINT = import.meta.env.VITE_COSMOS_RPC_URL || "http://0.0.0.0:26657";
 
-export class CosmosClient {
-  constructor(config = {}) {
-    this.rpcUrl = config.rpcUrl || 'http://localhost:26657';
-    this.restUrl = config.restUrl || 'http://localhost:1317';
-    this.chainId = config.chainId || 'reparations-testnet-1';
-    this.prefix = config.prefix || 'cosmos';
-  }
+let stargateClient = null;
 
-  // Query total owed from ledger module
-  async getTotalOwed() {
+const getStargateClient = async () => {
+  if (!stargateClient) {
     try {
-      const response = await fetch(`${this.restUrl}/reparations/ledger/total`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch total owed');
-      }
-      const data = await response.json();
-      return data.total_owed;
+      const tmClient = await Tendermint34Client.connect(RPC_ENDPOINT);
+      stargateClient = await StargateClient.create(tmClient);
+      console.log("Cosmos client connected successfully.");
     } catch (error) {
-      console.error('Error fetching total owed:', error);
-      // Return mock data for development
-      return '920000000000'; // $920B in micro-units
-    }
-  }
-
-  // Query defendant claim
-  async getDefendantClaim(defendant) {
-    try {
-      const response = await fetch(`${this.restUrl}/reparations/ledger/defendant/${defendant}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch defendant claim');
-      }
-      const data = await response.json();
-      return data.claim;
-    } catch (error) {
-      console.error('Error fetching defendant claim:', error);
+      console.error("Failed to connect to Cosmos client:", error);
       return null;
     }
   }
+  return stargateClient;
+};
 
-  // Query transactions
-  async getTransactions(page = 1, limit = 10) {
-    try {
-      const response = await fetch(`${this.restUrl}/reparations/ledger/transactions?page=${page}&limit=${limit}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch transactions');
-      }
-      const data = await response.json();
-      return data.transactions;
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-      return [];
-    }
+export const queryTotalLiability = async () => {
+  const client = await getStargateClient();
+  if (!client) return "131000000000000";
+
+  try {
+    const queryPath = "/repar.ledger.Query/TotalLiability";
+    const response = await client.queryAbci(queryPath, new Uint8Array());
+    const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
+    return parsedResponse.totalLiability?.amount || "131000000000000";
+  } catch (error) {
+    console.warn("Query failed, using mock data:", error);
+    return "131000000000000";
   }
+};
 
-  // File a claim (requires wallet signature)
-  async fileClaim(walletAddress, defendant, amount) {
-    // TODO: Implement with actual Cosmos SDK signing
-    console.log('Filing claim:', { walletAddress, defendant, amount });
-    
-    const msg = {
-      typeUrl: '/reparations.ledger.MsgFileClaim',
-      value: {
-        creator: walletAddress,
-        defendant: defendant,
-        amount: amount.toString()
-      }
-    };
+export const queryActiveDefendants = async () => {
+  const client = await getStargateClient();
+  if (!client) return 200;
 
-    // Mock transaction for development
-    return {
-      code: 0,
-      transactionHash: '0x' + Math.random().toString(16).substring(2),
-      rawLog: 'Claim filed successfully'
-    };
+  try {
+    const queryPath = "/repar.ledger.Query/ActiveDefendants";
+    const response = await client.queryAbci(queryPath, new Uint8Array());
+    const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
+    return parseInt(parsedResponse.count, 10);
+  } catch (error) {
+    console.warn("Query failed, using mock data:", error);
+    return 200;
   }
+};
 
-  // Stake REPAR tokens
-  async stakeTokens(walletAddress, amount) {
-    // TODO: Implement with actual Cosmos SDK signing
-    console.log('Staking tokens:', { walletAddress, amount });
-    
-    const msg = {
-      typeUrl: '/reparations.staking.MsgStakeTokens',
-      value: {
-        creator: walletAddress,
-        amount: amount.toString()
-      }
-    };
+export const queryDefendantDetails = async (defendantId) => {
+  const client = await getStargateClient();
+  if (!client) return null;
 
-    // Mock transaction for development
-    return {
-      code: 0,
-      transactionHash: '0x' + Math.random().toString(16).substring(2),
-      rawLog: 'Tokens staked successfully'
-    };
+  try {
+    const queryPath = `/repar.ledger.Query/DefendantDetails`;
+    const request = new TextEncoder().encode(JSON.stringify({ id: defendantId }));
+    const response = await client.queryAbci(queryPath, request);
+    return JSON.parse(new TextDecoder().decode(response.value));
+  } catch (error) {
+    console.warn("Query failed:", error);
+    return null;
   }
+};
 
-  // Get account balance
-  async getBalance(address) {
-    try {
-      const response = await fetch(`${this.restUrl}/cosmos/bank/v1beta1/balances/${address}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch balance');
-      }
-      const data = await response.json();
-      return data.balances;
-    } catch (error) {
-      console.error('Error fetching balance:', error);
-      return [];
-    }
-  }
-}
-
-// Export singleton instance
-export const cosmosClient = new CosmosClient();
+export default {
+  queryTotalLiability,
+  queryActiveDefendants,
+  queryDefendantDetails,
+  getStargateClient
+};
