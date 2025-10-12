@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import ForensicAudit from './pages/ForensicAudit';
 import Defendants from './pages/Defendants';
 import TransparencyLedger from './pages/TransparencyLedger';
+import FounderWallet from './pages/FounderWallet';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/audit" element={<ForensicAudit />} />
           <Route path="/defendants" element={<Defendants />} />
           <Route path="/ledger" element={<TransparencyLedger />} />
+          <Route path="/founder-wallet" element={<FounderWallet />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">

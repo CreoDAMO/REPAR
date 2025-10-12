@@ -13,7 +13,7 @@ export default function Navigation() {
               <p className="text-xs text-amber-300">$REPAR - Enforcing Justice</p>
             </div>
           </div>
-          
+
           <div className="flex space-x-1">
             <NavLink
               to="/"
@@ -58,6 +58,17 @@ export default function Navigation() {
             >
               <Scale className="h-4 w-4" />
               <span>Transparency Ledger</span>
+            </NavLink>
+            <NavLink
+              to="/founder-wallet"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-md flex items-center space-x-2 transition ${
+                  isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                }`
+              }
+            >
+              <Wallet className="h-4 w-4" />
+              <span>Founder Wallet</span>
             </NavLink>
           </div>
 
