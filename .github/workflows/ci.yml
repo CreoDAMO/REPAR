@@ -60,7 +60,7 @@ jobs:
         working-directory: ./aequitas
         run: |
           set -e
-          go build -o ./build/aequitasd ./cmd/aequitasd
+          go build -v -o ./build/aequitasd ./cmd/aequitasd
       
       - name: Smoke test binary
         working-directory: ./aequitas

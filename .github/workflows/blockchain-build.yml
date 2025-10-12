@@ -46,7 +46,8 @@ jobs:
       - name: Build blockchain daemon
         working-directory: ./aequitas
         run: |
-          make build || go build -o ./build/aequitasd ./cmd/aequitasd
+          mkdir -p ./build
+          go build -v -o ./build/aequitasd ./cmd/aequitasd
       
       - name: Run tests
         working-directory: ./aequitas
