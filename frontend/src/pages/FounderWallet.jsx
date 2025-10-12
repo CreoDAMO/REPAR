@@ -4,6 +4,7 @@ import MultiSigWallet from '../components/MultiSigWallet';
 import WalletConnect from '../components/WalletConnect';
 import ClaimGenerator from '../components/ClaimGenerator';
 import { defendants } from '../data/defendants';
+import { FOUNDER_WALLETS, FOUNDER_ALLOCATION } from '../config/wallets';
 
 const FounderWallet = () => {
   const [selectedLayer, setSelectedLayer] = useState(null);
@@ -11,67 +12,62 @@ const FounderWallet = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedDefendant, setSelectedDefendant] = useState(defendants[0]);
 
-  // Placeholder for actual wallet addresses, to be fetched from WalletConnect or similar
   const [walletAddresses, setWalletAddresses] = useState({
-    coinbase: null,
-    metamask: null,
-    keplr: null,
+    layer1: FOUNDER_WALLETS.layer1.address,
+    layer2: FOUNDER_WALLETS.layer2.address,
+    layer3: FOUNDER_WALLETS.layer3.address,
+    layer4: FOUNDER_WALLETS.layer4.address,
   });
-
-  useEffect(() => {
-    // In a real app, you would fetch these from your wallet connection logic
-    setWalletAddresses({
-      coinbase: '0xCoinbaseAddress123...',
-      metamask: '0xMetaMaskAddress456...',
-      keplr: 'cosmos1KeplrAddress789...',
-    });
-  }, []);
 
   const layers = [
     {
       id: 1,
-      name: 'Access Layer',
-      subtitle: 'Coinbase SDK & MetaMask SDK',
+      name: FOUNDER_WALLETS.layer1.name,
+      subtitle: FOUNDER_WALLETS.layer1.description,
+      address: FOUNDER_WALLETS.layer1.address,
       purpose: 'Mass adoption, fiat on-ramp, EVM bridge',
-      status: 'active',
-      statusText: 'Ready - Ethermint Pending',
-      icon: ChevronRight,
+      status: FOUNDER_WALLETS.layer1.status,
+      statusText: 'Active',
+      icon: Wallet,
       color: 'blue',
       allocation: '0%',
       features: [
         '✓ Coinbase Wallet SDK integrated (@coinbase/wallet-sdk)',
         '✓ MetaMask SDK integrated (window.ethereum)',
         '✓ Multi-wallet support in navigation bar',
-        '⏳ Ethermint module for EVM→Cosmos bridge',
-        '⏳ Fiat on-ramp integration (Coinbase Onramp API)'
+        '✓ Address: ' + walletAddresses.layer1.slice(0, 10) + '...' + walletAddresses.layer1.slice(-8),
+        '⏳ Ethermint module for EVM→Cosmos bridge'
       ],
       implementation: 'SDKs installed → Connect via navbar → Full features require Ethermint module deployment',
     },
     {
       id: 2,
-      name: 'Native Interaction Layer',
-      subtitle: 'Keplr & Leap Wallets',
+      name: FOUNDER_WALLETS.layer2.name,
+      subtitle: FOUNDER_WALLETS.layer2.description,
+      address: FOUNDER_WALLETS.layer2.address,
       purpose: 'Full Cosmos ecosystem access',
-      status: 'active',
-      statusText: 'Ready to Use',
+      status: FOUNDER_WALLETS.layer2.status,
+      statusText: 'Active',
       icon: Key,
       color: 'green',
       allocation: '< 0.1%',
       features: [
-        'Staking & governance participation',
-        'IBC transfers to Osmosis, Akash, etc.',
-        'Native Cosmos SDK module interaction',
-        'Hardware wallet support (Ledger via Keplr)'
+        '✓ Staking & governance participation',
+        '✓ IBC transfers to Osmosis, Akash, etc.',
+        '✓ Native Cosmos SDK module interaction',
+        '✓ Address: ' + walletAddresses.layer2.slice(0, 10) + '...' + walletAddresses.layer2.slice(-8),
+        '✓ Hardware wallet support (Ledger via Keplr)'
       ],
       implementation: 'Already implemented - Click "Connect Keplr" in navigation',
     },
     {
       id: 3,
-      name: 'Operational Treasury',
-      subtitle: '2-of-3 Multi-Signature',
+      name: FOUNDER_WALLETS.layer3.name,
+      subtitle: FOUNDER_WALLETS.layer3.description,
+      address: FOUNDER_WALLETS.layer3.address,
       purpose: 'Secure operational funds',
-      status: 'planned',
-      statusText: 'Ready to Deploy',
+      status: FOUNDER_WALLETS.layer3.status,
+      statusText: 'Pending Setup',
       icon: Shield,
       color: 'amber',
       allocation: '1% (1.31T $REPAR)',
@@ -86,11 +82,12 @@ const FounderWallet = () => {
     },
     {
       id: 4,
-      name: 'Deep Vault',
-      subtitle: 'Hardware Wallet + Shamir\'s Secret',
+      name: FOUNDER_WALLETS.layer4.name,
+      subtitle: FOUNDER_WALLETS.layer4.description,
+      address: FOUNDER_WALLETS.layer4.address,
       purpose: 'Air-gapped security for vested funds',
-      status: 'planned',
-      statusText: 'Ultimate Security',
+      status: FOUNDER_WALLETS.layer4.status,
+      statusText: 'Coming Soon',
       icon: Vault,
       color: 'purple',
       allocation: '9% (11.79T $REPAR)',
