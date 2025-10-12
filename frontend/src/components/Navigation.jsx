@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Scale, Database, FileText, TrendingUp, Wallet } from 'lucide-react';
+import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 
 export default function Navigation() {
@@ -81,6 +81,50 @@ export default function Navigation() {
             >
               <Scale className="h-4 w-4" />
               <span>Roadmap</span>
+            </NavLink>
+            <NavLink
+              to="/ifr"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-md flex items-center space-x-2 transition ${
+                  isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                }`
+              }
+            >
+              <Shield className="h-4 w-4" />
+              <span>IFR</span>
+            </NavLink>
+            <NavLink
+              to="/grc"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-md flex items-center space-x-2 transition ${
+                  isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                }`
+              }
+            >
+              <CheckCircle className="h-4 w-4" />
+              <span>GRC</span>
+            </NavLink>
+            <NavLink
+              to="/dao"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-md flex items-center space-x-2 transition ${
+                  isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                }`
+              }
+            >
+              <Vote className="h-4 w-4" />
+              <span>DAO</span>
+            </NavLink>
+            <NavLink
+              to="/ai-analytics"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-md flex items-center space-x-2 transition ${
+                  isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                }`
+              }
+            >
+              <Brain className="h-4 w-4" />
+              <span>AI</span>
             </NavLink>
           </div>
 

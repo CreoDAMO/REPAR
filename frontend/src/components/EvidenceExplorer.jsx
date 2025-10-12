@@ -26,7 +26,7 @@ const EvidenceExplorer = ({ defendant }) => {
               <div className="flex-1 bg-gray-700 rounded p-3">
                 <div className="font-semibold text-white">{entry.entity}</div>
                 <div className="text-green-400">
-                  ${entry.liability.toLocaleString()}
+                  ${(entry.slaveryDerivedWealth || entry.liability)?.toLocaleString()}
                 </div>
               </div>
               {idx < defendant.chainOfGuilt.length - 1 && (
@@ -41,7 +41,7 @@ const EvidenceExplorer = ({ defendant }) => {
       <div className="bg-gray-800 rounded-lg p-6">
         <h3 className="text-xl font-bold text-purple-400 mb-4">Evidence Repository</h3>
         <div className="grid gap-4">
-          {defendant.evidence?.map((evidence, idx) => (
+          {(defendant.ipfsEvidence || defendant.evidence)?.map((evidence, idx) => (
             <div
               key={idx}
               className="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors cursor-pointer"
@@ -87,15 +87,15 @@ const EvidenceExplorer = ({ defendant }) => {
         </h3>
         <div className="space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-gray-400">Original Liability (1690):</span>
+            <span className="text-gray-400">Original Wealth ({defendant.chainOfGuilt?.[0]?.year}):</span>
             <span className="text-white font-semibold">
-              ${defendant.chainOfGuilt?.[0]?.liability.toLocaleString()}
+              ${(defendant.chainOfGuilt?.[0]?.slaveryDerivedWealth || defendant.chainOfGuilt?.[0]?.liability)?.toLocaleString()}
             </span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-gray-400">Annual Interest Rate:</span>
+            <span className="text-gray-400">Annual Growth Rate:</span>
             <span className="text-white font-semibold">
-              {(defendant.compoundInterestRate * 100).toFixed(1)}%
+              {((defendant.compoundInterestRate || 0.035) * 100).toFixed(1)}%
             </span>
           </div>
           <div className="flex justify-between items-center">
@@ -106,9 +106,9 @@ const EvidenceExplorer = ({ defendant }) => {
           </div>
           <div className="border-t border-gray-600 pt-3 mt-3">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Current Liability (2024):</span>
+              <span className="text-gray-400">Current Liability ({new Date().getFullYear()}):</span>
               <span className="text-green-400 font-bold text-xl">
-                ${defendant.liability?.toLocaleString()}
+                ${(defendant.slaveryDerivedWealth || defendant.liability)?.toLocaleString()}
               </span>
             </div>
           </div>

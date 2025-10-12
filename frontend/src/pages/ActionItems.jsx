@@ -11,7 +11,7 @@ const ActionItems = () => {
       category: 'Immediate Priority',
       title: 'Implement Wallet Integration',
       description: 'Make the "Connect Wallet" button functional using Coinbase, MetaMask, and Keplr SDKs',
-      status: 'in-progress',
+      status: 'completed',
       priority: 'high',
       icon: Wallet
     },
@@ -29,7 +29,7 @@ const ActionItems = () => {
       category: 'Immediate Priority',
       title: 'Build Interactive Evidence Explorer',
       description: 'Enhance Defendants page with Chain of Guilt visualizer and compound interest calculator',
-      status: 'pending',
+      status: 'completed',
       priority: 'high',
       icon: FileText
     },
@@ -38,7 +38,7 @@ const ActionItems = () => {
       category: 'Medium-Term',
       title: 'Integrate Cosmos SDK Blockchain',
       description: 'Connect React frontend to Aequitas Zone testnet for live on-chain data',
-      status: 'pending',
+      status: 'in-progress',
       priority: 'medium',
       icon: Globe
     },
@@ -47,7 +47,7 @@ const ActionItems = () => {
       category: 'Medium-Term',
       title: 'Implement Claim Filing System',
       description: 'Build secure portal for verified descendants to file arbitration demands',
-      status: 'pending',
+      status: 'completed',
       priority: 'medium',
       icon: FileText
     },
@@ -56,21 +56,39 @@ const ActionItems = () => {
       category: 'Medium-Term',
       title: 'Integrate IPFS for Evidence Storage',
       description: 'Store source documents on IPFS with immutable hash references',
-      status: 'pending',
+      status: 'completed',
       priority: 'medium',
       icon: Database
     },
     {
       id: 7,
+      category: 'Medium-Term',
+      title: 'Build IFR & GRC Systems',
+      description: 'Create International Forensic Registry and Governance/Risk/Compliance oversight pages',
+      status: 'completed',
+      priority: 'medium',
+      icon: CheckCircle
+    },
+    {
+      id: 8,
       category: 'Long-Term',
       title: 'Build DAO Governance UI',
       description: 'Create voting interface for $REPAR holders on governance proposals',
-      status: 'pending',
+      status: 'completed',
       priority: 'low',
       icon: Wallet
     },
     {
-      id: 8,
+      id: 9,
+      category: 'Long-Term',
+      title: 'Integrate AI Analytics (NVIDIA)',
+      description: 'Deploy NVIDIA-powered predictive models for case analysis and optimization',
+      status: 'completed',
+      priority: 'low',
+      icon: Globe
+    },
+    {
+      id: 10,
       category: 'Long-Term',
       title: 'Mobile Responsive Optimization',
       description: 'Ensure full functionality on mobile devices for global accessibility',

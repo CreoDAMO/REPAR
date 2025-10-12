@@ -5,7 +5,11 @@ import ForensicAudit from './pages/ForensicAudit';
 import Defendants from './pages/Defendants';
 import TransparencyLedger from './pages/TransparencyLedger';
 import FounderWallet from './pages/FounderWallet';
-import ActionItems from './pages/ActionItems'; // Import the new component
+import ActionItems from './pages/ActionItems';
+import IFRSystem from './pages/IFRSystem';
+import GRCOversight from './pages/GRCOversight';
+import DAOGovernance from './pages/DAOGovernance';
+import AIAnalytics from './pages/AIAnalytics';
 
 function App() {
   return (
@@ -18,7 +22,11 @@ function App() {
           <Route path="/defendants" element={<Defendants />} />
           <Route path="/ledger" element={<TransparencyLedger />} />
           <Route path="/founder-wallet" element={<FounderWallet />} />
-          <Route path="/roadmap" element={<ActionItems />} /> {/* Added new route */}
+          <Route path="/roadmap" element={<ActionItems />} />
+          <Route path="/ifr" element={<IFRSystem />} />
+          <Route path="/grc" element={<GRCOversight />} />
+          <Route path="/dao" element={<DAOGovernance />} />
+          <Route path="/ai-analytics" element={<AIAnalytics />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">

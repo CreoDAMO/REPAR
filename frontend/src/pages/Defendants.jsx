@@ -7,6 +7,7 @@ export default function Defendants() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
+  const [expandedDefendant, setExpandedDefendant] = useState(null);
 
   const categories = ['All', ...new Set(defendants.map(d => d.category))];
   const statuses = ['All', ...new Set(defendants.map(d => d.status))];
@@ -25,7 +26,7 @@ export default function Defendants() {
     return `$${value.toLocaleString()}`;
   };
 
-  const totalLiability = filteredDefendants.reduce((sum, d) => sum + d.slaveryDerivedWealth, 0);
+  const totalLiability = filteredDefendants.reduce((sum, d) => sum + (d.slaveryDerivedWealth || d.liability || 0), 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -153,13 +154,22 @@ export default function Defendants() {
               </div>
 
               <div className="mt-4 flex space-x-3">
-                <button className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition">
-                  View Full Audit
+                <button 
+                  onClick={() => setExpandedDefendant(expandedDefendant === defendant.id ? null : defendant.id)}
+                  className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md font-semibold transition"
+                >
+                  {expandedDefendant === defendant.id ? 'Hide Evidence' : 'View Evidence & Chain of Guilt'}
                 </button>
                 <button className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md font-semibold transition">
                   File Arbitration Claim
                 </button>
               </div>
+
+              {expandedDefendant === defendant.id && (
+                <div className="mt-6">
+                  <EvidenceExplorer defendant={defendant} />
+                </div>
+              )}
             </div>
           ))}
         </div>
