@@ -55,7 +55,15 @@ jobs:
       
       - name: Compile check
         working-directory: ./aequitas
-        run: go build -o /dev/null ./cmd/aequitasd || echo "Build in progress"
+        run: |
+          set -e
+          go build -o ./build/aequitasd ./cmd/aequitasd
+      
+      - name: Smoke test binary
+        working-directory: ./aequitas
+        run: |
+          ./build/aequitasd version || echo "Version command pending implementation"
+          ls -lh ./build/aequitasd
 
   integration-status:
     name: Integration Status Report
