@@ -13,18 +13,19 @@ const FounderWallet = () => {
       name: 'Access Layer',
       subtitle: 'Coinbase SDK & MetaMask SDK',
       purpose: 'Mass adoption, fiat on-ramp, EVM bridge',
-      status: 'pending',
-      statusText: 'Requires Ethermint',
+      status: 'active',
+      statusText: 'Ready - Ethermint Pending',
       icon: ChevronRight,
       color: 'blue',
       allocation: '0%',
       features: [
-        'One-click onboarding for Coinbase/MetaMask users',
-        'Fiat-to-crypto conversion via Coinbase Onramp',
-        'EVM compatibility through Ethermint module',
-        'Automatic 0x... to repar... address mapping'
+        '✓ Coinbase Wallet SDK integrated (@coinbase/wallet-sdk)',
+        '✓ MetaMask SDK integrated (window.ethereum)',
+        '✓ Multi-wallet support in navigation bar',
+        '⏳ Ethermint module for EVM→Cosmos bridge',
+        '⏳ Fiat on-ramp integration (Coinbase Onramp API)'
       ],
-      implementation: 'Install Ethermint module → Configure EVM RPC → Integrate Coinbase SDK v4.3.7+',
+      implementation: 'SDKs installed → Connect via navbar → Full features require Ethermint module deployment',
     },
     {
       id: 2,
