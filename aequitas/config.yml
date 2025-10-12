@@ -1,0 +1,56 @@
+version: 1
+
+accounts:
+  - name: validator
+    coins:
+      - 1000000000000000000000repar
+      - 100000000stake
+  - name: alice
+    coins:
+      - 1000000000000000repar
+      - 50000000stake
+
+validator:
+  name: validator
+  staked: 100000000stake
+
+client:
+  openapi:
+    path: docs/static/openapi.yml
+  vuex:
+    path: vue/src/store
+
+faucet:
+  name: alice
+  coins:
+    - 100000repar
+    - 5000stake
+
+genesis:
+  chain_id: aequitas-1
+  app_state:
+    bank:
+      supply:
+        - denom: repar
+          amount: "131000000000000000000000"
+      denom_metadata:
+        - description: "$REPAR - Aequitas Protocol Reparations Coin"
+          denom_units:
+            - denom: repar
+              exponent: 0
+              aliases: []
+            - denom: REPAR
+              exponent: 6
+              aliases: ["$REPAR"]
+          base: repar
+          display: REPAR
+          name: REPAR
+          symbol: REPAR
+    staking:
+      params:
+        bond_denom: stake
+        unbonding_time: 1814400s
+        max_validators: 100
+        max_entries: 7
+        historical_entries: 10000
+        min_commission_rate: "0.045"
