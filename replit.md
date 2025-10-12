@@ -58,6 +58,25 @@ frontend/
 
 ## Recent Changes
 
+### October 12, 2025 - Blockchain Foundation Created
+
+**Aequitas Zone Blockchain Scaffolded**:
+- ✅ **Blockchain Structure**: Cosmos SDK-based Layer-1 blockchain created using Ignite CLI
+- ✅ **$REPAR Module**: Custom x/repar module initialized for reparations logic
+- ✅ **Coin Configuration**: 131 trillion $REPAR supply configured in genesis
+- ✅ **Chain Parameters**: Proper staking params (4.5% min commission, 21-day unbonding)
+- 🚧 **Build Process**: Dependencies being resolved for full compilation
+- 🚧 **Custom Modules**: Evidence Registry, Claims System, Defendant Tracking modules planned
+
+**Blockchain Location**: `/aequitas` directory contains full chain code
+
+**Next Steps**:
+1. Complete blockchain build and compilation
+2. Add custom modules for evidence, claims, and defendant tracking
+3. Configure testnet deployment
+4. Connect frontend to local blockchain via RPC
+5. Implement on-chain governance for DAO voting
+
 ### October 12, 2025 - Feature Complete: Governance, AI, & Oversight Systems
 
 **Major Features Implemented**:

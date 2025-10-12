@@ -37,7 +37,7 @@ const ActionItems = () => {
       id: 4,
       category: 'Medium-Term',
       title: 'Integrate Cosmos SDK Blockchain',
-      description: 'Connect React frontend to Aequitas Zone testnet for live on-chain data',
+      description: 'Aequitas Zone blockchain scaffolded with x/repar module, 131T $REPAR supply configured. Build & deployment in progress.',
       status: 'in-progress',
       priority: 'medium',
       icon: Globe

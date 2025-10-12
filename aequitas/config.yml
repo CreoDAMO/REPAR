@@ -3,11 +3,11 @@ version: 1
 accounts:
   - name: validator
     coins:
-      - 1000000000000000000000repar
+      - 100000000000000000repar
       - 100000000stake
   - name: alice
     coins:
-      - 1000000000000000repar
+      - 10000000000000000repar
       - 50000000stake
 
 validator:
@@ -32,7 +32,7 @@ genesis:
     bank:
       supply:
         - denom: repar
-          amount: "131000000000000000000000"
+          amount: "131000000000000000000"
       denom_metadata:
         - description: "$REPAR - Aequitas Protocol Reparations Coin"
           denom_units:
