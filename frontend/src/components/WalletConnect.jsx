@@ -13,22 +13,26 @@ const WalletConnect = ({ onWalletConnected }) => {
 
   useEffect(() => {
     // Initialize Coinbase Wallet SDK
-    const coinbaseWalletSDK = new CoinbaseWalletSDK({
-      appName: 'Aequitas Protocol',
-      appLogoUrl: 'https://example.com/logo.png', // Add your logo URL
-      darkMode: true
-    });
+    try {
+      const coinbaseWalletSDK = new CoinbaseWalletSDK({
+        appName: 'Aequitas Protocol',
+        appLogoUrl: 'https://example.com/logo.png',
+        darkMode: true
+      });
 
-    const ethereum = coinbaseWalletSDK.makeWeb3Provider(
-      import.meta.env.VITE_COSMOS_RPC_URL || 'http://0.0.0.0:26657',
-      1 // Chain ID - update as needed
-    );
+      // Note: Coinbase Wallet requires an EVM-compatible RPC
+      // This will only work if Ethermint module is enabled
+      const ethereum = coinbaseWalletSDK.makeWeb3Provider();
 
-    setCoinbaseWallet(ethereum);
+      setCoinbaseWallet(ethereum);
+    } catch (error) {
+      console.warn('Coinbase Wallet initialization failed:', error);
+    }
   }, []);
 
   const connectCoinbase = async () => {
     if (!coinbaseWallet) {
+      alert('Coinbase Wallet requires EVM compatibility. Please use Keplr for native Cosmos functionality.');
       setShowInfo(true);
       return;
     }
@@ -52,6 +56,7 @@ const WalletConnect = ({ onWalletConnected }) => {
       }
     } catch (error) {
       console.error('Coinbase Wallet connection failed:', error);
+      alert('Coinbase Wallet connection failed. Please try Keplr or MetaMask.');
       setShowInfo(true);
     } finally {
       setConnecting(false);
@@ -60,6 +65,7 @@ const WalletConnect = ({ onWalletConnected }) => {
 
   const connectMetaMask = async () => {
     if (!window.ethereum) {
+      alert('MetaMask not detected. Please install MetaMask or use Keplr wallet.');
       setShowInfo(true);
       return;
     }
@@ -83,6 +89,7 @@ const WalletConnect = ({ onWalletConnected }) => {
       }
     } catch (error) {
       console.error('MetaMask connection failed:', error);
+      alert('MetaMask connection failed. Please try again or use Keplr.');
       setShowInfo(true);
     } finally {
       setConnecting(false);

@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Shield, Lock, Key, Vault, ChevronRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import MultiSigWallet from '../components/MultiSigWallet';
+import WalletConnect from '../components/WalletConnect';
 
 const FounderWallet = () => {
   const [selectedLayer, setSelectedLayer] = useState(null);
