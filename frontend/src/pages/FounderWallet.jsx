@@ -264,7 +264,7 @@ const FounderWallet = () => {
         )}
 
         {activeTab === 'multisig' && (
-          <MultiSigWallet walletAddress={walletAddress} />ts={walletAddresses} />
+          <MultiSigWallet />
         )}
 
         {activeTab === 'claims' && (
