@@ -1,12 +1,45 @@
 
 import { useState } from 'react';
-import { Wallet, Info, AlertCircle, CheckCircle } from 'lucide-react';
+import { Wallet, Info, AlertCircle, CheckCircle, Shield } from 'lucide-react';
 
 const WalletConnect = ({ onWalletConnected }) => {
   const [showInfo, setShowInfo] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(false);
   const [address, setAddress] = useState('');
+  const [walletType, setWalletType] = useState('');
+
+  const connectMetaMask = async () => {
+    if (!window.ethereum) {
+      setShowInfo(true);
+      return;
+    }
+
+    setConnecting(true);
+    try {
+      // Request account access
+      const accounts = await window.ethereum.request({ 
+        method: 'eth_requestAccounts' 
+      });
+      
+      const evmAddress = accounts[0];
+      setAddress(evmAddress);
+      setWalletType('metamask');
+      setConnected(true);
+      
+      if (onWalletConnected) {
+        onWalletConnected({
+          address: evmAddress,
+          wallet: 'metamask',
+        });
+      }
+    } catch (error) {
+      console.error('MetaMask connection failed:', error);
+      setShowInfo(true);
+    } finally {
+      setConnecting(false);
+    }
+  };
 
   const connectKeplr = async () => {
     if (!window.keplr) {
@@ -70,6 +103,7 @@ const WalletConnect = ({ onWalletConnected }) => {
       const accounts = await offlineSigner.getAccounts();
 
       setAddress(accounts[0].address);
+      setWalletType('keplr');
       setConnected(true);
       
       if (onWalletConnected) {
@@ -89,6 +123,7 @@ const WalletConnect = ({ onWalletConnected }) => {
   const disconnectWallet = () => {
     setConnected(false);
     setAddress('');
+    setWalletType('');
   };
 
   if (connected) {
@@ -96,6 +131,7 @@ const WalletConnect = ({ onWalletConnected }) => {
       <div className="flex items-center gap-2">
         <div className="bg-green-900/30 border border-green-500/50 rounded-md px-3 py-2 flex items-center gap-2">
           <CheckCircle className="h-4 w-4 text-green-400" />
+          <span className="text-xs text-green-400 uppercase">{walletType}</span>
           <span className="text-sm text-green-300 font-mono">
             {address.slice(0, 10)}...{address.slice(-8)}
           </span>
@@ -111,14 +147,23 @@ const WalletConnect = ({ onWalletConnected }) => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative flex gap-2">
+      <button
+        onClick={connectMetaMask}
+        disabled={connecting}
+        className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md font-semibold flex items-center space-x-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <Wallet className="h-4 w-4" />
+        <span>{connecting ? 'Connecting...' : 'MetaMask'}</span>
+      </button>
+      
       <button
         onClick={connectKeplr}
         disabled={connecting}
         className="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-md font-semibold flex items-center space-x-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Wallet className="h-4 w-4" />
-        <span>{connecting ? 'Connecting...' : 'Connect Keplr'}</span>
+        <span>{connecting ? 'Connecting...' : 'Keplr'}</span>
       </button>
       
       {showInfo && (
@@ -126,24 +171,30 @@ const WalletConnect = ({ onWalletConnected }) => {
           <div className="flex items-start gap-2 mb-3">
             <AlertCircle className="h-5 w-5 text-amber-400 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-white mb-2">Keplr Wallet Required</h4>
+              <h4 className="font-semibold text-white mb-2">Wallet Setup Required</h4>
               <p className="text-sm text-slate-300 mb-3">
-                Aequitas Protocol is a <span className="text-amber-400">native Cosmos SDK blockchain</span>.
+                Connect with Keplr for native Cosmos or MetaMask for EVM compatibility.
               </p>
-              <div className="text-sm text-slate-400 space-y-2 mb-3">
-                <p><strong className="text-white">To connect:</strong></p>
-                <ol className="list-decimal list-inside space-y-1">
-                  <li>Install <a href="https://www.keplr.app/download" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">Keplr Wallet</a></li>
-                  <li>Create or import your wallet</li>
-                  <li>Click "Connect Keplr" above</li>
-                  <li>Approve the Aequitas chain connection</li>
-                </ol>
+              <div className="text-sm text-slate-400 space-y-3 mb-3">
+                <div>
+                  <p><strong className="text-white">Keplr (Recommended):</strong></p>
+                  <ol className="list-decimal list-inside space-y-1 ml-2">
+                    <li>Install <a href="https://www.keplr.app/download" target="_blank" rel="noopener noreferrer" className="text-amber-400 hover:underline">Keplr Wallet</a></li>
+                    <li>Create or import your wallet</li>
+                    <li>Click "Keplr" button above</li>
+                  </ol>
+                </div>
+                <div>
+                  <p><strong className="text-white">MetaMask (EVM Bridge):</strong></p>
+                  <ol className="list-decimal list-inside space-y-1 ml-2">
+                    <li>Install <a href="https://metamask.io/download/" target="_blank" rel="noopener noreferrer" className="text-orange-400 hover:underline">MetaMask</a></li>
+                    <li>Create or import your wallet</li>
+                    <li>Click "MetaMask" button above</li>
+                  </ol>
+                </div>
               </div>
               <div className="text-xs text-slate-500 border-t border-slate-700 pt-2">
-                <p><strong className="text-slate-400">Coming Soon:</strong></p>
-                <p>• Ethermint integration for EVM wallets</p>
-                <p>• Coinbase Wallet & MetaMask support</p>
-                <p>• Multi-signature treasury wallets</p>
+                <p><strong className="text-slate-400">Note:</strong> MetaMask uses EVM addresses. Full Cosmos integration requires Ethermint module.</p>
               </div>
             </div>
           </div>

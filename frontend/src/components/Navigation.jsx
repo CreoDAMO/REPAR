@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { Scale, Database, FileText, TrendingUp, Wallet } from 'lucide-react';
+import WalletConnect from './WalletConnect';
 
 export default function Navigation() {
   return (
@@ -72,10 +73,7 @@ export default function Navigation() {
             </NavLink>
           </div>
 
-          <button className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-md font-semibold flex items-center space-x-2 transition">
-            <Wallet className="h-4 w-4" />
-            <span>Connect Wallet</span>
-          </button>
+          <WalletConnect />
         </div>
       </div>
     </nav>

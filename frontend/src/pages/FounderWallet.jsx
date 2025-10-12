@@ -1,9 +1,11 @@
 
 import { useState } from 'react';
 import { Shield, Lock, Key, Vault, ChevronRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import MultiSigWallet from '../components/MultiSigWallet';
 
 const FounderWallet = () => {
   const [selectedLayer, setSelectedLayer] = useState(null);
+  const [showMultiSig, setShowMultiSig] = useState(false);
 
   const layers = [
     {
@@ -184,6 +186,24 @@ const FounderWallet = () => {
             </div>
           );
         })}
+      </div>
+
+      {/* Multi-Sig Treasury Interface */}
+      {showMultiSig && (
+        <div className="mt-8">
+          <MultiSigWallet />
+        </div>
+      )}
+
+      {/* Quick Access Button */}
+      <div className="mt-8 text-center">
+        <button
+          onClick={() => setShowMultiSig(!showMultiSig)}
+          className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-lg font-bold flex items-center gap-2 mx-auto transition-colors"
+        >
+          <Shield className="h-5 w-5" />
+          <span>{showMultiSig ? 'Hide' : 'Access'} Multi-Sig Treasury (Layer 3)</span>
+        </button>
       </div>
 
       {/* Security Best Practices */}
