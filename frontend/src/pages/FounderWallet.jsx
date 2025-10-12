@@ -1,12 +1,31 @@
-
-import { useState } from 'react';
-import { Shield, Lock, Key, Vault, ChevronRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, Wallet, Lock, Key, ChevronRight, AlertTriangle, CheckCircle2, FileText } from 'lucide-react';
 import MultiSigWallet from '../components/MultiSigWallet';
 import WalletConnect from '../components/WalletConnect';
+import ClaimGenerator from '../components/ClaimGenerator';
+import { defendants } from '../data/defendants';
 
 const FounderWallet = () => {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [showMultiSig, setShowMultiSig] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [selectedDefendant, setSelectedDefendant] = useState(defendants[0]);
+
+  // Placeholder for actual wallet addresses, to be fetched from WalletConnect or similar
+  const [walletAddresses, setWalletAddresses] = useState({
+    coinbase: null,
+    metamask: null,
+    keplr: null,
+  });
+
+  useEffect(() => {
+    // In a real app, you would fetch these from your wallet connection logic
+    setWalletAddresses({
+      coinbase: '0xCoinbaseAddress123...',
+      metamask: '0xMetaMaskAddress456...',
+      keplr: 'cosmos1KeplrAddress789...',
+    });
+  }, []);
 
   const layers = [
     {
@@ -128,76 +147,153 @@ const FounderWallet = () => {
         </div>
       </div>
 
-      {/* Security Layers */}
-      <div className="space-y-4">
-        {layers.map((layer) => {
-          const Icon = layer.icon;
-          const isExpanded = selectedLayer === layer.id;
-          
-          return (
-            <div key={layer.id} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
-              <button
-                onClick={() => setSelectedLayer(isExpanded ? null : layer.id)}
-                className="w-full p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors"
-              >
-                <div className={`p-3 rounded-lg bg-${layer.color}-100`}>
-                  <Icon className={`h-6 w-6 text-${layer.color}-600`} />
-                </div>
-                <div className="flex-1 text-left">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="text-lg font-bold text-gray-900">Layer {layer.id}: {layer.name}</h3>
-                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      layer.status === 'active' ? 'bg-green-100 text-green-700' :
-                      layer.status === 'planned' ? 'bg-amber-100 text-amber-700' :
-                      'bg-gray-100 text-gray-700'
-                    }`}>
-                      {layer.statusText}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600">{layer.subtitle}</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">{layer.allocation}</p>
-                  <p className="text-xs text-gray-500">{layer.purpose}</p>
-                </div>
-                <ChevronRight className={`h-5 w-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
-              </button>
-              
-              {isExpanded && (
-                <div className="border-t border-gray-200 p-6 bg-gray-50">
-                  <div className="mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-2">Key Features</h4>
-                    <ul className="space-y-2">
-                      {layer.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                          <CheckCircle2 className={`h-4 w-4 text-${layer.color}-500 flex-shrink-0 mt-0.5`} />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="bg-white rounded-lg p-4 border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-amber-500" />
-                      Implementation Steps
-                    </h4>
-                    <p className="text-sm text-gray-700 font-mono">{layer.implementation}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          );
-        })}
+      {/* Tabs for different sections */}
+      <div className="flex space-x-4 mb-8 overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`px-6 py-3 rounded-lg transition-colors ${
+            activeTab === 'overview' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+          }`}
+        >
+          Overview
+        </button>
+        <button
+          onClick={() => setActiveTab('multisig')}
+          className={`px-6 py-3 rounded-lg transition-colors ${
+            activeTab === 'multisig' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+          }`}
+        >
+          Multi-Sig Security
+        </button>
+        <button
+            onClick={() => setActiveTab('claims')}
+            className={`px-6 py-3 rounded-lg transition-colors ${
+              activeTab === 'claims' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+          >
+            <FileText className="inline w-5 h-5 mr-2" />
+            File Claim
+          </button>
       </div>
 
-      {/* Multi-Sig Treasury Interface */}
-      {showMultiSig && (
-        <div className="mt-8">
-          <MultiSigWallet />
-        </div>
-      )}
+      {/* Content based on active tab */}
+      <div>
+        {activeTab === 'overview' && (
+          <>
+            {/* Security Layers */}
+            <div className="space-y-4 mb-8">
+              {layers.map((layer) => {
+                const Icon = layer.icon;
+                const isExpanded = selectedLayer === layer.id;
 
-      {/* Quick Access Button */}
+                return (
+                  <div key={layer.id} className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
+                    <button
+                      onClick={() => setSelectedLayer(isExpanded ? null : layer.id)}
+                      className="w-full p-6 flex items-center gap-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className={`p-3 rounded-lg bg-${layer.color}-100`}>
+                        <Icon className={`h-6 w-6 text-${layer.color}-600`} />
+                      </div>
+                      <div className="flex-1 text-left">
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="text-lg font-bold text-gray-900">Layer {layer.id}: {layer.name}</h3>
+                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                            layer.status === 'active' ? 'bg-green-100 text-green-700' :
+                            layer.status === 'planned' ? 'bg-amber-100 text-amber-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {layer.statusText}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600">{layer.subtitle}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-semibold text-gray-900">{layer.allocation}</p>
+                        <p className="text-xs text-gray-500">{layer.purpose}</p>
+                      </div>
+                      <ChevronRight className={`h-5 w-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                    </button>
+
+                    {isExpanded && (
+                      <div className="border-t border-gray-200 p-6 bg-gray-50">
+                        <div className="mb-4">
+                          <h4 className="font-semibold text-gray-900 mb-2">Key Features</h4>
+                          <ul className="space-y-2">
+                            {layer.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                                <CheckCircle2 className={`h-4 w-4 text-${layer.color}-500 flex-shrink-0 mt-0.5`} />
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                            <AlertTriangle className="h-4 w-4 text-amber-500" />
+                            Implementation Steps
+                          </h4>
+                          <p className="text-sm text-gray-700 font-mono">{layer.implementation}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Security Best Practices */}
+            <div className="bg-slate-900 text-white rounded-lg p-6">
+              <h3 className="text-xl font-bold mb-4">Security Principles</h3>
+              <div className="grid md:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <h4 className="font-semibold text-amber-400 mb-2">Defense in Depth</h4>
+                  <p className="text-slate-300">Each layer serves a specific purpose. Public access → Native power → Operational security → Deep vault.</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-amber-400 mb-2">Zero Single Points of Failure</h4>
+                  <p className="text-slate-300">Multisig for operations. Shamir's Secret for deep storage. No single key controls the kingdom.</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-amber-400 mb-2">Mathematical Sovereignty</h4>
+                  <p className="text-slate-300">"The hardware is disposable; the decentralized seed is eternal." - Your seed phrase outlives any device.</p>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'multisig' && (
+          <MultiSigWallet wallets={walletAddresses} />
+        )}
+
+        {activeTab === 'claims' && (
+          <div className="space-y-6">
+            <div className="bg-gray-800 rounded-lg p-6">
+              <h3 className="text-xl font-bold text-purple-400 mb-4">Select Defendant</h3>
+              <select
+                value={selectedDefendant.id}
+                onChange={(e) => setSelectedDefendant(defendants.find(d => d.id === Number(e.target.value)))}
+                className="w-full bg-gray-700 text-white rounded px-4 py-2"
+              >
+                {defendants.map(d => (
+                  <option key={d.id} value={d.id}>
+                    {d.name} - ${d.liability?.toLocaleString()}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <ClaimGenerator 
+              defendant={selectedDefendant} 
+              walletAddress={walletAddresses.coinbase || walletAddresses.metamask || walletAddresses.keplr}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Quick Access Button for Multi-Sig (can be conditionally shown or removed based on design) */}
+      {/* If you want to keep this button, you might want to adjust its visibility or placement */}
+      {/*
       <div className="mt-8 text-center">
         <button
           onClick={() => setShowMultiSig(!showMultiSig)}
@@ -207,25 +303,7 @@ const FounderWallet = () => {
           <span>{showMultiSig ? 'Hide' : 'Access'} Multi-Sig Treasury (Layer 3)</span>
         </button>
       </div>
-
-      {/* Security Best Practices */}
-      <div className="mt-8 bg-slate-900 text-white rounded-lg p-6">
-        <h3 className="text-xl font-bold mb-4">Security Principles</h3>
-        <div className="grid md:grid-cols-3 gap-4 text-sm">
-          <div>
-            <h4 className="font-semibold text-amber-400 mb-2">Defense in Depth</h4>
-            <p className="text-slate-300">Each layer serves a specific purpose. Public access → Native power → Operational security → Deep vault.</p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-amber-400 mb-2">Zero Single Points of Failure</h4>
-            <p className="text-slate-300">Multisig for operations. Shamir's Secret for deep storage. No single key controls the kingdom.</p>
-          </div>
-          <div>
-            <h4 className="font-semibold text-amber-400 mb-2">Mathematical Sovereignty</h4>
-            <p className="text-slate-300">"The hardware is disposable; the decentralized seed is eternal." - Your seed phrase outlives any device.</p>
-          </div>
-        </div>
-      </div>
+      */}
     </div>
   );
 };

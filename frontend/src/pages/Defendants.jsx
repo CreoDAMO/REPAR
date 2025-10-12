@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Search, Building2, MapPin, TrendingUp, FileText } from 'lucide-react';
 import { defendants } from '../data/defendants';
+import EvidenceExplorer from '../components/EvidenceExplorer';
 
 export default function Defendants() {
   const [searchTerm, setSearchTerm] = useState('');

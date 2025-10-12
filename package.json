@@ -3,6 +3,7 @@
     "@coinbase/wallet-sdk": "^4.3.7",
     "@cosmjs/proto-signing": "^0.36.1",
     "@cosmjs/stargate": "^0.36.1",
-    "@cosmjs/tendermint-rpc": "^0.36.1"
+    "@cosmjs/tendermint-rpc": "^0.36.1",
+    "ipfs-http-client": "^60.0.1"
   }
 }
