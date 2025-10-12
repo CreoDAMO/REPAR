@@ -82,6 +82,8 @@ jobs:
     name: Initialize Local Testnet
     runs-on: ubuntu-latest
     needs: build-and-test
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout code
