@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Wallet, Lock, Key, ChevronRight, AlertTriangle, CheckCircle2, FileText } from 'lucide-react';
+import { Shield, Wallet, Lock, Key, ChevronRight, AlertTriangle, CheckCircle2, FileText, Vault } from 'lucide-react';
 import MultiSigWallet from '../components/MultiSigWallet';
 import WalletConnect from '../components/WalletConnect';
 import ClaimGenerator from '../components/ClaimGenerator';
