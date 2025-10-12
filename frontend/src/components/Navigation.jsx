@@ -71,6 +71,17 @@ export default function Navigation() {
               <Wallet className="h-4 w-4" />
               <span>Founder Wallet</span>
             </NavLink>
+            <NavLink
+              to="/roadmap"
+              className={({ isActive }) =>
+                `px-4 py-2 rounded-md flex items-center space-x-2 transition ${
+                  isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                }`
+              }
+            >
+              <Scale className="h-4 w-4" />
+              <span>Roadmap</span>
+            </NavLink>
           </div>
 
           <WalletConnect />
