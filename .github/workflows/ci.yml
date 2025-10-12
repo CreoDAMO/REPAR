@@ -1,5 +1,8 @@
 name: CI - Full Stack Testing
 
+permissions:
+  contents: read
+
 on:
   push:
     branches: [ main, develop ]
