@@ -3,6 +3,7 @@ package v1
 import (
 	"strconv"
 	"strings"
+	"math"
 
 	"github.com/spf13/pflag"
 
@@ -75,7 +76,10 @@ func (f *Flag) ExportToFlagSet(fs *pflag.FlagSet) error {
 		if err != nil {
 			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
 		}
-
+		// Check upper bound before converting
+		if v > uint64(math.MaxUint) {
+			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
+		}
 		fs.UintP(f.Name, f.Shorthand, uint(v), f.Usage)
 		if f.Value != "" {
 			if err := fs.Set(f.Name, f.Value); err != nil {
