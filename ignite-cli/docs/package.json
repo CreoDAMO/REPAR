@@ -44,5 +44,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "resolutions": {
+    "axios": "^1.7.9",
+    "path-to-regexp": "^8.2.0",
+    "trim": "^0.0.3"
   }
 }
