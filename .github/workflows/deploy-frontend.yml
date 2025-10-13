@@ -10,9 +10,11 @@ on:
 
 permissions:
   contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: "frontend-build"
+  group: "pages"
   cancel-in-progress: false
 
 jobs:
@@ -41,18 +43,23 @@ jobs:
         env:
           NODE_ENV: production
       
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: frontend-build-${{ github.sha }}
           path: ./frontend/dist
-          retention-days: 30
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
       
       - name: Build summary
         run: |
-          echo "### ✅ Frontend Built Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Frontend Deployed Successfully" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Build Artifact:** frontend-build-${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Live URL:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Features:**" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Dashboard with \$REPAR coinomics" >> $GITHUB_STEP_SUMMARY
@@ -61,5 +68,3 @@ jobs:
           echo "- ✅ DAO governance interface" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ AI analytics dashboard" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ IPFS integration for evidence storage" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Note:** To deploy to GitHub Pages, enable Pages in repository settings and set source to 'GitHub Actions'" >> $GITHUB_STEP_SUMMARY
