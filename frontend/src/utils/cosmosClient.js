@@ -89,10 +89,58 @@ export const queryDefendantDetails = async (defendantId) => {
   }
 };
 
+// Query liability ledger
+export const queryDefendantLiability = async (defendantId) => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return null;
+
+  try {
+    const queryData = {
+      path: "/repar.liability.Query/GetLiability",
+      data: new TextEncoder().encode(JSON.stringify({ entity: defendantId })),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+    
+    if (response.code === 0 && response.value) {
+      return JSON.parse(new TextDecoder().decode(response.value));
+    }
+    return null;
+  } catch (error) {
+    console.warn("⚠️ Liability query failed:", error.message);
+    return null;
+  }
+};
+
+// Query threat defense stats
+export const queryThreatStats = async () => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return { totalThreats: 0, nftsMinted: 0, nightmareActivations: 0 };
+
+  try {
+    const queryData = {
+      path: "/repar.threatdefense.Query/Stats",
+      data: new Uint8Array(),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+    
+    if (response.code === 0 && response.value) {
+      return JSON.parse(new TextDecoder().decode(response.value));
+    }
+    return { totalThreats: 0, nftsMinted: 0, nightmareActivations: 0 };
+  } catch (error) {
+    console.warn("⚠️ Threat stats query failed:", error.message);
+    return { totalThreats: 0, nftsMinted: 0, nightmareActivations: 0 };
+  }
+};
+
 export const cosmosClient = {
   queryTotalLiability,
   queryActiveDefendants,
   queryDefendantDetails,
+  queryDefendantLiability,
+  queryThreatStats,
   getStargateClient,
   getTotalOwed: queryTotalLiability // Alias for compatibility
 };
