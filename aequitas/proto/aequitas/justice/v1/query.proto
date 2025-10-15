@@ -4,6 +4,7 @@ package aequitas.justice.v1;
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
 import "aequitas/justice/v1/justice.proto";
 
 option go_package = "github.com/aequitas/aequitas/x/justice/types";
