@@ -11,6 +11,8 @@ import GRCOversight from './pages/GRCOversight';
 import DAOGovernance from './pages/DAOGovernance';
 import AIAnalytics from './pages/AIAnalytics';
 import Alliances from './pages/Alliances';
+import REPAREconomics from './pages/REPAREconomics';
+import CryptoComparison from './pages/CryptoComparison';
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
           <Route path="/dao" element={<DAOGovernance />} />
           <Route path="/ai-analytics" element={<AIAnalytics />} />
           <Route path="/alliances" element={<Alliances />} />
+          <Route path="/economics" element={<REPAREconomics />} />
+          <Route path="/crypto-comparison" element={<CryptoComparison />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">
