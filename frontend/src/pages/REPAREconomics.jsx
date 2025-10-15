@@ -146,7 +146,7 @@ export default function REPAREconomics() {
               </div>
               <div>
                 <p className="text-gray-600">Average per 150,000 Descendants:</p>
-                <p className="font-bold text-green-600">${((burnData.newSupply * burnData.newPrice * 0.43) / 0.15).toFixed(2)}B</p>
+                <p className="font-bold text-green-600">${((burnData.newSupply * burnData.newPrice * 0.43 * 1000) / 150).toFixed(2)}B</p>
               </div>
             </div>
           </div>
