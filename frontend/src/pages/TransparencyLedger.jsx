@@ -1,8 +1,8 @@
+import { useState, useEffect } from 'react';
 import { Shield, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 
 export default function TransparencyLedger() {
   const [actions, setActions] = useState([]);
-  const [distributions, setDistributions] = useState([]);
   const [stats, setStats] = useState({
     totalClaimed: 0,
     activeCases: 0,
