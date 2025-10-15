@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { DollarSign, Users, FileText, Scale, TrendingUp, Flame } from 'lucide-react';
 import StatCard from '../components/StatCard';
+import ChainStatus from '../components/ChainStatus';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { reparStatistics, coinAllocation, historicalData } from '../data/statistics';
 import { defendants } from '../data/defendants';
@@ -40,20 +41,35 @@ export default function Dashboard() {
     const fetchChainData = async () => {
       setIsLoading(true);
       try {
-        const totalOwed = await cosmosClient.getTotalOwed();
-        setChainData({ totalOwed: totalOwed / 1e9 }); // Convert to billions
-        // Also fetch totalLiability if available from cosmosClient or other source
-        // For now, using a placeholder or static value if not directly available
-        const totalLiability = reparStatistics.totalLiability; // Placeholder or actual fetch
-        setChainData(prevData => ({ ...prevData, totalLiability: totalLiability }));
+        const [totalLiability, activeDefendants, threatStats] = await Promise.all([
+          cosmosClient.queryTotalLiability(),
+          cosmosClient.queryActiveDefendants(),
+          cosmosClient.queryThreatStats()
+        ]);
+        
+        setChainData({
+          totalLiability: parseInt(totalLiability) || reparStatistics.totalLiability,
+          activeDefendants: activeDefendants || reparStatistics.totalDefendants,
+          nftsMinted: threatStats.nftsMinted || 0,
+          totalThreats: threatStats.totalThreats || 0
+        });
       } catch (error) {
         console.error('Error fetching chain data:', error);
+        // Fallback to mock data on error
+        setChainData({
+          totalLiability: reparStatistics.totalLiability,
+          activeDefendants: reparStatistics.totalDefendants,
+          nftsMinted: 0,
+          totalThreats: 0
+        });
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchChainData();
+    const interval = setInterval(fetchChainData, 30000); // Refresh every 30 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const handleWalletConnected = (address) => {
@@ -69,7 +85,10 @@ export default function Dashboard() {
           <div className="mb-8">
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-4xl font-bold text-white mb-2">Aequitas Protocol Dashboard</h1>
+                <div className="flex items-center space-x-4 mb-2">
+                  <h1 className="text-4xl font-bold text-white">Aequitas Protocol Dashboard</h1>
+                  <ChainStatus />
+                </div>
                 <p className="text-xl text-indigo-200">Decentralized Justice for the {formatLiability(chainData.totalLiability)} Debt</p>
                 <p className="text-sm text-amber-300 mt-2 italic">"Justice delayed is justice denied, but mathematics is eternal."</p>
               </div>
@@ -83,14 +102,14 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Total Liability"
-            value={isLoading ? 'Loading...' : formatCurrency(chainData.totalOwed * 1e9 || reparStatistics.totalLiability)}
-            subtitle={walletAddress ? 'On-Chain Data' : 'Documented Harm (Brattle Group)'}
+            value={isLoading ? 'Loading...' : formatCurrency(chainData.totalLiability || reparStatistics.totalLiability)}
+            subtitle={walletAddress ? 'Live Blockchain Data' : 'Documented Harm (Brattle Group)'}
             icon={DollarSign}
             color="indigo"
           />
           <StatCard
             title="Active Defendants"
-            value={reparStatistics.totalDefendants}
+            value={isLoading ? 'Loading...' : (chainData.activeDefendants || reparStatistics.totalDefendants)}
             subtitle={`${reparStatistics.activeArbitrationCases} active cases`}
             icon={Scale}
             color="red"

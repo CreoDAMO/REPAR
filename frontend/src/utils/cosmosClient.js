@@ -1,21 +1,36 @@
 import { StargateClient } from "@cosmjs/stargate";
 import { Tendermint37Client } from "@cosmjs/tendermint-rpc";
 
-const RPC_ENDPOINT = import.meta.env.VITE_COSMOS_RPC_URL || "https://rpc.aequitas.zone";
+const RPC_ENDPOINT = import.meta.env.VITE_COSMOS_RPC_URL || "http://0.0.0.0:26657";
+const FALLBACK_RPC = "https://rpc.aequitas.zone"; // Production fallback
 
 let stargateClient = null;
 let tmClient = null;
+let isChainAvailable = false;
 
 const getStargateClient = async () => {
   if (!stargateClient) {
     try {
+      // Try local RPC first
       tmClient = await Tendermint37Client.connect(RPC_ENDPOINT);
       stargateClient = await StargateClient.create(tmClient);
-      console.log("✅ Cosmos client connected to Aequitas Zone");
+      isChainAvailable = true;
+      console.log("✅ Cosmos client connected to Aequitas Zone (local)");
       return stargateClient;
     } catch (error) {
-      console.warn("⚠️ Aequitas Zone not available, using mock data:", error.message);
-      return null;
+      console.warn("⚠️ Local chain not available, trying fallback RPC...");
+      try {
+        // Try production RPC
+        tmClient = await Tendermint37Client.connect(FALLBACK_RPC);
+        stargateClient = await StargateClient.create(tmClient);
+        isChainAvailable = true;
+        console.log("✅ Cosmos client connected to Aequitas Zone (production)");
+        return stargateClient;
+      } catch (fallbackError) {
+        console.warn("⚠️ No chain available, using mock data mode");
+        isChainAvailable = false;
+        return null;
+      }
     }
   }
   return stargateClient;

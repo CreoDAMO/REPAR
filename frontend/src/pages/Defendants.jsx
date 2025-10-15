@@ -8,11 +8,42 @@ export default function Defendants() {
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [expandedDefendant, setExpandedDefendant] = useState(null);
+  const [blockchainDefendants, setBlockchainDefendants] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchDefendants = async () => {
+      setIsLoading(true);
+      try {
+        // Attempt to fetch defendants from blockchain
+        const chainDefendants = await Promise.all(
+          defendants.slice(0, 10).map(async (d) => {
+            try {
+              const liability = await cosmosClient.queryDefendantLiability(d.id);
+              return { ...d, blockchainLiability: liability };
+            } catch {
+              return d;
+            }
+          })
+        );
+        setBlockchainDefendants(chainDefendants);
+      } catch (error) {
+        console.warn('Using static defendant data:', error);
+        setBlockchainDefendants(defendants);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDefendants();
+  }, []);
+
+  const activeDefendants = blockchainDefendants.length > 0 ? blockchainDefendants : defendants;
 
   const categories = ['All', ...new Set(defendants.map(d => d.category))];
   const statuses = ['All', ...new Set(defendants.map(d => d.status))];
 
-  const filteredDefendants = defendants.filter(defendant => {
+  const filteredDefendants = activeDefendants.filter(defendant => {
     const matchesSearch = defendant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          defendant.country.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === 'All' || defendant.category === filterCategory;

@@ -1,6 +1,34 @@
 import { Shield, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 
 export default function TransparencyLedger() {
+  const [actions, setActions] = useState([]);
+  const [distributions, setDistributions] = useState([]);
+  const [stats, setStats] = useState({
+    totalClaimed: 0,
+    activeCases: 0,
+    totalRecovered: 0
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch enforcement actions from blockchain
+        const chainStats = await cosmosClient.queryThreatStats();
+        setStats({
+          totalClaimed: chainStats.totalClaimed || 3800000000,
+          activeCases: chainStats.activeCases || 3,
+          totalRecovered: chainStats.totalRecovered || 0
+        });
+      } catch (error) {
+        console.warn('Using mock transparency data:', error);
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
+
   const enforcementActions = [
     {
       id: 1,
