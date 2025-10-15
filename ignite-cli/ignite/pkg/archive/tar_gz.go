@@ -6,6 +6,7 @@ import (
         "io"
         "os"
         "path/filepath"
+        "strings"
 
         "github.com/ignite/cli/v29/ignite/pkg/errors"
 )
