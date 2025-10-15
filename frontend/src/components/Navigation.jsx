@@ -17,6 +17,7 @@ export default function Navigation() {
     { to: '/grc', icon: CheckCircle, label: 'GRC' },
     { to: '/dao', icon: Vote, label: 'DAO' },
     { to: '/ai-analytics', icon: Brain, label: 'AI' },
+    { to: '/alliances', icon: CheckCircle, label: 'Alliances' },
   ];
 
   return (

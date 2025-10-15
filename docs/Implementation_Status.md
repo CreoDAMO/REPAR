@@ -43,6 +43,8 @@ This document tracks the progress of implementing the Aequitas Protocol based on
 - [x] Defendants explorer with evidence viewer
 - [x] Wallet integration architecture (Coinbase SDK ready)
 - [x] IPFS client utilities for evidence storage
+- [x] Alliances page with DNA verification methods and reparations organizations
+- [x] Transparent engagement framework for collaboration opportunities
 
 ## ⚠️ REMAINING (5%)
 
