@@ -1,0 +1,69 @@
+syntax = "proto3";
+package aequitas.claims.v1;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "aequitas/claims/v1/claims.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/claims/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // GetClaim queries a claim by ID
+  rpc GetClaim(QueryGetClaimRequest) returns (QueryGetClaimResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/claims/{id}";
+  }
+
+  // ListClaims queries all claims with pagination
+  rpc ListClaims(QueryListClaimsRequest) returns (QueryListClaimsResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/claims";
+  }
+
+  // ListClaimsByDefendant queries claims by defendant ID
+  rpc ListClaimsByDefendant(QueryListClaimsByDefendantRequest) returns (QueryListClaimsByDefendantResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/claims/defendant/{defendant_id}";
+  }
+
+  // ListClaimsByClaimant queries claims by claimant address
+  rpc ListClaimsByClaimant(QueryListClaimsByClaimantRequest) returns (QueryListClaimsByClaimantResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/claims/claimant/{claimant}";
+  }
+}
+
+message QueryGetClaimRequest {
+  string id = 1;
+}
+
+message QueryGetClaimResponse {
+  Claim claim = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryListClaimsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryListClaimsResponse {
+  repeated Claim claims = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryListClaimsByDefendantRequest {
+  string defendant_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryListClaimsByDefendantResponse {
+  repeated Claim claims = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryListClaimsByClaimantRequest {
+  string claimant = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryListClaimsByClaimantResponse {
+  repeated Claim claims = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

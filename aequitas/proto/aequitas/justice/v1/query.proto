@@ -1,0 +1,55 @@
+syntax = "proto3";
+package aequitas.justice.v1;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "aequitas/justice/v1/justice.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/justice/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // GetBurnStatistics queries burn statistics
+  rpc GetBurnStatistics(QueryGetBurnStatisticsRequest) returns (QueryGetBurnStatisticsResponse) {
+    option (google.api.http).get = "/aequitas/justice/v1/statistics";
+  }
+
+  // ListBurns queries all burns with pagination
+  rpc ListBurns(QueryListBurnsRequest) returns (QueryListBurnsResponse) {
+    option (google.api.http).get = "/aequitas/justice/v1/burns";
+  }
+
+  // GetBurnByDefendant queries burns by defendant ID
+  rpc GetBurnByDefendant(QueryGetBurnByDefendantRequest) returns (QueryGetBurnByDefendantResponse) {
+    option (google.api.http).get = "/aequitas/justice/v1/burns/defendant/{defendant_id}";
+  }
+}
+
+message QueryGetBurnStatisticsRequest {}
+
+message QueryGetBurnStatisticsResponse {
+  BurnStatistics statistics = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryListBurnsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryListBurnsResponse {
+  repeated JusticeBurn burns = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetBurnByDefendantRequest {
+  string defendant_id = 1;
+}
+
+message QueryGetBurnByDefendantResponse {
+  repeated JusticeBurn burns = 1 [(gogoproto.nullable) = false];
+  string total_burned = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}

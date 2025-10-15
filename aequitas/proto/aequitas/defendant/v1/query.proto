@@ -1,0 +1,64 @@
+syntax = "proto3";
+package aequitas.defendant.v1;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "aequitas/defendant/v1/defendant.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/defendant/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // GetDefendant queries a defendant by ID
+  rpc GetDefendant(QueryGetDefendantRequest) returns (QueryGetDefendantResponse) {
+    option (google.api.http).get = "/aequitas/defendant/v1/defendants/{id}";
+  }
+
+  // ListDefendants queries all defendants with pagination
+  rpc ListDefendants(QueryListDefendantsRequest) returns (QueryListDefendantsResponse) {
+    option (google.api.http).get = "/aequitas/defendant/v1/defendants";
+  }
+
+  // GetTotalLiability queries the total outstanding liability
+  rpc GetTotalLiability(QueryGetTotalLiabilityRequest) returns (QueryGetTotalLiabilityResponse) {
+    option (google.api.http).get = "/aequitas/defendant/v1/total_liability";
+  }
+}
+
+message QueryGetDefendantRequest {
+  string id = 1;
+}
+
+message QueryGetDefendantResponse {
+  Defendant defendant = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryListDefendantsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryListDefendantsResponse {
+  repeated Defendant defendants = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetTotalLiabilityRequest {}
+
+message QueryGetTotalLiabilityResponse {
+  string total_liability = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string total_paid = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string remaining = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}

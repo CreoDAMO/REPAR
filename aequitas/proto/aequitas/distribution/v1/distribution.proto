@@ -1,0 +1,71 @@
+syntax = "proto3";
+package aequitas.distribution.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/distribution/types";
+
+// DescendantRegistration tracks verified descendants
+message DescendantRegistration {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string lineage_cid = 2; // IPFS CID for verified lineage documentation
+  int64 registered_at = 3;
+  bool verified = 4;
+  string verification_cid = 5;
+}
+
+// Distribution represents a reparations distribution
+message Distribution {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  DistributionType type = 2;
+  string total_amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 scheduled_at = 4;
+  int64 executed_at = 5;
+  DistributionStatus status = 6;
+  string source_defendant = 7; // Which defendant payment funded this
+}
+
+enum DistributionType {
+  DISTRIBUTION_TYPE_UNSPECIFIED = 0;
+  DISTRIBUTION_TYPE_COMMUNITY = 1; // 43% community & descendant fund
+  DISTRIBUTION_TYPE_TREASURY = 2; // 25% foundation treasury
+  DISTRIBUTION_TYPE_COMPENSATION = 3; // 25% claims & compensation
+  DISTRIBUTION_TYPE_ECOSYSTEM = 4; // 16% ecosystem & enforcement
+  DISTRIBUTION_TYPE_DEVELOPMENT = 5; // 6% development fund
+}
+
+enum DistributionStatus {
+  DISTRIBUTION_STATUS_UNSPECIFIED = 0;
+  DISTRIBUTION_STATUS_SCHEDULED = 1;
+  DISTRIBUTION_STATUS_EXECUTING = 2;
+  DISTRIBUTION_STATUS_COMPLETED = 3;
+  DISTRIBUTION_STATUS_FAILED = 4;
+}
+
+// AllocationRecord tracks individual distributions
+message AllocationRecord {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string distribution_id = 2;
+  string recipient = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string amount = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 timestamp = 5;
+  string tx_hash = 6;
+}

@@ -1,0 +1,75 @@
+syntax = "proto3";
+package aequitas.claims.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/claims/types";
+
+// Claim represents an arbitration demand filed against a defendant
+message Claim {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string claimant = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"]; // Descendant filing claim
+  string defendant_id = 3;
+  string amount_claimed = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string evidence_cid = 5; // IPFS CID for claim evidence
+  ClaimType claim_type = 6;
+  ClaimStatus status = 7;
+  int64 filed_at = 8;
+  int64 updated_at = 9;
+  string jurisdiction = 10; // One of 172 NYC Convention countries
+  string arbitration_center = 11; // e.g., "ICDR", "LCIA", "SIAC"
+  string award_amount = 12 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string notes = 13;
+}
+
+enum ClaimType {
+  CLAIM_TYPE_UNSPECIFIED = 0;
+  CLAIM_TYPE_UNJUST_ENRICHMENT = 1;
+  CLAIM_TYPE_SUCCESSOR_LIABILITY = 2;
+  CLAIM_TYPE_MONEY_LAUNDERING = 3;
+  CLAIM_TYPE_GENOCIDE = 4;
+  CLAIM_TYPE_UCC_ARTICLE_9 = 5; // Commercial lien
+}
+
+enum ClaimStatus {
+  CLAIM_STATUS_UNSPECIFIED = 0;
+  CLAIM_STATUS_FILED = 1;
+  CLAIM_STATUS_UNDER_REVIEW = 2;
+  CLAIM_STATUS_ACCEPTED = 3;
+  CLAIM_STATUS_AWARD_ISSUED = 4;
+  CLAIM_STATUS_ENFORCING = 5;
+  CLAIM_STATUS_SETTLED = 6;
+  CLAIM_STATUS_REJECTED = 7;
+}
+
+// ArbitrationAward represents a successful claim award
+message ArbitrationAward {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string claim_id = 2;
+  string award_amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string award_cid = 4; // IPFS CID for award document
+  int64 issued_at = 5;
+  string arbitration_center = 6;
+  string jurisdiction = 7;
+  bool enforceable = 8; // NYC Convention enforceability
+  repeated string enforcement_jurisdictions = 9; // Where it can be enforced
+}

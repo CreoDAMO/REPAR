@@ -1,0 +1,17 @@
+syntax = "proto3";
+package aequitas.distribution.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/distribution/v1/distribution.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/distribution/types";
+
+// GenesisState defines the distribution module's genesis state
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  repeated DescendantRegistration descendants = 1 [(gogoproto.nullable) = false];
+  repeated Distribution distributions = 2 [(gogoproto.nullable) = false];
+  repeated AllocationRecord allocations = 3 [(gogoproto.nullable) = false];
+}

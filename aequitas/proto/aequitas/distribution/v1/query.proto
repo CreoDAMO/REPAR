@@ -1,0 +1,53 @@
+syntax = "proto3";
+package aequitas.distribution.v1;
+
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "aequitas/distribution/v1/distribution.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/distribution/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // GetDescendant queries a descendant registration by address
+  rpc GetDescendant(QueryGetDescendantRequest) returns (QueryGetDescendantResponse) {
+    option (google.api.http).get = "/aequitas/distribution/v1/descendants/{address}";
+  }
+
+  // ListDescendants queries all registered descendants
+  rpc ListDescendants(QueryListDescendantsRequest) returns (QueryListDescendantsResponse) {
+    option (google.api.http).get = "/aequitas/distribution/v1/descendants";
+  }
+
+  // ListDistributions queries all distributions
+  rpc ListDistributions(QueryListDistributionsRequest) returns (QueryListDistributionsResponse) {
+    option (google.api.http).get = "/aequitas/distribution/v1/distributions";
+  }
+}
+
+message QueryGetDescendantRequest {
+  string address = 1;
+}
+
+message QueryGetDescendantResponse {
+  DescendantRegistration descendant = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryListDescendantsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryListDescendantsResponse {
+  repeated DescendantRegistration descendants = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryListDistributionsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryListDistributionsResponse {
+  repeated Distribution distributions = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

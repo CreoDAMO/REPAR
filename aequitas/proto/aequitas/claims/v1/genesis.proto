@@ -1,0 +1,16 @@
+syntax = "proto3";
+package aequitas.claims.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/claims/v1/claims.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/claims/types";
+
+// GenesisState defines the claims module's genesis state
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  repeated Claim claims = 1 [(gogoproto.nullable) = false];
+  repeated ArbitrationAward awards = 2 [(gogoproto.nullable) = false];
+}

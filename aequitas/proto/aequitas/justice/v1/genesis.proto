@@ -1,0 +1,24 @@
+syntax = "proto3";
+package aequitas.justice.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/justice/v1/justice.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/justice/types";
+
+// GenesisState defines the justice module's genesis state
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  repeated JusticeBurn burns = 1 [(gogoproto.nullable) = false];
+  BurnStatistics statistics = 2 [(gogoproto.nullable) = false];
+  
+  // Initial supply: 131 trillion REPAR
+  string initial_supply = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}

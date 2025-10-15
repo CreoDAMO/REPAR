@@ -1,0 +1,75 @@
+syntax = "proto3";
+package aequitas.distribution.v1;
+
+import "cosmos/msg/v1/msg.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "aequitas/distribution/v1/distribution.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/distribution/types";
+
+// Msg defines the distribution Msg service
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // RegisterDescendant registers a verified descendant
+  rpc RegisterDescendant(MsgRegisterDescendant) returns (MsgRegisterDescendantResponse);
+
+  // ScheduleDistribution schedules a reparations distribution
+  rpc ScheduleDistribution(MsgScheduleDistribution) returns (MsgScheduleDistributionResponse);
+  
+  // ExecuteDistribution executes a scheduled distribution
+  rpc ExecuteDistribution(MsgExecuteDistribution) returns (MsgExecuteDistributionResponse);
+}
+
+message MsgRegisterDescendant {
+  option (cosmos.msg.v1.signer) = "applicant";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string applicant = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string lineage_cid = 2; // IPFS CID for lineage documentation
+}
+
+message MsgRegisterDescendantResponse {
+  bool approved = 1;
+  string verification_cid = 2;
+}
+
+message MsgScheduleDistribution {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  DistributionType type = 2;
+  string total_amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 scheduled_time = 4;
+  string source_defendant = 5;
+}
+
+message MsgScheduleDistributionResponse {
+  string distribution_id = 1;
+}
+
+message MsgExecuteDistribution {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string distribution_id = 2;
+}
+
+message MsgExecuteDistributionResponse {
+  int64 recipients_count = 1;
+  string total_distributed = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}

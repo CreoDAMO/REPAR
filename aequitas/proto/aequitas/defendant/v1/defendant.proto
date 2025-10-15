@@ -1,0 +1,110 @@
+syntax = "proto3";
+package aequitas.defendant.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/defendant/types";
+
+// Defendant represents an entity liable for reparations
+message Defendant {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string name = 2;
+  DefendantType type = 3;
+  string country = 4;
+  string total_debt = 5 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string amount_paid = 6 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string remaining_debt = 7 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  PaymentType payment_type = 8;
+  int64 created_at = 9;
+  int64 updated_at = 10;
+  string evidence_cid = 11; // IPFS CID for evidence documentation
+  DefendantStatus status = 12;
+}
+
+enum DefendantType {
+  DEFENDANT_TYPE_UNSPECIFIED = 0;
+  DEFENDANT_TYPE_CORPORATION = 1;
+  DEFENDANT_TYPE_FINANCIAL_INSTITUTION = 2;
+  DEFENDANT_TYPE_NATION_STATE = 3;
+  DEFENDANT_TYPE_AFRICAN_KINGDOM = 4;
+  DEFENDANT_TYPE_UNIVERSITY = 5;
+  DEFENDANT_TYPE_INDIVIDUAL = 6;
+}
+
+enum PaymentType {
+  PAYMENT_TYPE_UNSPECIFIED = 0;
+  PAYMENT_TYPE_FINANCIAL = 1; // Cash/asset seizure for wealthy entities
+  PAYMENT_TYPE_RESTORATIVE = 2; // Cultural restitution for African nations
+  PAYMENT_TYPE_HYBRID = 3; // Combination of both
+}
+
+enum DefendantStatus {
+  DEFENDANT_STATUS_UNSPECIFIED = 0;
+  DEFENDANT_STATUS_ACTIVE = 1;
+  DEFENDANT_STATUS_ENGAGED = 2;
+  DEFENDANT_STATUS_NON_COMPLIANT = 3;
+  DEFENDANT_STATUS_SETTLED = 4;
+}
+
+// Payment represents a payment or contribution from a defendant
+message Payment {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string defendant_id = 2;
+  string amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  PaymentMethod method = 4;
+  int64 timestamp = 5;
+  string evidence_cid = 6; // IPFS CID for payment proof
+  string description = 7;
+}
+
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CASH = 1;
+  PAYMENT_METHOD_ASSET_SEIZURE = 2;
+  PAYMENT_METHOD_ARTIFACT_RETURN = 3;
+  PAYMENT_METHOD_EDUCATION_REFORM = 4;
+  PAYMENT_METHOD_LAND_GRANT = 5;
+  PAYMENT_METHOD_DIPLOMATIC_ACTION = 6;
+}
+
+// NonMonetaryContribution for African nations
+message NonMonetaryContribution {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string defendant_id = 2;
+  string contribution_type = 3;
+  string estimated_value = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string evidence_cid = 5;
+  int64 timestamp = 6;
+  string description = 7;
+  bool verified = 8;
+}

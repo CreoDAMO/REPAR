@@ -1,0 +1,17 @@
+syntax = "proto3";
+package aequitas.defendant.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/defendant/v1/defendant.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/defendant/types";
+
+// GenesisState defines the defendant module's genesis state
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  repeated Defendant defendants = 1 [(gogoproto.nullable) = false];
+  repeated Payment payments = 2 [(gogoproto.nullable) = false];
+  repeated NonMonetaryContribution contributions = 3 [(gogoproto.nullable) = false];
+}
