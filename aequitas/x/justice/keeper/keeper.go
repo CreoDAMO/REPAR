@@ -76,7 +76,7 @@ func (k Keeper) ExecuteJusticeBurn(ctx context.Context, defendantId string, usdA
 
 	// Burn the REPAR tokens from the module account
 	burnCoins := sdk.NewCoins(sdk.NewCoin("urepar", reparAmount))
-	
+
 	// Burn tokens (permanently remove from supply)
 	if err := k.bankKeeper.BurnCoins(ctx, types.ModuleName, burnCoins); err != nil {
 		return fmt.Errorf("failed to burn coins: %w", err)
@@ -137,6 +137,14 @@ func (k Keeper) ExecuteJusticeBurn(ctx context.Context, defendantId string, usdA
 func (k Keeper) GetBurnStatistics(ctx context.Context) (types.BurnStatistics, error) {
 	stats, err := k.Statistics.Get(ctx)
 	if err != nil {
+		// Handle case where statistics item might not exist yet
+		if collections.ErrNotFound.Is(err) {
+			return types.BurnStatistics{
+				TotalBurned:   math.ZeroInt(),
+				TotalUsdValue: math.ZeroInt(),
+				BurnCount:     0,
+			}, nil
+		}
 		return types.BurnStatistics{}, err
 	}
 	return stats, nil

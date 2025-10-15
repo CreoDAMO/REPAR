@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/store"
