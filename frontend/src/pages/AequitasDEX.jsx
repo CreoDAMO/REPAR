@@ -15,10 +15,10 @@ export default function AequitasDEX() {
             Aequitas DEX - Native Coin Exchange
           </h1>
           <p className="text-xl text-gray-300">
-            Trade $REPAR (native coin) with BTC, ETH, SOL, POL via ⚡ Lightning Network
+            Trade $REPAR with BTC, ETH, SOL, POL, AVAX, ATOM via ⚡ Lightning Network
           </p>
           <p className="text-sm text-gray-400 mt-2">
-            Sovereign Layer-1 DEX • No Wrapped Tokens • Direct Native Coin Swaps
+            Sovereign Layer-1 DEX • No Wrapped Tokens • Direct Native Coin Swaps • Lightning Network Enabled
           </p>
 </div>
         </div>
@@ -93,24 +93,27 @@ export default function AequitasDEX() {
 
               <div className="space-y-4">
                 {[
-                  { pair: 'REPAR/USDC', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%' },
-                  { pair: 'REPAR/ATOM', tvl: '$12.8M', volume24h: '$580K', apr: '8.3%', myShare: '0%' },
-                  { pair: 'REPAR/ETH', tvl: '$8.5M', volume24h: '$420K', apr: '15.2%', myShare: '0%' },
+                  { pair: 'REPAR/BTC', tvl: '$125.5M', volume24h: '$8.5M', apr: '18.2%', myShare: '0%', icon1: '⚖️', icon2: '₿' },
+                  { pair: 'REPAR/ETH', tvl: '$89.3M', volume24h: '$5.2M', apr: '15.2%', myShare: '0%', icon1: '⚖️', icon2: '⟠' },
+                  { pair: 'REPAR/SOL', tvl: '$52.8M', volume24h: '$3.1M', apr: '14.5%', myShare: '0%', icon1: '⚖️', icon2: '◎' },
+                  { pair: 'REPAR/POL', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%', icon1: '⚖️', icon2: '🔷' },
+                  { pair: 'REPAR/AVAX', tvl: '$38.6M', volume24h: '$1.8M', apr: '13.8%', myShare: '0%', icon1: '⚖️', icon2: '🔺' },
+                  { pair: 'REPAR/ATOM', tvl: '$28.4M', volume24h: '$1.2M', apr: '11.3%', myShare: '0%', icon1: '⚖️', icon2: '⚛️' },
                 ].map((pool, index) => (
                   <div key={index} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center -space-x-2">
                           <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center border-2 border-white text-xl">
-                            ⚖️
+                            {pool.icon1}
                           </div>
                           <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white text-xl">
-                            {pool.pair.includes('USDC') ? '💵' : pool.pair.includes('ATOM') ? '⚛️' : '⟠'}
+                            {pool.icon2}
                           </div>
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{pool.pair}</h4>
-                          <p className="text-sm text-gray-500">0.3% fee</p>
+                          <p className="text-sm text-gray-500">0.3% fee • Lightning Network</p>
                         </div>
                       </div>
                       <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition">

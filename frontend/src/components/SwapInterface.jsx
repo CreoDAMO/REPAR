@@ -11,12 +11,29 @@ export default function SwapInterface() {
   const [isSwapping, setIsSwapping] = useState(false);
 
   const tokens = [
-    { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', icon: '⚖️' },
-    { symbol: 'USDC', name: 'USD Coin', balance: '50,000', icon: '💵' },
-    { symbol: 'ATOM', name: 'Cosmos', balance: '500', icon: '⚛️' },
+    { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', icon: '⚖️', isNative: true },
+    { symbol: 'BTC', name: 'Bitcoin', balance: '0.5', icon: '₿', isNative: true },
+    { symbol: 'ETH', name: 'Ethereum', balance: '5.2', icon: '⟠', isNative: true },
+    { symbol: 'SOL', name: 'Solana', balance: '125', icon: '◎', isNative: true },
+    { symbol: 'POL', name: 'Polygon', balance: '8,500', icon: '🔷', isNative: true },
+    { symbol: 'AVAX', name: 'Avalanche', balance: '45', icon: '🔺', isNative: true },
+    { symbol: 'ATOM', name: 'Cosmos', balance: '500', icon: '⚛️', isNative: true },
+    { symbol: 'USDC', name: 'USD Coin', balance: '50,000', icon: '💵', isNative: false },
   ];
 
-  const mockPrice = fromToken === 'REPAR' ? 18.33 : 0.0546; // REPAR/USDC price
+  // Mock prices relative to USDC
+  const prices = {
+    'REPAR': 18.33,
+    'BTC': 95000,
+    'ETH': 3500,
+    'SOL': 140,
+    'POL': 0.85,
+    'AVAX': 42,
+    'ATOM': 9.5,
+    'USDC': 1
+  };
+
+  const mockPrice = prices[toToken] / prices[fromToken];
 
   const handleFromAmountChange = (value) => {
     setFromAmount(value);

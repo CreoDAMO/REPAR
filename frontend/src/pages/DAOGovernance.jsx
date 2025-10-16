@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Vote, Users, TrendingUp, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Vote, Users, TrendingUp, CheckCircle, Clock, AlertCircle, ArrowLeftRight, DollarSign, Send } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function DAOGovernance() {
+  const navigate = useNavigate();
   const [walletConnected, setWalletConnected] = useState(false);
   const [votingPower, setVotingPower] = useState(0);
 
@@ -152,6 +154,41 @@ export default function DAOGovernance() {
                 className="text-green-700 hover:text-green-900 text-sm font-semibold"
               >
                 Disconnect
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Financial Tools Integration */}
+        {walletConnected && (
+          <div className="bg-gradient-to-r from-indigo-900 to-purple-900 text-white rounded-lg p-6 mb-8">
+            <h3 className="text-xl font-bold mb-4">Manage Your $REPAR Holdings</h3>
+            <div className="grid md:grid-cols-3 gap-4">
+              <button
+                onClick={() => navigate('/dex')}
+                className="bg-white/10 hover:bg-white/20 rounded-lg p-4 transition text-left"
+              >
+                <ArrowLeftRight className="h-8 w-8 text-cyan-400 mb-2" />
+                <h4 className="font-bold mb-1">Trade on DEX</h4>
+                <p className="text-sm text-gray-300">Swap $REPAR with BTC, ETH, SOL, POL</p>
+              </button>
+              
+              <button
+                onClick={() => navigate('/onramper')}
+                className="bg-white/10 hover:bg-white/20 rounded-lg p-4 transition text-left"
+              >
+                <DollarSign className="h-8 w-8 text-green-400 mb-2" />
+                <h4 className="font-bold mb-1">Buy More $REPAR</h4>
+                <p className="text-sm text-gray-300">On-ramp fiat via Coinbase</p>
+              </button>
+              
+              <button
+                onClick={() => navigate('/superpay')}
+                className="bg-white/10 hover:bg-white/20 rounded-lg p-4 transition text-left"
+              >
+                <Send className="h-8 w-8 text-purple-400 mb-2" />
+                <h4 className="font-bold mb-1">Send Payments</h4>
+                <p className="text-sm text-gray-300">Batch transfers with SuperPay</p>
               </button>
             </div>
           </div>

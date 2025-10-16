@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Wallet, Lock, Key, ChevronRight, AlertTriangle, CheckCircle2, FileText, Vault } from 'lucide-react';
+import { Shield, Wallet, Lock, Key, ChevronRight, AlertTriangle, CheckCircle2, FileText, Vault, ArrowLeftRight, Users, Send, DollarSign } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import MultiSigWallet from '../components/MultiSigWallet';
 import WalletConnect from '../components/WalletConnect';
 import ClaimGenerator from '../components/ClaimGenerator';
 import { defendants } from '../data/defendants';
 import { FOUNDER_WALLETS, FOUNDER_ALLOCATION } from '../config/wallets';
+import { cosmosClient } from '../utils/cosmosClient';
 
 const FounderWallet = () => {
+  const navigate = useNavigate();
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [showMultiSig, setShowMultiSig] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedDefendant, setSelectedDefendant] = useState(defendants[0]);
+  const [connectedWallet, setConnectedWallet] = useState(null);
+  const [walletBalance, setWalletBalance] = useState('0');
 
   const [walletAddresses, setWalletAddresses] = useState({
     layer1: FOUNDER_WALLETS.layer1.address,
@@ -19,15 +24,69 @@ const FounderWallet = () => {
     layer4: FOUNDER_WALLETS.layer4.address,
   });
 
+  useEffect(() => {
+    if (connectedWallet?.address) {
+      fetchWalletBalance(connectedWallet.address);
+    }
+  }, [connectedWallet]);
+
+  const fetchWalletBalance = async (address) => {
+    try {
+      // Mock balance for now - integrate with actual blockchain
+      setWalletBalance('125,000');
+    } catch (error) {
+      console.error('Failed to fetch balance:', error);
+    }
+  };
+
+  const handleWalletConnected = (wallet) => {
+    setConnectedWallet(wallet);
+  };
+
+  const quickActions = [
+    {
+      name: 'Trade on DEX',
+      description: 'Swap native coins (BTC, ETH, SOL, POL)',
+      icon: ArrowLeftRight,
+      color: 'indigo',
+      action: () => navigate('/dex'),
+      active: !!connectedWallet
+    },
+    {
+      name: 'DAO Governance',
+      description: 'Vote on proposals with your $REPAR',
+      icon: Users,
+      color: 'blue',
+      action: () => navigate('/dao'),
+      active: !!connectedWallet
+    },
+    {
+      name: 'Buy $REPAR',
+      description: 'On-ramp fiat via Coinbase',
+      icon: DollarSign,
+      color: 'green',
+      action: () => navigate('/onramper'),
+      active: true
+    },
+    {
+      name: 'SuperPay',
+      description: 'Batch payments & transfers',
+      icon: Send,
+      color: 'purple',
+      action: () => navigate('/superpay'),
+      active: !!connectedWallet
+    }
+  ];
+
   const layers = [
     {
       id: 1,
       name: FOUNDER_WALLETS.layer1.name,
       subtitle: FOUNDER_WALLETS.layer1.description,
-      address: FOUNDER_WALLETS.layer1.address,
+      address: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? connectedWallet.address : FOUNDER_WALLETS.layer1.address,
       purpose: 'Mass adoption, fiat on-ramp, EVM bridge',
-      status: FOUNDER_WALLETS.layer1.status,
-      statusText: 'Active',
+      status: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? 'active' : FOUNDER_WALLETS.layer1.status,
+      statusText: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? 'Connected' : 'Active',
       icon: Wallet,
       color: 'blue',
       allocation: '0%',
@@ -35,19 +94,19 @@ const FounderWallet = () => {
         '✓ Coinbase Wallet SDK integrated (@coinbase/wallet-sdk)',
         '✓ MetaMask SDK integrated (window.ethereum)',
         '✓ Multi-wallet support in navigation bar',
-        '✓ Address: ' + walletAddresses.layer1.slice(0, 10) + '...' + walletAddresses.layer1.slice(-8),
-        '⏳ Ethermint module for EVM→Cosmos bridge'
+        '✓ Address: ' + (connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? connectedWallet.address : walletAddresses.layer1).slice(0, 10) + '...' + (connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? connectedWallet.address : walletAddresses.layer1).slice(-8),
+        connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? '✓ Connected & Active' : '⏳ Awaiting connection'
       ],
-      implementation: 'SDKs installed → Connect via navbar → Full features require Ethermint module deployment',
+      implementation: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? 'Connected! Use quick actions below for DEX, DAO, etc.' : 'Connect Coinbase or MetaMask wallet using button above',
     },
     {
       id: 2,
       name: FOUNDER_WALLETS.layer2.name,
       subtitle: FOUNDER_WALLETS.layer2.description,
-      address: FOUNDER_WALLETS.layer2.address,
+      address: connectedWallet?.wallet === 'keplr' ? connectedWallet.address : FOUNDER_WALLETS.layer2.address,
       purpose: 'Full Cosmos ecosystem access',
-      status: FOUNDER_WALLETS.layer2.status,
-      statusText: 'Active',
+      status: connectedWallet?.wallet === 'keplr' ? 'active' : FOUNDER_WALLETS.layer2.status,
+      statusText: connectedWallet?.wallet === 'keplr' ? 'Connected' : 'Active',
       icon: Key,
       color: 'green',
       allocation: '< 0.1%',
@@ -55,10 +114,10 @@ const FounderWallet = () => {
         '✓ Staking & governance participation',
         '✓ IBC transfers to Osmosis, Akash, etc.',
         '✓ Native Cosmos SDK module interaction',
-        '✓ Address: ' + walletAddresses.layer2.slice(0, 10) + '...' + walletAddresses.layer2.slice(-8),
-        '✓ Hardware wallet support (Ledger via Keplr)'
+        '✓ Address: ' + (connectedWallet?.wallet === 'keplr' ? connectedWallet.address : walletAddresses.layer2).slice(0, 10) + '...' + (connectedWallet?.wallet === 'keplr' ? connectedWallet.address : walletAddresses.layer2).slice(-8),
+        connectedWallet?.wallet === 'keplr' ? '✓ Connected with Ledger support' : '⏳ Awaiting Keplr connection'
       ],
-      implementation: 'Already implemented - Click "Connect Keplr" in navigation',
+      implementation: connectedWallet?.wallet === 'keplr' ? 'Connected! Full Cosmos features available' : 'Connect Keplr wallet using button above',
     },
     {
       id: 3,
@@ -115,6 +174,60 @@ const FounderWallet = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Founder Wallet Architecture</h1>
         <p className="text-gray-600">The Aequitas Citadel: Multi-Layer Custody Stack</p>
       </div>
+
+      {/* Wallet Connection Section */}
+      <div className="bg-gradient-to-br from-purple-900 to-indigo-900 text-white rounded-lg p-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Connect Your Wallet</h2>
+            <p className="text-purple-200">Choose your preferred wallet to activate all features</p>
+          </div>
+          <WalletConnect onWalletConnected={handleWalletConnected} />
+        </div>
+        
+        {connectedWallet && (
+          <div className="mt-4 p-4 bg-white/10 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-purple-200">Connected Wallet</p>
+                <p className="text-lg font-bold">{connectedWallet.address.slice(0, 16)}...{connectedWallet.address.slice(-8)}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-purple-200">Balance</p>
+                <p className="text-lg font-bold">{walletBalance} REPAR</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Quick Actions */}
+      {connectedWallet && (
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h3>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+              return (
+                <button
+                  key={action.name}
+                  onClick={action.action}
+                  disabled={!action.active}
+                  className={`p-4 rounded-lg border-2 transition text-left ${
+                    action.active
+                      ? `border-${action.color}-500 bg-${action.color}-50 hover:bg-${action.color}-100`
+                      : 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
+                  }`}
+                >
+                  <Icon className={`h-8 w-8 text-${action.color}-600 mb-2`} />
+                  <h4 className="font-bold text-gray-900">{action.name}</h4>
+                  <p className="text-sm text-gray-600">{action.description}</p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Allocation Summary */}
       <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 rounded-lg p-6 mb-8">
