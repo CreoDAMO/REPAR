@@ -64,13 +64,13 @@ const Onramper = () => {
         
         <div className="text-center mb-12">
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-pink-500 bg-clip-text text-transparent">
-            Buy $REPAR with Fiat
+            Buy $REPAR Native Coin with Fiat
           </h1>
           <p className="text-xl text-gray-300">
-            Purchase $REPAR directly using credit card, debit card, bank transfer, or PayPal
+            Purchase $REPAR (native coin of Aequitas Zone) directly using credit card, debit card, bank transfer, PayPal, or ⚡ Lightning Network
           </p>
           <p className="text-sm text-gray-400 mt-2">
-            Powered by Coinbase OnRamp • 110M+ Users • 100+ Tokens • 60+ Fiat Currencies
+            Powered by Coinbase OnRamp • Lightning Network Enabled • 110M+ Users • Native Coin Trading • 60+ Fiat Currencies
           </p>
         </div>
 

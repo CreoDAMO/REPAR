@@ -10,17 +10,22 @@ export default function AequitasDEX() {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <div className="flex items-center space-x-3 mb-4">
-            <ArrowLeftRight className="h-12 w-12 text-green-400" />
-            <h1 className="text-4xl font-bold">Aequitas DEX</h1>
-          </div>
-          <p className="text-xl text-purple-200">Decentralized Exchange for $REPAR Trading</p>
-          <p className="text-sm text-amber-300 mt-2">Sovereign, censorship-resistant, community-owned</p>
+          <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+            Aequitas DEX - Native Coin Exchange
+          </h1>
+          <p className="text-xl text-gray-300">
+            Trade $REPAR (native coin) with BTC, ETH, SOL, POL via ⚡ Lightning Network
+          </p>
+          <p className="text-sm text-gray-400 mt-2">
+            Sovereign Layer-1 DEX • No Wrapped Tokens • Direct Native Coin Swaps
+          </p>
+</div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        
+
         {/* Tab Navigation */}
         <div className="flex gap-4 mb-8 border-b border-gray-200">
           <button
@@ -85,7 +90,7 @@ export default function AequitasDEX() {
           <div className="max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-6">
               <h3 className="text-2xl font-bold mb-6">Liquidity Pools</h3>
-              
+
               <div className="space-y-4">
                 {[
                   { pair: 'REPAR/USDC', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%' },
@@ -112,7 +117,7 @@ export default function AequitasDEX() {
                         Add Liquidity
                       </button>
                     </div>
-                    
+
                     <div className="grid grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-gray-500 mb-1">TVL</p>
@@ -140,11 +145,11 @@ export default function AequitasDEX() {
 
         {activeTab === 'about' && (
           <div>
-        
+
         {/* Overview */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-3xl font-bold mb-6">The Three-Part Financial Stack</h2>
-          
+
           <p className="text-gray-700 mb-6">
             The Aequitas Zone provides a complete financial infrastructure that ensures $REPAR is not just a theoretical 
             store of value, but a deeply liquid, globally accessible, and highly useful currency. This three-part system 
@@ -219,7 +224,7 @@ export default function AequitasDEX() {
 
           <div className="mb-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Implementation Steps</h3>
-            
+
             <div className="space-y-4">
               <div className="border-l-4 border-purple-500 pl-4 py-2">
                 <h4 className="font-bold text-gray-900 mb-1">1. Enable x/liquidity Module</h4>
@@ -356,7 +361,7 @@ export default function AequitasDEX() {
 
           <div className="mb-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Implementation Steps</h3>
-            
+
             <div className="space-y-4">
               <div className="border-l-4 border-indigo-500 pl-4 py-2">
                 <h4 className="font-bold text-gray-900 mb-1">1. Configure IBC Modules</h4>
@@ -457,7 +462,7 @@ export default function AequitasDEX() {
 
           <div className="mb-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Implementation Roadmap</h3>
-            
+
             <div className="space-y-4 mb-6">
               <div className="border-l-4 border-blue-500 pl-4 py-2">
                 <h4 className="font-bold text-gray-900 mb-1">Step 1: Coinbase Pay SDK Integration</h4>
@@ -617,7 +622,7 @@ export default function AequitasDEX() {
         {/* Final Summary */}
         <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 text-white rounded-lg shadow-lg p-8 mt-8">
           <h2 className="text-3xl font-bold mb-6">Implementation Complete</h2>
-          
+
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
               <ArrowLeftRight className="h-6 w-6 text-purple-300 mt-1" />
