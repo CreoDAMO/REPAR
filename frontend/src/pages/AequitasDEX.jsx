@@ -1,3 +1,224 @@
+
+import { useState, useEffect } from 'react';
+import { TrendingUp, TrendingDown, DollarSign, Activity } from 'lucide-react';
+
+export default function AequitasDEX() {
+  const [orderBook, setOrderBook] = useState({ buyOrders: [], sellOrders: [] });
+  const [tradingPair, setTradingPair] = useState('REPAR/USDC');
+  const [orderType, setOrderType] = useState('buy');
+  const [amount, setAmount] = useState('');
+  const [price, setPrice] = useState('');
+
+  useEffect(() => {
+    // Fetch order book from blockchain
+    const fetchOrderBook = async () => {
+      try {
+        // TODO: Connect to actual blockchain RPC
+        // const data = await cosmosClient.queryOrderBook(tradingPair);
+        // setOrderBook(data);
+      } catch (error) {
+        console.error('Error fetching order book:', error);
+      }
+    };
+
+    fetchOrderBook();
+    const interval = setInterval(fetchOrderBook, 5000);
+    return () => clearInterval(interval);
+  }, [tradingPair]);
+
+  const handlePlaceOrder = async () => {
+    try {
+      // TODO: Connect to blockchain
+      // await cosmosClient.placeOrder(orderType, tradingPair, amount, price);
+      alert('Order placed successfully!');
+    } catch (error) {
+      console.error('Error placing order:', error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8">Aequitas DEX</h1>
+        
+        {/* Market Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">24h Volume</p>
+                <p className="text-2xl font-bold">$2.4M</p>
+              </div>
+              <Activity className="text-blue-600" size={32} />
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">Current Price</p>
+                <p className="text-2xl font-bold">$18.33</p>
+              </div>
+              <DollarSign className="text-green-600" size={32} />
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">24h High</p>
+                <p className="text-2xl font-bold">$18.95</p>
+              </div>
+              <TrendingUp className="text-green-600" size={32} />
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm">24h Low</p>
+                <p className="text-2xl font-bold">$17.88</p>
+              </div>
+              <TrendingDown className="text-red-600" size={32} />
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Order Book */}
+          <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
+            <h2 className="text-2xl font-bold mb-6">Order Book - {tradingPair}</h2>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {/* Buy Orders */}
+              <div>
+                <h3 className="text-lg font-bold text-green-600 mb-4">Buy Orders</h3>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-3 text-sm font-semibold text-gray-600 mb-2">
+                    <span>Price</span>
+                    <span>Amount</span>
+                    <span>Total</span>
+                  </div>
+                  {/* Mock data - replace with actual order book */}
+                  {[
+                    { price: '18.30', amount: '1,000', total: '18,300' },
+                    { price: '18.25', amount: '2,500', total: '45,625' },
+                    { price: '18.20', amount: '5,000', total: '91,000' },
+                  ].map((order, i) => (
+                    <div key={i} className="grid grid-cols-3 text-sm py-1 hover:bg-green-50">
+                      <span className="text-green-600">${order.price}</span>
+                      <span>{order.amount}</span>
+                      <span>{order.total}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sell Orders */}
+              <div>
+                <h3 className="text-lg font-bold text-red-600 mb-4">Sell Orders</h3>
+                <div className="space-y-2">
+                  <div className="grid grid-cols-3 text-sm font-semibold text-gray-600 mb-2">
+                    <span>Price</span>
+                    <span>Amount</span>
+                    <span>Total</span>
+                  </div>
+                  {[
+                    { price: '18.35', amount: '3,000', total: '55,050' },
+                    { price: '18.40', amount: '1,500', total: '27,600' },
+                    { price: '18.45', amount: '4,000', total: '73,800' },
+                  ].map((order, i) => (
+                    <div key={i} className="grid grid-cols-3 text-sm py-1 hover:bg-red-50">
+                      <span className="text-red-600">${order.price}</span>
+                      <span>{order.amount}</span>
+                      <span>{order.total}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trading Form */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-2xl font-bold mb-6">Place Order</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Order Type</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setOrderType('buy')}
+                    className={`py-2 px-4 rounded font-semibold ${
+                      orderType === 'buy' 
+                        ? 'bg-green-600 text-white' 
+                        : 'bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    onClick={() => setOrderType('sell')}
+                    className={`py-2 px-4 rounded font-semibold ${
+                      orderType === 'sell' 
+                        ? 'bg-red-600 text-white' 
+                        : 'bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    Sell
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Price (USDC)</label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                  placeholder="18.33"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Amount (REPAR)</label>
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full border rounded px-3 py-2"
+                  placeholder="1000"
+                />
+              </div>
+
+              <div className="bg-gray-50 p-3 rounded">
+                <p className="text-sm text-gray-600">Total Cost</p>
+                <p className="text-xl font-bold">
+                  ${((parseFloat(price) || 0) * (parseFloat(amount) || 0)).toFixed(2)} USDC
+                </p>
+              </div>
+
+              <button
+                onClick={handlePlaceOrder}
+                className={`w-full py-3 rounded font-bold text-white ${
+                  orderType === 'buy' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                Place {orderType === 'buy' ? 'Buy' : 'Sell'} Order
+              </button>
+            </div>
+
+            <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded">
+              <p className="text-sm font-semibold text-yellow-800 mb-2">🚧 Implementation Status</p>
+              <p className="text-xs text-yellow-700">
+                DEX backend is deployed on Aequitas Zone blockchain. Connect wallet to start trading.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 import { ArrowLeftRight, Globe, Wallet, TrendingUp, Lock, Zap, CheckCircle } from 'lucide-react';
 
 export default function AequitasDEX() {

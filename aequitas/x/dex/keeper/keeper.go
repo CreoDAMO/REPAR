@@ -1,17 +1,15 @@
+
 package keeper
 
 import (
-	"context"
 	"fmt"
 
 	"cosmossdk.io/collections"
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/log"
-	"cosmossdk.io/math"
-	
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	
+
 	"aequitas/x/dex/types"
 )
 
@@ -20,17 +18,19 @@ type Keeper struct {
 	storeService store.KVStoreService
 	logger       log.Logger
 
-	// the address capable of executing a MsgUpdateParams message
+	// State management
+	Schema      collections.Schema
+	Params      collections.Item[types.Params]
+	OrderBooks  collections.Map[string, types.OrderBook]
+	Orders      collections.Map[uint64, types.Order]
+	NextOrderID collections.Sequence
+
+	// Module authorities
 	authority string
 
+	// Expected keepers
 	bankKeeper    types.BankKeeper
 	accountKeeper types.AccountKeeper
-
-	Schema collections.Schema
-	Params collections.Item[types.Params]
-	Pools  collections.Map[uint64, types.Pool]
-	LiquidityPositions collections.Map[collections.Pair[string, uint64], types.LiquidityPosition]
-	NextPoolID collections.Sequence
 }
 
 func NewKeeper(
@@ -44,17 +44,16 @@ func NewKeeper(
 	sb := collections.NewSchemaBuilder(storeService)
 
 	k := Keeper{
-		cdc:          cdc,
-		storeService: storeService,
-		authority:    authority,
-		logger:       logger,
-		bankKeeper:   bankKeeper,
+		cdc:           cdc,
+		storeService:  storeService,
+		authority:     authority,
+		logger:        logger,
+		bankKeeper:    bankKeeper,
 		accountKeeper: accountKeeper,
 		Params:        collections.NewItem(sb, types.ParamsKey, "params", codec.CollValue[types.Params](cdc)),
-		Pools:         collections.NewMap(sb, types.PoolKey, "pools", collections.Uint64Key, codec.CollValue[types.Pool](cdc)),
-		LiquidityPositions: collections.NewMap(sb, types.LiquidityPositionKey, "liquidity_positions", 
-			collections.PairKeyCodec(collections.StringKey, collections.Uint64Key), codec.CollValue[types.LiquidityPosition](cdc)),
-		NextPoolID:    collections.NewSequence(sb, types.NextPoolIDKey, "next_pool_id"),
+		OrderBooks:    collections.NewMap(sb, types.OrderBookKey, "order_books", collections.StringKey, codec.CollValue[types.OrderBook](cdc)),
+		Orders:        collections.NewMap(sb, types.OrderKey, "orders", collections.Uint64Key, codec.CollValue[types.Order](cdc)),
+		NextOrderID:   collections.NewSequence(sb, types.NextOrderIDKey, "next_order_id"),
 	}
 
 	schema, err := sb.Build()
@@ -76,97 +75,224 @@ func (k Keeper) Logger() log.Logger {
 	return k.logger.With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// GetPool retrieves a pool by ID
-func (k Keeper) GetPool(ctx context.Context, poolID uint64) (types.Pool, error) {
-	pool, err := k.Pools.Get(ctx, poolID)
+// CreateOrderBook creates a new trading pair order book
+func (k Keeper) CreateOrderBook(ctx sdk.Context, baseDenom, quoteDenom string) error {
+	pairID := types.GetPairID(baseDenom, quoteDenom)
+	
+	// Check if order book already exists
+	exists, err := k.OrderBooks.Has(ctx, pairID)
 	if err != nil {
-		return types.Pool{}, types.ErrPoolNotFound
+		return err
 	}
-	return pool, nil
+	if exists {
+		return types.ErrOrderBookExists
+	}
+
+	orderBook := types.OrderBook{
+		PairId:     pairID,
+		BaseDenom:  baseDenom,
+		QuoteDenom: quoteDenom,
+		BuyOrders:  []uint64{},
+		SellOrders: []uint64{},
+	}
+
+	return k.OrderBooks.Set(ctx, pairID, orderBook)
 }
 
-// SetPool stores a pool
-func (k Keeper) SetPool(ctx context.Context, pool types.Pool) error {
-	return k.Pools.Set(ctx, pool.Id, pool)
-}
-
-// GetLiquidityPosition retrieves a liquidity position
-func (k Keeper) GetLiquidityPosition(ctx context.Context, owner string, poolID uint64) (types.LiquidityPosition, error) {
-	position, err := k.LiquidityPositions.Get(ctx, collections.Join(owner, poolID))
+// PlaceOrder creates a new buy or sell order
+func (k Keeper) PlaceOrder(ctx sdk.Context, creator string, orderType types.OrderType, baseDenom, quoteDenom string, amount, price sdk.Int) (uint64, error) {
+	pairID := types.GetPairID(baseDenom, quoteDenom)
+	
+	// Get order book
+	orderBook, err := k.OrderBooks.Get(ctx, pairID)
 	if err != nil {
-		return types.LiquidityPosition{}, err
+		return 0, types.ErrOrderBookNotFound
 	}
-	return position, nil
+
+	// Generate order ID
+	orderID, err := k.NextOrderID.Next(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	// Calculate total cost
+	totalCost := amount.Mul(price).Quo(sdk.NewInt(1000000)) // Price normalization
+
+	// Lock funds based on order type
+	creatorAddr, err := sdk.AccAddressFromBech32(creator)
+	if err != nil {
+		return 0, err
+	}
+
+	if orderType == types.OrderType_BUY {
+		// Lock quote denom for buy orders
+		if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creatorAddr, types.ModuleName, sdk.NewCoins(sdk.NewCoin(quoteDenom, totalCost))); err != nil {
+			return 0, err
+		}
+	} else {
+		// Lock base denom for sell orders
+		if err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, creatorAddr, types.ModuleName, sdk.NewCoins(sdk.NewCoin(baseDenom, amount))); err != nil {
+			return 0, err
+		}
+	}
+
+	// Create order
+	order := types.Order{
+		OrderId:       orderID,
+		Creator:       creator,
+		OrderType:     orderType,
+		BaseDenom:     baseDenom,
+		QuoteDenom:    quoteDenom,
+		Amount:        amount,
+		Price:         price,
+		FilledAmount:  sdk.ZeroInt(),
+		Status:        types.OrderStatus_ACTIVE,
+		CreatedHeight: ctx.BlockHeight(),
+	}
+
+	// Save order
+	if err := k.Orders.Set(ctx, orderID, order); err != nil {
+		return 0, err
+	}
+
+	// Add to order book
+	if orderType == types.OrderType_BUY {
+		orderBook.BuyOrders = append(orderBook.BuyOrders, orderID)
+	} else {
+		orderBook.SellOrders = append(orderBook.SellOrders, orderID)
+	}
+
+	if err := k.OrderBooks.Set(ctx, pairID, orderBook); err != nil {
+		return 0, err
+	}
+
+	// Attempt to match orders
+	if err := k.MatchOrders(ctx, pairID); err != nil {
+		k.Logger().Error("failed to match orders", "error", err)
+	}
+
+	return orderID, nil
 }
 
-// SetLiquidityPosition stores a liquidity position
-func (k Keeper) SetLiquidityPosition(ctx context.Context, position types.LiquidityPosition) error {
-	return k.LiquidityPositions.Set(ctx, collections.Join(position.Owner, position.PoolId), position)
+// MatchOrders attempts to match buy and sell orders in an order book
+func (k Keeper) MatchOrders(ctx sdk.Context, pairID string) error {
+	orderBook, err := k.OrderBooks.Get(ctx, pairID)
+	if err != nil {
+		return err
+	}
+
+	// Sort orders by price (buy orders descending, sell orders ascending)
+	// For simplicity, we'll do basic matching - in production use a proper matching engine
+	
+	for i := 0; i < len(orderBook.BuyOrders); i++ {
+		buyOrder, err := k.Orders.Get(ctx, orderBook.BuyOrders[i])
+		if err != nil || buyOrder.Status != types.OrderStatus_ACTIVE {
+			continue
+		}
+
+		for j := 0; j < len(orderBook.SellOrders); j++ {
+			sellOrder, err := k.Orders.Get(ctx, orderBook.SellOrders[j])
+			if err != nil || sellOrder.Status != types.OrderStatus_ACTIVE {
+				continue
+			}
+
+			// Check if prices match (buy price >= sell price)
+			if buyOrder.Price.GTE(sellOrder.Price) {
+				// Execute trade
+				if err := k.ExecuteTrade(ctx, &buyOrder, &sellOrder); err != nil {
+					k.Logger().Error("failed to execute trade", "error", err)
+					continue
+				}
+
+				// Update orders
+				if err := k.Orders.Set(ctx, buyOrder.OrderId, buyOrder); err != nil {
+					return err
+				}
+				if err := k.Orders.Set(ctx, sellOrder.OrderId, sellOrder); err != nil {
+					return err
+				}
+			}
+		}
+	}
+
+	return nil
 }
 
-// CalculateSwapOutput calculates the output amount for a swap using constant product formula (x*y=k)
-// Formula: amountOut = (amountIn * reserveOut * (10000 - feeRate)) / ((reserveIn * 10000) + (amountIn * (10000 - feeRate)))
-func (k Keeper) CalculateSwapOutput(amountIn, reserveIn, reserveOut math.Int, feeRate uint64) math.Int {
-	// Calculate fee (in basis points, e.g., 30 = 0.3%)
-	tenThousand := math.NewInt(10000)
-	feeRateInt := math.NewInt(int64(feeRate))
+// ExecuteTrade executes a matched trade between buy and sell orders
+func (k Keeper) ExecuteTrade(ctx sdk.Context, buyOrder, sellOrder *types.Order) error {
+	// Calculate trade amount (minimum of remaining amounts)
+	buyRemaining := buyOrder.Amount.Sub(buyOrder.FilledAmount)
+	sellRemaining := sellOrder.Amount.Sub(sellOrder.FilledAmount)
 	
-	// amountInWithFee = amountIn * (10000 - feeRate)
-	amountInWithFee := amountIn.Mul(tenThousand.Sub(feeRateInt))
-	
-	// numerator = amountInWithFee * reserveOut
-	numerator := amountInWithFee.Mul(reserveOut)
-	
-	// denominator = (reserveIn * 10000) + amountInWithFee
-	denominator := reserveIn.Mul(tenThousand).Add(amountInWithFee)
-	
-	// amountOut = numerator / denominator
-	if denominator.IsZero() {
-		return math.ZeroInt()
+	tradeAmount := buyRemaining
+	if sellRemaining.LT(buyRemaining) {
+		tradeAmount = sellRemaining
 	}
-	
-	return numerator.Quo(denominator)
+
+	// Use sell order price (price improvement for buyer)
+	tradePrice := sellOrder.Price
+	totalCost := tradeAmount.Mul(tradePrice).Quo(sdk.NewInt(1000000))
+
+	// Transfer base denom to buyer
+	buyerAddr, _ := sdk.AccAddressFromBech32(buyOrder.Creator)
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, buyerAddr, sdk.NewCoins(sdk.NewCoin(buyOrder.BaseDenom, tradeAmount))); err != nil {
+		return err
+	}
+
+	// Transfer quote denom to seller
+	sellerAddr, _ := sdk.AccAddressFromBech32(sellOrder.Creator)
+	if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sellerAddr, sdk.NewCoins(sdk.NewCoin(sellOrder.QuoteDenom, totalCost))); err != nil {
+		return err
+	}
+
+	// Update filled amounts
+	buyOrder.FilledAmount = buyOrder.FilledAmount.Add(tradeAmount)
+	sellOrder.FilledAmount = sellOrder.FilledAmount.Add(tradeAmount)
+
+	// Update order statuses
+	if buyOrder.FilledAmount.Equal(buyOrder.Amount) {
+		buyOrder.Status = types.OrderStatus_FILLED
+	}
+	if sellOrder.FilledAmount.Equal(sellOrder.Amount) {
+		sellOrder.Status = types.OrderStatus_FILLED
+	}
+
+	return nil
 }
 
-// CalculateLiquidityShares calculates shares to mint when adding liquidity
-func (k Keeper) CalculateLiquidityShares(amountA, amountB, reserveA, reserveB, totalShares math.Int) math.Int {
-	// If this is the first liquidity provision, shares = sqrt(amountA * amountB)
-	if totalShares.IsZero() {
-		// Simple geometric mean for initial shares
-		product := amountA.Mul(amountB)
-		return Sqrt(product)
+// CancelOrder cancels an active order and returns locked funds
+func (k Keeper) CancelOrder(ctx sdk.Context, orderID uint64, creator string) error {
+	order, err := k.Orders.Get(ctx, orderID)
+	if err != nil {
+		return types.ErrOrderNotFound
 	}
-	
-	// shares = min(amountA * totalShares / reserveA, amountB * totalShares / reserveB)
-	sharesFromA := amountA.Mul(totalShares).Quo(reserveA)
-	sharesFromB := amountB.Mul(totalShares).Quo(reserveB)
-	
-	if sharesFromA.LT(sharesFromB) {
-		return sharesFromA
-	}
-	return sharesFromB
-}
 
-// Sqrt calculates the square root of x using Newton's method
-func Sqrt(x math.Int) math.Int {
-	if x.IsZero() {
-		return math.ZeroInt()
+	if order.Creator != creator {
+		return types.ErrUnauthorized
 	}
-	
-	// Initial guess: x / 2
-	z := x.QuoRaw(2)
-	y := x
-	
-	// Newton's method: z = (z + x/z) / 2
-	for z.LT(y) {
-		y = z
-		z = x.Quo(z).Add(z).QuoRaw(2)
-	}
-	
-	return y
-}
 
-// GetModuleAddress returns the dex module's address
-func (k Keeper) GetModuleAddress() sdk.AccAddress {
-	return k.accountKeeper.GetModuleAddress(types.ModuleName)
+	if order.Status != types.OrderStatus_ACTIVE {
+		return types.ErrInvalidOrderStatus
+	}
+
+	// Calculate unfilled amount
+	unfilledAmount := order.Amount.Sub(order.FilledAmount)
+	
+	// Return locked funds
+	creatorAddr, _ := sdk.AccAddressFromBech32(creator)
+	
+	if order.OrderType == types.OrderType_BUY {
+		totalCost := unfilledAmount.Mul(order.Price).Quo(sdk.NewInt(1000000))
+		if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, creatorAddr, sdk.NewCoins(sdk.NewCoin(order.QuoteDenom, totalCost))); err != nil {
+			return err
+		}
+	} else {
+		if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, creatorAddr, sdk.NewCoins(sdk.NewCoin(order.BaseDenom, unfilledAmount))); err != nil {
+			return err
+		}
+	}
+
+	// Update order status
+	order.Status = types.OrderStatus_CANCELLED
+	return k.Orders.Set(ctx, orderID, order)
 }
