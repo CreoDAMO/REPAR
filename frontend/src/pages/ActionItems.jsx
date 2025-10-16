@@ -37,7 +37,7 @@ const ActionItems = () => {
       id: 4,
       category: 'Medium-Term',
       title: 'Integrate Cosmos SDK Blockchain',
-      description: 'Aequitas Zone blockchain scaffolded with x/repar module, 131T $REPAR supply configured. Build & deployment in progress.',
+      description: 'Aequitas Zone blockchain scaffolded with x/repar, x/dex, x/claims, x/defendant modules. DEX integration 95% complete. Deployment pending.',
       status: 'in-progress',
       priority: 'medium',
       icon: Globe
@@ -91,9 +91,27 @@ const ActionItems = () => {
       id: 10,
       category: 'Long-Term',
       title: 'Mobile Responsive Optimization',
-      description: 'Ensure full functionality on mobile devices for global accessibility',
-      status: 'pending',
-      priority: 'low',
+      description: 'Ensure full functionality on mobile devices for global accessibility. Current status: 60% complete - UI renders but needs touch interaction optimization.',
+      status: 'in-progress',
+      priority: 'medium',
+      icon: Globe
+    },
+    {
+      id: 11,
+      category: 'Immediate Priority',
+      title: 'Fix REPAR Price Display in DEX',
+      description: 'Correct price calculation to show $18.33 per REPAR (currently showing inverted rate). 95% complete - final testing needed.',
+      status: 'in-progress',
+      priority: 'high',
+      icon: Wallet
+    },
+    {
+      id: 12,
+      category: 'Medium-Term',
+      title: 'Deploy Cosmos Blockchain to Testnet',
+      description: 'Deploy Aequitas Zone to public testnet with validator nodes. Infrastructure ready, deployment process 80% complete.',
+      status: 'in-progress',
+      priority: 'high',
       icon: Globe
     }
   ];
@@ -176,7 +194,7 @@ const ActionItems = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="mt-8 grid grid-cols-3 gap-4">
+      <div className="mt-8 grid grid-cols-4 gap-4">
         <div className="bg-green-50 rounded-lg p-4 border border-green-200">
           <div className="flex items-center space-x-2 mb-1">
             <CheckCircle className="h-5 w-5 text-green-600" />
@@ -202,6 +220,15 @@ const ActionItems = () => {
           </div>
           <p className="text-2xl font-bold text-gray-600">
             {actionItems.filter(i => i.status === 'pending').length}
+          </p>
+        </div>
+        <div className="bg-indigo-50 rounded-lg p-4 border border-indigo-200">
+          <div className="flex items-center space-x-2 mb-1">
+            <CheckCircle className="h-5 w-5 text-indigo-600" />
+            <span className="font-semibold text-indigo-900">Overall Progress</span>
+          </div>
+          <p className="text-2xl font-bold text-indigo-600">
+            {Math.round((actionItems.filter(i => i.status === 'completed').length / actionItems.length) * 100)}%
           </p>
         </div>
       </div>
