@@ -62,14 +62,12 @@ export default function SwapInterface() {
     return () => clearInterval(interval);
   }, []);
 
-  const mockPrice = prices[toToken] / prices[fromToken];
+  const mockPrice = prices[fromToken] / prices[toToken];
 
   const handleFromAmountChange = (value) => {
     setFromAmount(value);
     if (value) {
-      const calculated = fromToken === 'REPAR' 
-        ? (parseFloat(value) * mockPrice).toFixed(2)
-        : (parseFloat(value) / mockPrice).toFixed(6);
+      const calculated = (parseFloat(value) * mockPrice).toFixed(6);
       setToAmount(calculated);
     } else {
       setToAmount('');
@@ -221,7 +219,7 @@ export default function SwapInterface() {
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Price</span>
             <span className="font-medium">
-              1 {fromToken} = {mockPrice.toFixed(4)} {toToken}
+              1 {fromToken} = {mockPrice.toFixed(2)} {toToken}
             </span>
           </div>
           <div className="flex justify-between text-sm">
