@@ -47,7 +47,7 @@ export const queryTotalLiability = async () => {
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
       return parsedResponse.totalLiability?.amount || "131000000000000";
@@ -70,7 +70,7 @@ export const queryActiveDefendants = async () => {
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
       return parseInt(parsedResponse.count, 10);
@@ -93,7 +93,7 @@ export const queryDefendantDetails = async (defendantId) => {
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       return JSON.parse(new TextDecoder().decode(response.value));
     }
@@ -116,7 +116,7 @@ export const queryDefendantLiability = async (defendantId) => {
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       return JSON.parse(new TextDecoder().decode(response.value));
     }
@@ -139,7 +139,7 @@ export const queryThreatStats = async () => {
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       return JSON.parse(new TextDecoder().decode(response.value));
     }
@@ -162,7 +162,7 @@ export const queryDEXPools = async () => {
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
       return parsedResponse.pools || [];
@@ -185,7 +185,7 @@ export const queryDEXPool = async (poolId) => {
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       return JSON.parse(new TextDecoder().decode(response.value)).pool;
     }
@@ -212,7 +212,7 @@ export const estimateDEXSwap = async (poolId, tokenInDenom, tokenInAmount, token
       prove: false,
     };
     const response = await tmClient.abciQuery(queryData);
-    
+
     if (response.code === 0 && response.value) {
       return JSON.parse(new TextDecoder().decode(response.value));
     }
@@ -233,7 +233,52 @@ export const cosmosClient = {
   queryDEXPool,
   estimateDEXSwap,
   getStargateClient,
-  getTotalOwed: queryTotalLiability // Alias for compatibility
+  getTotalOwed: queryTotalLiability, // Alias for compatibility
+
+  async signAndBroadcast(messages) {
+    try {
+      if (!isChainAvailable) {
+        throw new Error('Client not connected');
+      }
+
+      const client = await getStargateClient();
+      const account = await this.getAccount();
+
+      const fee = {
+        amount: [{ denom: 'urepar', amount: '5000' }],
+        gas: '200000',
+      };
+
+      const result = await client.signAndBroadcast(
+        account.address,
+        messages,
+        fee,
+        'Aequitas DEX Transaction'
+      );
+
+      if (result.code !== 0) {
+        throw new Error(`Transaction failed: ${result.rawLog}`);
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Transaction broadcast failed:', error);
+      throw error;
+    }
+  },
+
+  async getAccount() {
+    // Return the connected wallet account
+    // This would integrate with Keplr/Leap wallet
+    if (window.keplr) {
+      const chainId = 'aequitas-1';
+      await window.keplr.enable(chainId);
+      const offlineSigner = window.keplr.getOfflineSigner(chainId);
+      const accounts = await offlineSigner.getAccounts();
+      return accounts[0];
+    }
+    throw new Error('No wallet connected');
+  }
 };
 
 export default cosmosClient;

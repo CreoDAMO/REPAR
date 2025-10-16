@@ -22,21 +22,38 @@ class BackendIntegration {
   // DEX Integration
   async executeDEXSwap(fromToken, toToken, amount, minReceived, walletAddress) {
     try {
-      // This will connect to actual DEX module when backend is ready
+      // Convert amount to proper chain denomination (urepar for REPAR)
+      const fromDenom = fromToken === 'REPAR' ? 'urepar' : fromToken.toLowerCase();
+      const toDenom = toToken === 'REPAR' ? 'urepar' : toToken.toLowerCase();
+      
+      // Convert to micro units (1 REPAR = 1,000,000 urepar)
+      const microAmount = Math.floor(parseFloat(amount) * 1_000_000).toString();
+      const microMinReceived = Math.floor(parseFloat(minReceived) * 1_000_000).toString();
+      
       const msg = {
         typeUrl: '/aequitas.dex.v1.MsgSwap',
         value: {
           sender: walletAddress,
-          tokenIn: { denom: fromToken.toLowerCase(), amount: amount },
-          tokenOut: toToken.toLowerCase(),
-          minTokenOut: minReceived,
-          routes: [{ poolId: 1, tokenInDenom: fromToken, tokenOutDenom: toToken }]
+          routes: [{ 
+            poolId: '1', 
+            tokenInDenom: fromDenom, 
+            tokenOutDenom: toDenom 
+          }],
+          tokenIn: { 
+            denom: fromDenom, 
+            amount: microAmount 
+          },
+          minTokenOut: microMinReceived
         }
       };
 
       console.log('Executing DEX swap:', msg);
-      // await cosmosClient.signAndBroadcast(msg);
-      return { success: true, txHash: 'mock-tx-hash' };
+      const result = await cosmosClient.signAndBroadcast([msg]);
+      return { 
+        success: true, 
+        txHash: result.transactionHash,
+        amountOut: result.rawLog 
+      };
     } catch (error) {
       console.error('DEX swap failed:', error);
       throw error;
@@ -45,18 +62,30 @@ class BackendIntegration {
 
   async addLiquidity(poolId, tokenA, tokenB, amountA, amountB, walletAddress) {
     try {
+      const denomA = tokenA === 'REPAR' ? 'urepar' : tokenA.toLowerCase();
+      const denomB = tokenB === 'REPAR' ? 'urepar' : tokenB.toLowerCase();
+      
+      const microAmountA = Math.floor(parseFloat(amountA) * 1_000_000).toString();
+      const microAmountB = Math.floor(parseFloat(amountB) * 1_000_000).toString();
+      
       const msg = {
         typeUrl: '/aequitas.dex.v1.MsgAddLiquidity',
         value: {
           sender: walletAddress,
-          poolId: poolId,
-          tokenA: { denom: tokenA, amount: amountA },
-          tokenB: { denom: tokenB, amount: amountB }
+          poolId: poolId.toString(),
+          tokenA: { denom: denomA, amount: microAmountA },
+          tokenB: { denom: denomB, amount: microAmountB },
+          minShares: '1' // Minimum 1 micro-share
         }
       };
 
       console.log('Adding liquidity:', msg);
-      return { success: true, lpTokens: '1000' };
+      const result = await cosmosClient.signAndBroadcast([msg]);
+      return { 
+        success: true, 
+        lpTokens: result.rawLog,
+        txHash: result.transactionHash 
+      };
     } catch (error) {
       console.error('Add liquidity failed:', error);
       throw error;

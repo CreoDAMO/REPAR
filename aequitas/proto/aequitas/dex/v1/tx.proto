@@ -63,7 +63,8 @@ message MsgAddLiquidity {
 }
 
 message MsgAddLiquidityResponse {
-  string shares_issued = 1 [
+  string lp_tokens = 1;
+  string shares_issued = 2 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
@@ -95,8 +96,10 @@ message MsgRemoveLiquidity {
 }
 
 message MsgRemoveLiquidityResponse {
-  cosmos.base.v1beta1.Coin token_a = 1 [(gogoproto.nullable) = false];
-  cosmos.base.v1beta1.Coin token_b = 2 [(gogoproto.nullable) = false];
+  string amount_a = 1;
+  string amount_b = 2;
+  cosmos.base.v1beta1.Coin token_a = 3 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin token_b = 4 [(gogoproto.nullable) = false];
 }
 
 // MsgSwap executes a token swap
@@ -115,5 +118,6 @@ message MsgSwap {
 }
 
 message MsgSwapResponse {
-  cosmos.base.v1beta1.Coin token_out = 1 [(gogoproto.nullable) = false];
+  string amount_out = 1;
+  cosmos.base.v1beta1.Coin token_out = 2 [(gogoproto.nullable) = false];
 }

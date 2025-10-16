@@ -30,6 +30,12 @@ message Pool {
     (gogoproto.nullable) = false
   ];
   uint64 swap_fee_rate = 7; // in basis points (30 = 0.3%)
+  string lp_token_denom = 8; // LP token denomination for this pool
+  string lp_token_supply = 9 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
 }
 
 // LiquidityPosition represents a user's position in a pool
