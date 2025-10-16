@@ -13,6 +13,7 @@ import AIAnalytics from './pages/AIAnalytics';
 import Alliances from './pages/Alliances';
 import REPAREconomics from './pages/REPAREconomics';
 import CryptoComparison from './pages/CryptoComparison';
+import AequitasDEX from './pages/AequitasDEX';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/alliances" element={<Alliances />} />
           <Route path="/economics" element={<REPAREconomics />} />
           <Route path="/crypto-comparison" element={<CryptoComparison />} />
+          <Route path="/dex" element={<AequitasDEX />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">
