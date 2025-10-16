@@ -95,7 +95,7 @@ export default function SwapInterface() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md mx-auto">
+    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 max-w-md mx-auto w-full">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Swap</h2>
@@ -151,15 +151,16 @@ export default function SwapInterface() {
           <div className="flex items-center justify-between">
             <input
               type="number"
+              inputMode="decimal"
               value={fromAmount}
               onChange={(e) => handleFromAmountChange(e.target.value)}
               placeholder="0.0"
-              className="bg-transparent text-2xl font-semibold outline-none w-full"
+              className="bg-transparent text-xl sm:text-2xl font-semibold outline-none w-full"
             />
             <select
               value={fromToken}
               onChange={(e) => setFromToken(e.target.value)}
-              className="bg-white border border-gray-300 rounded-lg px-3 py-2 font-medium ml-4"
+              className="bg-white border border-gray-300 rounded-lg px-2 sm:px-3 py-2 font-medium ml-2 sm:ml-4 text-sm sm:text-base"
             >
               {tokens.map((token) => (
                 <option key={token.symbol} value={token.symbol}>

@@ -91,8 +91,8 @@ const ActionItems = () => {
       id: 10,
       category: 'Long-Term',
       title: 'Mobile Responsive Optimization',
-      description: 'Ensure full functionality on mobile devices for global accessibility. Current status: 60% complete - UI renders but needs touch interaction optimization.',
-      status: 'in-progress',
+      description: 'Full mobile responsive design with optimized touch targets, mobile navigation menu, and improved readability on all screen sizes.',
+      status: 'completed',
       priority: 'medium',
       icon: Globe
     },
@@ -100,8 +100,8 @@ const ActionItems = () => {
       id: 11,
       category: 'Immediate Priority',
       title: 'Fix REPAR Price Display in DEX',
-      description: 'Correct price calculation to show $18.33 per REPAR (currently showing inverted rate). 95% complete - final testing needed.',
-      status: 'in-progress',
+      description: 'Corrected price calculation to show $18.33 per REPAR with real-time price feeds for crypto assets.',
+      status: 'completed',
       priority: 'high',
       icon: Wallet
     },
