@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowDownUp, Settings, AlertCircle, Loader } from 'lucide-react';
 
 export default function SwapInterface() {
@@ -21,8 +21,7 @@ export default function SwapInterface() {
     { symbol: 'USDC', name: 'USD Coin', balance: '50,000', icon: '💵', isNative: false },
   ];
 
-  // Mock prices relative to USDC
-  const prices = {
+  const [prices, setPrices] = useState({
     'REPAR': 18.33,
     'BTC': 95000,
     'ETH': 3500,
@@ -31,7 +30,37 @@ export default function SwapInterface() {
     'AVAX': 42,
     'ATOM': 9.5,
     'USDC': 1
-  };
+  });
+
+  // Fetch real-time crypto prices
+  useEffect(() => {
+    const fetchPrices = async () => {
+      try {
+        // Using CoinGecko API (free tier) for real-time prices
+        const response = await fetch(
+          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,matic-network,avalanche-2,cosmos&vs_currencies=usd'
+        );
+        const data = await response.json();
+        
+        setPrices(prev => ({
+          ...prev,
+          'BTC': data.bitcoin?.usd || prev.BTC,
+          'ETH': data.ethereum?.usd || prev.ETH,
+          'SOL': data.solana?.usd || prev.SOL,
+          'POL': data['matic-network']?.usd || prev.POL,
+          'AVAX': data['avalanche-2']?.usd || prev.AVAX,
+          'ATOM': data.cosmos?.usd || prev.ATOM,
+        }));
+      } catch (error) {
+        console.warn('Failed to fetch real-time prices, using cached values:', error);
+      }
+    };
+
+    fetchPrices();
+    // Update prices every 30 seconds
+    const interval = setInterval(fetchPrices, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const mockPrice = prices[toToken] / prices[fromToken];
 

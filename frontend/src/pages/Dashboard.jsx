@@ -156,7 +156,7 @@ export default function Dashboard() {
                 <Flame className="text-red-600 mr-2" />
                 <div>
                   <p className="text-sm text-gray-600">Justice Burn</p>
-                  <p className="text-lg font-bold text-red-600">$1 = 1 $REPAR</p>
+                  <p className="text-lg font-bold text-red-600">$18.33 per $REPAR</p>
                   <p className="text-xs text-gray-500">Deflationary model</p>
                 </div>
               </div>
