@@ -1,19 +1,23 @@
-
 package types
 
 import (
+	"context"
+	
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// AccountKeeper defines the expected account keeper used for simulations
-type AccountKeeper interface {
-	GetAccount(ctx sdk.Context, addr sdk.AccAddress) sdk.AccountI
-	GetModuleAddress(moduleName string) sdk.AccAddress
+// BankKeeper defines the expected bank keeper interface
+type BankKeeper interface {
+	SendCoins(ctx context.Context, fromAddr, toAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
+	GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins
+	SpendableCoins(ctx context.Context, addr sdk.AccAddress) sdk.Coins
 }
 
-// BankKeeper defines the expected interface needed to retrieve account balances
-type BankKeeper interface {
-	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
-	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
-	GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin
+// AccountKeeper defines the expected account keeper interface
+type AccountKeeper interface {
+	GetModuleAddress(name string) sdk.AccAddress
+	GetModuleAccount(ctx context.Context, moduleName string) sdk.ModuleAccountI
 }

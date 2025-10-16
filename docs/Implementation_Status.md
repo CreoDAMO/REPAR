@@ -46,12 +46,10 @@ This document tracks the progress of implementing the Aequitas Protocol based on
 - [x] Alliances page with DNA verification methods and reparations organizations
 - [x] Transparent engagement framework for collaboration opportunities
 
-## ⚠️ REMAINING (3%)
+## ⚠️ REMAINING (5%)
 
 ### Final Integration Steps
-- [x] DEX module fully implemented (keeper, msg_server, query_server)
-- [x] DEX frontend trading interface complete
-- [ ] Wire ALL custom modules into app/app.go (add to module manager)
+- [ ] Wire custom modules into app/app.go (add to module manager)
 - [ ] Update app/app_config.go with module configurations
 - [ ] Test end-to-end claim filing flow
 - [ ] Connect frontend RPC to live blockchain (currently using mock data)
