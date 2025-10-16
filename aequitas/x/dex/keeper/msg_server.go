@@ -46,9 +46,12 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
                 return nil, err
         }
 
+        amountA := math.NewIntFromUint64(msg.TokenA.Amount.Uint64())
+        amountB := math.NewIntFromUint64(msg.TokenB.Amount.Uint64())
+        
         shares := k.CalculateLiquidityShares(
-                math.NewIntFromBigInt(msg.TokenA.Amount.BigInt()),
-                math.NewIntFromBigInt(msg.TokenB.Amount.BigInt()),
+                amountA,
+                amountB,
                 math.ZeroInt(),
                 math.ZeroInt(),
                 math.ZeroInt(),
@@ -56,8 +59,8 @@ func (k msgServer) CreatePool(goCtx context.Context, msg *types.MsgCreatePool) (
 
         pool := types.Pool{
                 Id:          poolID,
-                ReserveA:    math.NewIntFromBigInt(msg.TokenA.Amount.BigInt()),
-                ReserveB:    math.NewIntFromBigInt(msg.TokenB.Amount.BigInt()),
+                ReserveA:    amountA,
+                ReserveB:    amountB,
                 DenomA:      msg.TokenA.Denom,
                 DenomB:      msg.TokenB.Denom,
                 TotalShares: shares,
@@ -114,9 +117,12 @@ func (k msgServer) AddLiquidity(goCtx context.Context, msg *types.MsgAddLiquidit
                 return nil, err
         }
 
+        amountA := math.NewIntFromUint64(msg.TokenA.Amount.Uint64())
+        amountB := math.NewIntFromUint64(msg.TokenB.Amount.Uint64())
+        
         shares := k.CalculateLiquidityShares(
-                math.NewIntFromBigInt(msg.TokenA.Amount.BigInt()),
-                math.NewIntFromBigInt(msg.TokenB.Amount.BigInt()),
+                amountA,
+                amountB,
                 pool.ReserveA,
                 pool.ReserveB,
                 pool.TotalShares,
@@ -126,8 +132,8 @@ func (k msgServer) AddLiquidity(goCtx context.Context, msg *types.MsgAddLiquidit
                 return nil, types.ErrSlippageExceeded
         }
 
-        pool.ReserveA = pool.ReserveA.Add(math.NewIntFromBigInt(msg.TokenA.Amount.BigInt()))
-        pool.ReserveB = pool.ReserveB.Add(math.NewIntFromBigInt(msg.TokenB.Amount.BigInt()))
+        pool.ReserveA = pool.ReserveA.Add(amountA)
+        pool.ReserveB = pool.ReserveB.Add(amountB)
         pool.TotalShares = pool.TotalShares.Add(shares)
 
         if err := k.SetPool(ctx, pool); err != nil {
@@ -183,8 +189,8 @@ func (k msgServer) RemoveLiquidity(goCtx context.Context, msg *types.MsgRemoveLi
         }
 
         coins := sdk.NewCoins(
-                sdk.NewCoin(pool.DenomA, sdk.NewIntFromBigInt(tokenAAmount.BigInt())),
-                sdk.NewCoin(pool.DenomB, sdk.NewIntFromBigInt(tokenBAmount.BigInt())),
+                sdk.NewCoin(pool.DenomA, sdk.NewIntFromUint64(tokenAAmount.Uint64())),
+                sdk.NewCoin(pool.DenomB, sdk.NewIntFromUint64(tokenBAmount.Uint64())),
         )
 
         if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sender, coins); err != nil {
@@ -226,7 +232,7 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
                 return nil, err
         }
 
-        currentAmount := math.NewIntFromBigInt(msg.TokenIn.Amount.BigInt())
+        currentAmount := math.NewIntFromUint64(msg.TokenIn.Amount.Uint64())
         currentDenom := msg.TokenIn.Denom
 
         for _, route := range msg.Routes {
@@ -272,7 +278,7 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
                 return nil, types.ErrSlippageExceeded
         }
 
-        tokenOut := sdk.NewCoin(currentDenom, sdk.NewIntFromBigInt(currentAmount.BigInt()))
+        tokenOut := sdk.NewCoin(currentDenom, sdk.NewIntFromUint64(currentAmount.Uint64()))
         if err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, sender, sdk.NewCoins(tokenOut)); err != nil {
                 return nil, err
         }

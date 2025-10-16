@@ -150,12 +150,88 @@ export const queryThreatStats = async () => {
   }
 };
 
+// DEX Query Functions
+export const queryDEXPools = async () => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return [];
+
+  try {
+    const queryData = {
+      path: "/aequitas.dex.v1.Query/Pools",
+      data: new Uint8Array(),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+    
+    if (response.code === 0 && response.value) {
+      const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
+      return parsedResponse.pools || [];
+    }
+    return [];
+  } catch (error) {
+    console.warn("⚠️ DEX pools query failed, using mock data:", error.message);
+    return [];
+  }
+};
+
+export const queryDEXPool = async (poolId) => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return null;
+
+  try {
+    const queryData = {
+      path: "/aequitas.dex.v1.Query/Pool",
+      data: new TextEncoder().encode(JSON.stringify({ pool_id: poolId })),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+    
+    if (response.code === 0 && response.value) {
+      return JSON.parse(new TextDecoder().decode(response.value)).pool;
+    }
+    return null;
+  } catch (error) {
+    console.warn("⚠️ DEX pool query failed:", error.message);
+    return null;
+  }
+};
+
+export const estimateDEXSwap = async (poolId, tokenInDenom, tokenInAmount, tokenOutDenom) => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return { token_out_amount: "0", price_impact: "0", swap_fee: "0" };
+
+  try {
+    const queryData = {
+      path: "/aequitas.dex.v1.Query/EstimateSwap",
+      data: new TextEncoder().encode(JSON.stringify({ 
+        pool_id: poolId,
+        token_in_denom: tokenInDenom,
+        token_in_amount: tokenInAmount,
+        token_out_denom: tokenOutDenom
+      })),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+    
+    if (response.code === 0 && response.value) {
+      return JSON.parse(new TextDecoder().decode(response.value));
+    }
+    return { token_out_amount: "0", price_impact: "0", swap_fee: "0" };
+  } catch (error) {
+    console.warn("⚠️ DEX swap estimation failed:", error.message);
+    return { token_out_amount: "0", price_impact: "0", swap_fee: "0" };
+  }
+};
+
 export const cosmosClient = {
   queryTotalLiability,
   queryActiveDefendants,
   queryDefendantDetails,
   queryDefendantLiability,
   queryThreatStats,
+  queryDEXPools,
+  queryDEXPool,
+  estimateDEXSwap,
   getStargateClient,
   getTotalOwed: queryTotalLiability // Alias for compatibility
 };
