@@ -1,0 +1,119 @@
+syntax = "proto3";
+package aequitas.dex.v1;
+
+option go_package = "aequitas/x/dex/types";
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/msg/v1/msg.proto";
+import "amino/amino.proto";
+import "aequitas/dex/v1/dex.proto";
+
+// Msg defines the dex Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
+  // CreatePool creates a new liquidity pool
+  rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
+  
+  // AddLiquidity adds liquidity to an existing pool
+  rpc AddLiquidity(MsgAddLiquidity) returns (MsgAddLiquidityResponse);
+  
+  // RemoveLiquidity removes liquidity from a pool
+  rpc RemoveLiquidity(MsgRemoveLiquidity) returns (MsgRemoveLiquidityResponse);
+  
+  // Swap executes a token swap
+  rpc Swap(MsgSwap) returns (MsgSwapResponse);
+}
+
+// MsgCreatePool creates a new liquidity pool
+message MsgCreatePool {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "aequitas/dex/MsgCreatePool";
+  
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  cosmos.base.v1beta1.Coin token_a = 2 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin token_b = 3 [(gogoproto.nullable) = false];
+  uint64 swap_fee_rate = 4; // in basis points (30 = 0.3%)
+}
+
+message MsgCreatePoolResponse {
+  uint64 pool_id = 1;
+  string shares_issued = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgAddLiquidity adds liquidity to an existing pool
+message MsgAddLiquidity {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "aequitas/dex/MsgAddLiquidity";
+  
+  string sender = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 pool_id = 2;
+  cosmos.base.v1beta1.Coin token_a = 3 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin token_b = 4 [(gogoproto.nullable) = false];
+  string min_shares = 5 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgAddLiquidityResponse {
+  string shares_issued = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgRemoveLiquidity removes liquidity from a pool
+message MsgRemoveLiquidity {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "aequitas/dex/MsgRemoveLiquidity";
+  
+  string sender = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 pool_id = 2;
+  string shares = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string min_token_a = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string min_token_b = 5 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgRemoveLiquidityResponse {
+  cosmos.base.v1beta1.Coin token_a = 1 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin token_b = 2 [(gogoproto.nullable) = false];
+}
+
+// MsgSwap executes a token swap
+message MsgSwap {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (amino.name) = "aequitas/dex/MsgSwap";
+  
+  string sender = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  repeated SwapRoute routes = 2 [(gogoproto.nullable) = false];
+  cosmos.base.v1beta1.Coin token_in = 3 [(gogoproto.nullable) = false];
+  string min_token_out = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgSwapResponse {
+  cosmos.base.v1beta1.Coin token_out = 1 [(gogoproto.nullable) = false];
+}

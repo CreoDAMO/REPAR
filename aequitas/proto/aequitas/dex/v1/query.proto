@@ -1,0 +1,98 @@
+syntax = "proto3";
+package aequitas.dex.v1;
+
+option go_package = "aequitas/x/dex/types";
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "aequitas/dex/v1/dex.proto";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Pool queries a pool by id
+  rpc Pool(QueryPoolRequest) returns (QueryPoolResponse) {
+    option (google.api.http).get = "/aequitas/dex/v1/pools/{pool_id}";
+  }
+  
+  // Pools queries all pools
+  rpc Pools(QueryPoolsRequest) returns (QueryPoolsResponse) {
+    option (google.api.http).get = "/aequitas/dex/v1/pools";
+  }
+  
+  // LiquidityPosition queries a user's liquidity position
+  rpc LiquidityPosition(QueryLiquidityPositionRequest) returns (QueryLiquidityPositionResponse) {
+    option (google.api.http).get = "/aequitas/dex/v1/positions/{owner}/{pool_id}";
+  }
+  
+  // LiquidityPositions queries all liquidity positions for an owner
+  rpc LiquidityPositions(QueryLiquidityPositionsRequest) returns (QueryLiquidityPositionsResponse) {
+    option (google.api.http).get = "/aequitas/dex/v1/positions/{owner}";
+  }
+  
+  // EstimateSwap estimates the output of a swap
+  rpc EstimateSwap(QueryEstimateSwapRequest) returns (QueryEstimateSwapResponse) {
+    option (google.api.http).get = "/aequitas/dex/v1/estimate_swap";
+  }
+}
+
+message QueryPoolRequest {
+  uint64 pool_id = 1;
+}
+
+message QueryPoolResponse {
+  Pool pool = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryPoolsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryPoolsResponse {
+  repeated Pool pools = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLiquidityPositionRequest {
+  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 pool_id = 2;
+}
+
+message QueryLiquidityPositionResponse {
+  LiquidityPosition position = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryLiquidityPositionsRequest {
+  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryLiquidityPositionsResponse {
+  repeated LiquidityPosition positions = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryEstimateSwapRequest {
+  uint64 pool_id = 1;
+  string token_in_denom = 2;
+  string token_in_amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string token_out_denom = 4;
+}
+
+message QueryEstimateSwapResponse {
+  string token_out_amount = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string price_impact = 2; // percentage as string
+  string swap_fee = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}

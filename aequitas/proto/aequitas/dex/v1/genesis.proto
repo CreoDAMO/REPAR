@@ -1,0 +1,44 @@
+syntax = "proto3";
+package aequitas.dex.v1;
+
+option go_package = "aequitas/x/dex/types";
+
+import "gogoproto/gogo.proto";
+import "aequitas/dex/v1/dex.proto";
+
+// GenesisState defines the dex module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [(gogoproto.nullable) = false];
+  
+  // pools is a list of all liquidity pools
+  repeated Pool pools = 2 [(gogoproto.nullable) = false];
+  
+  // positions is a list of all liquidity positions
+  repeated LiquidityPosition positions = 3 [(gogoproto.nullable) = false];
+  
+  // next_pool_id is the next pool ID to be used
+  uint64 next_pool_id = 4;
+}
+
+// Params defines the parameters for the dex module.
+message Params {
+  option (gogoproto.equal) = true;
+  
+  // pool_creation_fee is the fee required to create a pool
+  string pool_creation_fee = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  
+  // min_initial_pool_liquidity is the minimum liquidity required when creating a pool
+  string min_initial_pool_liquidity = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  
+  // max_swap_fee_rate is the maximum swap fee rate in basis points
+  uint64 max_swap_fee_rate = 3;
+}

@@ -1,0 +1,53 @@
+syntax = "proto3";
+package aequitas.dex.v1;
+
+option go_package = "aequitas/x/dex/types";
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "amino/amino.proto";
+
+// Pool represents a liquidity pool for token swaps
+message Pool {
+  option (gogoproto.equal) = true;
+  
+  uint64 id = 1;
+  string reserve_a = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string reserve_b = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string denom_a = 4;
+  string denom_b = 5;
+  string total_shares = 6 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 swap_fee_rate = 7; // in basis points (30 = 0.3%)
+}
+
+// LiquidityPosition represents a user's position in a pool
+message LiquidityPosition {
+  option (gogoproto.equal) = true;
+  
+  uint64 pool_id = 1;
+  string owner = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string shares = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// SwapRoute defines a path for token swaps
+message SwapRoute {
+  uint64 pool_id = 1;
+  string token_in_denom = 2;
+  string token_out_denom = 3;
+}
