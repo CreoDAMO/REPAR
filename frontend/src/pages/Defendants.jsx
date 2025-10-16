@@ -8,37 +8,8 @@ export default function Defendants() {
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
   const [expandedDefendant, setExpandedDefendant] = useState(null);
-  const [blockchainDefendants, setBlockchainDefendants] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchDefendants = async () => {
-      setIsLoading(true);
-      try {
-        // Attempt to fetch defendants from blockchain
-        const chainDefendants = await Promise.all(
-          defendants.slice(0, 10).map(async (d) => {
-            try {
-              const liability = await cosmosClient.queryDefendantLiability(d.id);
-              return { ...d, blockchainLiability: liability };
-            } catch {
-              return d;
-            }
-          })
-        );
-        setBlockchainDefendants(chainDefendants);
-      } catch (error) {
-        console.warn('Using static defendant data:', error);
-        setBlockchainDefendants(defendants);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDefendants();
-  }, []);
-
-  const activeDefendants = blockchainDefendants.length > 0 ? blockchainDefendants : defendants;
+  const activeDefendants = defendants;
 
   const categories = ['All', ...new Set(defendants.map(d => d.category))];
   const statuses = ['All', ...new Set(defendants.map(d => d.status))];
@@ -64,7 +35,7 @@ export default function Defendants() {
       <div className="bg-gradient-to-r from-red-900 via-rose-900 to-red-900 text-white py-12">
         <div className="container mx-auto px-4">
           <h1 className="text-4xl font-bold mb-4">Defendant Database</h1>
-          <p className="text-xl text-red-200">200+ Entities with Documented Slavery-Derived Wealth</p>
+          <p className="text-xl text-red-200">{defendants.length} Entities with Documented Slavery-Derived Wealth</p>
           <p className="text-sm text-amber-300 mt-2">Complete forensic audit with provable liability</p>
         </div>
       </div>
