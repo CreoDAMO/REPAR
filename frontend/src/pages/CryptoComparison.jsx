@@ -7,6 +7,8 @@ export default function CryptoComparison() {
       bitcoin: "Disinflationary → Fixed Cap (21M)",
       ethereum: "Dynamic Deflationary (No cap)",
       solana: "Perpetual Inflation (1.5% floor)",
+      cardano: "Disinflationary → Fixed Cap (45B)",
+      avalanche: "Inflationary + Fee Burn (720M cap)",
       repar: "Event-Driven Deflationary (→ 0)"
     },
     {
@@ -14,6 +16,8 @@ export default function CryptoComparison() {
       bitcoin: "19.8M BTC (~94% mined)",
       ethereum: "~120M ETH",
       solana: "~580M SOL",
+      cardano: "~35B ADA (~78% mined)",
+      avalanche: "~450M AVAX (~63% issued)",
       repar: "131T REPAR (100% initial)"
     },
     {
@@ -21,6 +25,8 @@ export default function CryptoComparison() {
       bitcoin: "Decreasing (halving every 4 years)",
       ethereum: "~0.5-1% annually",
       solana: "~4.8% annually (decreasing)",
+      cardano: "~3-4% annually (from reserves)",
+      avalanche: "~5-7% annually (staking rewards)",
       repar: "ZERO (no new issuance ever)"
     },
     {
@@ -28,6 +34,8 @@ export default function CryptoComparison() {
       bitcoin: "None",
       ethereum: "EIP-1559 (transaction fees)",
       solana: "50% of fees (since 2024)",
+      cardano: "None (treasury model)",
+      avalanche: "100% of all transaction fees",
       repar: "Justice Burn (1:1 debt payment)"
     },
     {
@@ -35,6 +43,8 @@ export default function CryptoComparison() {
       bitcoin: "+0.8% (decreasing)",
       ethereum: "-0.2% to +0.5% (variable)",
       solana: "+4.5% net (inflation > burn)",
+      cardano: "+3-4% (treasury funded)",
+      avalanche: "+2-5% (depends on usage)",
       repar: "Variable reduction (e.g., -38% at $50T paid)"
     },
     {
@@ -42,6 +52,8 @@ export default function CryptoComparison() {
       bitcoin: "Scarcity narrative + speculation",
       ethereum: "Utility + deflationary pressure",
       solana: "Network speed + DeFi utility",
+      cardano: "Research-driven development",
+      avalanche: "Subnet customization + speed",
       repar: "Justice enforcement + mathematical certainty"
     },
     {
@@ -49,6 +61,8 @@ export default function CryptoComparison() {
       bitcoin: "Hold for halvings (passive)",
       ethereum: "Use network for burns (passive)",
       solana: "Stake to offset dilution (active)",
+      cardano: "Stake for rewards (active)",
+      avalanche: "Stake for 7-11% APY (active)",
       repar: "Enforce justice for value (active)"
     },
     {
@@ -56,6 +70,8 @@ export default function CryptoComparison() {
       bitcoin: "21M forever (year 2140)",
       ethereum: "Equilibrium possible",
       solana: "Perpetual 1.5% inflation",
+      cardano: "45B cap (long-term equilibrium)",
+      avalanche: "720M cap (deflationary if usage high)",
       repar: "ZERO supply (full justice)"
     }
   ];
@@ -81,6 +97,20 @@ export default function CryptoComparison() {
       priceImpact: "-4.1% (dilution)",
       timeline: "Variable",
       certainty: "Guaranteed negative"
+    },
+    {
+      coin: "Cardano",
+      supplyChange: "+3-4% (treasury inflation)",
+      priceImpact: "-3.5% (dilution)",
+      timeline: "Variable",
+      certainty: "Guaranteed negative"
+    },
+    {
+      coin: "Avalanche",
+      supplyChange: "+2-5% (net, with burn)",
+      priceImpact: "-2% to +3% (usage-dependent)",
+      timeline: "Variable",
+      certainty: "Usage-dependent"
     },
     {
       coin: "$REPAR",
@@ -146,6 +176,41 @@ export default function CryptoComparison() {
     },
     {
       rank: 4,
+      name: "Avalanche Fee Burn",
+      rating: "5/10",
+      pros: [
+        "100% of fees burned",
+        "Can be net deflationary with high usage",
+        "Subnet customization for developers",
+        "Fast finality (<2s)"
+      ],
+      cons: [
+        "Still has 5-7% annual inflation",
+        "Burns don't offset inflation yet",
+        "Usage-dependent deflation",
+        "Must stake to earn rewards"
+      ],
+      color: "from-red-500 to-orange-600"
+    },
+    {
+      rank: 5,
+      name: "Cardano Treasury Model",
+      rating: "4/10",
+      pros: [
+        "Research-driven development",
+        "Governance via treasury",
+        "Predictable 3-4% inflation"
+      ],
+      cons: [
+        "No burn mechanism",
+        "Perpetual inflation from reserves",
+        "Dilutes non-stakers",
+        "No deflationary endgame"
+      ],
+      color: "from-blue-400 to-teal-500"
+    },
+    {
+      rank: 6,
       name: "Solana Inflation",
       rating: "3/10",
       pros: [
@@ -163,8 +228,11 @@ export default function CryptoComparison() {
   ];
 
   const getImpactIcon = (impact) => {
-    if (impact.includes('+')) return <TrendingUp className="h-5 w-5 text-green-600" />;
+    // Handle mixed outcomes (e.g., "-2% to +3%") as neutral
+    if (impact.includes('+') && impact.includes('-')) return <Minus className="h-5 w-5 text-yellow-600" />;
+    // Negative takes priority
     if (impact.includes('-')) return <TrendingDown className="h-5 w-5 text-red-600" />;
+    if (impact.includes('+')) return <TrendingUp className="h-5 w-5 text-green-600" />;
     return <Minus className="h-5 w-5 text-gray-600" />;
   };
 
@@ -176,7 +244,7 @@ export default function CryptoComparison() {
             <Shield className="h-12 w-12 text-green-400" />
             <h1 className="text-4xl font-bold">Crypto Economic Comparison</h1>
           </div>
-          <p className="text-xl text-indigo-200">$REPAR vs Bitcoin, Ethereum, Solana & More</p>
+          <p className="text-xl text-indigo-200">$REPAR vs Bitcoin, Ethereum, Solana, Cardano, Avalanche & More</p>
           <p className="text-sm text-amber-300 mt-2">Why justice-enforced deflation outperforms all existing crypto models</p>
         </div>
       </div>
@@ -185,7 +253,7 @@ export default function CryptoComparison() {
         
         {/* Main Comparison Table */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold mb-6">The Four-Way Showdown</h2>
+          <h2 className="text-3xl font-bold mb-6">The Six-Way Crypto Economic Showdown</h2>
           
           <div className="overflow-x-auto">
             <table className="min-w-full">
@@ -195,6 +263,8 @@ export default function CryptoComparison() {
                   <th className="px-4 py-3 text-left text-sm font-semibold text-orange-600">Bitcoin</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-blue-600">Ethereum</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-purple-600">Solana</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-teal-600">Cardano</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-red-600">Avalanche</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-indigo-600">$REPAR</th>
                 </tr>
               </thead>
@@ -205,6 +275,8 @@ export default function CryptoComparison() {
                     <td className="px-4 py-4 text-sm text-gray-700">{row.bitcoin}</td>
                     <td className="px-4 py-4 text-sm text-gray-700">{row.ethereum}</td>
                     <td className="px-4 py-4 text-sm text-gray-700">{row.solana}</td>
+                    <td className="px-4 py-4 text-sm text-gray-700">{row.cardano}</td>
+                    <td className="px-4 py-4 text-sm text-gray-700">{row.avalanche}</td>
                     <td className="px-4 py-4 text-sm font-semibold text-indigo-600">{row.repar}</td>
                   </tr>
                 ))}
@@ -220,7 +292,7 @@ export default function CryptoComparison() {
             What happens when each blockchain experiences a significant economic event equivalent to a $50 trillion settlement?
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {$50TComparison.map((item, index) => (
               <div key={index} className={`p-6 rounded-lg ${item.coin === '$REPAR' ? 'bg-gradient-to-br from-purple-50 to-indigo-100 border-2 border-indigo-300' : 'bg-gray-50'}`}>
                 <h3 className={`text-xl font-bold mb-4 ${item.coin === '$REPAR' ? 'text-indigo-900' : 'text-gray-900'}`}>
