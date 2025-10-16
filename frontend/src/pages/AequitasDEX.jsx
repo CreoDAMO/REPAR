@@ -1,20 +1,145 @@
-import { ArrowLeftRight, Globe, Wallet, TrendingUp, Lock, Zap, CheckCircle } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeftRight, Globe, Wallet, TrendingUp, Lock, Zap, CheckCircle, BarChart3 } from 'lucide-react';
+import SwapInterface from '../components/SwapInterface';
+import LiquidityInterface from '../components/LiquidityInterface';
 
 export default function AequitasDEX() {
+  const [activeTab, setActiveTab] = useState('swap');
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-pink-900 text-white py-12">
         <div className="container mx-auto px-4">
           <div className="flex items-center space-x-3 mb-4">
             <ArrowLeftRight className="h-12 w-12 text-green-400" />
-            <h1 className="text-4xl font-bold">Aequitas Financial Infrastructure</h1>
+            <h1 className="text-4xl font-bold">Aequitas DEX</h1>
           </div>
-          <p className="text-xl text-purple-200">Complete Trading, Transfer & Payment System for $REPAR</p>
-          <p className="text-sm text-amber-300 mt-2">From on-chain trading to real-world payments</p>
+          <p className="text-xl text-purple-200">Decentralized Exchange for $REPAR Trading</p>
+          <p className="text-sm text-amber-300 mt-2">Sovereign, censorship-resistant, community-owned</p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        
+        {/* Tab Navigation */}
+        <div className="flex gap-4 mb-8 border-b border-gray-200">
+          <button
+            onClick={() => setActiveTab('swap')}
+            className={`px-6 py-3 font-semibold transition border-b-2 ${
+              activeTab === 'swap'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <ArrowLeftRight className="inline h-5 w-5 mr-2" />
+            Swap
+          </button>
+          <button
+            onClick={() => setActiveTab('liquidity')}
+            className={`px-6 py-3 font-semibold transition border-b-2 ${
+              activeTab === 'liquidity'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <TrendingUp className="inline h-5 w-5 mr-2" />
+            Liquidity
+          </button>
+          <button
+            onClick={() => setActiveTab('pools')}
+            className={`px-6 py-3 font-semibold transition border-b-2 ${
+              activeTab === 'pools'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <BarChart3 className="inline h-5 w-5 mr-2" />
+            Pools
+          </button>
+          <button
+            onClick={() => setActiveTab('about')}
+            className={`px-6 py-3 font-semibold transition border-b-2 ${
+              activeTab === 'about'
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            About
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        {activeTab === 'swap' && (
+          <div className="max-w-2xl mx-auto">
+            <SwapInterface />
+          </div>
+        )}
+
+        {activeTab === 'liquidity' && (
+          <div className="max-w-2xl mx-auto">
+            <LiquidityInterface />
+          </div>
+        )}
+
+        {activeTab === 'pools' && (
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-6">
+              <h3 className="text-2xl font-bold mb-6">Liquidity Pools</h3>
+              
+              <div className="space-y-4">
+                {[
+                  { pair: 'REPAR/USDC', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%' },
+                  { pair: 'REPAR/ATOM', tvl: '$12.8M', volume24h: '$580K', apr: '8.3%', myShare: '0%' },
+                  { pair: 'REPAR/ETH', tvl: '$8.5M', volume24h: '$420K', apr: '15.2%', myShare: '0%' },
+                ].map((pool, index) => (
+                  <div key={index} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center -space-x-2">
+                          <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center border-2 border-white text-xl">
+                            ⚖️
+                          </div>
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white text-xl">
+                            {pool.pair.includes('USDC') ? '💵' : pool.pair.includes('ATOM') ? '⚛️' : '⟠'}
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-lg">{pool.pair}</h4>
+                          <p className="text-sm text-gray-500">0.3% fee</p>
+                        </div>
+                      </div>
+                      <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition">
+                        Add Liquidity
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-500 mb-1">TVL</p>
+                        <p className="font-semibold">{pool.tvl}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 mb-1">24h Volume</p>
+                        <p className="font-semibold">{pool.volume24h}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 mb-1">APR</p>
+                        <p className="font-semibold text-green-600">{pool.apr}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500 mb-1">My Share</p>
+                        <p className="font-semibold">{pool.myShare}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'about' && (
+          <div>
         
         {/* Overview */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
@@ -533,6 +658,8 @@ export default function AequitasDEX() {
             </p>
           </div>
         </div>
+        </div>
+        )}
 
       </div>
     </div>

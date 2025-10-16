@@ -9,6 +9,8 @@ export default function CryptoComparison() {
       solana: "Perpetual Inflation (1.5% floor)",
       cardano: "Disinflationary → Fixed Cap (45B)",
       avalanche: "Inflationary + Fee Burn (720M cap)",
+      polkadot: "Adaptive Inflation (10% target)",
+      cosmos: "Adaptive Inflation (7-20%)",
       repar: "Event-Driven Deflationary (→ 0)"
     },
     {
@@ -18,6 +20,8 @@ export default function CryptoComparison() {
       solana: "~580M SOL",
       cardano: "~35B ADA (~78% mined)",
       avalanche: "~450M AVAX (~63% issued)",
+      polkadot: "~1.4B DOT",
+      cosmos: "~390M ATOM",
       repar: "131T REPAR (100% initial)"
     },
     {
@@ -27,6 +31,8 @@ export default function CryptoComparison() {
       solana: "~4.8% annually (decreasing)",
       cardano: "~3-4% annually (from reserves)",
       avalanche: "~5-7% annually (staking rewards)",
+      polkadot: "~10% annually (adaptive)",
+      cosmos: "7-20% annually (adaptive)",
       repar: "ZERO (no new issuance ever)"
     },
     {
@@ -36,6 +42,8 @@ export default function CryptoComparison() {
       solana: "50% of fees (since 2024)",
       cardano: "None (treasury model)",
       avalanche: "100% of all transaction fees",
+      polkadot: "80% of fees + slashing",
+      cosmos: "None (fees to community pool)",
       repar: "Justice Burn (1:1 debt payment)"
     },
     {
@@ -45,6 +53,8 @@ export default function CryptoComparison() {
       solana: "+4.5% net (inflation > burn)",
       cardano: "+3-4% (treasury funded)",
       avalanche: "+2-5% (depends on usage)",
+      polkadot: "+8-10% net (inflation > burn)",
+      cosmos: "+7-20% (must stake to avoid dilution)",
       repar: "Variable reduction (e.g., -38% at $50T paid)"
     },
     {
@@ -54,6 +64,8 @@ export default function CryptoComparison() {
       solana: "Network speed + DeFi utility",
       cardano: "Research-driven development",
       avalanche: "Subnet customization + speed",
+      polkadot: "Parachain auctions + interoperability",
+      cosmos: "IBC interoperability + app-chains",
       repar: "Justice enforcement + mathematical certainty"
     },
     {
@@ -63,6 +75,8 @@ export default function CryptoComparison() {
       solana: "Stake to offset dilution (active)",
       cardano: "Stake for rewards (active)",
       avalanche: "Stake for 7-11% APY (active)",
+      polkadot: "Stake to avoid 10% dilution (active)",
+      cosmos: "Must stake to preserve value (active)",
       repar: "Enforce justice for value (active)"
     },
     {
@@ -72,6 +86,8 @@ export default function CryptoComparison() {
       solana: "Perpetual 1.5% inflation",
       cardano: "45B cap (long-term equilibrium)",
       avalanche: "720M cap (deflationary if usage high)",
+      polkadot: "Perpetual 10% inflation",
+      cosmos: "Perpetual 7-20% inflation",
       repar: "ZERO supply (full justice)"
     }
   ];
@@ -111,6 +127,20 @@ export default function CryptoComparison() {
       priceImpact: "-2% to +3% (usage-dependent)",
       timeline: "Variable",
       certainty: "Usage-dependent"
+    },
+    {
+      coin: "Polkadot",
+      supplyChange: "+8-10% (inflation > burn)",
+      priceImpact: "-8% (dilution for non-stakers)",
+      timeline: "Variable",
+      certainty: "Guaranteed negative"
+    },
+    {
+      coin: "Cosmos",
+      supplyChange: "+7-20% (adaptive inflation)",
+      priceImpact: "-7% to -20% (dilution)",
+      timeline: "Variable",
+      certainty: "Guaranteed negative (must stake)"
     },
     {
       coin: "$REPAR",
@@ -211,8 +241,41 @@ export default function CryptoComparison() {
     },
     {
       rank: 6,
-      name: "Solana Inflation",
+      name: "Polkadot Adaptive Inflation",
       rating: "3/10",
+      pros: [
+        "10% target inflation for security",
+        "80% of fees burned",
+        "Slashing penalties"
+      ],
+      cons: [
+        "High inflation rate (8-10% net)",
+        "Must stake to avoid dilution",
+        "Burns don't offset inflation",
+        "No scarcity endgame"
+      ],
+      color: "from-pink-500 to-rose-600"
+    },
+    {
+      rank: 7,
+      name: "Cosmos Adaptive Inflation",
+      rating: "2/10",
+      pros: [
+        "Adaptive to staking participation",
+        "IBC interoperability benefits"
+      ],
+      cons: [
+        "Very high inflation (7-20%)",
+        "Must stake to preserve value",
+        "No burn mechanism at all",
+        "Perpetual dilution of holders"
+      ],
+      color: "from-cyan-500 to-blue-600"
+    },
+    {
+      rank: 8,
+      name: "Solana Inflation",
+      rating: "2/10",
       pros: [
         "Decreasing inflation rate",
         "Fee burn partially offsets (since 2024)"
@@ -253,7 +316,8 @@ export default function CryptoComparison() {
         
         {/* Main Comparison Table */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
-          <h2 className="text-3xl font-bold mb-6">The Six-Way Crypto Economic Showdown</h2>
+          <h2 className="text-3xl font-bold mb-6">The Complete Crypto Economic Showdown</h2>
+          <p className="text-gray-600 mb-6">Comparing $REPAR against Bitcoin, Ethereum, Solana, Cardano, Avalanche, Polkadot, and Cosmos</p>
           
           <div className="overflow-x-auto">
             <table className="min-w-full">
@@ -265,6 +329,8 @@ export default function CryptoComparison() {
                   <th className="px-4 py-3 text-left text-sm font-semibold text-purple-600">Solana</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-teal-600">Cardano</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-red-600">Avalanche</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-pink-600">Polkadot</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-cyan-600">Cosmos</th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-indigo-600">$REPAR</th>
                 </tr>
               </thead>
@@ -277,6 +343,8 @@ export default function CryptoComparison() {
                     <td className="px-4 py-4 text-sm text-gray-700">{row.solana}</td>
                     <td className="px-4 py-4 text-sm text-gray-700">{row.cardano}</td>
                     <td className="px-4 py-4 text-sm text-gray-700">{row.avalanche}</td>
+                    <td className="px-4 py-4 text-sm text-gray-700">{row.polkadot}</td>
+                    <td className="px-4 py-4 text-sm text-gray-700">{row.cosmos}</td>
                     <td className="px-4 py-4 text-sm font-semibold text-indigo-600">{row.repar}</td>
                   </tr>
                 ))}
