@@ -11,9 +11,9 @@ const MultiSigWallet = () => {
     usdValue: '$24.01B',
     signaturesRequired: '2 of 3',
     keyholders: [
-      { id: 1, name: 'Founder Operational Key', address: 'repar1founder...', status: 'active', device: 'Keplr + Ledger' },
-      { id: 2, name: 'Foundation CFO/COO', address: 'repar1cfo...', status: 'active', device: 'Keplr' },
-      { id: 3, name: 'Automated Policy Contract', address: 'repar1policy...', status: 'active', device: 'Smart Contract' },
+      { id: 1, name: 'Founder Operational Key', address: 'repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun', status: 'active', device: 'Keplr + Ledger' },
+      { id: 2, name: 'Foundation CFO/COO', address: 'repar1x7xkhr5r384sllcs76umpjmd5v4h83pta5qlg4', status: 'active', device: 'Keplr' },
+      { id: 3, name: 'Automated Policy Contract', address: 'repar1w5fm0s27hgkrmx8a4z0xwyle5lugcr7app5xl3', status: 'active', device: 'Smart Contract' },
     ],
     pendingTransactions: [
       { id: 1, type: 'Security Detail Payment', amount: '5,000 $REPAR', signatures: 1, required: 2, timestamp: '2024-01-15' },
