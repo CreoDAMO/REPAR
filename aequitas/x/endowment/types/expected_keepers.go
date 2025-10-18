@@ -1,0 +1,19 @@
+package types
+
+import (
+	"context"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+)
+
+type BankKeeper interface {
+	SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+	SendCoinsFromModuleToModule(ctx context.Context, senderModule, recipientModule string, amt sdk.Coins) error
+	GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin
+}
+
+type AccountKeeper interface {
+	GetModuleAddress(moduleName string) sdk.AccAddress
+	GetModuleAccount(ctx context.Context, moduleName string) sdk.ModuleAccountI
+}

@@ -1,0 +1,24 @@
+syntax = "proto3";
+package aequitas.endowment.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/endowment/v1/endowment.proto";
+
+option go_package = "aequitas/x/endowment/types";
+
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  repeated Endowment endowments = 2 [(gogoproto.nullable) = false];
+  repeated InvestmentStrategy strategies = 3 [(gogoproto.nullable) = false];
+  repeated SocialProgram social_programs = 4 [(gogoproto.nullable) = false];
+  uint64 next_endowment_id = 5;
+}
+
+message Params {
+  uint64 lp_lock_period_years = 1;
+  uint64 social_lock_period_years = 2;
+  uint64 target_apy_bps = 3;
+  uint64 lp_allocation_bps = 4;
+  uint64 social_allocation_bps = 5;
+  uint64 community_allocation_bps = 6;
+}

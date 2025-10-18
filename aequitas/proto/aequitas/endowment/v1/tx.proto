@@ -1,0 +1,85 @@
+syntax = "proto3";
+package aequitas.endowment.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "aequitas/endowment/v1/genesis.proto";
+
+option go_package = "aequitas/x/endowment/types";
+
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  rpc DepositToEndowment(MsgDepositToEndowment) returns (MsgDepositToEndowmentResponse);
+  rpc DistributeYield(MsgDistributeYield) returns (MsgDistributeYieldResponse);
+  rpc RebalanceStrategies(MsgRebalanceStrategies) returns (MsgRebalanceStrategiesResponse);
+  rpc UpdateStrategyAllocation(MsgUpdateStrategyAllocation) returns (MsgUpdateStrategyAllocationResponse);
+  rpc DistributeToSocialPrograms(MsgDistributeToSocialPrograms) returns (MsgDistributeToSocialProgramsResponse);
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+message MsgDepositToEndowment {
+  option (cosmos.msg.v1.signer) = "authority";
+  
+  string authority = 1;
+  string endowment_id = 2;
+  cosmos.base.v1beta1.Coin amount = 3 [(gogoproto.nullable) = false];
+}
+
+message MsgDepositToEndowmentResponse {}
+
+message MsgDistributeYield {
+  option (cosmos.msg.v1.signer) = "authority";
+  
+  string authority = 1;
+  string endowment_id = 2;
+}
+
+message MsgDistributeYieldResponse {
+  string amount_distributed = 1 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgRebalanceStrategies {
+  option (cosmos.msg.v1.signer) = "authority";
+  
+  string authority = 1;
+  string endowment_id = 2;
+}
+
+message MsgRebalanceStrategiesResponse {}
+
+message MsgUpdateStrategyAllocation {
+  option (cosmos.msg.v1.signer) = "authority";
+  
+  string authority = 1;
+  string strategy_id = 2;
+  uint64 new_allocation_percentage = 3;
+}
+
+message MsgUpdateStrategyAllocationResponse {}
+
+message MsgDistributeToSocialPrograms {
+  option (cosmos.msg.v1.signer) = "authority";
+  
+  string authority = 1;
+}
+
+message MsgDistributeToSocialProgramsResponse {
+  string total_distributed = 1 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  
+  string authority = 1;
+  Params params = 2 [(gogoproto.nullable) = false];
+}
+
+message MsgUpdateParamsResponse {}

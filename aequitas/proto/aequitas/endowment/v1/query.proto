@@ -1,0 +1,106 @@
+syntax = "proto3";
+package aequitas.endowment.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "aequitas/endowment/v1/endowment.proto";
+import "aequitas/endowment/v1/genesis.proto";
+
+option go_package = "aequitas/x/endowment/types";
+
+service Query {
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/aequitas/endowment/v1/params";
+  }
+
+  rpc Endowment(QueryEndowmentRequest) returns (QueryEndowmentResponse) {
+    option (google.api.http).get = "/aequitas/endowment/v1/endowment/{id}";
+  }
+
+  rpc AllEndowments(QueryAllEndowmentsRequest) returns (QueryAllEndowmentsResponse) {
+    option (google.api.http).get = "/aequitas/endowment/v1/endowments";
+  }
+
+  rpc InvestmentStrategies(QueryInvestmentStrategiesRequest) returns (QueryInvestmentStrategiesResponse) {
+    option (google.api.http).get = "/aequitas/endowment/v1/strategies";
+  }
+
+  rpc SocialPrograms(QuerySocialProgramsRequest) returns (QuerySocialProgramsResponse) {
+    option (google.api.http).get = "/aequitas/endowment/v1/social_programs";
+  }
+
+  rpc EndowmentStats(QueryEndowmentStatsRequest) returns (QueryEndowmentStatsResponse) {
+    option (google.api.http).get = "/aequitas/endowment/v1/stats/{endowment_id}";
+  }
+
+  rpc YieldProjection(QueryYieldProjectionRequest) returns (QueryYieldProjectionResponse) {
+    option (google.api.http).get = "/aequitas/endowment/v1/yield_projection/{endowment_id}";
+  }
+}
+
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryEndowmentRequest {
+  string id = 1;
+}
+
+message QueryEndowmentResponse {
+  Endowment endowment = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryAllEndowmentsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllEndowmentsResponse {
+  repeated Endowment endowments = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryInvestmentStrategiesRequest {
+  string endowment_id = 1;
+}
+
+message QueryInvestmentStrategiesResponse {
+  repeated InvestmentStrategy strategies = 1 [(gogoproto.nullable) = false];
+}
+
+message QuerySocialProgramsRequest {}
+
+message QuerySocialProgramsResponse {
+  repeated SocialProgram programs = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryEndowmentStatsRequest {
+  string endowment_id = 1;
+}
+
+message QueryEndowmentStatsResponse {
+  EndowmentStats stats = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryYieldProjectionRequest {
+  string endowment_id = 1;
+  uint64 years_ahead = 2;
+}
+
+message QueryYieldProjectionResponse {
+  repeated YearProjection projections = 1 [(gogoproto.nullable) = false];
+}
+
+message YearProjection {
+  uint64 year = 1;
+  string principal = 2 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string annual_yield = 3 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}

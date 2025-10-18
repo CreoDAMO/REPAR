@@ -1,0 +1,80 @@
+syntax = "proto3";
+package aequitas.endowment.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "aequitas/x/endowment/types";
+
+message Endowment {
+  string id = 1;
+  string endowment_type = 2;
+  string principal = 3 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string yield_accumulated = 4 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 last_yield_calc = 5;
+  int64 unlock_time = 6;
+  string beneficiary = 7;
+  bool is_locked = 8;
+  uint64 target_apy_bps = 9;
+}
+
+message InvestmentStrategy {
+  string id = 1;
+  string name = 2;
+  uint64 allocation_percentage = 3;
+  string invested_amount = 4 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string current_value = 5 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 apy_bps = 6;
+  string strategy_type = 7;
+}
+
+message SocialProgram {
+  string id = 1;
+  string name = 2;
+  uint64 allocation_percentage = 3;
+  string annual_budget = 4 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string total_distributed = 5 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  repeated string beneficiaries = 6;
+}
+
+message YieldDistribution {
+  string endowment_id = 1;
+  string amount = 2 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string recipient = 3;
+  int64 timestamp = 4;
+  string distribution_type = 5;
+}
+
+message EndowmentStats {
+  string total_principal = 1 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string total_yield_distributed = 2 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 beneficiary_count = 3;
+  uint64 average_apy_bps = 4;
+}

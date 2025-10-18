@@ -15,6 +15,7 @@ import REPAREconomics from './pages/REPAREconomics';
 import CryptoComparison from './pages/CryptoComparison';
 import AequitasDEX from './pages/AequitasDEX';
 import AequitasSuperPay from './pages/AequitasSuperPay';
+import EndowmentDashboard from './pages/EndowmentDashboard';
 import Onramper from './components/Onramper';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/crypto-comparison" element={<CryptoComparison />} />
           <Route path="/dex" element={<AequitasDEX />} />
           <Route path="/superpay" element={<AequitasSuperPay />} />
+          <Route path="/endowment" element={<EndowmentDashboard />} />
           <Route path="/onramp" element={<Onramper />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
