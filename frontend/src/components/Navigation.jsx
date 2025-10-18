@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock } from 'lucide-react';
 import WalletConnect from './WalletConnect';
+import reparLogo from '../../docs/REPAR_Coin_Logo.png';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center space-x-2">
-            <Scale className="h-8 w-8 text-amber-400" />
+            <img src={reparLogo} alt="$REPAR Coin" className="h-8 w-8" />
             <div className="hidden sm:block">
               <h1 className="text-xl font-bold">AEQUITAS PROTOCOL</h1>
               <p className="text-xs text-amber-300">$REPAR - Enforcing Justice</p>
