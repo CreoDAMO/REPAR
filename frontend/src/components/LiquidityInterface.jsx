@@ -9,9 +9,21 @@ export default function LiquidityInterface() {
   const [tokenBAmount, setTokenBAmount] = useState('');
   const [removePercent, setRemovePercent] = useState(25);
 
-  // State for selected tokens (added for the logo logic)
+  // State for selected tokens
   const [tokenA, setTokenA] = useState('REPAR');
   const [tokenB, setTokenB] = useState('USDC');
+
+  // Crypto logos mapping
+  const cryptoLogos = {
+    'REPAR': reparLogo,
+    'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+    'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+    'SOL': 'https://cryptologos.cc/logos/solana-sol-logo.png',
+    'POL': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+    'AVAX': 'https://cryptologos.cc/logos/avalanche-avax-logo.png',
+    'ATOM': 'https://cryptologos.cc/logos/cosmos-atom-logo.png',
+    'USDC': 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png'
+  };
 
   const mockPoolShare = 2.5; // User owns 2.5% of the pool
   const mockLPTokens = 125000;
@@ -73,7 +85,7 @@ export default function LiquidityInterface() {
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
                   <div className="flex items-center gap-2">
-                    {tokenA === 'REPAR' && <img src={reparLogo} alt="REPAR" className="w-6 h-6 rounded-full" />}
+                    <img src={cryptoLogos[tokenA]} alt={tokenA} className="w-6 h-6 rounded-full object-cover" />
                     <select
                       value={tokenA}
                       onChange={(e) => setTokenA(e.target.value)}
@@ -111,7 +123,7 @@ export default function LiquidityInterface() {
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
                   <div className="flex items-center gap-2">
-                    {tokenB === 'REPAR' && <img src={reparLogo} alt="REPAR" className="w-6 h-6 rounded-full" />}
+                    <img src={cryptoLogos[tokenB]} alt={tokenB} className="w-6 h-6 rounded-full object-cover" />
                     <select
                       value={tokenB}
                       onChange={(e) => setTokenB(e.target.value)}

@@ -11,16 +11,28 @@ export default function SwapInterface() {
   const [showSettings, setShowSettings] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
 
+  // Crypto logos mapping
+  const cryptoLogos = {
+    'REPAR': reparLogo,
+    'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
+    'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
+    'SOL': 'https://cryptologos.cc/logos/solana-sol-logo.png',
+    'POL': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
+    'AVAX': 'https://cryptologos.cc/logos/avalanche-avax-logo.png',
+    'ATOM': 'https://cryptologos.cc/logos/cosmos-atom-logo.png',
+    'USDC': 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png'
+  };
+
   // Native coins (not tokens) - each is the native asset of its own blockchain
   const tokens = [
-    { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', icon: '⚖️', isNative: true },
-    { symbol: 'BTC', name: 'Bitcoin', balance: '0.5', icon: '₿', isNative: true },
-    { symbol: 'ETH', name: 'Ethereum', balance: '5.2', icon: '⟠', isNative: true },
-    { symbol: 'SOL', name: 'Solana', balance: '125', icon: '◎', isNative: true },
-    { symbol: 'POL', name: 'Polygon', balance: '8,500', icon: '🔷', isNative: true },
-    { symbol: 'AVAX', name: 'Avalanche', balance: '45', icon: '🔺', isNative: true },
-    { symbol: 'ATOM', name: 'Cosmos', balance: '500', icon: '⚛️', isNative: true },
-    { symbol: 'USDC', name: 'USD Coin', balance: '50,000', icon: '💵', isNative: false },
+    { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', isNative: true },
+    { symbol: 'BTC', name: 'Bitcoin', balance: '0.5', isNative: true },
+    { symbol: 'ETH', name: 'Ethereum', balance: '5.2', isNative: true },
+    { symbol: 'SOL', name: 'Solana', balance: '125', isNative: true },
+    { symbol: 'POL', name: 'Polygon', balance: '8,500', isNative: true },
+    { symbol: 'AVAX', name: 'Avalanche', balance: '45', isNative: true },
+    { symbol: 'ATOM', name: 'Cosmos', balance: '500', isNative: true },
+    { symbol: 'USDC', name: 'USD Coin', balance: '50,000', isNative: false },
   ];
 
   const [prices, setPrices] = useState({
@@ -159,17 +171,20 @@ export default function SwapInterface() {
               placeholder="0.0"
               className="bg-transparent text-gray-900 text-xl sm:text-2xl font-semibold outline-none w-full"
             />
-            <select
-              value={fromToken}
-              onChange={(e) => setFromToken(e.target.value)}
-              className="bg-white border border-gray-300 rounded-lg px-2 sm:px-3 py-2 font-medium ml-2 sm:ml-4 text-sm sm:text-base"
-            >
-              {tokens.map((token) => (
-                <option key={token.symbol} value={token.symbol}>
-                  {token.icon} {token.symbol}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-2 sm:px-3 py-2 ml-2 sm:ml-4">
+              <img src={cryptoLogos[fromToken]} alt={fromToken} className="w-6 h-6 rounded-full object-cover" />
+              <select
+                value={fromToken}
+                onChange={(e) => setFromToken(e.target.value)}
+                className="bg-transparent font-medium outline-none cursor-pointer text-sm sm:text-base"
+              >
+                {tokens.map((token) => (
+                  <option key={token.symbol} value={token.symbol}>
+                    {token.symbol}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
@@ -201,17 +216,20 @@ export default function SwapInterface() {
               placeholder="0.0"
               className="bg-transparent text-gray-900 text-2xl font-semibold outline-none w-full"
             />
-            <select
-              value={toToken}
-              onChange={(e) => setToToken(e.target.value)}
-              className="bg-white border border-gray-300 rounded-lg px-3 py-2 font-medium ml-4"
-            >
-              {tokens.map((token) => (
-                <option key={token.symbol} value={token.symbol}>
-                  {token.icon} {token.symbol}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
+              <img src={cryptoLogos[toToken]} alt={toToken} className="w-6 h-6 rounded-full object-cover" />
+              <select
+                value={toToken}
+                onChange={(e) => setToToken(e.target.value)}
+                className="bg-transparent font-medium outline-none cursor-pointer"
+              >
+                {tokens.map((token) => (
+                  <option key={token.symbol} value={token.symbol}>
+                    {token.symbol}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
       </div>
