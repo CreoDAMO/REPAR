@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { DollarSign, CreditCard, Building2, CheckCircle, AlertCircle } from 'lucide-react';
+import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
 export default function CoinbasePayGateway() {
   const [amount, setAmount] = useState('');
@@ -23,9 +24,7 @@ export default function CoinbasePayGateway() {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-blue-600 rounded-full p-3">
-          <DollarSign className="h-6 w-6 text-white" />
-        </div>
+        <img src={reparLogo} alt="REPAR Coin" className="w-12 h-12 rounded-full" />
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Coinbase Pay</h2>
           <p className="text-sm text-gray-500">Buy $REPAR with USD</p>
