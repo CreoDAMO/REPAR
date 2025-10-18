@@ -1,3 +1,5 @@
+import { isValidElement, createElement } from 'react';
+
 export default function StatCard({ title, value, subtitle, icon, trend, trendLabel, color = 'indigo' }) {
   const colorClasses = {
     indigo: 'from-indigo-500 to-purple-600',
@@ -9,9 +11,18 @@ export default function StatCard({ title, value, subtitle, icon, trend, trendLab
     blue: 'from-blue-500 to-cyan-600',
   };
 
-  // Handle both component and JSX element icons
-  const IconComponent = typeof icon === 'function' ? icon : null;
-  const iconElement = typeof icon === 'object' ? icon : null;
+  // Render icon: handle both React elements (JSX) and component types
+  const renderIcon = () => {
+    if (!icon) return null;
+    
+    // If it's already a React element (JSX), render it directly
+    if (isValidElement(icon)) {
+      return icon;
+    }
+    
+    // Otherwise, treat it as a component and instantiate it
+    return createElement(icon, { className: 'h-8 w-8' });
+  };
 
   return (
     <div className={`bg-gradient-to-br ${colorClasses[color] || colorClasses.indigo} rounded-lg shadow-lg p-6 text-white`}>
@@ -27,9 +38,9 @@ export default function StatCard({ title, value, subtitle, icon, trend, trendLab
             </div>
           )}
         </div>
-        {(IconComponent || iconElement) && (
+        {icon && (
           <div className="bg-white/20 rounded-lg p-3">
-            {IconComponent ? <IconComponent className="h-8 w-8" /> : iconElement}
+            {renderIcon()}
           </div>
         )}
       </div>
