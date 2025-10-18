@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock } from 'lucide-react';
 import WalletConnect from './WalletConnect';
-import reparLogo from '../../docs/REPAR_Coin_Logo.png';
+import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
