@@ -1796,7 +1796,7 @@ In 2025, with Coinbase's "Base App" evolution (stablecoin-powered "everything ap
 </grok:render><grok:render card_id="34b286" card_type="citation_card" type="render_inline_citation">
 <argument name="citation_id">9</argument>
 </grok:render>
-  - **On/Off-Ramps**: Onramp/Offramp for fiat-to-crypto (e.g., USD to $REPAR token) and swaps via CDP Swap API—fund claims without crypto friction.<grok:render card_id="c9e293" card_type="citation_card" type="render_inline_citation">
+  - **On/Off-Ramps**: Onramp/Offramp for fiat-to-crypto (e.g., USD to $REPAR native coin) and swaps via CDP Swap API—fund claims without crypto friction.<grok:render card_id="c9e293" card_type="citation_card" type="render_inline_citation">
 <argument name="citation_id">3</argument>
 </grok:render><grok:render card_id="950687" card_type="citation_card" type="render_inline_citation">
 <argument name="citation_id">6</argument>
@@ -1841,7 +1841,7 @@ In 2025, with Coinbase's "Base App" evolution (stablecoin-powered "everything ap
 ```
 
 - **Frontend**: React with Cosmos Kit for chain queries + Coinbase Wallet SDK for connects/ramp buttons.
-- **Flows**: User connects wallet → Onramps USD to $REPAR → Stakes for claim governance on Cosmos → Award executes via CosmWasm → Offramps to fiat.
+- **Flows**: User connects wallet → Onramps USD to $REPAR native coin → Stakes for claim governance on Cosmos → Award executes via CosmWasm → Offramps to fiat.
 
 ---
 
@@ -2046,54 +2046,54 @@ The ledger module will track total liability, individual defendant claims, and h
 package keeper
 
 import (
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/reparations-chain/reparations/x/ledger/types"
+        "github.com/cosmos/cosmos-sdk/store/prefix"
+        sdk "github.com/cosmos/cosmos-sdk/types"
+        "github.com/reparations-chain/reparations/x/ledger/types"
 )
 
 // SetTotalOwed sets the total owed amount in the store
 func (k Keeper) SetTotalOwed(ctx sdk.Context, amount sdk.Uint) {
-	store := ctx.KVStore(k.storeKey)
-	store.Set(types.TotalOwedKey, k.cdc.MustMarshal(&amount))
+        store := ctx.KVStore(k.storeKey)
+        store.Set(types.TotalOwedKey, k.cdc.MustMarshal(&amount))
 }
 
 // GetTotalOwed gets the total owed amount from the store
 func (k Keeper) GetTotalOwed(ctx sdk.Context) (sdk.Uint, bool) {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(types.TotalOwedKey)
-	if bz == nil {
-		return sdk.ZeroUint(), false
-	}
-	var amount sdk.Uint
-	k.cdc.MustUnmarshal(bz, &amount)
-	return amount, true
+        store := ctx.KVStore(k.storeKey)
+        bz := store.Get(types.TotalOwedKey)
+        if bz == nil {
+                return sdk.ZeroUint(), false
+        }
+        var amount sdk.Uint
+        k.cdc.MustUnmarshal(bz, &amount)
+        return amount, true
 }
 
 // SetDefendantClaim sets a defendant's claim details
 func (k Keeper) SetDefendantClaim(ctx sdk.Context, defendant string, claim types.DefendantClaim) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.DefendantClaimsKey)
-	bz := k.cdc.MustMarshal(&claim)
-	store.Set([]byte(defendant), bz)
+        store := prefix.NewStore(ctx.KVStore(k.storeKey), types.DefendantClaimsKey)
+        bz := k.cdc.MustMarshal(&claim)
+        store.Set([]byte(defendant), bz)
 }
 
 // GetDefendantClaim gets a defendant's claim details
 func (k Keeper) GetDefendantClaim(ctx sdk.Context, defendant string) (types.DefendantClaim, bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.DefendantClaimsKey)
-	bz := store.Get([]byte(defendant))
-	if bz == nil {
-		return types.DefendantClaim{}, false
-	}
-	var claim types.DefendantClaim
-	k.cdc.MustUnmarshal(bz, &claim)
-	return claim, true
+        store := prefix.NewStore(ctx.KVStore(k.storeKey), types.DefendantClaimsKey)
+        bz := store.Get([]byte(defendant))
+        if bz == nil {
+                return types.DefendantClaim{}, false
+        }
+        var claim types.DefendantClaim
+        k.cdc.MustUnmarshal(bz, &claim)
+        return claim, true
 }
 
 // AddTransaction logs a new transaction (e.g., award, filing)
 func (k Keeper) AddTransaction(ctx sdk.Context, tx types.Transaction) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.TransactionsKey)
-	id := sdk.UintToString(sdk.NewUint(uint64(ctx.BlockHeight())))
-	bz := k.cdc.MustMarshal(&tx)
-	store.Set([]byte(id), bz)
+        store := prefix.NewStore(ctx.KVStore(k.storeKey), types.TransactionsKey)
+        id := sdk.UintToString(sdk.NewUint(uint64(ctx.BlockHeight())))
+        bz := k.cdc.MustMarshal(&tx)
+        store.Set([]byte(id), bz)
 }
 ```
 
@@ -2102,40 +2102,40 @@ func (k Keeper) AddTransaction(ctx sdk.Context, tx types.Transaction) {
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+        sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
-	// ModuleName defines the module name
-	ModuleName = "ledger"
+        // ModuleName defines the module name
+        ModuleName = "ledger"
 
-	// StoreKey defines the primary module store key
-	StoreKey = ModuleName
+        // StoreKey defines the primary module store key
+        StoreKey = ModuleName
 
-	// TotalOwedKey is the key for the total owed amount
-	TotalOwedKey = []byte{0x00}
+        // TotalOwedKey is the key for the total owed amount
+        TotalOwedKey = []byte{0x00}
 
-	// DefendantClaimsKey is the prefix for defendant claims
-	DefendantClaimsKey = []byte{0x01}
+        // DefendantClaimsKey is the prefix for defendant claims
+        DefendantClaimsKey = []byte{0x01}
 
-	// TransactionsKey is the prefix for transaction logs
-	TransactionsKey = []byte{0x02}
+        // TransactionsKey is the prefix for transaction logs
+        TransactionsKey = []byte{0x02}
 )
 
 type DefendantClaim struct {
-	Defendant     string         `json:"defendant"`
-	TotalLiability sdk.Uint      `json:"total_liability"`
-	DirectLiability sdk.Uint     `json:"direct_liability"`
-	IndirectLiability sdk.Uint   `json:"indirect_liability"`
-	Status        string         `json:"status"` // e.g., "Filed", "Awarded"
+        Defendant     string         `json:"defendant"`
+        TotalLiability sdk.Uint      `json:"total_liability"`
+        DirectLiability sdk.Uint     `json:"direct_liability"`
+        IndirectLiability sdk.Uint   `json:"indirect_liability"`
+        Status        string         `json:"status"` // e.g., "Filed", "Awarded"
 }
 
 type Transaction struct {
-	ID        string         `json:"id"`
-	Type      string         `json:"type"`      // e.g., "Filing", "Award"
-	Amount    sdk.Uint       `json:"amount"`
-	Defendant string         `json:"defendant"`
-	Timestamp int64          `json:"timestamp"`
+        ID        string         `json:"id"`
+        Type      string         `json:"type"`      // e.g., "Filing", "Award"
+        Amount    sdk.Uint       `json:"amount"`
+        Defendant string         `json:"defendant"`
+        Timestamp int64          `json:"timestamp"`
 }
 ```
 
@@ -2144,42 +2144,42 @@ type Transaction struct {
 package keeper
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/reparations-chain/reparations/x/ledger/types"
+        sdk "github.com/cosmos/cosmos-sdk/types"
+        "github.com/reparations-chain/reparations/x/ledger/types"
 )
 
 func (k msgServer) FileClaim(goCtx context.Context, msg *types.MsgFileClaim) (*types.MsgFileClaimResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
+        ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Validate input
-	if msg.Defendant == "" || msg.Amount.IsNil() || msg.Amount.IsZero() {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid claim details")
-	}
+        // Validate input
+        if msg.Defendant == "" || msg.Amount.IsNil() || msg.Amount.IsZero() {
+                return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "invalid claim details")
+        }
 
-	// Update or create defendant claim
-	claim, found := k.GetDefendantClaim(ctx, msg.Defendant)
-	if !found {
-		claim = types.DefendantClaim{Defendant: msg.Defendant}
-	}
-	claim.TotalLiability = claim.TotalLiability.Add(msg.Amount)
-	claim.Status = "Filed"
-	k.SetDefendantClaim(ctx, msg.Defendant, claim)
+        // Update or create defendant claim
+        claim, found := k.GetDefendantClaim(ctx, msg.Defendant)
+        if !found {
+                claim = types.DefendantClaim{Defendant: msg.Defendant}
+        }
+        claim.TotalLiability = claim.TotalLiability.Add(msg.Amount)
+        claim.Status = "Filed"
+        k.SetDefendantClaim(ctx, msg.Defendant, claim)
 
-	// Update total owed
-	totalOwed, _ := k.GetTotalOwed(ctx)
-	k.SetTotalOwed(ctx, totalOwed.Add(msg.Amount))
+        // Update total owed
+        totalOwed, _ := k.GetTotalOwed(ctx)
+        k.SetTotalOwed(ctx, totalOwed.Add(msg.Amount))
 
-	// Log transaction
-	tx := types.Transaction{
-		ID:        sdk.UintToString(sdk.NewUint(uint64(ctx.BlockHeight()))),
-		Type:      "Filing",
-		Amount:    msg.Amount,
-		Defendant: msg.Defendant,
-		Timestamp: ctx.BlockTime().Unix(),
-	}
-	k.AddTransaction(ctx, tx)
+        // Log transaction
+        tx := types.Transaction{
+                ID:        sdk.UintToString(sdk.NewUint(uint64(ctx.BlockHeight()))),
+                Type:      "Filing",
+                Amount:    msg.Amount,
+                Defendant: msg.Defendant,
+                Timestamp: ctx.BlockTime().Unix(),
+        }
+        k.AddTransaction(ctx, tx)
 
-	return &types.MsgFileClaimResponse{}, nil
+        return &types.MsgFileClaimResponse{}, nil
 }
 ```
 
@@ -2300,87 +2300,87 @@ The staking module allows users to stake $REPAR tokens for governance or claim p
 package keeper
 
 import (
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/reparations-chain/reparations/x/staking/types"
+        "github.com/cosmos/cosmos-sdk/store/prefix"
+        sdk "github.com/cosmos/cosmos-sdk/types"
+        "github.com/reparations-chain/reparations/x/staking/types"
 )
 
 const (
-	StakingDenom = "urepar"
+        StakingDenom = "urepar"
 )
 
 func (k Keeper) StakeTokens(ctx sdk.Context, addr sdk.AccAddress, amount sdk.Coin) error {
-	if amount.Denom != StakingDenom {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid denom: %s", amount.Denom)
-	}
+        if amount.Denom != StakingDenom {
+                return sdkerrors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid denom: %s", amount.Denom)
+        }
 
-	// Lock tokens (move to staking pool)
-	err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, sdk.NewCoins(amount))
-	if err != nil {
-		return err
-	}
+        // Lock tokens (move to staking pool)
+        err := k.bankKeeper.SendCoinsFromAccountToModule(ctx, addr, types.ModuleName, sdk.NewCoins(amount))
+        if err != nil {
+                return err
+        }
 
-	// Update staker record
-	staker, found := k.GetStaker(ctx, addr.String())
-	if !found {
-		staker = types.Staker{Address: addr.String()}
-	}
-	staker.StakedAmount = staker.StakedAmount.Add(amount.Amount)
-	k.SetStaker(ctx, staker)
+        // Update staker record
+        staker, found := k.GetStaker(ctx, addr.String())
+        if !found {
+                staker = types.Staker{Address: addr.String()}
+        }
+        staker.StakedAmount = staker.StakedAmount.Add(amount.Amount)
+        k.SetStaker(ctx, staker)
 
-	// Emit event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(types.EventTypeStake,
-			sdk.NewAttribute(types.AttributeKeyStaker, addr.String()),
-			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
-		),
-	)
+        // Emit event
+        ctx.EventManager().EmitEvent(
+                sdk.NewEvent(types.EventTypeStake,
+                        sdk.NewAttribute(types.AttributeKeyStaker, addr.String()),
+                        sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+                ),
+        )
 
-	return nil
+        return nil
 }
 
 func (k Keeper) UnstakeTokens(ctx sdk.Context, addr sdk.AccAddress, amount sdk.Coin) error {
-	staker, found := k.GetStaker(ctx, addr.String())
-	if !found || staker.StakedAmount.LT(amount.Amount) {
-		return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, "insufficient staked amount")
-	}
+        staker, found := k.GetStaker(ctx, addr.String())
+        if !found || staker.StakedAmount.LT(amount.Amount) {
+                return sdkerrors.Wrap(sdkerrors.ErrInsufficientFunds, "insufficient staked amount")
+        }
 
-	// Unlock tokens
-	err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, addr, sdk.NewCoins(amount))
-	if err != nil {
-		return err
-	}
+        // Unlock tokens
+        err := k.bankKeeper.SendCoinsFromModuleToAccount(ctx, types.ModuleName, addr, sdk.NewCoins(amount))
+        if err != nil {
+                return err
+        }
 
-	// Update staker
-	staker.StakedAmount = staker.StakedAmount.Sub(amount.Amount)
-	k.SetStaker(ctx, staker)
+        // Update staker
+        staker.StakedAmount = staker.StakedAmount.Sub(amount.Amount)
+        k.SetStaker(ctx, staker)
 
-	// Emit event
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(types.EventTypeUnstake,
-			sdk.NewAttribute(types.AttributeKeyStaker, addr.String()),
-			sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
-		),
-	)
+        // Emit event
+        ctx.EventManager().EmitEvent(
+                sdk.NewEvent(types.EventTypeUnstake,
+                        sdk.NewAttribute(types.AttributeKeyStaker, addr.String()),
+                        sdk.NewAttribute(types.AttributeKeyAmount, amount.String()),
+                ),
+        )
 
-	return nil
+        return nil
 }
 
 func (k Keeper) SetStaker(ctx sdk.Context, staker types.Staker) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.StakersKey)
-	bz := k.cdc.MustMarshal(&staker)
-	store.Set([]byte(staker.Address), bz)
+        store := prefix.NewStore(ctx.KVStore(k.storeKey), types.StakersKey)
+        bz := k.cdc.MustMarshal(&staker)
+        store.Set([]byte(staker.Address), bz)
 }
 
 func (k Keeper) GetStaker(ctx sdk.Context, addr string) (types.Staker, bool) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.StakersKey)
-	bz := store.Get([]byte(addr))
-	if bz == nil {
-		return types.Staker{}, false
-	}
-	var staker types.Staker
-	k.cdc.MustUnmarshal(bz, &staker)
-	return staker, true
+        store := prefix.NewStore(ctx.KVStore(k.storeKey), types.StakersKey)
+        bz := store.Get([]byte(addr))
+        if bz == nil {
+                return types.Staker{}, false
+        }
+        var staker types.Staker
+        k.cdc.MustUnmarshal(bz, &staker)
+        return staker, true
 }
 ```
 
@@ -2389,24 +2389,24 @@ func (k Keeper) GetStaker(ctx sdk.Context, addr string) (types.Staker, bool) {
 package types
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+        sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 const (
-	ModuleName = "staking"
+        ModuleName = "staking"
 
-	StakersKey = []byte{0x01}
+        StakersKey = []byte{0x01}
 
-	// Events
-	EventTypeStake     = "stake"
-	EventTypeUnstake   = "unstake"
-	AttributeKeyStaker = "staker"
-	AttributeKeyAmount = "amount"
+        // Events
+        EventTypeStake     = "stake"
+        EventTypeUnstake   = "unstake"
+        AttributeKeyStaker = "staker"
+        AttributeKeyAmount = "amount"
 )
 
 type Staker struct {
-	Address     string  `json:"address"`
-	StakedAmount sdk.Uint `json:"staked_amount"`
+        Address     string  `json:"address"`
+        StakedAmount sdk.Uint `json:"staked_amount"`
 }
 ```
 
@@ -2415,37 +2415,37 @@ type Staker struct {
 package keeper
 
 func (k msgServer) StakeTokens(goCtx context.Context, msg *types.MsgStakeTokens) (*types.MsgStakeTokensResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
+        ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// Convert amount to coin
-	amount, err := sdk.ParseCoinNormalized(fmt.Sprintf("%d%s", msg.Amount, StakingDenom))
-	if err != nil {
-		return nil, err
-	}
+        // Convert amount to coin
+        amount, err := sdk.ParseCoinNormalized(fmt.Sprintf("%d%s", msg.Amount, StakingDenom))
+        if err != nil {
+                return nil, err
+        }
 
-	// Execute staking
-	err = k.StakeTokens(ctx, msg.Creator, amount)
-	if err != nil {
-		return nil, err
-	}
+        // Execute staking
+        err = k.StakeTokens(ctx, msg.Creator, amount)
+        if err != nil {
+                return nil, err
+        }
 
-	return &types.MsgStakeTokensResponse{}, nil
+        return &types.MsgStakeTokensResponse{}, nil
 }
 
 func (k msgServer) UnstakeTokens(goCtx context.Context, msg *types.MsgUnstakeTokens) (*types.MsgUnstakeTokensResponse, error) {
-	ctx := sdk.UnwrapSDKContext(goCtx)
+        ctx := sdk.UnwrapSDKContext(goCtx)
 
-	amount, err := sdk.ParseCoinNormalized(fmt.Sprintf("%d%s", msg.Amount, StakingDenom))
-	if err != nil {
-		return nil, err
-	}
+        amount, err := sdk.ParseCoinNormalized(fmt.Sprintf("%d%s", msg.Amount, StakingDenom))
+        if err != nil {
+                return nil, err
+        }
 
-	err = k.UnstakeTokens(ctx, msg.Creator, amount)
-	if err != nil {
-		return nil, err
-	}
+        err = k.UnstakeTokens(ctx, msg.Creator, amount)
+        if err != nil {
+                return nil, err
+        }
 
-	return &types.MsgUnstakeTokensResponse{}, nil
+        return &types.MsgUnstakeTokensResponse{}, nil
 }
 ```
 

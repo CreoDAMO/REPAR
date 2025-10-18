@@ -218,7 +218,7 @@ export default function EndowmentDashboard() {
             <div>
               <h4 className="font-bold text-lg mb-2 text-yellow-400">⚠️ Traditional LP Rewards</h4>
               <p className="text-sm text-gray-300">Mint new tokens → Pay LPs → Inflation → Death spiral</p>
-              <p className="text-xs text-gray-400 mt-2">Result: Unsustainable, token value crashes</p>
+              <p className="text-xs text-gray-400 mt-2">Result: Unsustainable, coin value crashes</p>
             </div>
             <div>
               <h4 className="font-bold text-lg mb-2 text-green-400">✅ Aequitas Perpetual Endowment</h4>

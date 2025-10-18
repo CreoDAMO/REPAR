@@ -264,7 +264,7 @@ export default function AequitasDEX() {
                   <li>• Show APY calculator based on trading volume</li>
                   <li>• Explain impermanent loss risks and mitigation</li>
                   <li>• Enable single-sided liquidity deposits</li>
-                  <li>• Implement LP token minting and staking</li>
+                  <li>• Implement LP share minting and staking</li>
                 </ul>
               </div>
 
