@@ -3,6 +3,7 @@ import { TrendingUp, Lock, Unlock, DollarSign, PieChart, BarChart3 } from 'lucid
 import StatCard from '../components/StatCard';
 import InvestmentStrategies from '../components/InvestmentStrategies';
 import SocialProgramsPanel from '../components/SocialProgramsPanel';
+import EndowmentSimulator from '../components/endowment/EndowmentSimulator';
 
 export default function EndowmentDashboard() {
   const [lpEndowment, setLpEndowment] = useState({
@@ -202,6 +203,8 @@ export default function EndowmentDashboard() {
             </div>
           </div>
         </div>
+
+        <EndowmentSimulator />
 
         <InvestmentStrategies endowmentId="lp_endowment" principal={lpEndowment.principal} />
 

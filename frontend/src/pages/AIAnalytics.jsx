@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Brain, TrendingUp, Target, Zap, Database, LineChart, Upload, Play, Download, Settings, Eye, Globe } from 'lucide-react';
+import OracleQuery from '../components/ai/OracleQuery';
+import WarRoomVisualization from '../components/ai/WarRoomVisualization';
 
 export default function AIAnalytics() {
   const [activeModel, setActiveModel] = useState('predictive');
@@ -388,6 +390,16 @@ export default function AIAnalytics() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Interactive Oracle Query */}
+        <div className="mb-8">
+          <OracleQuery />
+        </div>
+
+        {/* Interactive War Room */}
+        <div className="mb-8">
+          <WarRoomVisualization />
         </div>
 
         {/* Technical Stack */}
