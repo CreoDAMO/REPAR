@@ -155,7 +155,7 @@ export default function SwapInterface() {
               value={fromAmount}
               onChange={(e) => handleFromAmountChange(e.target.value)}
               placeholder="0.0"
-              className="bg-transparent text-xl sm:text-2xl font-semibold outline-none w-full"
+              className="bg-transparent text-gray-900 text-xl sm:text-2xl font-semibold outline-none w-full"
             />
             <select
               value={fromToken}
@@ -197,7 +197,7 @@ export default function SwapInterface() {
               value={toAmount}
               readOnly
               placeholder="0.0"
-              className="bg-transparent text-2xl font-semibold outline-none w-full"
+              className="bg-transparent text-gray-900 text-2xl font-semibold outline-none w-full"
             />
             <select
               value={toToken}
