@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowDownUp, Settings, AlertCircle, Loader } from 'lucide-react';
+import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
 export default function SwapInterface() {
   const [fromToken, setFromToken] = useState('REPAR');
@@ -41,7 +42,7 @@ export default function SwapInterface() {
           'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,matic-network,avalanche-2,cosmos&vs_currencies=usd'
         );
         const data = await response.json();
-        
+
         setPrices(prev => ({
           ...prev,
           'BTC': data.bitcoin?.usd || prev.BTC,
