@@ -99,13 +99,14 @@ func ExtractArchive(outDir string, gzipStream io.Reader) error {
 
                 // Prevent Zip Slip vulnerability by validating the path
                 targetPath := filepath.Join(outDir, header.Name)
-                // Clean and evaluate the path to prevent directory traversal
+                // Prevent Zip Slip: ensure targetPath is within outDir
                 cleanedPath := filepath.Clean(targetPath)
-                cleanedOutDir := filepath.Clean(outDir) + string(os.PathSeparator)
-                if !strings.HasPrefix(cleanedPath+string(os.PathSeparator), cleanedOutDir) &&
-                        cleanedPath != filepath.Clean(outDir) {
+                relPath, err := filepath.Rel(outDir, cleanedPath)
+                if err != nil || relPath == ".." || strings.HasPrefix(relPath, ".."+string(os.PathSeparator)) {
                         return errors.Errorf("invalid file path: %s", header.Name)
                 }
+                // Only use the safe, cleaned path from here on
+                targetPath = cleanedPath
 
                 switch header.Typeflag {
                 case tar.TypeDir:
