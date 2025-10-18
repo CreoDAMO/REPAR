@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins } from 'lucide-react';
+import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 
 export default function Navigation() {
@@ -17,6 +17,7 @@ export default function Navigation() {
     { to: '/grc', icon: CheckCircle, label: 'GRC' },
     { to: '/dao', icon: Vote, label: 'DAO' },
     { to: '/ai-analytics', icon: Brain, label: 'AI' },
+    { to: '/endowment', icon: Lock, label: 'Endowment' },
     { to: '/alliances', icon: CheckCircle, label: 'Alliances' },
     { to: '/economics', icon: DollarSign, label: 'Economics' },
     { to: '/crypto-comparison', icon: BarChart3, label: 'Comparison' },
