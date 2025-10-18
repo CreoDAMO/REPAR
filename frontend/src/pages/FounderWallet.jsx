@@ -81,91 +81,124 @@ const FounderWallet = () => {
   const layers = [
     {
       id: 1,
-      name: FOUNDER_WALLETS.layer1.name,
-      subtitle: FOUNDER_WALLETS.layer1.description,
-      address: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? connectedWallet.address : FOUNDER_WALLETS.layer1.address,
-      purpose: 'Mass adoption, fiat on-ramp, EVM bridge',
-      status: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? 'active' : FOUNDER_WALLETS.layer1.status,
-      statusText: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? 'Connected' : 'Active',
+      name: 'Layer 1 - Coinbase',
+      subtitle: 'Onboarding, Onramper, SuperPay, Lightning ⚡ Network',
+      address: connectedWallet?.wallet === 'coinbase' ? connectedWallet.address : FOUNDER_WALLETS.layer1.address,
+      purpose: 'Onboarding & Payments',
+      status: 'active',
+      statusText: connectedWallet?.wallet === 'coinbase' ? 'Connected' : 'Active',
       icon: Wallet,
       color: 'blue',
-      allocation: '0%',
+      allocation: 'Operational funds',
       features: [
         '✓ Coinbase Wallet SDK integrated (@coinbase/wallet-sdk)',
-        '✓ MetaMask SDK integrated (window.ethereum)',
-        '✓ Multi-wallet support in navigation bar',
-        '✓ Address: ' + (connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? connectedWallet.address : walletAddresses.layer1).slice(0, 10) + '...' + (connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? connectedWallet.address : walletAddresses.layer1).slice(-8),
-        connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? '✓ Connected & Active' : '⏳ Awaiting connection'
+        '✓ Fiat on-ramp via Coinbase Onramper',
+        '✓ SuperPay for P2P payments',
+        '✓ Lightning ⚡ Network integration',
+        '✓ Mobile-first convenience',
+        '✓ Address: ' + (connectedWallet?.wallet === 'coinbase' ? connectedWallet.address : walletAddresses.layer1).slice(0, 10) + '...' + (connectedWallet?.wallet === 'coinbase' ? connectedWallet.address : walletAddresses.layer1).slice(-8),
+        connectedWallet?.wallet === 'coinbase' ? '✓ Connected & Active' : '⏳ Connect for onboarding features'
       ],
-      implementation: connectedWallet?.wallet === 'coinbase' || connectedWallet?.wallet === 'metamask' ? 'Connected! Use quick actions below for DEX, DAO, etc.' : 'Connect Coinbase or MetaMask wallet using button above',
+      implementation: connectedWallet?.wallet === 'coinbase' ? 'Connected! Access onramper, SuperPay, and Lightning features' : 'Connect Coinbase wallet to access fiat on-ramp and payment features',
     },
     {
       id: 2,
-      name: FOUNDER_WALLETS.layer2.name,
-      subtitle: FOUNDER_WALLETS.layer2.description,
-      address: connectedWallet?.wallet === 'keplr' ? connectedWallet.address : FOUNDER_WALLETS.layer2.address,
-      purpose: 'Full Cosmos ecosystem access',
-      status: connectedWallet?.wallet === 'keplr' ? 'active' : FOUNDER_WALLETS.layer2.status,
-      statusText: connectedWallet?.wallet === 'keplr' ? 'Connected' : 'Active',
+      name: 'Layer 2 - MetaMask',
+      subtitle: 'EVM Compatible',
+      address: connectedWallet?.wallet === 'metamask' ? connectedWallet.address : FOUNDER_WALLETS.layer2.address,
+      purpose: 'EVM Compatibility (Chain ID: 1619)',
+      status: 'active',
+      statusText: connectedWallet?.wallet === 'metamask' ? 'Connected' : 'Active',
       icon: Key,
-      color: 'green',
-      allocation: '< 0.1%',
+      color: 'orange',
+      allocation: 'Active positions',
       features: [
-        '✓ Staking & governance participation',
-        '✓ IBC transfers to Osmosis, Akash, etc.',
-        '✓ Native Cosmos SDK module interaction',
-        '✓ Address: ' + (connectedWallet?.wallet === 'keplr' ? connectedWallet.address : walletAddresses.layer2).slice(0, 10) + '...' + (connectedWallet?.wallet === 'keplr' ? connectedWallet.address : walletAddresses.layer2).slice(-8),
-        connectedWallet?.wallet === 'keplr' ? '✓ Connected with Ledger support' : '⏳ Awaiting Keplr connection'
+        '✓ MetaMask SDK integrated (window.ethereum)',
+        '✓ EVM chain interactions (Chain ID: 1619)',
+        '✓ DeFi protocol access',
+        '✓ NFT management',
+        '✓ dApp connectivity',
+        '✓ Address: ' + (connectedWallet?.wallet === 'metamask' ? connectedWallet.address : walletAddresses.layer1).slice(0, 10) + '...' + (connectedWallet?.wallet === 'metamask' ? connectedWallet.address : walletAddresses.layer1).slice(-8),
+        connectedWallet?.wallet === 'metamask' ? '✓ Connected & Active' : '⏳ Connect for EVM features'
       ],
-      implementation: connectedWallet?.wallet === 'keplr' ? 'Connected! Full Cosmos features available' : 'Connect Keplr wallet using button above',
+      implementation: connectedWallet?.wallet === 'metamask' ? 'Connected! Full EVM compatibility active' : 'Connect MetaMask wallet for EVM chain access',
     },
     {
       id: 3,
-      name: FOUNDER_WALLETS.layer3.name,
-      subtitle: FOUNDER_WALLETS.layer3.description,
+      name: 'Layer 3 - Multi-Sig',
+      subtitle: 'Enhanced Security',
       address: FOUNDER_WALLETS.layer3.address,
-      purpose: 'Secure operational funds',
-      status: FOUNDER_WALLETS.layer3.status,
-      statusText: 'Pending Setup',
+      purpose: 'Secure Transactions & Transfer on EVM chains',
+      status: 'active',
+      statusText: 'Active',
       icon: Shield,
       color: 'amber',
-      allocation: '1% (1.31T $REPAR)',
+      allocation: 'High-value assets',
       features: [
-        'Holds immediate 1% founder allocation',
-        'Requires 2-of-3 signatures for transactions',
-        'Key 1: Founder\'s operational key (Keplr + Ledger)',
-        'Key 2: Foundation CFO/COO key',
-        'Key 3: Automated policy smart contract'
+        '✓ Multiple signature requirements (2-of-3, 3-of-5)',
+        '✓ Time-locked transactions for added security',
+        '✓ Emergency recovery mechanisms',
+        '✓ EVM chain security (Gnosis Safe compatible)',
+        '✓ Institutional-grade protection',
+        '✓ Smart contract-based approvals'
       ],
-      implementation: 'Deploy CosmWasm multisig contract → Fund with 1% allocation → Configure keyholders',
+      implementation: 'Active multi-signature wallet protecting high-value EVM operations',
     },
     {
       id: 4,
-      name: FOUNDER_WALLETS.layer4.name,
-      subtitle: FOUNDER_WALLETS.layer4.description,
-      address: FOUNDER_WALLETS.layer4.address,
-      purpose: 'Air-gapped security for vested funds',
-      status: FOUNDER_WALLETS.layer4.status,
-      statusText: 'Coming Soon',
+      name: 'Layer 4 - Keplr',
+      subtitle: 'Cosmos Native Wallet',
+      address: connectedWallet?.wallet === 'keplr' ? connectedWallet.address : 'repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun',
+      purpose: 'Primary Custody - Native Cosmos SDK',
+      status: 'active',
+      statusText: connectedWallet?.wallet === 'keplr' ? 'Connected' : 'Active',
       icon: Vault,
-      color: 'purple',
-      allocation: '9% (11.79T $REPAR)',
+      color: 'green',
+      allocation: 'Currently: 13.1T REPAR (100% of founder allocation)',
+      allocationFuture: 'Future: 1.31T REPAR (10% when Layer 5 acquired)',
       features: [
-        'Receives 9% vested allocation (5yr, 1yr cliff)',
-        'Hardware wallet (Ledger/Trezor) never connected online',
-        '3-of-5 Shamir\'s Secret Sharing for seed phrase',
-        'Metal plates in geographically distributed vaults',
-        'Hardware device is disposable - seed is eternal'
+        '✓ Currently holds entire 10% founder allocation (13.1T REPAR)',
+        '✓ Will hold 1% (1.31T REPAR) when Hardware Wallet acquired',
+        '✓ Native Cosmos SDK wallet functionality',
+        '✓ IBC transfers to other Cosmos chains',
+        '✓ Staking & governance participation',
+        '✓ Direct blockchain interaction',
+        '✓ 24-word seed phrase backup (secured offline)',
+        connectedWallet?.wallet === 'keplr' ? '✓ Connected with full access' : '⏳ Connect for full Cosmos features'
       ],
-      implementation: 'Generate seed → Split with SSS → Distribute 5 shards → Program vesting contract → Hardware stays offline',
+      implementation: connectedWallet?.wallet === 'keplr' ? 'Connected! Primary custody wallet active' : 'Connect Keplr wallet for native Cosmos functionality',
+    },
+    {
+      id: 5,
+      name: 'Layer 5 - Hardware Wallet',
+      subtitle: 'Founder Vault',
+      address: 'Coming Soon',
+      purpose: 'Cold Storage Vault (Maximum Security)',
+      status: 'planned',
+      statusText: 'Coming Soon',
+      icon: Lock,
+      color: 'purple',
+      allocation: 'Future: 11.79T REPAR (90% of founder allocation)',
+      features: [
+        '⏳ Offline private key storage (air-gapped)',
+        '⏳ Physical transaction signing required',
+        '⏳ PIN + recovery phrase protection',
+        '⏳ Ledger Nano X / Trezor Model T compatible',
+        '⏳ Will receive 11.79T REPAR (90%) from Layer 4',
+        '⏳ Maximum security cold storage',
+        '⏳ Device is disposable - seed is eternal'
+      ],
+      implementation: 'Pending hardware wallet acquisition → Transfer 90% from Keplr → Secure offline storage',
     },
   ];
 
   const totalAllocation = {
-    immediate: '1.31T $REPAR',
-    vested: '11.79T $REPAR',
+    current: '13.1T $REPAR in Layer 4 (Keplr)',
+    futureLayer4: '1.31T $REPAR (10%)',
+    futureLayer5: '11.79T $REPAR (90%)',
     total: '13.1T $REPAR',
-    usdValue: '$240.1B @ $18.33'
+    usdValue: '$240.1B @ $18.33',
+    percentOfSupply: '10% of 131T total supply'
   };
 
   return (
@@ -234,23 +267,48 @@ const FounderWallet = () => {
         <div className="flex items-start gap-4">
           <Lock className="h-8 w-8 text-amber-600 flex-shrink-0" />
           <div className="flex-1">
-            <h2 className="text-xl font-bold text-gray-900 mb-3">Total Founder Allocation: 10%</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">Immediate (Layer 3)</p>
-                <p className="text-lg font-bold text-amber-700">{totalAllocation.immediate}</p>
+            <h2 className="text-xl font-bold text-gray-900 mb-3">Total Founder Allocation: {totalAllocation.percentOfSupply}</h2>
+            
+            {/* Current State */}
+            <div className="bg-white rounded-lg p-4 mb-4">
+              <h3 className="text-md font-semibold text-green-700 mb-2">✅ Current Allocation</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600">Layer 4 (Keplr)</p>
+                  <p className="text-lg font-bold text-green-700">{totalAllocation.current}</p>
+                  <p className="text-xs text-gray-500">100% of founder share</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Total $REPAR</p>
+                  <p className="text-lg font-bold text-gray-900">{totalAllocation.total}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">USD Value</p>
+                  <p className="text-lg font-bold text-green-700">{totalAllocation.usdValue}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Vested (Layer 4)</p>
-                <p className="text-lg font-bold text-purple-700">{totalAllocation.vested}</p>
+            </div>
+
+            {/* Future State */}
+            <div className="bg-white rounded-lg p-4">
+              <h3 className="text-md font-semibold text-purple-700 mb-2">🔮 Future Distribution (When Layer 5 Active)</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600">Layer 4 (Keplr - Hot)</p>
+                  <p className="text-lg font-bold text-amber-700">{totalAllocation.futureLayer4}</p>
+                  <p className="text-xs text-gray-500">10% - Active operations</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Layer 5 (Hardware - Cold)</p>
+                  <p className="text-lg font-bold text-purple-700">{totalAllocation.futureLayer5}</p>
+                  <p className="text-xs text-gray-500">90% - Maximum security</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Total $REPAR</p>
-                <p className="text-lg font-bold text-gray-900">{totalAllocation.total}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">USD Value</p>
-                <p className="text-lg font-bold text-green-700">{totalAllocation.usdValue}</p>
+              <div className="mt-3 bg-purple-50 border border-purple-200 rounded p-2">
+                <p className="text-xs text-purple-700 flex items-center gap-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  Transition will occur upon hardware wallet acquisition (Ledger Nano X / Trezor Model T)
+                </p>
               </div>
             </div>
           </div>
@@ -352,21 +410,52 @@ const FounderWallet = () => {
               })}
             </div>
 
+            {/* Security Hierarchy Visualization */}
+            <div className="bg-slate-900 text-white rounded-lg p-6 mb-8">
+              <h3 className="text-xl font-bold mb-4">🔐 Security Hierarchy</h3>
+              <div className="space-y-3">
+                {[
+                  { level: 'Maximum', layer: 'Layer 5: Hardware Wallet', security: 'COLD', color: 'purple', holdings: '11.79T (90%)', status: 'Coming Soon' },
+                  { level: 'Institutional', layer: 'Layer 3: Multi-Sig', security: 'WARM', color: 'amber', holdings: 'Variable', status: 'Active' },
+                  { level: 'High', layer: 'Layer 4: Keplr', security: 'HOT', color: 'green', holdings: '13.1T (100%) → 1.31T (10%)', status: 'Active' },
+                  { level: 'Standard', layer: 'Layer 2: MetaMask', security: 'HOT', color: 'orange', holdings: 'Operational', status: 'Active' },
+                  { level: 'Convenience', layer: 'Layer 1: Coinbase', security: 'CUSTODIAL', color: 'blue', holdings: 'Minimal', status: 'Active' }
+                ].map((item, idx) => (
+                  <div key={idx} className={`bg-${item.color}-900/30 border border-${item.color}-500/50 rounded-lg p-4 flex items-center justify-between hover:bg-${item.color}-900/50 transition-all cursor-pointer`}>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className={`px-2 py-1 text-xs font-bold rounded bg-${item.color}-600`}>{item.level}</span>
+                        <span className="font-semibold">{item.layer}</span>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-slate-300">
+                        <span>Storage: {item.security}</span>
+                        <span>Holdings: {item.holdings}</span>
+                        <span className={item.status === 'Active' ? 'text-green-400' : 'text-amber-400'}>
+                          {item.status === 'Active' ? '✅' : '⏳'} {item.status}
+                        </span>
+                      </div>
+                    </div>
+                    <Shield className={`h-6 w-6 text-${item.color}-400`} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* Security Best Practices */}
             <div className="bg-slate-900 text-white rounded-lg p-6">
               <h3 className="text-xl font-bold mb-4">Security Principles</h3>
               <div className="grid md:grid-cols-3 gap-4 text-sm">
                 <div>
                   <h4 className="font-semibold text-amber-400 mb-2">Defense in Depth</h4>
-                  <p className="text-slate-300">Each layer serves a specific purpose. Public access → Native power → Operational security → Deep vault.</p>
+                  <p className="text-slate-300">5 layers of progressive security. Convenience → Operations → Institutional → Native → Maximum.</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-amber-400 mb-2">Zero Single Points of Failure</h4>
-                  <p className="text-slate-300">Multisig for operations. Shamir's Secret for deep storage. No single key controls the kingdom.</p>
+                  <p className="text-slate-300">Multi-sig for EVM operations. 24-word seed backup. Future hardware vault for 90% of holdings.</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-amber-400 mb-2">Mathematical Sovereignty</h4>
-                  <p className="text-slate-300">"The hardware is disposable; the decentralized seed is eternal." - Your seed phrase outlives any device.</p>
+                  <p className="text-slate-300">"The hardware is disposable; the seed is eternal." - Your cryptographic keys outlive any device.</p>
                 </div>
               </div>
             </div>
