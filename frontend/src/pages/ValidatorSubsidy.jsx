@@ -8,6 +8,9 @@ export default function ValidatorSubsidy() {
   const [payments, setPayments] = useState([]);
   const [schedule, setSchedule] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [budget, setBudget] = useState(6456); // $6,456 USDC/month
+  const [emergency, setEmergency] = useState(2152); // $2,152 emergency reserve
+  const [infrastructure, setInfrastructure] = useState(4304); // $4,304 base infrastructure
 
   useEffect(() => {
     fetchSubsidyData();
@@ -127,17 +130,17 @@ export default function ValidatorSubsidy() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Monthly Budget"
-            value={`${formatREPAR(subsidyPool.monthlyBudget)} REPAR`}
+            value={`${budget.toLocaleString()} USDC`}
             subtitle="Allocated per month"
             icon={<DollarSign className="h-8 w-8 text-green-600" />}
             color="green"
           />
           <StatCard
-            title="Emergency Reserve"
-            value={`${formatREPAR(subsidyPool.emergencyReserve)} REPAR`}
-            subtitle="For unforeseen expenses"
-            icon={<Shield className="h-8 w-8 text-blue-600" />}
-            color="blue"
+            title="Payment Source"
+            value="DEX Treasury"
+            subtitle="Funded by trading fees (USDC)"
+            icon={<Shield className="h-8 w-8 text-orange-600" />}
+            color="orange"
           />
           <StatCard
             title="Active Validators"
@@ -164,8 +167,8 @@ export default function ValidatorSubsidy() {
 
           <div className="space-y-4">
             <p className="text-gray-700">
-              The Validator Subsidy Protocol ensures the Aequitas Zone blockchain remains secure and operational 
-              from day one by automatically funding validator infrastructure costs. This creates a self-sustaining 
+              The Validator Subsidy Protocol ensures the Aequitas Zone blockchain remains secure and operational
+              from day one by automatically funding validator infrastructure costs. This creates a self-sustaining
               network that doesn't rely on external funding or validators operating at a loss.
             </p>
 
@@ -173,10 +176,13 @@ export default function ValidatorSubsidy() {
               <div className="bg-green-50 p-6 rounded-lg border-2 border-green-200">
                 <div className="flex items-center space-x-2 mb-3">
                   <DollarSign className="h-6 w-6 text-green-600" />
-                  <h3 className="text-lg font-bold text-green-900">Monthly Coverage</h3>
+                  <h3 className="text-lg font-bold text-green-900">Monthly Infrastructure</h3>
                 </div>
                 <p className="text-sm text-green-800">
-                  Covers server costs (~$80/month DigitalOcean Droplet = ~4.36 REPAR at $18.33/REPAR)
+                  Covers server costs (~$80/month DigitalOcean Droplet)
+                </p>
+                <p className="text-sm text-green-800 mt-2">
+                  Total: ${infrastructure.toLocaleString()}
                 </p>
               </div>
 
@@ -186,7 +192,10 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold text-blue-900">Emergency Buffer</h3>
                 </div>
                 <p className="text-sm text-blue-800">
-                  50% buffer for unforeseen expenses (~$40/month = ~2.18 REPAR)
+                  For unforeseen expenses (~$40/month)
+                </p>
+                <p className="text-sm text-blue-800 mt-2">
+                  Total: ${emergency.toLocaleString()}
                 </p>
               </div>
 
@@ -196,7 +205,7 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold text-purple-900">Total Allocation</h3>
                 </div>
                 <p className="text-sm text-purple-800">
-                  ~6.54 REPAR per validator per month ($120 equivalent)
+                  ~${budget.toLocaleString()} per validator per month
                 </p>
               </div>
             </div>
@@ -206,15 +215,15 @@ export default function ValidatorSubsidy() {
         {/* Registered Validators */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-3xl font-bold mb-6">Registered Validators</h2>
-          
+
           <div className="space-y-4">
             {validators.map((validator, index) => (
               <div key={index} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
                     <div className={`w-3 h-3 rounded-full ${
-                      validator.status === 'ACTIVE' ? 'bg-green-500' : 
-                      validator.status === 'INACTIVE' ? 'bg-gray-400' : 
+                      validator.status === 'ACTIVE' ? 'bg-green-500' :
+                      validator.status === 'INACTIVE' ? 'bg-gray-400' :
                       'bg-red-500'
                     }`}></div>
                     <div>
@@ -228,8 +237,8 @@ export default function ValidatorSubsidy() {
                   </div>
                   <div className="text-right">
                     <div className={`px-3 py-1 rounded-full text-sm font-semibold ${
-                      validator.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 
-                      validator.status === 'INACTIVE' ? 'bg-gray-100 text-gray-800' : 
+                      validator.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
+                      validator.status === 'INACTIVE' ? 'bg-gray-100 text-gray-800' :
                       'bg-red-100 text-red-800'
                     }`}>
                       {validator.status}
@@ -283,7 +292,7 @@ export default function ValidatorSubsidy() {
         {/* Payment History */}
         <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
           <h2 className="text-3xl font-bold mb-6">Payment History</h2>
-          
+
           <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead className="border-b-2 border-gray-200">
@@ -304,8 +313,8 @@ export default function ValidatorSubsidy() {
                     </td>
                     <td className="px-4 py-4 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                        payment.type === 'MONTHLY_SUBSIDY' ? 'bg-green-100 text-green-800' : 
-                        payment.type === 'EMERGENCY_EXPENSE' ? 'bg-red-100 text-red-800' : 
+                        payment.type === 'MONTHLY_SUBSIDY' ? 'bg-green-100 text-green-800' :
+                        payment.type === 'EMERGENCY_EXPENSE' ? 'bg-red-100 text-red-800' :
                         'bg-blue-100 text-blue-800'
                       }`}>
                         {payment.type.replace('_', ' ')}
@@ -329,7 +338,7 @@ export default function ValidatorSubsidy() {
               <Clock className="h-8 w-8 text-cyan-400" />
               <h2 className="text-3xl font-bold">Distribution Schedule</h2>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-white/10 rounded-lg p-6">
                 <div className="flex items-center space-x-2 mb-2">

@@ -1,12 +1,14 @@
 package types
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"cosmossdk.io/math"
 )
 
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
+		Params: DefaultParams(),
 		Pool: ValidatorSubsidyPool{
 			TotalAllocated:   math.ZeroInt(),
 			MonthlyBudget:    math.NewInt(1000000000000), // 1M REPAR
@@ -55,5 +57,39 @@ func (gs GenesisState) Validate() error {
 		return ErrInvalidAmount
 	}
 
+	// Validate parameters
+	if err := gs.Params.Validate(); err != nil {
+		return err
+	}
 	return nil
+}
+
+// DefaultParams returns default module parameters
+func DefaultParams() Params {
+	return Params{
+		SubsidyAmount:    6456000000, // $6,456 USDC in micro units
+		OperatorAddress:  "", // Set in genesis
+		DistributionInterval: 2592000, // 30 days in seconds
+	}
+}
+
+// Validate validates parameters
+func (p Params) Validate() error {
+	if p.SubsidyAmount <= 0 {
+		return ErrInvalidSubsidyAmount
+	}
+	if p.OperatorAddress != "" {
+		if _, err := sdk.AccAddressFromBech32(p.OperatorAddress); err != nil {
+			return ErrInvalidOperatorAddress
+		}
+	}
+	if p.DistributionInterval <= 0 {
+		return ErrInvalidDistributionInterval
+	}
+	return nil
+}
+
+// LastDistribution tracks the last subsidy payment time
+type LastDistribution struct {
+	Time sdk.Time
 }
