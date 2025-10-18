@@ -11,6 +11,7 @@ export default function SwapInterface() {
   const [showSettings, setShowSettings] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
 
+  // Native coins (not tokens) - each is the native asset of its own blockchain
   const tokens = [
     { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', icon: '⚖️', isNative: true },
     { symbol: 'BTC', name: 'Bitcoin', balance: '0.5', icon: '₿', isNative: true },
@@ -271,7 +272,7 @@ export default function SwapInterface() {
 
       {/* Disclaimer */}
       <p className="text-xs text-center text-gray-500 mt-4">
-        Connected to Aequitas DEX • Network: Aequitas Zone
+        Connected to Aequitas DEX • Network: Aequitas Zone • $REPAR is the native coin
       </p>
     </div>
   );
