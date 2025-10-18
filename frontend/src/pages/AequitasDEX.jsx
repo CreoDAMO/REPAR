@@ -3,6 +3,12 @@ import { ArrowLeftRight, Globe, Wallet, TrendingUp, Lock, Zap, CheckCircle, BarC
 import SwapInterface from '../components/SwapInterface';
 import LiquidityInterface from '../components/LiquidityInterface';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
+import btcLogo from '../assets/btc-logo.jpg';
+import ethLogo from '../assets/eth-logo.jpg';
+import solLogo from '../assets/sol-logo.jpg';
+import polLogo from '../assets/pol-logo.jpg';
+import avaxLogo from '../assets/avax-logo.jpg';
+import atomLogo from '../assets/atom-logo.jpg';
 
 export default function AequitasDEX() {
   const [activeTab, setActiveTab] = useState('swap');
@@ -94,20 +100,20 @@ export default function AequitasDEX() {
 
               <div className="space-y-4">
                 {[
-                  { pair: 'REPAR/BTC', tvl: '$125.5M', volume24h: '$8.5M', apr: '18.2%', myShare: '0%', icon2: '₿' },
-                  { pair: 'REPAR/ETH', tvl: '$89.3M', volume24h: '$5.2M', apr: '15.2%', myShare: '0%', icon2: '⟠' },
-                  { pair: 'REPAR/SOL', tvl: '$52.8M', volume24h: '$3.1M', apr: '14.5%', myShare: '0%', icon2: '◎' },
-                  { pair: 'REPAR/POL', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%', icon2: '🔷' },
-                  { pair: 'REPAR/AVAX', tvl: '$38.6M', volume24h: '$1.8M', apr: '13.8%', myShare: '0%', icon2: '🔺' },
-                  { pair: 'REPAR/ATOM', tvl: '$28.4M', volume24h: '$1.2M', apr: '11.3%', myShare: '0%', icon2: '⚛️' },
+                  { pair: 'REPAR/BTC', tvl: '$125.5M', volume24h: '$8.5M', apr: '18.2%', myShare: '0%', icon2: btcLogo },
+                  { pair: 'REPAR/ETH', tvl: '$89.3M', volume24h: '$5.2M', apr: '15.2%', myShare: '0%', icon2: ethLogo },
+                  { pair: 'REPAR/SOL', tvl: '$52.8M', volume24h: '$3.1M', apr: '14.5%', myShare: '0%', icon2: solLogo },
+                  { pair: 'REPAR/POL', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%', icon2: polLogo },
+                  { pair: 'REPAR/AVAX', tvl: '$38.6M', volume24h: '$1.8M', apr: '13.8%', myShare: '0%', icon2: avaxLogo },
+                  { pair: 'REPAR/ATOM', tvl: '$28.4M', volume24h: '$1.2M', apr: '11.3%', myShare: '0%', icon2: atomLogo },
                 ].map((pool, index) => (
                   <div key={index} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center -space-x-2">
                           <img src={reparLogo} alt="REPAR" className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white text-xl">
-                            {pool.icon2}
+                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white">
+                            <img src={pool.icon2} alt="Pool Logo" className="w-full h-full object-cover rounded-full" />
                           </div>
                         </div>
                         <div>

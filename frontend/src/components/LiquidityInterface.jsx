@@ -2,6 +2,13 @@
 import { useState } from 'react';
 import { Plus, Minus, Info } from 'lucide-react';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
+import btcLogo from '../assets/btc-logo.jpg';
+import ethLogo from '../assets/eth-logo.jpg';
+import solLogo from '../assets/sol-logo.jpg';
+import polLogo from '../assets/pol-logo.jpg';
+import avaxLogo from '../assets/avax-logo.jpg';
+import atomLogo from '../assets/atom-logo.jpg';
+import usdcLogo from '../assets/usdc-logo.jpg';
 
 export default function LiquidityInterface() {
   const [mode, setMode] = useState('add'); // 'add' or 'remove'
@@ -16,13 +23,13 @@ export default function LiquidityInterface() {
   // Crypto logos mapping
   const cryptoLogos = {
     'REPAR': reparLogo,
-    'BTC': 'https://cryptologos.cc/logos/bitcoin-btc-logo.png',
-    'ETH': 'https://cryptologos.cc/logos/ethereum-eth-logo.png',
-    'SOL': 'https://cryptologos.cc/logos/solana-sol-logo.png',
-    'POL': 'https://cryptologos.cc/logos/polygon-matic-logo.png',
-    'AVAX': 'https://cryptologos.cc/logos/avalanche-avax-logo.png',
-    'ATOM': 'https://cryptologos.cc/logos/cosmos-atom-logo.png',
-    'USDC': 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png'
+    'BTC': btcLogo,
+    'ETH': ethLogo,
+    'SOL': solLogo,
+    'POL': polLogo,
+    'AVAX': avaxLogo,
+    'ATOM': atomLogo,
+    'USDC': usdcLogo
   };
 
   const mockPoolShare = 2.5; // User owns 2.5% of the pool
