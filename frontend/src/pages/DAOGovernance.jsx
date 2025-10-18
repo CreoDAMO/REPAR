@@ -74,7 +74,7 @@ export default function DAOGovernance() {
             </div>
           </div>
           <p className="text-sm text-blue-300 mt-2">
-            Decentralized governance by descendants and $REPAR token holders
+            Decentralized governance by descendants and $REPAR native coin holders
           </p>
         </div>
       </div>
