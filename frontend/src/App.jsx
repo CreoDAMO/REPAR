@@ -16,6 +16,7 @@ import CryptoComparison from './pages/CryptoComparison';
 import AequitasDEX from './pages/AequitasDEX';
 import AequitasSuperPay from './pages/AequitasSuperPay';
 import EndowmentDashboard from './pages/EndowmentDashboard';
+import ValidatorSubsidy from './pages/ValidatorSubsidy';
 import Onramper from './components/Onramper';
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           <Route path="/dex" element={<AequitasDEX />} />
           <Route path="/superpay" element={<AequitasSuperPay />} />
           <Route path="/endowment" element={<EndowmentDashboard />} />
+          <Route path="/validator-subsidy" element={<ValidatorSubsidy />} />
           <Route path="/onramp" element={<Onramper />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">

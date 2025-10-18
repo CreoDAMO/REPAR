@@ -1,0 +1,99 @@
+syntax = "proto3";
+package aequitas.validatorsubsidy.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/validatorsubsidy/types";
+
+// ValidatorSubsidyPool manages the validator subsidy treasury
+message ValidatorSubsidyPool {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string total_allocated = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string monthly_budget = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string emergency_reserve = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 last_distribution = 4;
+}
+
+// ValidatorSubsidyRecord tracks individual validator subsidies
+message ValidatorSubsidyRecord {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string operator_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string monthly_allocation = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string total_received = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 registered_at = 5;
+  int64 last_payment = 6;
+  ValidatorStatus status = 7;
+  string infrastructure_cost_usd = 8; // Monthly USD cost (e.g., "80.00" for DigitalOcean)
+  string emergency_buffer_usd = 9; // Emergency buffer USD (e.g., "40.00")
+}
+
+enum ValidatorStatus {
+  VALIDATOR_STATUS_UNSPECIFIED = 0;
+  VALIDATOR_STATUS_ACTIVE = 1;
+  VALIDATOR_STATUS_INACTIVE = 2;
+  VALIDATOR_STATUS_SUSPENDED = 3;
+  VALIDATOR_STATUS_GRADUATED = 4; // Self-sufficient, no longer needs subsidy
+}
+
+// SubsidyPayment represents a subsidy distribution event
+message SubsidyPayment {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string validator_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 timestamp = 4;
+  PaymentType type = 5;
+  string tx_hash = 6;
+  string notes = 7;
+}
+
+enum PaymentType {
+  PAYMENT_TYPE_UNSPECIFIED = 0;
+  PAYMENT_TYPE_MONTHLY_SUBSIDY = 1;
+  PAYMENT_TYPE_EMERGENCY_EXPENSE = 2;
+  PAYMENT_TYPE_INFRASTRUCTURE_UPGRADE = 3;
+  PAYMENT_TYPE_BONUS_REWARD = 4;
+}
+
+// SubsidyDistributionSchedule defines when subsidies are distributed
+message SubsidyDistributionSchedule {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  int64 distribution_interval_seconds = 1; // Default: 2592000 (30 days)
+  int64 next_distribution = 2;
+  bool auto_distribute = 3;
+  string min_validator_uptime_percent = 4; // Required uptime to qualify
+}

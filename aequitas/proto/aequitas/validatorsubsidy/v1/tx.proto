@@ -1,0 +1,85 @@
+syntax = "proto3";
+package aequitas.validatorsubsidy.v1;
+
+import "google/api/annotations.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
+import "aequitas/validatorsubsidy/v1/validatorsubsidy.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/validatorsubsidy/types";
+
+// Msg defines the validator subsidy Msg service
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // RegisterValidator registers a validator for subsidy program
+  rpc RegisterValidator(MsgRegisterValidator) returns (MsgRegisterValidatorResponse);
+
+  // DistributeSubsidies manually triggers subsidy distribution
+  rpc DistributeSubsidies(MsgDistributeSubsidies) returns (MsgDistributeSubsidiesResponse);
+
+  // ClaimEmergencyFunds allows validators to claim emergency funds
+  rpc ClaimEmergencyFunds(MsgClaimEmergencyFunds) returns (MsgClaimEmergencyFundsResponse);
+
+  // UpdateValidatorStatus updates a validator's subsidy status
+  rpc UpdateValidatorStatus(MsgUpdateValidatorStatus) returns (MsgUpdateValidatorStatusResponse);
+}
+
+message MsgRegisterValidator {
+  option (cosmos.msg.v1.signer) = "operator_address";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string operator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string validator_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string infrastructure_cost_usd = 3; // Monthly cost in USD
+  string emergency_buffer_usd = 4; // Emergency buffer in USD
+}
+
+message MsgRegisterValidatorResponse {}
+
+message MsgDistributeSubsidies {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+message MsgDistributeSubsidiesResponse {
+  uint32 validators_paid = 1;
+  string total_distributed = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message MsgClaimEmergencyFunds {
+  option (cosmos.msg.v1.signer) = "operator_address";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string operator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string reason = 3;
+}
+
+message MsgClaimEmergencyFundsResponse {}
+
+message MsgUpdateValidatorStatus {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string validator_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  ValidatorStatus status = 3;
+}
+
+message MsgUpdateValidatorStatusResponse {}

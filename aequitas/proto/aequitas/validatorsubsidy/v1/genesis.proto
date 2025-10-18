@@ -1,0 +1,18 @@
+syntax = "proto3";
+package aequitas.validatorsubsidy.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/validatorsubsidy/v1/validatorsubsidy.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/validatorsubsidy/types";
+
+// GenesisState defines the validator subsidy module's genesis state
+message GenesisState {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  ValidatorSubsidyPool pool = 1;
+  repeated ValidatorSubsidyRecord validators = 2;
+  repeated SubsidyPayment payments = 3;
+  SubsidyDistributionSchedule schedule = 4;
+}

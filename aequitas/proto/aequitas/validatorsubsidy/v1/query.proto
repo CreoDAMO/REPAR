@@ -1,0 +1,70 @@
+syntax = "proto3";
+package aequitas.validatorsubsidy.v1;
+
+import "google/api/annotations.proto";
+import "gogoproto/gogo.proto";
+import "aequitas/validatorsubsidy/v1/validatorsubsidy.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/validatorsubsidy/types";
+
+// Query defines the gRPC querier service for validator subsidy module
+service Query {
+  // Pool returns the current subsidy pool status
+  rpc Pool(QueryPoolRequest) returns (QueryPoolResponse) {
+    option (google.api.http).get = "/aequitas/validatorsubsidy/v1/pool";
+  }
+
+  // Validator returns subsidy info for a specific validator
+  rpc Validator(QueryValidatorRequest) returns (QueryValidatorResponse) {
+    option (google.api.http).get = "/aequitas/validatorsubsidy/v1/validator/{validator_address}";
+  }
+
+  // AllValidators returns all validators receiving subsidies
+  rpc AllValidators(QueryAllValidatorsRequest) returns (QueryAllValidatorsResponse) {
+    option (google.api.http).get = "/aequitas/validatorsubsidy/v1/validators";
+  }
+
+  // Payments returns payment history
+  rpc Payments(QueryPaymentsRequest) returns (QueryPaymentsResponse) {
+    option (google.api.http).get = "/aequitas/validatorsubsidy/v1/payments";
+  }
+
+  // Schedule returns the subsidy distribution schedule
+  rpc Schedule(QueryScheduleRequest) returns (QueryScheduleResponse) {
+    option (google.api.http).get = "/aequitas/validatorsubsidy/v1/schedule";
+  }
+}
+
+message QueryPoolRequest {}
+
+message QueryPoolResponse {
+  ValidatorSubsidyPool pool = 1;
+}
+
+message QueryValidatorRequest {
+  string validator_address = 1;
+}
+
+message QueryValidatorResponse {
+  ValidatorSubsidyRecord validator = 1;
+}
+
+message QueryAllValidatorsRequest {}
+
+message QueryAllValidatorsResponse {
+  repeated ValidatorSubsidyRecord validators = 1;
+}
+
+message QueryPaymentsRequest {
+  string validator_address = 1; // Optional: filter by validator
+}
+
+message QueryPaymentsResponse {
+  repeated SubsidyPayment payments = 1;
+}
+
+message QueryScheduleRequest {}
+
+message QueryScheduleResponse {
+  SubsidyDistributionSchedule schedule = 1;
+}
