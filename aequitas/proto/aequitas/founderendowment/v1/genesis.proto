@@ -1,0 +1,16 @@
+
+syntax = "proto3";
+package aequitas.founderendowment.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/founderendowment/v1/founderendowment.proto";
+
+option go_package = "aequitas/x/founderendowment/types";
+
+message GenesisState {
+  FounderEndowment endowment = 1 [(gogoproto.nullable) = false];
+  DistributionConfig distribution_config = 2 [(gogoproto.nullable) = false];
+  ProtocolAllocation protocol_allocation = 3 [(gogoproto.nullable) = false];
+  EndowmentStats statistics = 4 [(gogoproto.nullable) = false];
+  repeated YieldDistribution distributions = 5 [(gogoproto.nullable) = false];
+}

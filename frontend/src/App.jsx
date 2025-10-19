@@ -17,6 +17,7 @@ import AequitasDEX from './pages/AequitasDEX';
 import AequitasSuperPay from './pages/AequitasSuperPay';
 import EndowmentDashboard from './pages/EndowmentDashboard';
 import ValidatorSubsidy from './pages/ValidatorSubsidy';
+import FounderEndowment from './pages/FounderEndowment';
 import Onramper from './components/Onramper';
 import BlackPaper from './pages/BlackPaper';
 
@@ -43,6 +44,7 @@ function App() {
           <Route path="/superpay" element={<AequitasSuperPay />} />
           <Route path="/endowment" element={<EndowmentDashboard />} />
           <Route path="/validator-subsidy" element={<ValidatorSubsidy />} />
+          <Route path="/founder-endowment" element={<FounderEndowment />} />
           <Route path="/onramp" element={<Onramper />} />
           <Route path="/black-paper" element={<BlackPaper />} />
         </Routes>

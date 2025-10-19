@@ -27,6 +27,7 @@ export default function Navigation() {
     { to: '/onramp', icon: Coins, label: 'Buy $REPAR' },
     { to: '/superpay', icon: CreditCard, label: 'SuperPay' },
     { to: '/validator-subsidy', icon: Server, label: 'Validators' },
+    { to: '/founder-endowment', icon: Lock, label: 'Founder\'s Endowment' },
   ];
 
   return (

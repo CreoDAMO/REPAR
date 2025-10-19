@@ -1,0 +1,55 @@
+
+syntax = "proto3";
+package aequitas.founderendowment.v1;
+
+import "google/api/annotations.proto";
+import "aequitas/founderendowment/v1/founderendowment.proto";
+
+option go_package = "aequitas/x/founderendowment/types";
+
+service Query {
+  rpc Endowment(QueryEndowmentRequest) returns (QueryEndowmentResponse) {
+    option (google.api.http).get = "/aequitas/founderendowment/v1/endowment";
+  }
+
+  rpc Statistics(QueryStatisticsRequest) returns (QueryStatisticsResponse) {
+    option (google.api.http).get = "/aequitas/founderendowment/v1/statistics";
+  }
+
+  rpc Distributions(QueryDistributionsRequest) returns (QueryDistributionsResponse) {
+    option (google.api.http).get = "/aequitas/founderendowment/v1/distributions";
+  }
+
+  rpc ProjectedYield(QueryProjectedYieldRequest) returns (QueryProjectedYieldResponse) {
+    option (google.api.http).get = "/aequitas/founderendowment/v1/projected_yield";
+  }
+}
+
+message QueryEndowmentRequest {}
+
+message QueryEndowmentResponse {
+  FounderEndowment endowment = 1;
+  DistributionConfig distribution_config = 2;
+  ProtocolAllocation protocol_allocation = 3;
+}
+
+message QueryStatisticsRequest {}
+
+message QueryStatisticsResponse {
+  EndowmentStats statistics = 1;
+}
+
+message QueryDistributionsRequest {}
+
+message QueryDistributionsResponse {
+  repeated YieldDistribution distributions = 1;
+}
+
+message QueryProjectedYieldRequest {}
+
+message QueryProjectedYieldResponse {
+  string annual_yield = 1;
+  string quarterly_yield = 2;
+  string founder_annual_dividend = 3;
+  string protocol_annual_funding = 4;
+}

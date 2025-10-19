@@ -1,0 +1,56 @@
+
+syntax = "proto3";
+package aequitas.founderendowment.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "aequitas/founderendowment/v1/founderendowment.proto";
+
+option go_package = "aequitas/x/founderendowment/types";
+
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  rpc InitializeEndowment(MsgInitializeEndowment) returns (MsgInitializeEndowmentResponse);
+  rpc DistributeYield(MsgDistributeYield) returns (MsgDistributeYieldResponse);
+  rpc UpdateDistributionConfig(MsgUpdateDistributionConfig) returns (MsgUpdateDistributionConfigResponse);
+}
+
+message MsgInitializeEndowment {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string principal_amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 lock_years = 3;
+}
+
+message MsgInitializeEndowmentResponse {}
+
+message MsgDistributeYield {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string founder_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+message MsgDistributeYieldResponse {
+  string total_yield = 1;
+  string founder_dividend = 2;
+  string protocol_funding = 3;
+}
+
+message MsgUpdateDistributionConfig {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  DistributionConfig distribution_config = 2;
+  ProtocolAllocation protocol_allocation = 3;
+}
+
+message MsgUpdateDistributionConfigResponse {}

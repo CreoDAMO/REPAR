@@ -1,0 +1,103 @@
+
+syntax = "proto3";
+package aequitas.founderendowment.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "aequitas/x/founderendowment/types";
+
+// FounderEndowment represents the founder's perpetual endowment
+message FounderEndowment {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string principal = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string yield_accumulated = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 target_apy_bps = 4; // 450 bps = 4.5%
+  int64 last_yield_calc = 5;
+  int64 unlock_time = 6;
+  bool is_locked = 7;
+}
+
+// DistributionConfig defines the 90/10 split
+message DistributionConfig {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  uint64 protocol_percentage = 1; // 90%
+  uint64 founder_percentage = 2;  // 10%
+}
+
+// ProtocolAllocation defines the 25/25/25/15 split for protocol operations
+message ProtocolAllocation {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  uint64 dex_liquidity_percentage = 1;    // 25%
+  uint64 dao_treasury_percentage = 2;     // 25%
+  uint64 social_endowment_percentage = 3; // 25%
+  uint64 validator_subsidy_percentage = 4; // 15%
+}
+
+// YieldDistribution tracks each distribution event
+message YieldDistribution {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string total_yield = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string protocol_amount = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string founder_dividend = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 timestamp = 5;
+  string distribution_type = 6; // "quarterly", "annual", etc.
+}
+
+// EndowmentStats tracks overall statistics
+message EndowmentStats {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string total_principal = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string total_yield_distributed = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string total_founder_dividends = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string total_protocol_funding = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 distribution_count = 5;
+}
