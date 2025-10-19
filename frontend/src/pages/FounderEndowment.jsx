@@ -180,9 +180,6 @@ export default function FounderEndowment() {
           </div>
         </div>
 
-          </div>
-        </div>
-
         {/* Main Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <StatCard
