@@ -35,7 +35,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd frontend && npm run dev"
+args = "cd frontend && npm install --prefer-offline --no-audit && npm run dev"
 waitForPort = 5000
 
 [[workflows.workflow]]
@@ -47,19 +47,18 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd dexplorer && npm run dev"
-waitForPort = 3001
+args = "cd dexplorer && npm install --prefer-offline --no-audit && npm run dev"
 
 [[workflows.workflow]]
 name = "Circle API Backend"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && npm start"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm install --prefer-offline --no-audit && npm start"
 
 [[ports]]
 localPort = 3001

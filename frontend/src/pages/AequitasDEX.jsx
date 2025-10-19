@@ -2,70 +2,7 @@ import { useState } from 'react';
 import { ArrowLeftRight, Globe, Wallet, TrendingUp, Lock, Zap, CheckCircle, BarChart3 } from 'lucide-react';
 import SwapInterface from '../components/SwapInterface';
 import LiquidityInterface from '../components/LiquidityInterface';
-import {
-  Bitcoin,
-  Ethereum,
-  Solana,
-  Polygon,
-  Avalanche,
-  Cosmos,
-  Binance,
-  Cardano,
-  Polkadot,
-  Dogecoin,
-  Tron,
-  Chainlink
-} from 'cryptocons';
-import reparLogo from '../assets/REPAR_Coin_Logo.png';
-
-const CryptoIcon = ({ symbol, className = "w-10 h-10" }) => {
-  const iconMap = {
-    'BTC': Bitcoin,
-    'ETH': Ethereum,
-    'SOL': Solana,
-    'POL': Polygon,
-    'AVAX': Avalanche,
-    'ATOM': Cosmos,
-    'BNB': Binance,
-    'ADA': Cardano,
-    'DOT': Polkadot,
-    'DOGE': Dogecoin,
-    'TRX': Tron,
-    'LINK': Chainlink
-  };
-
-  if (symbol === 'REPAR') {
-    return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
-  }
-
-  if (symbol === 'USDC' || symbol === 'XRP') {
-    return (
-      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm"}>
-        {symbol.charAt(0)}
-      </div>
-    );
-  }
-
-  const Icon = iconMap[symbol];
-  if (Icon) {
-    try {
-      return <Icon className={className} />;
-    } catch (error) {
-      console.warn(`Failed to render icon for ${symbol}:`, error);
-      return (
-        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm"}>
-          {symbol.charAt(0)}
-        </div>
-      );
-    }
-  }
-
-  return (
-    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-sm"}>
-      {symbol.charAt(0)}
-    </div>
-  );
-};
+import CryptoIcon from '../components/CryptoIcon';
 
 export default function AequitasDEX() {
   const [activeTab, setActiveTab] = useState('swap');

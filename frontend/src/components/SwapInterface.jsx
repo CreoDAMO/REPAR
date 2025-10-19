@@ -1,72 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { ArrowDownUp, Settings, AlertCircle, Loader } from 'lucide-react';
-import {
-  Bitcoin,
-  Ethereum,
-  Solana,
-  Polygon,
-  Avalanche,
-  Cosmos,
-  Binance,
-  Cardano,
-  Polkadot,
-  Dogecoin,
-  Tron,
-  Chainlink
-} from 'cryptocons';
-import reparLogo from '../assets/REPAR_Coin_Logo.png';
-
-const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
-  // Define icon mapping
-  const iconMap = {
-    'BTC': Bitcoin,
-    'ETH': Ethereum,
-    'SOL': Solana,
-    'POL': Polygon,
-    'AVAX': Avalanche,
-    'ATOM': Cosmos,
-    'BNB': Binance,
-    'ADA': Cardano,
-    'DOT': Polkadot,
-    'DOGE': Dogecoin,
-    'TRX': Tron,
-    'LINK': Chainlink
-  };
-
-  // REPAR - use image
-  if (symbol === 'REPAR') {
-    return (
-      <img 
-        src={reparLogo} 
-        alt={symbol} 
-        className={`${className} rounded-full object-cover`}
-      />
-    );
-  }
-
-  // USDC and XRP - use letter fallback
-  if (symbol === 'USDC' || symbol === 'XRP') {
-    return (
-      <div className={`${className} bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs`}>
-        {symbol.charAt(0)}
-      </div>
-    );
-  }
-
-  // Try to get icon from cryptocons library
-  const Icon = iconMap[symbol];
-  if (Icon) {
-    return <Icon className={className} />;
-  }
-
-  // Fallback for any unknown symbols
-  return (
-    <div className={`${className} bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs`}>
-      {symbol ? symbol.charAt(0) : '?'}
-    </div>
-  );
-};
+import CryptoIcon from './CryptoIcon';
 
 export default function SwapInterface() {
   const [fromCoin, setFromCoin] = useState('REPAR');

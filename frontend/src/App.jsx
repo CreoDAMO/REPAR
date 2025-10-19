@@ -21,6 +21,7 @@ import ValidatorSubsidy from './pages/ValidatorSubsidy';
 import FounderEndowment from './pages/FounderEndowment';
 import Onramper from './components/Onramper';
 import BlackPaper from './pages/BlackPaper';
+import IconTest from './pages/IconTest';
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path="/founder-endowment" element={<ErrorBoundary><FounderEndowment /></ErrorBoundary>} />
           <Route path="/onramp" element={<Onramper />} />
           <Route path="/black-paper" element={<BlackPaper />} />
+          <Route path="/icon-test" element={<IconTest />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">

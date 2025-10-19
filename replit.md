@@ -44,13 +44,35 @@ The frontend features a comprehensive UI including:
 ### Legal & Enforcement Framework
 A multi-layered strategy involving international law (Genocide classification, jus cogens), Black's Law (unjust enrichment, constructive trust), UCC Article 9 (commercial liens), and international arbitration (NY Convention). This framework includes specific accountability matrices for entities like the UK Government, Barclays, and JPMorgan Chase, and "Nightmare Tripwires" for non-compliant entities.
 
+## Recent Changes (October 19, 2025)
+
+### DEX Black Screen Fix ✓
+Fixed critical rendering issue where DEX, Liquidity, and Pools tabs would crash to black screen when switching cryptocurrencies:
+- **Root Cause**: Improper error handling for cryptocons icon library
+- **Solution**: Created shared `CryptoIcon` component with comprehensive fallback system
+- **Files Modified**:
+  - Created: `frontend/src/components/CryptoIcon.jsx` (centralized icon rendering)
+  - Updated: `frontend/src/components/SwapInterface.jsx`
+  - Updated: `frontend/src/components/LiquidityInterface.jsx`
+  - Updated: `frontend/src/pages/AequitasDEX.jsx`
+- **Result**: All tabs now render gracefully with letter-based fallbacks if icons fail
+- **Test Route**: `/icon-test` - displays all 15 cryptocurrency icons
+
+### Workflow Optimization
+Updated all three workflows to auto-install dependencies on startup:
+- Frontend workflow now runs: `npm install --prefer-offline --no-audit && npm run dev`
+- Backend workflow now runs: `npm install --prefer-offline --no-audit && npm start`
+- Block Explorer workflow now runs: `npm install --prefer-offline --no-audit && npm run dev`
+
+This ensures dependencies are always up-to-date without manual intervention.
+
 ## External Dependencies
 
 - **Frontend Framework**: React 18+
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS 3.x
 - **Charts**: Recharts
-- **Icons**: Lucide React
+- **Icons**: Lucide React, cryptocons (with fallback handling)
 - **Blockchain SDK**: Cosmos SDK
 - **Payment Processing**: Circle USDCKit SDK (for USDC payments)
 - **Decentralized Storage**: IPFS
