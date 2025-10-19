@@ -1,45 +1,48 @@
 import { useState, useEffect } from 'react';
 import { ArrowDownUp, Settings, AlertCircle, Loader } from 'lucide-react';
 import {
-  Btc,
-  Eth,
-  Sol,
-  Matic,
-  Avax,
-  Atom,
-  Bnb,
-  Ada,
-  Dot,
-  Xrp,
-  Doge,
-  Trx,
-  Link,
-  Usdc
+  Bitcoin,
+  Ethereum,
+  Solana,
+  Polygon,
+  Avalanche,
+  Cosmos,
+  Binance,
+  Cardano,
+  Polkadot,
+  Dogecoin,
+  Tron,
+  Chainlink
 } from 'cryptocons';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
 const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
   const iconMap = {
-    'BTC': Btc,
-    'ETH': Eth,
-    'SOL': Sol,
-    'POL': Matic,
-    'AVAX': Avax,
-    'ATOM': Atom,
-    'BNB': Bnb,
-    'ADA': Ada,
-    'DOT': Dot,
-    'XRP': Xrp,
-    'DOGE': Doge,
-    'TRX': Trx,
-    'LINK': Link,
-    'USDC': Usdc
+    'BTC': Bitcoin,
+    'ETH': Ethereum,
+    'SOL': Solana,
+    'POL': Polygon,
+    'AVAX': Avalanche,
+    'ATOM': Cosmos,
+    'BNB': Binance,
+    'ADA': Cardano,
+    'DOT': Polkadot,
+    'DOGE': Dogecoin,
+    'TRX': Tron,
+    'LINK': Chainlink
   };
 
   const Icon = iconMap[symbol];
   if (!Icon) {
     if (symbol === 'REPAR') {
       return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
+    }
+    if (symbol === 'USDC' || symbol === 'XRP') {
+      return (
+        <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+          {symbol.charAt(0)}
+        </div>
+      );
     }
     return <div className={className + " bg-gray-300 rounded-full"} />;
   }
