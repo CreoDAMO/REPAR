@@ -172,21 +172,34 @@ npm install @circle-fin/usdckit
 - ✅ Built-in compliance (Circle Compliance Engine, Travel Rule)
 - ✅ Mass payout capabilities for reparations distribution
 
-**Required Secrets (Add in Replit Secrets Manager):**
-- `VITE_CIRCLE_API_KEY`: Your Circle API key from https://console.circle.com
-- `VITE_CIRCLE_ENTITY_SECRET`: Your 32-byte entity secret
+**Required Secrets (✅ CONFIGURED in Replit Secrets Manager):**
+- `CIRCLE_API_KEY` ✅ - Circle API key for backend
+- `CIRCLE_ENTITY_SECRET` ✅ - 32-byte entity secret for wallet encryption
+- `COINBASE_API_KEY` ✅ - Coinbase Commerce integration
+- `COINBASE_API_SECRET` ✅ - Coinbase webhook verification
+- `DIGITALOCEAN_ACCESS_TOKEN` ✅ - Deployment automation
+- `SESSION_SECRET` ✅ - Backend session security
 
-**Integration Points:**
-1. **Justice Burn Payments**: Accept USDC from defendants → Burn equivalent $REPAR
-2. **Reparations Distribution**: Mass payout USDC to registered descendants
+**Active Integration Points:**
+1. **Justice Burn Payments**: Accept USDC from defendants → Burn equivalent $REPAR (via backend API)
+2. **Reparations Distribution**: Mass payout USDC to registered descendants (via backend API)
 3. **DEX Operations**: USDC <-> REPAR swaps in Founder Wallet
 4. **Cross-Chain**: Transfer USDC across multiple blockchains via CCTP
 
+**Backend API Endpoints (Port 3002):**
+- `POST /api/circle/justice-burn` - Process defendant USDC payments
+- `POST /api/circle/distribute-reparations` - Mass payout to descendants
+- `POST /api/circle/create-wallet` - Create descendant wallets
+- `POST /api/circle/transfer` - USDC transfers
+- `POST /api/circle/cross-chain-transfer` - Cross-chain USDC via CCTP
+- `GET /api/circle/balance/:address` - Query wallet balance
+
 **Documentation:**
 - Integration guide: `docs/CIRCLE_SDK_INTEGRATION.md`
-- Client utility: `frontend/src/utils/circleClient.js`
+- Backend client: `backend/utils/circleClient.js`
+- Frontend API: `frontend/src/utils/backendAPI.js`
 
-**Status:** SDK installed and configured, awaiting API keys for activation.
+**Status:** ✅ FULLY CONFIGURED - All secrets set, backend running on port 3002, ready for production use.
 
 ## Implementation Status
 
