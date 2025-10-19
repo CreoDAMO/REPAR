@@ -224,6 +224,7 @@ npm install @circle-fin/usdckit
 - IPFS integration utilities
 - Cosmos client connection framework
 - **Founder Wallet DEX** with multi-cryptocurrency support (✅ Fixed: cryptocurrency switching black screen bug)
+- **Block Explorer (Dexplorer)** integrated on port 3001
 
 **Payment Integration:**
 - Circle USDCKit SDK installed and configured
