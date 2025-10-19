@@ -290,7 +290,7 @@ export default function FounderEndowment() {
               <ul className="text-sm text-gray-300 space-y-2">
                 <li>• {formatCurrency(projectedYields.protocolAnnualFunding)} annual protocol funding</li>
                 <li>• All rewards paid in USDC, not $REPAR</li>
-                <li>• Pure deflationary tokenomics</li>
+                <li>• Pure deflationary coinomics</li>
                 <li>• Justice Burns permanently remove supply</li>
                 <li>• Zero inflation forever</li>
               </ul>

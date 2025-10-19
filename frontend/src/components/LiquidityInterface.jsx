@@ -75,15 +75,15 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
 
 export default function LiquidityInterface() {
   const [mode, setMode] = useState('add'); // 'add' or 'remove'
-  const [tokenAAmount, setTokenAAmount] = useState('');
-  const [tokenBAmount, setTokenBAmount] = useState('');
+  const [coinAAmount, setCoinAAmount] = useState('');
+  const [coinBAmount, setCoinBAmount] = useState('');
   const [removePercent, setRemovePercent] = useState(25);
 
-  // State for selected tokens
-  const [tokenA, setTokenA] = useState('REPAR');
-  const [tokenB, setTokenB] = useState('USDC');
+  // State for selected coins
+  const [coinA, setCoinA] = useState('REPAR');
+  const [coinB, setCoinB] = useState('USDC');
 
-  const tokens = [
+  const coins = [
     { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000' },
     { symbol: 'BTC', name: 'Bitcoin', balance: '0.5' },
     { symbol: 'ETH', name: 'Ethereum', balance: '5.2' },
@@ -102,15 +102,15 @@ export default function LiquidityInterface() {
   ];
 
   const mockPoolShare = 2.5; // User owns 2.5% of the pool
-  const mockLPTokens = 125000;
+  const mockLPCoinS = 125000;
 
-  const handleTokenAChange = (value) => {
-    setTokenAAmount(value);
-    // Auto-calculate tokenB based on pool ratio (1 REPAR = 18.33 USDC)
+  const handleCoinAChange = (value) => {
+    setCoinAAmount(value);
+    // Auto-calculate coinB based on pool ratio (1 REPAR = 18.33 USDC)
     if (value) {
-      setTokenBAmount((parseFloat(value) * 18.33).toFixed(2));
+      setCoinBAmount((parseFloat(value) * 18.33).toFixed(2));
     } else {
-      setTokenBAmount('');
+      setCoinBAmount('');
     }
   };
 
@@ -148,30 +148,30 @@ export default function LiquidityInterface() {
           <div className="space-y-4 mb-6">
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">Token A</label>
+                <label className="text-sm font-medium text-gray-700">Coin A</label>
                 <span className="text-sm text-gray-500">
-                  Balance: {tokens.find(t => t.symbol === tokenA)?.balance || '0'}
+                  Balance: {coins.find(c => c.symbol === coinA)?.balance || '0'}
                 </span>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center justify-between">
                   <input
                     type="number"
-                    value={tokenAAmount}
-                    onChange={(e) => handleTokenAChange(e.target.value)}
+                    value={coinAAmount}
+                    onChange={(e) => handleCoinAChange(e.target.value)}
                     placeholder="0.0"
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
                   <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
-                    <CryptoIcon symbol={tokenA} />
+                    <CryptoIcon symbol={coinA} />
                     <select
-                      value={tokenA}
-                      onChange={(e) => setTokenA(e.target.value)}
+                      value={coinA}
+                      onChange={(e) => setCoinA(e.target.value)}
                       className="bg-transparent font-medium outline-none cursor-pointer"
                     >
-                      {tokens.map((token) => (
-                        <option key={token.symbol} value={token.symbol}>
-                          {token.symbol}
+                      {coins.map((coin) => (
+                        <option key={coin.symbol} value={coin.symbol}>
+                          {coin.symbol}
                         </option>
                       ))}
                     </select>
@@ -188,30 +188,30 @@ export default function LiquidityInterface() {
 
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">Token B</label>
+                <label className="text-sm font-medium text-gray-700">Coin B</label>
                 <span className="text-sm text-gray-500">
-                  Balance: {tokens.find(t => t.symbol === tokenB)?.balance || '0'}
+                  Balance: {coins.find(c => c.symbol === coinB)?.balance || '0'}
                 </span>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center justify-between">
                   <input
                     type="number"
-                    value={tokenBAmount}
-                    onChange={(e) => setTokenBAmount(e.target.value)}
+                    value={coinBAmount}
+                    onChange={(e) => setCoinBAmount(e.target.value)}
                     placeholder="0.0"
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
                   <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
-                    <CryptoIcon symbol={tokenB} />
+                    <CryptoIcon symbol={coinB} />
                     <select
-                      value={tokenB}
-                      onChange={(e) => setTokenB(e.target.value)}
+                      value={coinB}
+                      onChange={(e) => setCoinB(e.target.value)}
                       className="bg-transparent font-medium outline-none cursor-pointer"
                     >
-                      {tokens.map((token) => (
-                        <option key={token.symbol} value={token.symbol}>
-                          {token.symbol}
+                      {coins.map((coin) => (
+                        <option key={coin.symbol} value={coin.symbol}>
+                          {coin.symbol}
                         </option>
                       ))}
                     </select>
@@ -222,29 +222,29 @@ export default function LiquidityInterface() {
           </div>
 
           {/* Pool Info */}
-          {tokenAAmount && (
+          {coinAAmount && (
             <div className="bg-blue-50 rounded-lg p-4 mb-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Pool Share</span>
                 <span className="font-medium">
-                  {((parseFloat(tokenAAmount) / 10000000) * 100).toFixed(4)}%
+                  {((parseFloat(coinAAmount) / 10000000) * 100).toFixed(4)}%
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">LP Tokens to Receive</span>
+                <span className="text-gray-600">LP Coins to Receive</span>
                 <span className="font-medium">
-                  {(parseFloat(tokenAAmount) * 10).toFixed(2)}
+                  {(parseFloat(coinAAmount) * 10).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Exchange Rate</span>
-                <span className="font-medium">1 {tokenA} = 18.33 {tokenB}</span>
+                <span className="font-medium">1 {coinA} = 18.33 {coinB}</span>
               </div>
             </div>
           )}
 
           <button
-            disabled={!tokenAAmount || !tokenBAmount}
+            disabled={!coinAAmount || !coinBAmount}
             className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition"
           >
             Add Liquidity
@@ -293,8 +293,8 @@ export default function LiquidityInterface() {
                 <span className="font-medium text-purple-900">{mockPoolShare}%</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-purple-700">LP Tokens</span>
-                <span className="font-medium text-purple-900">{mockLPTokens.toLocaleString()}</span>
+                <span className="text-purple-700">LP Coins</span>
+                <span className="font-medium text-purple-900">{mockLPCoinS.toLocaleString()}</span>
               </div>
             </div>
 
@@ -302,15 +302,15 @@ export default function LiquidityInterface() {
             <div className="bg-blue-50 rounded-lg p-4 mb-4 space-y-2">
               <h4 className="font-semibold text-blue-900 mb-2">You Will Receive</h4>
               <div className="flex justify-between text-sm">
-                <span className="text-blue-700">{tokenA}</span>
+                <span className="text-blue-700">{coinA}</span>
                 <span className="font-medium text-blue-900">
-                  {((mockLPTokens * removePercent) / 100 / 10).toFixed(2)}
+                  {((mockLPCoinS * removePercent) / 100 / 10).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-blue-700">{tokenB}</span>
+                <span className="text-blue-700">{coinB}</span>
                 <span className="font-medium text-blue-900">
-                  {((mockLPTokens * removePercent) / 100 / 10 * 18.33).toFixed(2)}
+                  {((mockLPCoinS * removePercent) / 100 / 10 * 18.33).toFixed(2)}
                 </span>
               </div>
             </div>

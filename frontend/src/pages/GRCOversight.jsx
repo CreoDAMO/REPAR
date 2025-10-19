@@ -208,7 +208,7 @@ export default function GRCOversight() {
               <h3 className="text-xl font-bold text-purple-900 mb-3">Regulatory Partnerships</h3>
               <ul className="list-disc list-inside space-y-2 text-gray-700 ml-4">
                 <li>FCA (UK Financial Conduct Authority) - Digital Asset Guidance</li>
-                <li>SEC (US) - Token Classification Pre-Approval</li>
+                <li>SEC (US) - Native Coin Classification Pre-Approval</li>
                 <li>BaFin (Germany) - Cross-Border Payment Compliance</li>
                 <li>MAS (Singapore) - Fintech Regulatory Sandbox Participant</li>
               </ul>

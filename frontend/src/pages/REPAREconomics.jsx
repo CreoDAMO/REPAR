@@ -75,7 +75,7 @@ export default function REPAREconomics() {
           <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
             <p className="text-sm text-amber-900">
               <strong>What This Means:</strong> This represents the full, un-remedied debt of the transatlantic slave trade, 
-              now tokenized and quantified on a sovereign blockchain. It is the largest valuation of any asset in human history 
+              now quantified as a native coin on a sovereign blockchain. It is the largest valuation of any asset in human history 
               because it is pegged to the largest crime in human history.
             </p>
           </div>

@@ -32,34 +32,49 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     'LINK': Chainlink
   };
 
+  if (symbol === 'REPAR') {
+    return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
+  }
+
+  if (symbol === 'USDC' || symbol === 'XRP') {
+    return (
+      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+        {symbol.charAt(0)}
+      </div>
+    );
+  }
+
   const Icon = iconMap[symbol];
-  if (!Icon) {
-    if (symbol === 'REPAR') {
-      return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
-    }
-    if (symbol === 'USDC' || symbol === 'XRP') {
+  if (Icon) {
+    try {
+      return <Icon className={className} />;
+    } catch (error) {
+      console.warn(`Failed to render icon for ${symbol}:`, error);
       return (
-        <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
           {symbol.charAt(0)}
         </div>
       );
     }
-    return <div className={className + " bg-gray-300 rounded-full"} />;
   }
 
-  return <Icon className={className} />;
+  return (
+    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+      {symbol.charAt(0)}
+    </div>
+  );
 };
 
 export default function SwapInterface() {
-  const [fromToken, setFromToken] = useState('REPAR');
-  const [toToken, setToToken] = useState('USDC');
+  const [fromCoin, setFromCoin] = useState('REPAR');
+  const [toCoin, setToCoin] = useState('USDC');
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [slippage, setSlippage] = useState(0.5);
   const [showSettings, setShowSettings] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
 
-  const tokens = [
+  const coins = [
     { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', isNative: true },
     { symbol: 'BTC', name: 'Bitcoin', balance: '0.5', isNative: true },
     { symbol: 'ETH', name: 'Ethereum', balance: '5.2', isNative: true },
@@ -131,7 +146,7 @@ export default function SwapInterface() {
     return () => clearInterval(interval);
   }, []);
 
-  const mockPrice = prices[fromToken] / prices[toToken];
+  const mockPrice = prices[fromCoin] / prices[toCoin];
 
   const handleFromAmountChange = (value) => {
     setFromAmount(value);
@@ -143,9 +158,9 @@ export default function SwapInterface() {
     }
   };
 
-  const handleSwapTokens = () => {
-    setFromToken(toToken);
-    setToToken(fromToken);
+  const handleSwapCoins = () => {
+    setFromCoin(toCoin);
+    setToCoin(fromCoin);
     setFromAmount(toAmount);
     setToAmount(fromAmount);
   };
@@ -158,7 +173,7 @@ export default function SwapInterface() {
     // Simulate blockchain transaction
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsSwapping(false);
-    alert(`Swapped ${fromAmount} ${fromToken} for ${toAmount} ${toToken}`);
+    alert(`Swapped ${fromAmount} ${fromCoin} for ${toAmount} ${toCoin}`);
     setFromAmount('');
     setToAmount('');
   };
@@ -208,12 +223,12 @@ export default function SwapInterface() {
         </div>
       )}
 
-      {/* From Token */}
+      {/* From Coin */}
       <div className="mb-2">
         <div className="flex justify-between mb-2">
           <label className="text-sm font-medium text-gray-700">From</label>
           <span className="text-sm text-gray-500">
-            Balance: {tokens.find(t => t.symbol === fromToken)?.balance}
+            Balance: {coins.find(c => c.symbol === fromCoin)?.balance}
           </span>
         </div>
         <div className="bg-gray-50 rounded-xl p-4">
@@ -227,15 +242,15 @@ export default function SwapInterface() {
               className="bg-transparent text-gray-900 text-xl sm:text-2xl font-semibold outline-none w-full"
             />
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-2 sm:px-3 py-2 ml-2 sm:ml-4">
-              <CryptoIcon symbol={fromToken} />
+              <CryptoIcon symbol={fromCoin} />
               <select
-                value={fromToken}
-                onChange={(e) => setFromToken(e.target.value)}
+                value={fromCoin}
+                onChange={(e) => setFromCoin(e.target.value)}
                 className="bg-white font-medium outline-none cursor-pointer text-sm sm:text-base text-gray-900"
               >
-                {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol}>
-                    {token.symbol}
+                {coins.map((coin) => (
+                  <option key={coin.symbol} value={coin.symbol}>
+                    {coin.symbol}
                   </option>
                 ))}
               </select>
@@ -247,19 +262,19 @@ export default function SwapInterface() {
       {/* Swap Button */}
       <div className="flex justify-center -my-2 relative z-10">
         <button
-          onClick={handleSwapTokens}
+          onClick={handleSwapCoins}
           className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-lg transition"
         >
           <ArrowDownUp className="h-5 w-5" />
         </button>
       </div>
 
-      {/* To Token */}
+      {/* To Coin */}
       <div className="mb-4">
         <div className="flex justify-between mb-2">
           <label className="text-sm font-medium text-gray-700">To</label>
           <span className="text-sm text-gray-500">
-            Balance: {tokens.find(t => t.symbol === toToken)?.balance}
+            Balance: {coins.find(c => c.symbol === toCoin)?.balance}
           </span>
         </div>
         <div className="bg-gray-50 rounded-xl p-4">
@@ -272,15 +287,15 @@ export default function SwapInterface() {
               className="bg-transparent text-gray-900 text-2xl font-semibold outline-none w-full"
             />
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
-              <CryptoIcon symbol={toToken} />
+              <CryptoIcon symbol={toCoin} />
               <select
-                value={toToken}
-                onChange={(e) => setToToken(e.target.value)}
+                value={toCoin}
+                onChange={(e) => setToCoin(e.target.value)}
                 className="bg-white font-medium outline-none cursor-pointer text-gray-900"
               >
-                {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol}>
-                    {token.symbol}
+                {coins.map((coin) => (
+                  <option key={coin.symbol} value={coin.symbol}>
+                    {coin.symbol}
                   </option>
                 ))}
               </select>
@@ -295,7 +310,7 @@ export default function SwapInterface() {
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Price</span>
             <span className="font-medium">
-              1 {fromToken} = {mockPrice.toFixed(2)} {toToken}
+              1 {fromCoin} = {mockPrice.toFixed(2)} {toCoin}
             </span>
           </div>
           <div className="flex justify-between text-sm">
@@ -306,12 +321,12 @@ export default function SwapInterface() {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Trading Fee (0.3%)</span>
-            <span className="font-medium">{fee} {fromToken}</span>
+            <span className="font-medium">{fee} {fromCoin}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Minimum Received</span>
             <span className="font-medium">
-              {(parseFloat(toAmount) * (1 - slippage / 100)).toFixed(6)} {toToken}
+              {(parseFloat(toAmount) * (1 - slippage / 100)).toFixed(6)} {toCoin}
             </span>
           </div>
         </div>

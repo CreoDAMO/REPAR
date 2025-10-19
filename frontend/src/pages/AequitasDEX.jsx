@@ -40,7 +40,7 @@ const CryptoIcon = ({ symbol, className = "w-10 h-10" }) => {
 
   if (symbol === 'USDC' || symbol === 'XRP') {
     return (
-      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold"}>
+      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm"}>
         {symbol.charAt(0)}
       </div>
     );
@@ -51,8 +51,9 @@ const CryptoIcon = ({ symbol, className = "w-10 h-10" }) => {
     try {
       return <Icon className={className} />;
     } catch (error) {
+      console.warn(`Failed to render icon for ${symbol}:`, error);
       return (
-        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold"}>
+        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-sm"}>
           {symbol.charAt(0)}
         </div>
       );
@@ -60,7 +61,7 @@ const CryptoIcon = ({ symbol, className = "w-10 h-10" }) => {
   }
 
   return (
-    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold"}>
+    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-sm"}>
       {symbol.charAt(0)}
     </div>
   );
@@ -81,7 +82,7 @@ export default function AequitasDEX() {
             Trade $REPAR with BTC, ETH, SOL, POL, AVAX, ATOM via ⚡ Lightning Network
           </p>
           <p className="text-sm text-gray-400 mt-2">
-            Sovereign Layer-1 DEX • No Wrapped Tokens • Direct Native Coin Swaps • Lightning Network Enabled
+            Sovereign Layer-1 DEX • No Wrapped Coins • Direct Native Coin Swaps • Lightning Network Enabled
           </p>
 </div>
         </div>

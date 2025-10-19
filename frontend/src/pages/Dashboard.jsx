@@ -238,7 +238,7 @@ export default function Dashboard() {
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="text-center">
                     <Cpu className="h-16 w-16 text-purple-500 mx-auto mb-2 animate-spin" style={{ animationDuration: '4s' }} />
-                    <p className="text-lg font-bold text-purple-600">3D Tokenomics Visualization</p>
+                    <p className="text-lg font-bold text-purple-600">3D Coinomics Visualization</p>
                     <p className="text-sm text-gray-600">Real-time blockchain data</p>
                   </div>
                 </div>
