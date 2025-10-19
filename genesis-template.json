@@ -5,17 +5,15 @@
   "consensus_params": {
     "block": {
       "max_bytes": "22020096",
-      "max_gas": "100000000"
+      "max_gas": "-1"
     },
     "evidence": {
       "max_age_num_blocks": "100000",
-      "max_age_duration": "172800000000000",
-      "max_bytes": "1048576"
+      "max_age_duration": "172800000000000"
     },
     "validator": {
       "pub_key_types": ["ed25519"]
-    },
-    "version": {}
+    }
   },
   "app_hash": "",
   "app_state": {
@@ -47,44 +45,46 @@
           "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
           "coins": [
             {
-              "denom": "urepar",
-              "amount": "13100000000000000000"
+              "denom": "repar",
+              "amount": "131000000000000"
             }
           ]
         }
       ],
       "supply": [
         {
-          "denom": "urepar",
-          "amount": "131000000000000000000"
+          "denom": "repar",
+          "amount": "131000000000000"
         }
       ],
       "denom_metadata": [
         {
-          "description": "The native token of the Aequitas Zone",
+          "description": "The native staking token of Aequitas Zone",
           "denom_units": [
             {
-              "denom": "urepar",
-              "exponent": 0,
-              "aliases": ["microrepar"]
-            },
-            {
-              "denom": "mrepar",
-              "exponent": 3,
-              "aliases": ["millirepar"]
-            },
-            {
               "denom": "repar",
-              "exponent": 6,
+              "exponent": 0,
               "aliases": []
             }
           ],
-          "base": "urepar",
+          "base": "repar",
           "display": "repar",
           "name": "REPAR",
           "symbol": "REPAR"
         }
       ]
+    },
+    "infrastructure": {
+      "params": {},
+      "droplets": []
+    },
+    "validatorsubsidy": {
+      "params": {
+        "subsidy_amount": "6456000000",
+        "distribution_period": "2592000"
+      },
+      "last_distribution": "2025-10-20T16:00:00Z",
+      "operator_address": ""
     },
     "staking": {
       "params": {
@@ -92,8 +92,7 @@
         "max_validators": 100,
         "max_entries": 7,
         "historical_entries": 10000,
-        "bond_denom": "urepar",
-        "min_commission_rate": "0.050000000000000000"
+        "bond_denom": "repar"
       },
       "last_total_power": "0",
       "last_validator_powers": [],
@@ -102,148 +101,6 @@
       "unbonding_delegations": [],
       "redelegations": [],
       "exported": false
-    },
-    "distribution": {
-      "params": {
-        "community_tax": "0.020000000000000000",
-        "base_proposer_reward": "0.010000000000000000",
-        "bonus_proposer_reward": "0.040000000000000000",
-        "withdraw_addr_enabled": true
-      },
-      "fee_pool": {
-        "community_pool": []
-      },
-      "delegator_withdraw_infos": [],
-      "previous_proposer": "",
-      "outstanding_rewards": [],
-      "validator_accumulated_commissions": [],
-      "validator_historical_rewards": [],
-      "validator_current_rewards": [],
-      "delegator_starting_infos": [],
-      "validator_slash_events": []
-    },
-    "validatorsubsidy": {
-      "pool": {
-        "total_allocated": "0",
-        "monthly_budget": "1000000000000",
-        "emergency_reserve": "500000000000",
-        "last_distribution": "0"
-      },
-      "validators": [],
-      "payments": [],
-      "schedule": {
-        "distribution_interval_seconds": "2592000",
-        "next_distribution": "0",
-        "auto_distribute": true,
-        "min_validator_uptime_percent": "95.0"
-      }
-    },
-    "defendant": {
-      "defendants": [],
-      "claims": [],
-      "settlements": []
-    },
-    "claims": {
-      "claims": [],
-      "validators": []
-    },
-    "dex": {
-      "pools": [],
-      "positions": [],
-      "params": {
-        "pool_creation_fee": [
-          {
-            "denom": "urepar",
-            "amount": "100000000"
-          }
-        ],
-        "min_initial_pool_coin_supply": "1000000000000",
-        "max_reserve_coin_amount": "0",
-        "pool_types": [
-          {
-            "id": 1,
-            "name": "StandardAMM",
-            "min_reserve_coin_num": "2",
-            "max_reserve_coin_num": "2",
-            "description": "Standard constant product AMM pool"
-          }
-        ],
-        "min_price_tick": "0.000000000000000001",
-        "max_price_ratio": "10.000000000000000000"
-      }
-    },
-    "endowment": {
-      "endowments": [],
-      "simulations": [],
-      "params": {
-        "min_initial_allocation": "1000000000000",
-        "management_fee_bps": "200",
-        "performance_fee_bps": "1000"
-      }
-    },
-    "justice": {
-      "burn_records": [],
-      "params": {
-        "total_debt": "131000000000000000000",
-        "debt_paid": "0"
-      }
-    },
-    "gov": {
-      "starting_proposal_id": "1",
-      "deposits": [],
-      "votes": [],
-      "proposals": [],
-      "deposit_params": {
-        "min_deposit": [
-          {
-            "denom": "urepar",
-            "amount": "10000000000"
-          }
-        ],
-        "max_deposit_period": "172800s"
-      },
-      "voting_params": {
-        "voting_period": "172800s"
-      },
-      "tally_params": {
-        "quorum": "0.334000000000000000",
-        "threshold": "0.500000000000000000",
-        "veto_threshold": "0.334000000000000000"
-      }
-    },
-    "mint": {
-      "minter": {
-        "inflation": "0.000000000000000000",
-        "annual_provisions": "0.000000000000000000"
-      },
-      "params": {
-        "mint_denom": "urepar",
-        "inflation_rate_change": "0.000000000000000000",
-        "inflation_max": "0.000000000000000000",
-        "inflation_min": "0.000000000000000000",
-        "goal_bonded": "0.670000000000000000",
-        "blocks_per_year": "6311520"
-      }
-    },
-    "slashing": {
-      "params": {
-        "signed_blocks_window": "100",
-        "min_signed_per_window": "0.500000000000000000",
-        "downtime_jail_duration": "600s",
-        "slash_fraction_double_sign": "0.050000000000000000",
-        "slash_fraction_downtime": "0.010000000000000000"
-      },
-      "signing_infos": [],
-      "missed_blocks": []
-    },
-    "crisis": {
-      "constant_fee": {
-        "denom": "urepar",
-        "amount": "1000000000"
-      }
-    },
-    "genutil": {
-      "gen_txs": []
     }
   }
 }

@@ -26,3 +26,20 @@ var (
 	// LastDistributionKey stores the last subsidy distribution time
 	LastDistributionKey = []byte{0x02}
 )
+package types
+
+const (
+	// ModuleName defines the module name
+	ModuleName = "validatorsubsidy"
+
+	// StoreKey defines the primary module store key
+	StoreKey = ModuleName
+)
+
+var (
+	// LastDistributionKey stores the last subsidy distribution timestamp
+	LastDistributionKey = []byte{0x01}
+
+	// OperatorAddressKey stores the validator operator address
+	OperatorAddressKey = []byte{0x02}
+)

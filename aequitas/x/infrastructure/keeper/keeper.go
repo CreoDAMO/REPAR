@@ -1,143 +1,249 @@
+
 package keeper
 
 import (
-        "context"
-        "fmt"
+	"context"
+	"fmt"
+	"time"
 
-        "cosmossdk.io/collections"
-        "cosmossdk.io/core/store"
-        "cosmossdk.io/log"
-        "github.com/cosmos/cosmos-sdk/codec"
-        sdk "github.com/cosmos/cosmos-sdk/types"
-        "github.com/digitalocean/godo"
-        "golang.org/x/oauth2"
+	"github.com/cosmos/cosmos-sdk/telemetry"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/digitalocean/godo"
 
-        "github.com/aequitas/aequitas/x/infrastructure/types"
+	"github.com/creodamo/aequitas/x/infrastructure/types"
 )
 
 type Keeper struct {
-        cdc          codec.BinaryCodec
-        storeService store.KVStoreService
-        authority    string
-        bankKeeper   types.BankKeeper
-        stakingKeeper types.StakingKeeper
-
-        Droplets collections.Map[string, string]
-        Schema   collections.Schema
+	storeKey   sdk.StoreKey
+	bankKeeper types.BankKeeper
 }
 
-func NewKeeper(
-        cdc codec.BinaryCodec,
-        storeService store.KVStoreService,
-        authority string,
-        bankKeeper types.BankKeeper,
-        stakingKeeper types.StakingKeeper,
-) Keeper {
-        sb := collections.NewSchemaBuilder(storeService)
-
-        k := Keeper{
-                cdc:           cdc,
-                storeService:  storeService,
-                authority:     authority,
-                bankKeeper:    bankKeeper,
-                stakingKeeper: stakingKeeper,
-                Droplets:      collections.NewMap(sb, collections.NewPrefix(0), "droplets", collections.StringKey, collections.StringValue),
-        }
-
-        schema, err := sb.Build()
-        if err != nil {
-                panic(err)
-        }
-        k.Schema = schema
-
-        return k
+func NewKeeper(storeKey sdk.StoreKey, bankKeeper types.BankKeeper) *Keeper {
+	return &Keeper{
+		storeKey:   storeKey,
+		bankKeeper: bankKeeper,
+	}
 }
 
-func (k Keeper) Logger(ctx context.Context) log.Logger {
-        sdkCtx := sdk.UnwrapSDKContext(ctx)
-        return sdkCtx.Logger().With("module", "x/infrastructure")
-}
+// ProvisionValidator creates a CPU-Optimized Droplet for validator operations
+func (k Keeper) ProvisionValidator(ctx sdk.Context, apiToken string, sshKeyID int) error {
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyProvision)
 
-func (k Keeper) createDOClient(ctx context.Context, apiToken string) (*godo.Client, error) {
-        if apiToken == "" {
-                return nil, fmt.Errorf("DigitalOcean API token not provided")
-        }
+	if apiToken == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "API token not provided")
+	}
 
-        tokenSource := oauth2.StaticTokenSource(&oauth2.Token{AccessToken: apiToken})
-        oauthClient := oauth2.NewClient(context.Background(), tokenSource)
-        client := godo.NewClient(oauthClient)
-        
-        return client, nil
-}
+	client := godo.NewFromToken(apiToken)
+	ctxDO := context.Background()
 
-func (k Keeper) ProvisionValidator(ctx context.Context, apiToken, name, region, size string, sshKeyID int) error {
-        client, err := k.createDOClient(ctx, apiToken)
-        if err != nil {
-                return fmt.Errorf("failed to create DO client: %w", err)
-        }
-
-        createRequest := &godo.DropletCreateRequest{
-                Name:   name,
-                Region: region,
-                Size:   size,
-                Image: godo.DropletCreateImage{
-                        Slug: "ubuntu-22-04-x64",
-                },
-                SSHKeys: []godo.DropletCreateSSHKey{
-                        {ID: sshKeyID},
-                },
-                UserData: `#!/bin/bash
+	createRequest := &godo.DropletCreateRequest{
+		Name:   fmt.Sprintf("aequitas-validator-%d", time.Now().Unix()),
+		Region: "nyc3",
+		Size:   "c-8", // 8 vCPU, 16GB RAM - $168/month
+		Image: godo.DropletCreateImage{
+			Slug: "ubuntu-22-04-x64",
+		},
+		SSHKeys: []godo.DropletCreateSSHKey{
+			{ID: sshKeyID},
+		},
+		UserData: `#!/bin/bash
+# Install Aequitas validator
 curl -sSfL https://github.com/creodamo/REPAR/releases/latest/download/aequitasd-linux-amd64.tar.gz | tar -xz
 mv aequitasd /usr/local/bin/
-aequitasd init ` + name + ` --chain-id aequitas-1
+aequitasd init aequitas-validator-$(date +%s) --chain-id aequitas-1
 wget -O ~/.aequitasd/config/genesis.json https://aequitasprotocol.zone/genesis.json
 aequitasd start`,
-        }
+	}
 
-        droplet, _, err := client.Droplets.Create(context.Background(), createRequest)
-        if err != nil {
-                return fmt.Errorf("failed to create droplet: %w", err)
-        }
+	droplet, _, err := client.Droplets.Create(ctxDO, createRequest)
+	if err != nil {
+		return sdkerrors.Wrap(err, "failed to create validator droplet")
+	}
 
-        dropletID := fmt.Sprintf("%d", droplet.ID)
-        err = k.Droplets.Set(ctx, dropletID, name)
-        if err != nil {
-                return fmt.Errorf("failed to store droplet info: %w", err)
-        }
+	// Wait for IP assignment (up to 30 seconds)
+	var ipAddress string
+	for i := 0; i < 30; i++ {
+		d, _, err := client.Droplets.Get(ctxDO, droplet.ID)
+		if err == nil && len(d.Networks.V4) > 0 {
+			ipAddress = d.Networks.V4[0].IPAddress
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
 
-        ipAddress := "pending"
-        if droplet.Networks != nil && len(droplet.Networks.V4) > 0 {
-                ipAddress = droplet.Networks.V4[0].IPAddress
-        }
+	if ipAddress == "" {
+		ipAddress = "pending"
+	}
 
-        sdkCtx := sdk.UnwrapSDKContext(ctx)
-        sdkCtx.EventManager().EmitEvent(
-                sdk.NewEvent(
-                        types.EventTypeDropletProvisioned,
-                        sdk.NewAttribute(types.AttributeKeyDropletID, dropletID),
-                        sdk.NewAttribute(types.AttributeKeyDropletName, name),
-                        sdk.NewAttribute(types.AttributeKeyDropletIP, ipAddress),
-                ),
-        )
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("validator_provisioned",
+			sdk.NewAttribute("droplet_id", fmt.Sprintf("%d", droplet.ID)),
+			sdk.NewAttribute("ip_address", ipAddress),
+			sdk.NewAttribute("cost_monthly", "168"),
+		),
+	)
 
-        k.Logger(ctx).Info("provisioned validator droplet",
-                "id", droplet.ID,
-                "name", name,
-                "ip", ipAddress,
-        )
-
-        return nil
+	return nil
 }
 
-func (k Keeper) CheckAndProvision(ctx context.Context) error {
-        return nil
+// ProvisionGpuNode creates a GPU-Optimized Droplet for AI operations
+func (k Keeper) ProvisionGpuNode(ctx sdk.Context, apiToken string, sshKeyID int) error {
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyProvisionGPU)
+
+	if apiToken == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "API token not provided")
+	}
+
+	client := godo.NewFromToken(apiToken)
+	ctxDO := context.Background()
+
+	createRequest := &godo.DropletCreateRequest{
+		Name:   fmt.Sprintf("aequitas-gpu-%d", time.Now().Unix()),
+		Region: "nyc3",
+		Size:   "g-8vcpu-80gb-2h100", // 8 vCPU, 80GB RAM, 2x H100 - $3,654/month
+		Image: godo.DropletCreateImage{
+			Slug: "ubuntu-22-04-x64",
+		},
+		SSHKeys: []godo.DropletCreateSSHKey{
+			{ID: sshKeyID},
+		},
+		UserData: `#!/bin/bash
+# Install NVIDIA drivers
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+dpkg -i cuda-keyring_1.0-1_all.deb
+apt-get update
+apt-get -y install cuda
+
+# Verify GPU
+nvidia-smi
+
+# Install Aequitas AI node
+curl -sSfL https://github.com/creodamo/REPAR/releases/latest/download/aequitas-ai-linux-amd64.tar.gz | tar -xz
+mv aequitas-ai /usr/local/bin/
+aequitas-ai start`,
+	}
+
+	droplet, _, err := client.Droplets.Create(ctxDO, createRequest)
+	if err != nil {
+		return sdkerrors.Wrap(err, "failed to create GPU droplet")
+	}
+
+	var ipAddress string
+	for i := 0; i < 30; i++ {
+		d, _, err := client.Droplets.Get(ctxDO, droplet.ID)
+		if err == nil && len(d.Networks.V4) > 0 {
+			ipAddress = d.Networks.V4[0].IPAddress
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+
+	if ipAddress == "" {
+		ipAddress = "pending"
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("gpu_provisioned",
+			sdk.NewAttribute("droplet_id", fmt.Sprintf("%d", droplet.ID)),
+			sdk.NewAttribute("ip_address", ipAddress),
+			sdk.NewAttribute("cost_monthly", "3654"),
+		),
+	)
+
+	return nil
 }
 
-func (k Keeper) ListDroplets(ctx context.Context) (map[string]string, error) {
-        droplets := make(map[string]string)
-        err := k.Droplets.Walk(ctx, nil, func(key, value string) (bool, error) {
-                droplets[key] = value
-                return false, nil
-        })
-        return droplets, err
+// ProvisionRpcNode creates a General Purpose Droplet for RPC operations
+func (k Keeper) ProvisionRpcNode(ctx sdk.Context, apiToken string, sshKeyID int) error {
+	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyProvisionRPC)
+
+	if apiToken == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "API token not provided")
+	}
+
+	client := godo.NewFromToken(apiToken)
+	ctxDO := context.Background()
+
+	createRequest := &godo.DropletCreateRequest{
+		Name:   fmt.Sprintf("aequitas-rpc-%d", time.Now().Unix()),
+		Region: "nyc3",
+		Size:   "s-4vcpu-8gb", // 4 vCPU, 8GB RAM - $74/month
+		Image: godo.DropletCreateImage{
+			Slug: "ubuntu-22-04-x64",
+		},
+		SSHKeys: []godo.DropletCreateSSHKey{
+			{ID: sshKeyID},
+		},
+		UserData: `#!/bin/bash
+# Install Aequitas RPC node
+curl -sSfL https://github.com/creodamo/REPAR/releases/latest/download/aequitasd-linux-amd64.tar.gz | tar -xz
+mv aequitasd /usr/local/bin/
+aequitasd init aequitas-rpc-$(date +%s) --chain-id aequitas-1
+wget -O ~/.aequitasd/config/genesis.json https://aequitasprotocol.zone/genesis.json
+
+# Configure RPC
+sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/' ~/.aequitasd/config/config.toml
+
+aequitasd start`,
+	}
+
+	droplet, _, err := client.Droplets.Create(ctxDO, createRequest)
+	if err != nil {
+		return sdkerrors.Wrap(err, "failed to create RPC droplet")
+	}
+
+	var ipAddress string
+	for i := 0; i < 30; i++ {
+		d, _, err := client.Droplets.Get(ctxDO, droplet.ID)
+		if err == nil && len(d.Networks.V4) > 0 {
+			ipAddress = d.Networks.V4[0].IPAddress
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+
+	if ipAddress == "" {
+		ipAddress = "pending"
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("rpc_provisioned",
+			sdk.NewAttribute("droplet_id", fmt.Sprintf("%d", droplet.ID)),
+			sdk.NewAttribute("ip_address", ipAddress),
+			sdk.NewAttribute("cost_monthly", "74"),
+		),
+	)
+
+	return nil
+}
+
+// DestroyDroplet removes a Droplet by ID
+func (k Keeper) DestroyDroplet(ctx sdk.Context, apiToken string, dropletID int) error {
+	if apiToken == "" {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidRequest, "API token not provided")
+	}
+
+	client := godo.NewFromToken(apiToken)
+	ctxDO := context.Background()
+
+	_, err := client.Droplets.Delete(ctxDO, dropletID)
+	if err != nil {
+		return sdkerrors.Wrap(err, "failed to destroy droplet")
+	}
+
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent("droplet_destroyed",
+			sdk.NewAttribute("droplet_id", fmt.Sprintf("%d", dropletID)),
+		),
+	)
+
+	return nil
+}
+
+// CheckAndProvision is a safe no-op function to prevent chain halts
+// Remove this once provisioning logic is fully tested
+func (k Keeper) CheckAndProvision(ctx sdk.Context) error {
+	ctx.Logger().Info("CheckAndProvision called - no-op for safety")
+	return nil
 }
