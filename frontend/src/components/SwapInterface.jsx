@@ -1,53 +1,43 @@
 import { useState, useEffect } from 'react';
 import { ArrowDownUp, Settings, AlertCircle, Loader } from 'lucide-react';
-import {
-  Bitcoin,
-  Ethereum,
-  Solana,
-  Polygon,
-  Avalanche,
-  Cosmos,
-  Binance,
-  Cardano,
-  Polkadot,
-  Dogecoin,
-  Tron,
-  Chainlink
-} from 'cryptocons';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
+import btcLogo from '../assets/btc-logo.jpg';
+import ethLogo from '../assets/eth-logo.jpg';
+import solLogo from '../assets/sol-logo.jpg';
+import polLogo from '../assets/pol-logo.jpg';
+import avaxLogo from '../assets/avax-logo.jpg';
+import atomLogo from '../assets/atom-logo.jpg';
+import usdcLogo from '../assets/usdc-logo.jpg';
 
 const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
   const iconMap = {
-    'BTC': Bitcoin,
-    'ETH': Ethereum,
-    'SOL': Solana,
-    'POL': Polygon,
-    'AVAX': Avalanche,
-    'ATOM': Cosmos,
-    'BNB': Binance,
-    'ADA': Cardano,
-    'DOT': Polkadot,
-    'DOGE': Dogecoin,
-    'TRX': Tron,
-    'LINK': Chainlink
+    'REPAR': reparLogo,
+    'BTC': btcLogo,
+    'ETH': ethLogo,
+    'SOL': solLogo,
+    'POL': polLogo,
+    'AVAX': avaxLogo,
+    'ATOM': atomLogo,
+    'USDC': usdcLogo,
+    'BNB': btcLogo, // Using BTC as fallback for BNB
+    'ADA': ethLogo, // Using ETH as fallback for ADA
+    'DOT': polLogo, // Using POL as fallback for DOT
+    'DOGE': btcLogo, // Using BTC as fallback for DOGE
+    'TRX': solLogo, // Using SOL as fallback for TRX
+    'LINK': avaxLogo, // Using AVAX as fallback for LINK
+    'XRP': usdcLogo // Using USDC as fallback for XRP
   };
 
-  const Icon = iconMap[symbol];
-  if (!Icon) {
-    if (symbol === 'REPAR') {
-      return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
-    }
-    if (symbol === 'USDC' || symbol === 'XRP') {
-      return (
-        <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
-          {symbol.charAt(0)}
-        </div>
-      );
-    }
-    return <div className={className + " bg-gray-300 rounded-full"} />;
+  const logoSrc = iconMap[symbol];
+  if (!logoSrc) {
+    return (
+      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+        {symbol.charAt(0)}
+      </div>
+    );
   }
 
-  return <Icon className={className} />;
+  return <img src={logoSrc} alt={symbol} className={className + " rounded-full object-cover"} />;
 };
 
 export default function SwapInterface() {
