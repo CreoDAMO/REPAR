@@ -81,8 +81,9 @@ func (k Keeper) Logger() log.Logger {
 	return k.logger.With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// InitializeEndowment sets up the founder's endowment with 9% of total supply (11.79T REPAR)
-// Total founder allocation is 12%: 9% endowment + 3% discretionary
+// InitializeEndowment sets up the founder's endowment with 6% of total supply (7.86T REPAR)
+// This comes from the 8% Development Fund allocation (6% endowment + 2% discretionary)
+// Separate from the 10% Founder Allocation (9% vested + 1% discretionary)
 func (k Keeper) InitializeEndowment(ctx context.Context, principalAmount math.Int, founderAddress string) error {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	
@@ -91,7 +92,7 @@ func (k Keeper) InitializeEndowment(ctx context.Context, principalAmount math.In
 
 	endowment := types.FounderEndowment{
 		Id:               FOUNDER_ENDOWMENT_ID,
-		Principal:        principalAmount, // 9% of 131T = 11.79T REPAR
+		Principal:        principalAmount, // 6% of 131T = 7.86T REPAR (from 8% dev fund)
 		YieldAccumulated: math.ZeroInt(),
 		TargetApyBps:     TARGET_APY_BPS, // 4.5%
 		LastYieldCalc:    sdkCtx.BlockTime().Unix(),

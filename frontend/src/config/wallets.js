@@ -36,9 +36,20 @@ export const FOUNDER_WALLETS = {
 };
 
 export const FOUNDER_ALLOCATION = {
-  total: "13100000000000",
-  immediate: "1310000000000",
-  vested: "11790000000000",
-  vestingPeriod: "5 years",
-  cliff: "1 year"
+  // Founder Allocation: 10% (13.1T REPAR)
+  founderTotal: "13100000000000",
+  founderVested: "11790000000000", // 9% vested over 4 years
+  founderDiscretionary: "1310000000000", // 1% immediate access
+  
+  // Development Fund: 8% (10.48T REPAR)
+  devTotal: "10480000000000",
+  devEndowment: "7860000000000", // 6% locked for 8 years (renewable)
+  devDiscretionary: "2620000000000", // 2% immediate access
+  
+  // Total Control: 18% (23.58T REPAR)
+  totalControl: "23580000000000",
+  totalImmediate: "3930000000000", // 3% immediate (1% + 2%)
+  
+  vestingPeriod: "4 years",
+  endowmentPeriod: "8 years (renewable)"
 };

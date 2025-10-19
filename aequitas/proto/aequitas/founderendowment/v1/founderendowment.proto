@@ -8,8 +8,9 @@ import "cosmos_proto/cosmos.proto";
 option go_package = "aequitas/x/founderendowment/types";
 
 // FounderEndowment represents the founder's perpetual endowment
-// 9% of total supply (11.79T REPAR) locked perpetually
-// Generates 4.5% APY paid in USDC: 90% to protocol, 10% to founder
+// 6% of total supply (7.86T REPAR) from the 8% Development Fund
+// Locked for 8-year renewable periods
+// Generates 4.5% APY: 90% to protocol operations (25/25/25/15 split), 10% to founder
 message FounderEndowment {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_getters) = false;

@@ -1,3 +1,4 @@
+
 {
   "genesis_time": "2025-10-20T16:00:00Z",
   "chain_id": "aequitas-1",
@@ -59,7 +60,7 @@
       ],
       "denom_metadata": [
         {
-          "description": "The native staking token of Aequitas Zone",
+          "description": "The native token of Aequitas Zone - REPAR Coin",
           "denom_units": [
             {
               "denom": "repar",
@@ -74,6 +75,50 @@
         }
       ]
     },
+    "founderendowment": {
+      "endowment": {
+        "id": "founder-endowment-1",
+        "principal": "7860000000000",
+        "yield_accumulated": "0",
+        "target_apy_bps": "450",
+        "last_yield_calc": "0",
+        "unlock_time": "0",
+        "is_locked": true,
+        "founder_address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
+        "renewal_count": "0"
+      },
+      "distribution_config": {
+        "protocol_percentage": "90",
+        "founder_percentage": "10"
+      },
+      "protocol_allocation": {
+        "dex_liquidity_percentage": "25",
+        "dao_treasury_percentage": "25",
+        "social_endowment_percentage": "25",
+        "validator_subsidy_percentage": "15"
+      },
+      "statistics": {
+        "total_yield_generated": "0",
+        "total_protocol_funding": "0",
+        "total_founder_dividends": "0",
+        "last_distribution": "0"
+      },
+      "distributions": []
+    },
+    "endowment": {
+      "params": {
+        "lp_lock_period_years": "5",
+        "social_lock_period_years": "10",
+        "target_apy_bps": "700",
+        "lp_allocation_bps": "3000",
+        "social_allocation_bps": "1500",
+        "community_allocation_bps": "5500"
+      },
+      "endowments": [],
+      "strategies": [],
+      "social_programs": [],
+      "next_endowment_id": "0"
+    },
     "infrastructure": {
       "params": {},
       "droplets": []
@@ -83,8 +128,20 @@
         "subsidy_amount": "6456000000",
         "distribution_period": "2592000"
       },
-      "last_distribution": "2025-10-20T16:00:00Z",
-      "operator_address": ""
+      "pool": {
+        "total_allocated": "0",
+        "monthly_budget": "1000000000000",
+        "emergency_reserve": "500000000000",
+        "last_distribution": "0"
+      },
+      "validators": [],
+      "payments": [],
+      "schedule": {
+        "distribution_interval_seconds": "2592000",
+        "next_distribution": "0",
+        "auto_distribute": true,
+        "min_validator_uptime_percent": "95.0"
+      }
     },
     "staking": {
       "params": {
@@ -101,6 +158,38 @@
       "unbonding_delegations": [],
       "redelegations": [],
       "exported": false
+    },
+    "distribution": {
+      "descendants": [],
+      "distributions": []
+    },
+    "claims": {
+      "claims": [],
+      "awards": []
+    },
+    "defendant": {
+      "defendants": [],
+      "payments": [],
+      "contributions": []
+    },
+    "justice": {
+      "burns": [],
+      "statistics": {
+        "total_burned": "0",
+        "burn_count": "0",
+        "largest_burn": "0"
+      },
+      "initial_supply": "131000000000000"
+    },
+    "dex": {
+      "params": {
+        "pool_creation_fee": "1000000",
+        "min_initial_pool_liquidity": "1000000000",
+        "max_swap_fee_rate": "1000"
+      },
+      "pools": [],
+      "positions": [],
+      "next_pool_id": "1"
     }
   }
 }
