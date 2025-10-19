@@ -1,0 +1,252 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Code scanning alerts #7
+Incorrect conversion between integer types
+ Open in main 50 minutes ago
+Copilot Autofix for CodeQL attempted to generate an autofix for this alert, but wasn't able to. Please retry.
+
+Code snippet
+ignite-cli/ignite/services/plugin/grpc/v1/interface_flag.go:92 
+		if v > maxUint {
+			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
+		}
+		fs.UintP(f.Name, f.Shorthand, uint(v), f.Usage)
+Incorrect conversion of an unsigned 64-bit integer from 
+ to a lower bit size type uint without an upper bound check.
+CodeQL 
+		if f.Value != "" {
+			if err := fs.Set(f.Name, f.Value); err != nil {
+				return newDefaultFlagValueError(cobraFlagTypeUint, f.Value)
+Rule
+Tool
+CodeQL
+Rule ID
+go/incorrect-integer-conversion
+Query
+View source
+Description
+If a string is parsed into an int using strconv.Atoi, and subsequently that int is converted into another integer type of a smaller size, the result can produce unexpected values.
+
+This also applies to the results of strconv.ParseInt and strconv.ParseUint when the specified size is larger than the size of the type that number is converted to.
+
+Recommendation
+If you need to parse integer values with specific bit sizes, avoid strconv.Atoi, and instead use strconv.ParseInt or strconv.ParseUint, which also allow specifying the bit size.
+
+When using those functions, be careful to not convert the result to another type with a smaller bit size than the bit size you specified when parsing the number.
+
+If this is not possible, then add upper (and lower) bound checks specific to each type and bit size (you can find the minimum and maximum value for each type in the math package).
+
+Note that CodeQL is only able to identify bounds checks that compare against a constant value. When a variable is used in the comparison, CodeQL is unable to determine the value of the variable at runtime and will not recognize the bounds check.
+
+Example
+In the first example, assume that an input string is passed to parseAllocateBad1 function, parsed by strconv.Atoi, and then converted into an int32 type:
+
+package main
+
+import (
+	"strconv"
+)
+
+func parseAllocateBad1(wanted string) int32 {
+	parsed, err := strconv.Atoi(wanted)
+	if err != nil {
+		panic(err)
+	}
+	return int32(parsed)
+}
+func parseAllocateBad2(wanted string) int32 {
+	parsed, err := strconv.ParseInt(wanted, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return int32(parsed)
+}
+The bounds are not checked, so this means that if the provided number is greater than the maximum value of type int32, the resulting value from the conversion will be different from the actual provided value.
+
+To avoid unexpected values, you should either use the other functions provided by the strconv package to parse the specific types and bit sizes as shown in the parseAllocateGood2 function; or check bounds as in the parseAllocateGood1 function.
+
+package main
+
+import (
+	"math"
+	"strconv"
+)
+
+func main() {
+
+}
+
+const DefaultAllocate int32 = 256
+
+func parseAllocateGood1(desired string) int32 {
+	parsed, err := strconv.Atoi(desired)
+	if err != nil {
+		return DefaultAllocate
+	}
+	// GOOD: check for lower and upper bounds
+	if parsed > 0 && parsed <= math.MaxInt32 {
+		return int32(parsed)
+	}
+	return DefaultAllocate
+}
+func parseAllocateGood2(desired string) int32 {
+	// GOOD: parse specifying the bit size
+	parsed, err := strconv.ParseInt(desired, 10, 32)
+	if err != nil {
+		return DefaultAllocate
+	}
+	return int32(parsed)
+}
+
+func parseAllocateGood3(wanted string) int32 {
+	parsed, err := strconv.ParseInt(wanted, 10, 32)
+	if err != nil {
+		panic(err)
+	}
+	return int32(parsed)
+}
+func parseAllocateGood4(wanted string) int32 {
+	parsed, err := strconv.ParseInt(wanted, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	// GOOD: check for lower and uppper bounds
+	if parsed > 0 && parsed <= math.MaxInt32 {
+		return int32(parsed)
+	}
+	return DefaultAllocate
+}
+Example
+In the second example, assume that an input string is passed to parseAllocateBad2 function, parsed by strconv.ParseInt with a bit size set to 64, and then converted into an int32 type:
+
+package main
+
+import (
+	"strconv"
+)
+
+func parseAllocateBad1(wanted string) int32 {
+	parsed, err := strconv.Atoi(wanted)
+	if err != nil {
+		panic(err)
+	}
+	return int32(parsed)
+}
+func parseAllocateBad2(wanted string) int32 {
+	parsed, err := strconv.ParseInt(wanted, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	return int32(parsed)
+}
+If the provided number is greater than the maximum value of type int32, the resulting value from the conversion will be different from the actual provided value.
+
+To avoid unexpected values, you should specify the correct bit size as in parseAllocateGood3; or check bounds before making the conversion as in parseAllocateGood4.
+
+package main
+
+import (
+	"math"
+	"strconv"
+)
+
+func main() {
+
+}
+
+const DefaultAllocate int32 = 256
+
+func parseAllocateGood1(desired string) int32 {
+	parsed, err := strconv.Atoi(desired)
+	if err != nil {
+		return DefaultAllocate
+	}
+	// GOOD: check for lower and upper bounds
+	if parsed > 0 && parsed <= math.MaxInt32 {
+		return int32(parsed)
+	}
+	return DefaultAllocate
+}
+func parseAllocateGood2(desired string) int32 {
+	// GOOD: parse specifying the bit size
+	parsed, err := strconv.ParseInt(desired, 10, 32)
+	if err != nil {
+		return DefaultAllocate
+	}
+	return int32(parsed)
+}
+
+func parseAllocateGood3(wanted string) int32 {
+	parsed, err := strconv.ParseInt(wanted, 10, 32)
+	if err != nil {
+		panic(err)
+	}
+	return int32(parsed)
+}
+func parseAllocateGood4(wanted string) int32 {
+	parsed, err := strconv.ParseInt(wanted, 10, 64)
+	if err != nil {
+		panic(err)
+	}
+	// GOOD: check for lower and uppper bounds
+	if parsed > 0 && parsed <= math.MaxInt32 {
+		return int32(parsed)
+	}
+	return DefaultAllocate
+}
+References
+Wikipedia Integer overflow.
+Go language specification Integer overflow.
+Documentation for strconv.Atoi.
+Documentation for strconv.ParseInt.
+Documentation for strconv.ParseUint.
+Common Weakness Enumeration: CWE-190.
+Common Weakness Enumeration: CWE-681.
+Activity
+First detected in commit last week
+@CreoDAMO
+Merge pull request #2 from CreoDAMO/dependabot/npm_and_yarn/ignite-cl… …
+09c632b
+ignite-cli/ignite/services/plugin/grpc/v1/ interface_flag.go:79 on branch main
+Alert metadata
+Severity
+High
+Assignees
+Preview
+Give feedback
+No one -
+Affected branches
+Potential fix for code scanning alert no. 7: Incorrect conversion between integer types
+#9 was merged into main
+Potential fix for code scanning alert no. 7: Incorrect conversion between integer types
+#4 was merged into main
+Tags
+security
+Weaknesses
+WeaknessCWE-190
+WeaknessCWE-681
+Footer
+© 2025 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
