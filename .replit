@@ -18,6 +18,10 @@ author = "agent"
 task = "workflow.run"
 args = "Frontend"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Block Explorer"
+
 [[workflows.workflow]]
 name = "Frontend"
 author = "agent"
@@ -29,6 +33,18 @@ outputType = "webview"
 task = "shell.exec"
 args = "cd frontend && npm run dev"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Block Explorer"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd dexplorer && npm run dev"
+waitForPort = 3001
 
 [[ports]]
 localPort = 5000
@@ -81,6 +97,10 @@ externalPort = 4200
 [[ports]]
 localPort = 46421
 externalPort = 6800
+
+[[ports]]
+localPort = 3001
+externalPort = 3001
 
 [deployment]
 deploymentTarget = "autoscale"

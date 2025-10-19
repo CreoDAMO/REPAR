@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server } from 'lucide-react';
+import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server, ExternalLink } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
@@ -59,6 +59,17 @@ export default function Navigation() {
                 <span>{label}</span>
               </NavLink>
             ))}
+            <a
+              href="http://localhost:3001"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-2 rounded-md flex items-center space-x-2 transition text-sm hover:bg-indigo-800"
+              title="Open Block Explorer (Dexplorer)"
+            >
+              <Database className="h-4 w-4" />
+              <span>Explorer</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
           </div>
 
           {/* Mobile & Tablet - Wallet + Hamburger */}
@@ -100,6 +111,17 @@ export default function Navigation() {
                   <span>{label}</span>
                 </NavLink>
               ))}
+              <a
+                href="http://localhost:3001"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-3 rounded-md flex items-center space-x-3 transition hover:bg-indigo-800"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <Database className="h-5 w-5" />
+                <span>Block Explorer</span>
+                <ExternalLink className="h-4 w-4" />
+              </a>
               <div className="md:hidden pt-3 border-t border-indigo-700">
                 <WalletConnect />
               </div>
