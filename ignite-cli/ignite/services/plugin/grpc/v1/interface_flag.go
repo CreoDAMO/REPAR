@@ -77,9 +77,14 @@ func (f *Flag) ExportToFlagSet(fs *pflag.FlagSet) error {
 			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
 		}
 		// Check upper bound before converting to platform uint
-		var maxUint uint64 = math.MaxUint32
-		if strconv.IntSize == 64 {
+		var maxUint uint64
+		switch strconv.IntSize {
+		case 32:
+			maxUint = math.MaxUint32
+		case 64:
 			maxUint = math.MaxUint64
+		default:
+			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
 		}
 		if v > maxUint {
 			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
