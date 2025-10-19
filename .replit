@@ -22,6 +22,10 @@ args = "Frontend"
 task = "workflow.run"
 args = "Block Explorer"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend API"
+
 [[workflows.workflow]]
 name = "Frontend"
 author = "agent"
@@ -45,6 +49,18 @@ outputType = "console"
 task = "shell.exec"
 args = "cd dexplorer && npm run dev"
 waitForPort = 3001
+
+[[workflows.workflow]]
+name = "Backend API"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm start"
+waitForPort = 3002
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 3001
