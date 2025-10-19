@@ -31,11 +31,11 @@ export default function ValidatorSubsidy() {
         {
           validatorAddress: 'aequitasvaloper1...',
           operatorAddress: 'aequitas1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun',
-          monthlyAllocation: '6540',
-          totalReceived: '19620',
+          monthlyAllocation: '6456',
+          totalReceived: '19368',
           status: 'ACTIVE',
-          infrastructureCostUsd: '80.00',
-          emergencyBufferUsd: '40.00',
+          infrastructureCostUsd: '4304.00',
+          emergencyBufferUsd: '2152.00',
           lastPayment: Date.now() - 15 * 24 * 60 * 60 * 1000,
           registeredAt: Date.now() - 90 * 24 * 60 * 60 * 1000,
         },
@@ -45,26 +45,26 @@ export default function ValidatorSubsidy() {
         {
           id: 'payment-1',
           validatorAddress: 'aequitasvaloper1...',
-          amount: '6540',
+          amount: '6456',
           timestamp: Date.now() - 15 * 24 * 60 * 60 * 1000,
           type: 'MONTHLY_SUBSIDY',
-          notes: 'Monthly validator subsidy payment',
+          notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
         },
         {
           id: 'payment-2',
           validatorAddress: 'aequitasvaloper1...',
-          amount: '6540',
+          amount: '6456',
           timestamp: Date.now() - 45 * 24 * 60 * 60 * 1000,
           type: 'MONTHLY_SUBSIDY',
-          notes: 'Monthly validator subsidy payment',
+          notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
         },
         {
           id: 'payment-3',
           validatorAddress: 'aequitasvaloper1...',
-          amount: '6540',
+          amount: '6456',
           timestamp: Date.now() - 75 * 24 * 60 * 60 * 1000,
           type: 'MONTHLY_SUBSIDY',
-          notes: 'Monthly validator subsidy payment',
+          notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
         },
       ]);
 
@@ -82,8 +82,8 @@ export default function ValidatorSubsidy() {
     }
   };
 
-  const formatREPAR = (amount) => {
-    return (parseInt(amount) / 1000000).toFixed(2);
+  const formatUSDC = (amount) => {
+    return parseFloat(amount).toFixed(2);
   };
 
   const formatDate = (timestamp) => {
@@ -179,10 +179,10 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold text-green-900">Monthly Infrastructure</h3>
                 </div>
                 <p className="text-sm text-green-800">
-                  Covers server costs (~$80/month DigitalOcean Droplet)
+                  Multi-server architecture: Validator Core ($168), RPC Fleet ($74), AI Engine ($30), Secure API Gateway ($32)
                 </p>
                 <p className="text-sm text-green-800 mt-2">
-                  Total: ${infrastructure.toLocaleString()}
+                  Total: ${infrastructure.toLocaleString()}/month
                 </p>
               </div>
 
@@ -192,10 +192,10 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold text-blue-900">Emergency Buffer</h3>
                 </div>
                 <p className="text-sm text-blue-800">
-                  For unforeseen expenses (~$40/month)
+                  Emergency reserve for scaling, GPU nodes, and unforeseen infrastructure needs
                 </p>
                 <p className="text-sm text-blue-800 mt-2">
-                  Total: ${emergency.toLocaleString()}
+                  Total: ${emergency.toLocaleString()}/month
                 </p>
               </div>
 
@@ -205,7 +205,7 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold text-purple-900">Total Allocation</h3>
                 </div>
                 <p className="text-sm text-purple-800">
-                  ~${budget.toLocaleString()} per validator per month
+                  ${budget.toLocaleString()} USDC per validator per month (from DEX Treasury)
                 </p>
               </div>
             </div>
@@ -250,16 +250,16 @@ export default function ValidatorSubsidy() {
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Monthly Allocation</p>
                     <p className="font-semibold text-indigo-600">
-                      {formatREPAR(validator.monthlyAllocation)} REPAR
+                      ${formatUSDC(validator.monthlyAllocation)} USDC
                     </p>
                     <p className="text-xs text-gray-500">
-                      (${parseFloat(validator.infrastructureCostUsd) + parseFloat(validator.emergencyBufferUsd)}/mo)
+                      (Infrastructure + Emergency Reserve)
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 mb-1">Total Received</p>
                     <p className="font-semibold text-green-600">
-                      {formatREPAR(validator.totalReceived)} REPAR
+                      ${formatUSDC(validator.totalReceived)} USDC
                     </p>
                   </div>
                   <div>
@@ -321,7 +321,7 @@ export default function ValidatorSubsidy() {
                       </span>
                     </td>
                     <td className="px-4 py-4 text-sm font-semibold text-indigo-600">
-                      {formatREPAR(payment.amount)} REPAR
+                      ${formatUSDC(payment.amount)} USDC
                     </td>
                     <td className="px-4 py-4 text-sm text-gray-600">{payment.notes}</td>
                   </tr>

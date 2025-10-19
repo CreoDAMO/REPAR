@@ -1,13 +1,51 @@
 import { useState, useEffect } from 'react';
 import { ArrowDownUp, Settings, AlertCircle, Loader } from 'lucide-react';
+import {
+  Btc,
+  Eth,
+  Sol,
+  Matic,
+  Avax,
+  Atom,
+  Bnb,
+  Ada,
+  Dot,
+  Xrp,
+  Doge,
+  Trx,
+  Link,
+  Usdc
+} from 'cryptocons';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
-import btcLogo from '../assets/btc-logo.jpg';
-import ethLogo from '../assets/eth-logo.jpg';
-import solLogo from '../assets/sol-logo.jpg';
-import polLogo from '../assets/pol-logo.jpg';
-import avaxLogo from '../assets/avax-logo.jpg';
-import atomLogo from '../assets/atom-logo.jpg';
-import usdcLogo from '../assets/usdc-logo.jpg';
+
+const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
+  const iconMap = {
+    'BTC': Btc,
+    'ETH': Eth,
+    'SOL': Sol,
+    'POL': Matic,
+    'AVAX': Avax,
+    'ATOM': Atom,
+    'BNB': Bnb,
+    'ADA': Ada,
+    'DOT': Dot,
+    'XRP': Xrp,
+    'DOGE': Doge,
+    'TRX': Trx,
+    'LINK': Link,
+    'USDC': Usdc
+  };
+
+  const Icon = iconMap[symbol];
+  if (!Icon) {
+    if (symbol === 'REPAR') {
+      return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
+    }
+    return <div className={className + " bg-gray-300 rounded-full"} />;
+  }
+
+  return <Icon className={className} />;
+};
 
 export default function SwapInterface() {
   const [fromToken, setFromToken] = useState('REPAR');
@@ -18,27 +56,21 @@ export default function SwapInterface() {
   const [showSettings, setShowSettings] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
 
-  // Crypto logos mapping
-  const cryptoLogos = {
-    'REPAR': reparLogo,
-    'BTC': btcLogo,
-    'ETH': ethLogo,
-    'SOL': solLogo,
-    'POL': polLogo,
-    'AVAX': avaxLogo,
-    'ATOM': atomLogo,
-    'USDC': usdcLogo
-  };
-
-  // Native coins (not tokens) - each is the native asset of its own blockchain
   const tokens = [
     { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', isNative: true },
     { symbol: 'BTC', name: 'Bitcoin', balance: '0.5', isNative: true },
     { symbol: 'ETH', name: 'Ethereum', balance: '5.2', isNative: true },
+    { symbol: 'BNB', name: 'Binance Coin', balance: '12.5', isNative: true },
     { symbol: 'SOL', name: 'Solana', balance: '125', isNative: true },
-    { symbol: 'POL', name: 'Polygon', balance: '8,500', isNative: true },
+    { symbol: 'ADA', name: 'Cardano', balance: '5,000', isNative: true },
     { symbol: 'AVAX', name: 'Avalanche', balance: '45', isNative: true },
+    { symbol: 'DOT', name: 'Polkadot', balance: '350', isNative: true },
+    { symbol: 'POL', name: 'Polygon', balance: '8,500', isNative: true },
     { symbol: 'ATOM', name: 'Cosmos', balance: '500', isNative: true },
+    { symbol: 'XRP', name: 'Ripple', balance: '10,000', isNative: true },
+    { symbol: 'DOGE', name: 'Dogecoin', balance: '50,000', isNative: true },
+    { symbol: 'TRX', name: 'Tron', balance: '25,000', isNative: true },
+    { symbol: 'LINK', name: 'Chainlink', balance: '250', isNative: false },
     { symbol: 'USDC', name: 'USD Coin', balance: '50,000', isNative: false },
   ];
 
@@ -46,10 +78,17 @@ export default function SwapInterface() {
     'REPAR': 18.33,
     'BTC': 95000,
     'ETH': 3500,
+    'BNB': 620,
     'SOL': 140,
-    'POL': 0.85,
+    'ADA': 0.58,
     'AVAX': 42,
+    'DOT': 7.2,
+    'POL': 0.85,
     'ATOM': 9.5,
+    'XRP': 0.65,
+    'DOGE': 0.12,
+    'TRX': 0.18,
+    'LINK': 16.5,
     'USDC': 1
   });
 
@@ -57,9 +96,8 @@ export default function SwapInterface() {
   useEffect(() => {
     const fetchPrices = async () => {
       try {
-        // Using CoinGecko API (free tier) for real-time prices
         const response = await fetch(
-          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana,matic-network,avalanche-2,cosmos&vs_currencies=usd'
+          'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,binancecoin,solana,cardano,avalanche-2,polkadot,matic-network,cosmos,ripple,dogecoin,tron,chainlink&vs_currencies=usd'
         );
         const data = await response.json();
 
@@ -67,10 +105,17 @@ export default function SwapInterface() {
           ...prev,
           'BTC': data.bitcoin?.usd || prev.BTC,
           'ETH': data.ethereum?.usd || prev.ETH,
+          'BNB': data.binancecoin?.usd || prev.BNB,
           'SOL': data.solana?.usd || prev.SOL,
-          'POL': data['matic-network']?.usd || prev.POL,
+          'ADA': data.cardano?.usd || prev.ADA,
           'AVAX': data['avalanche-2']?.usd || prev.AVAX,
+          'DOT': data.polkadot?.usd || prev.DOT,
+          'POL': data['matic-network']?.usd || prev.POL,
           'ATOM': data.cosmos?.usd || prev.ATOM,
+          'XRP': data.ripple?.usd || prev.XRP,
+          'DOGE': data.dogecoin?.usd || prev.DOGE,
+          'TRX': data.tron?.usd || prev.TRX,
+          'LINK': data.chainlink?.usd || prev.LINK,
         }));
       } catch (error) {
         console.warn('Failed to fetch real-time prices, using cached values:', error);
@@ -179,7 +224,7 @@ export default function SwapInterface() {
               className="bg-transparent text-gray-900 text-xl sm:text-2xl font-semibold outline-none w-full"
             />
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-2 sm:px-3 py-2 ml-2 sm:ml-4">
-              <img src={cryptoLogos[fromToken]} alt={fromToken} className="w-6 h-6 rounded-full object-cover" />
+              <CryptoIcon symbol={fromToken} />
               <select
                 value={fromToken}
                 onChange={(e) => setFromToken(e.target.value)}
@@ -224,7 +269,7 @@ export default function SwapInterface() {
               className="bg-transparent text-gray-900 text-2xl font-semibold outline-none w-full"
             />
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
-              <img src={cryptoLogos[toToken]} alt={toToken} className="w-6 h-6 rounded-full object-cover" />
+              <CryptoIcon symbol={toToken} />
               <select
                 value={toToken}
                 onChange={(e) => setToToken(e.target.value)}
