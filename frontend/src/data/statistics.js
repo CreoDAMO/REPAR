@@ -18,7 +18,14 @@ export const reparStatistics = {
 export const coinAllocation = [
   { name: 'Community & Descendant Fund', percentage: 43, amount: 56330000000000, color: '#3b82f6' },
   { name: 'Claims & Compensation Fund', percentage: 25, amount: 32750000000000, color: '#10b981' },
-  { name: 'Ecosystem & Enforcement Treasury', percentage: 10, amount: 13100000000000, color: '#f59e0b' },
+  { name: 'Protocol Funding (90%)', percentage: 10, amount: 13100000000000, color: '#f59e0b', 
+    breakdown: [
+      { name: 'DEX Liquidity', percentage: 25, color: '#3b82f6' },
+      { name: 'DAO Treasury', percentage: 25, color: '#10b981' },
+      { name: 'Social Endowment', percentage: 25, color: '#22c55e' },
+      { name: 'Validator Subsidy', percentage: 15, color: '#eab308' }
+    ]
+  },
   { name: "Founder's Allocation", percentage: 10, amount: 13100000000000, color: '#8b5cf6' },
   { name: 'Development Fund', percentage: 8, amount: 10480000000000, color: '#ec4899' },
   { name: 'Foundation Treasury & Reserves', percentage: 4, amount: 5240000000000, color: '#6366f1' }

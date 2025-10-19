@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { TrendingUp, Lock, DollarSign, PieChart, Wallet, BarChart3 } from 'lucide-react';
 import StatCard from '../components/StatCard';

@@ -53,7 +53,7 @@ export default function Dashboard() {
           cosmosClient.queryActiveDefendants(),
           cosmosClient.queryThreatStats()
         ]);
-        
+
         setChainData({
           totalLiability: parseInt(totalLiability) || reparStatistics.totalLiability,
           activeDefendants: activeDefendants || reparStatistics.totalDefendants,
@@ -85,14 +85,14 @@ export default function Dashboard() {
       const burnRate = Math.random() * 15 + 10; // 10-25% projected burn
       const priceMultiplier = 1 + (burnRate / 100) * 2;
       const settlement = Math.random() * 30 + 65; // 65-95% probability
-      
+
       setAiInsights({
         burnPrediction: burnRate.toFixed(1),
         priceProjection: (reparStatistics.currentPrice * priceMultiplier).toFixed(2),
         settlementProbability: settlement.toFixed(1)
       });
     };
-    
+
     calculateAiInsights();
     const insightsInterval = setInterval(calculateAiInsights, 5000);
     return () => clearInterval(insightsInterval);
@@ -166,8 +166,8 @@ export default function Dashboard() {
               <button
                 onClick={() => setHoloMode(!holoMode)}
                 className={`px-4 py-2 rounded-lg font-semibold flex items-center gap-2 transition-all ${
-                  holoMode 
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg' 
+                  holoMode
+                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -228,10 +228,10 @@ export default function Dashboard() {
 
             {holoMode ? (
               <div className="relative" style={{ height: '300px' }}>
-                <canvas 
+                <canvas
                   ref={coinomicsCanvasRef}
                   className="w-full h-full rounded-lg"
-                  style={{ 
+                  style={{
                     background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.1) 100%)'
                   }}
                 />
@@ -305,7 +305,7 @@ export default function Dashboard() {
                         <span className="text-xs font-bold text-purple-900">{aiSettlementProb.toFixed(1)}%</span>
                       </div>
                       <div className="w-full bg-purple-200 rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all"
                           style={{ width: `${aiSettlementProb}%` }}
                         />
@@ -327,7 +327,7 @@ export default function Dashboard() {
               <span className="text-sm font-semibold text-blue-700">AI Trend Analysis</span>
             </div>
           </div>
-          
+
           {/* AI Insights Summary */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
