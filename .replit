@@ -47,6 +47,10 @@ args = "cd dexplorer && npm run dev"
 waitForPort = 3001
 
 [[ports]]
+localPort = 3001
+externalPort = 8081
+
+[[ports]]
 localPort = 5000
 externalPort = 80
 
@@ -83,6 +87,10 @@ localPort = 39419
 externalPort = 3003
 
 [[ports]]
+localPort = 42419
+externalPort = 8099
+
+[[ports]]
 localPort = 42461
 externalPort = 8000
 
@@ -97,10 +105,6 @@ externalPort = 4200
 [[ports]]
 localPort = 46421
 externalPort = 6800
-
-[[ports]]
-localPort = 3001
-externalPort = 3001
 
 [deployment]
 deploymentTarget = "autoscale"
