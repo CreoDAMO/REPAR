@@ -175,8 +175,8 @@ export default function AequitasDEX() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center -space-x-2">
-                          <CryptoIcon symbol="REPAR" className="w-10 h-10 border-2 border-white" />
-                          <CryptoIcon symbol={pool.coin2} className="w-10 h-10 border-2 border-white" />
+                          <CryptoIcon symbol="REPAR" className="w-10 h-10 border-2 border-white rounded-full" />
+                          <CryptoIcon symbol={pool.coin2} className="w-10 h-10 border-2 border-white rounded-full" />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{pool.pair}</h4>
