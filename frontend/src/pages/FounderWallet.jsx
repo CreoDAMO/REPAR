@@ -348,8 +348,10 @@ const FounderWallet = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Allocation Breakdown */}
+      {/* Allocation Breakdown */}
+      <div className="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white rounded-lg p-6 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-400/30 rounded-2xl p-6">
             <h3 className="text-lg font-bold mb-4 text-purple-300">Founder Allocation (10%)</h3>
@@ -417,7 +419,7 @@ const FounderWallet = () => {
             </div>
           </div>
         </div>
-
+      </div>
 
       {/* Tabs for different sections */}
       <div className="flex space-x-4 mb-8 overflow-x-auto">
