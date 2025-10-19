@@ -11,28 +11,37 @@ const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3
  */
 async function apiRequest(endpoint, options = {}) {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
-  
+
   // Add auth token if available
   const token = sessionStorage.getItem('backend_auth_token');
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  
+
+  // Add CSRF token for non-GET requests
+  if (options.method !== 'GET') {
+    const csrfToken = await getCsrfToken(); // Assuming getCsrfToken is available
+    if (csrfToken) {
+      headers['X-CSRF-Token'] = csrfToken;
+    }
+  }
+
   const response = await fetch(url, {
     ...options,
     headers,
+    credentials: options.method !== 'GET' ? 'include' : undefined, // Include credentials for non-GET requests
   });
-  
+
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'Request failed' }));
     throw new Error(error.error || `API request failed: ${response.status}`);
   }
-  
+
   return response.json();
 }
 
@@ -44,11 +53,11 @@ export async function createBackendSession() {
     const result = await apiRequest('/api/auth/session', {
       method: 'POST',
     });
-    
+
     if (result.token) {
       sessionStorage.setItem('backend_auth_token', result.token);
     }
-    
+
     return result;
   } catch (error) {
     console.warn('⚠️ Backend auth failed:', error.message);

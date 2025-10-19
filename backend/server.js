@@ -12,6 +12,8 @@ import morgan from 'morgan';
 import { config, validateConfig } from './config/index.js';
 import circleRoutes from './routes/circle.js';
 import { createSession } from './middleware/auth.js';
+import cookieParser from 'cookie-parser';
+import csrf from 'csurf';
 
 // Validate configuration on startup
 validateConfig();
@@ -40,7 +42,7 @@ app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, Postman, etc.)
     if (!origin) return callback(null, true);
-    
+
     if (config.cors.origins.includes(origin)) {
       callback(null, true);
     } else {
@@ -74,6 +76,18 @@ app.use(session({
   },
 }));
 
+// Cookie parser (required for CSRF)
+app.use(cookieParser());
+
+// CSRF protection
+const csrfProtection = csrf({ cookie: true });
+app.use(csrfProtection);
+
+// CSRF token endpoint
+app.get('/api/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
 // Logging
 if (config.nodeEnv === 'development') {
   app.use(morgan('dev'));
@@ -100,6 +114,7 @@ app.get('/api', (req, res) => {
     endpoints: {
       health: 'GET /health',
       auth: 'POST /api/auth/session',
+      csrfToken: 'GET /api/csrf-token',
       circle: {
         createWallet: 'POST /api/circle/create-wallet',
         transfer: 'POST /api/circle/transfer',
@@ -130,12 +145,20 @@ app.use((req, res) => {
 // Error handler
 app.use((err, req, res, next) => {
   console.error('❌ Server error:', err);
-  
+
   const statusCode = err.statusCode || 500;
   const message = config.nodeEnv === 'production' 
     ? 'Internal server error' 
     : err.message;
-  
+
+  // Handle CSRF errors specifically
+  if (err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).json({
+      success: false,
+      error: 'Invalid CSRF token',
+    });
+  }
+
   res.status(statusCode).json({
     success: false,
     error: message,
@@ -155,6 +178,7 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   console.log('Endpoints:');
   console.log(`  Health: http://localhost:${config.port}/health`);
   console.log(`  API Info: http://localhost:${config.port}/api`);
+  console.log(`  CSRF Token: http://localhost:${config.port}/api/csrf-token`);
   console.log(`  Circle: http://localhost:${config.port}/api/circle/*`);
   console.log('');
   console.log('Security:');
@@ -162,6 +186,7 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   console.log(`  ✅ Rate limiting: ${config.rateLimit.max} requests per ${config.rateLimit.windowMs / 60000} minutes`);
   console.log(`  ✅ Helmet security headers enabled`);
   console.log(`  ✅ Session management enabled`);
+  console.log(`  ✅ CSRF protection enabled`);
   console.log('');
   console.log('Circle SDK:');
   console.log(`  ✅ API Key: ${config.circle.apiKey ? '***configured***' : '❌ NOT SET'}`);
