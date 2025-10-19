@@ -32,44 +32,22 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     'LINK': Chainlink
   };
 
-  // Handle REPAR with local logo
-  if (symbol === 'REPAR') {
-    return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} onError={(e) => {
-      e.target.style.display = 'none';
-      e.target.nextSibling?.classList.remove('hidden');
-    }} />;
-  }
-
-  // Handle coins with fallback letters (USDC, XRP)
-  if (symbol === 'USDC' || symbol === 'XRP') {
-    return (
-      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
-        {symbol.charAt(0)}
-      </div>
-    );
-  }
-
-  // Handle cryptocons library icons
   const Icon = iconMap[symbol];
-  if (Icon) {
-    try {
-      return <Icon className={className} />;
-    } catch (error) {
-      console.warn(`Failed to render icon for ${symbol}:`, error);
+  if (!Icon) {
+    if (symbol === 'REPAR') {
+      return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
+    }
+    if (symbol === 'USDC' || symbol === 'XRP') {
       return (
-        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+        <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
           {symbol.charAt(0)}
         </div>
       );
     }
+    return <div className={className + " bg-gray-300 rounded-full"} />;
   }
 
-  // Default fallback
-  return (
-    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
-      {symbol.charAt(0)}
-    </div>
-  );
+  return <Icon className={className} />;
 };
 
 export default function SwapInterface() {
@@ -256,7 +234,7 @@ export default function SwapInterface() {
                 className="bg-white font-medium outline-none cursor-pointer text-sm sm:text-base text-gray-900"
               >
                 {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol}>
+                  <option key={token.symbol} value={token.symbol} className="bg-white text-gray-900">
                     {token.symbol}
                   </option>
                 ))}
@@ -301,7 +279,7 @@ export default function SwapInterface() {
                 className="bg-white font-medium outline-none cursor-pointer text-gray-900"
               >
                 {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol}>
+                  <option key={token.symbol} value={token.symbol} className="bg-white text-gray-900">
                     {token.symbol}
                   </option>
                 ))}

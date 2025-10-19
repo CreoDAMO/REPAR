@@ -22,51 +22,35 @@
 
 ---
 
-## ✅ Secrets Configuration Status
+## 🔑 What You Need to Do Next
 
-### All Required Secrets Are Configured
+### Step 1: Get Circle API Credentials
 
-The following secrets have been added to Replit Secrets Manager:
+1. **Sign up** at Circle Developer Console: https://console.circle.com
+2. **Generate API Key** from the dashboard
+3. **Generate Entity Secret** (32-byte key for wallet security)
 
-1. **CIRCLE_API_KEY** ✅ - Circle API key for USDC payment processing
-2. **CIRCLE_ENTITY_SECRET** ✅ - 32-byte encryption key for Circle wallet security
-3. **COINBASE_API_KEY** ✅ - Coinbase Commerce integration
-4. **COINBASE_API_SECRET** ✅ - Coinbase webhook verification
-5. **DIGITALOCEAN_ACCESS_TOKEN** ✅ - DigitalOcean deployment automation
-6. **SESSION_SECRET** ✅ - Backend session management
+### Step 2: Add Secrets to Replit
 
-**Note**: All secrets are stored server-side (NOT prefixed with `VITE_`) for maximum security.
+1. Click the **Secrets** tab in Replit (lock icon in left sidebar)
+2. Add these two secrets:
 
-### Backend Configuration
+```
+Key: VITE_CIRCLE_API_KEY
+Value: [paste your Circle API key here]
 
-The backend server automatically reads these secrets from the environment:
-- Circle SDK: Uses `CIRCLE_API_KEY` and `CIRCLE_ENTITY_SECRET`
-- Coinbase: Uses `COINBASE_API_KEY` and `COINBASE_API_SECRET`
-- Sessions: Uses `SESSION_SECRET`
+Key: VITE_CIRCLE_ENTITY_SECRET
+Value: [paste your 32-byte entity secret here]
+```
 
-### What's Ready to Use
+### Step 3: Test the Integration
 
-With all secrets configured, the following features are now active:
+Once you've added the API keys, the Circle SDK will automatically initialize and you can:
 
-1. **Circle Payment Processing**
-   - Justice Burn mechanism (defendant payments)
-   - Reparations distribution (mass payouts)
-   - Cross-chain USDC transfers via CCTP
-   - Wallet creation for descendants
-
-2. **Coinbase Integration**
-   - Fiat-to-crypto onramp
-   - Credit card purchases
-   - Webhook verification
-
-3. **Backend API Security**
-   - Secure session management
-   - Rate limiting and CORS protection
-   - API authentication
-
-### Next Step: Launch
-
-All infrastructure is configured and ready. You can now proceed with
+- ✅ Accept USDC payments for Justice Burn mechanism
+- ✅ Distribute USDC reparations to descendants
+- ✅ Enable USDC <-> REPAR swaps in the DEX
+- ✅ Transfer USDC across multiple blockchains (Ethereum, Solana, Arbitrum, etc.)
 
 ---
 

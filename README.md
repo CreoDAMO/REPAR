@@ -138,14 +138,11 @@ reparationsd query ledger total-owed
 
 🗓️ Roadmap
 
-Phase 1: Foundation (Q4 2025) - ✅ IN PROGRESS
+Phase 1: Foundation (Q4 2025)
 
-· ✅ Circle SDK Integration Complete (USDC payments)
-· ✅ Coinbase Commerce Integration Ready
-· ✅ Backend API Security Infrastructure Deployed
-· ✅ All API Keys & Secrets Configured
-· ⏳ Testnet Launch & IFR Validator Onboarding
-· ⏳ Security Audits (Quantstamp, Informal Systems)
+· Testnet Launch & IFR Validator Onboarding
+· Security Audits (Quantstamp, Informal Systems)
+· Coinbase SDK Integration
 
 Phase 2: Enforcement (Q1 2026)
 
