@@ -14,10 +14,11 @@
 
 ### 3. Circle SDK Integration
 - **SDK**: Circle USDCKit v0.17.1
-- **Installation**: ✅ Installed via npm
+- **Installation**: ✅ Installed via npm (backend)
 - **Documentation**: `docs/CIRCLE_SDK_INTEGRATION.md`
-- **Client Utility**: `frontend/src/utils/circleClient.js`
-- **Status**: ✅ CONFIGURED - Awaiting API keys
+- **Backend API**: `backend/server.js` (secure proxy)
+- **Frontend Client**: `frontend/src/utils/backendAPI.js`
+- **Status**: ✅ CONFIGURED - Awaiting API keys in backend secrets
 
 ---
 
