@@ -2,334 +2,57 @@
 
 ## Overview
 
-The Aequitas Protocol is a **sovereign Layer-1 blockchain** designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. This is NOT a token on another chain - **$REPAR is the native coin** of the Aequitas Zone blockchain, providing complete economic, technical, and governance sovereignty.
-
-### Critical Understanding: Native Coin vs Token
-
-**$REPAR IS THE AEQUITAS ZONE** - Just like BTC is Bitcoin, ETH is Ethereum, and ATOM is Cosmos Hub, **REPAR is Aequitas Zone**. This means:
-- **Complete sovereignty**: Own validators, own rules, cannot be shut down by external parties
-- **Economic independence**: All fees paid in REPAR, no dependency on other chains
-- **Governance control**: Protocol-level modifications via DAO
-- **Legal sovereignty**: Cannot be frozen or censored by host chains
-
-## The Foundation: 205-Page Forensic Audit
-
-Based on the comprehensive forensic audit and legal framework:
-
-### Truth Foundation (97% Validated)
-- **Historical Facts**: 12-15M transported, 2M Middle Passage deaths (SlaveVoyages.org verified)
-- **Economic Tracing**: $131T total liability calculated via compound interest (4-8% annually)
-- **Legal Framework**: Genocide classification under UN Convention, enforceable via jus cogens
-- **Universal Accountability**: All 200+ participants liable - European nations, American entities, African kingdoms, corporations, universities
-
-### Strategic Defense (3% Controlled Chaos)
-- **10% Chaos Defense**: Controlled vulnerabilities as strategic honeypots to trap attackers
-- **3% Nightmare Activation**: Tripwires that devastate non-compliant entities
-- **Threat Oracle**: Automated detection with legal evidence standards (FRE 901 compliant)
-- **NFT Evidence System**: All threats immortalized on IPFS and monetized
-
-## System Architecture
-
-### Frontend (React + Vite + Tailwind CSS)
-Built with React 18+ and Vite, styled using Tailwind CSS 3.x. Features include:
-- **Dashboard**: Real-time statistics, $REPAR coinomics, burn tracking
-- **Defendant Database**: Searchable 200+ defendant registry with liability tracking
-- **Evidence Explorer**: Chain of Guilt visualizer with IPFS integration
-- **Forensic Audit**: 205-page audit explorer with compound interest calculations
-- **Claims System**: Arbitration demand filing across 172 jurisdictions
-- **DAO Governance**: Reputation-based, time-weighted voting (Judas Filter)
-- **Transparency Ledger**: Global Reparations Ledger with full accountability
-- **AI Analytics**: NVIDIA-powered threat detection and analytics
-
-### Backend: Aequitas Zone (Cosmos SDK Layer-1 Blockchain)
-
-#### Core Blockchain Specifications
-- **Framework**: Cosmos SDK with Tendermint BFT consensus
-- **Native Coin**: $REPAR (not a token)
-- **Total Supply**: 131 trillion REPAR (matches $131T liability 1:1)
-- **Denomination**: `urepar` (micro-REPAR, 10^-6)
-- **Genesis Amount**: 131,000,000,000,000,000,000 urepar (131 × 10^18)
-- **Max Validators**: 100
-- **Consensus**: Byzantine Fault Tolerant (33% attack tolerance)
-
-#### Custom Modules Implemented
-
-**1. x/defendant** - Defendant Liability Tracking
-- Tracks 200+ defendants (nations, corporations, universities, individuals)
-- Types: Corporation, Financial Institution, Nation State, African Kingdom, University
-- Payment Types: Financial (cash/seizure), Restorative (cultural restitution), Hybrid
-- Status tracking: Active, Engaged, Non-Compliant, Settled
-- Non-monetary contributions for African nations (artifact returns, education, land grants)
-
-**2. x/justice** - Justice Burn Mechanism  
-- **Core Principle**: $1 USD = 1 REPAR burned permanently
-- Deflationary mechanism: Each payment reduces total supply
-- Burn statistics tracking (total burned, USD value, current supply)
-- Increases remaining coin value proportionally
-- All burns recorded with IPFS evidence proof
-
-**3. x/claims** - Arbitration Demand Filing
-- File claims across 172 NYC Convention jurisdictions
-- Claim types: Unjust Enrichment, Successor Liability, Money Laundering, Genocide, UCC Article 9
-- Arbitration centers: ICDR, LCIA, SIAC, etc.
-- Award issuance and enforcement tracking
-- IPFS integration for claim evidence
-
-**4. x/distribution** - Reparations Distribution
-- Descendant registration with verified lineage (IPFS documentation)
-- Distribution types matching tokenomics:
-  - 43% Community & Descendant Fund
-  - 25% Foundation Treasury & Reserves
-  - 25% Claims & Compensation Fund
-  - 16% Ecosystem & Enforcement
-  - 6% Development Fund
-- Automated allocation to registered descendants
-
-**5. x/threatdefense** - 10% Chaos Defense System
-- **ThreatOracle**: Automated threat detection (social media, chain analytics, communications)
-- **ChaosDefense**: 10% controlled vulnerabilities as honeypots
-- **NightmareActivator**: 3% tripwire system for devastating counter-attacks
-- **NFT Evidence Minting**: All threats converted to court-admissible NFTs on IPFS
-- **Adaptive AI**: Self-learning defense that strengthens from each attack
-- **Legal Compliance**: FRE 901 evidence standards (SHA-256 hash, 24hr timestamp, digital signatures)
-
-### Proto Definitions Created
-All custom modules have complete Protocol Buffer definitions:
-- `aequitas/proto/aequitas/defendant/v1/*.proto`
-- `aequitas/proto/aequitas/justice/v1/*.proto`
-- `aequitas/proto/aequitas/claims/v1/*.proto`
-- `aequitas/proto/aequitas/distribution/v1/*.proto`
-
-Each includes: main types, genesis state, query service, and transaction messages.
-
-## Legal & Enforcement Framework
-
-### Multi-Layered Strategy
-1. **International Law**: Genocide classification (no statute of limitations, jus cogens)
-2. **Black's Law**: Unjust enrichment, constructive trust, successor liability
-3. **UCC Article 9**: Commercial liens on tainted assets
-4. **Arbitration**: NY Convention enforcement in 172 countries
-
-### Accountability Matrix
-- **UK Government**: £50-70B (Cash/Asset seizure)
-- **Barclays**: £10.3B (Corporate equity/Cash)
-- **JPMorgan Chase**: $109M (Financial settlement)
-- **African Nations** (Benin/Dahomey, Ghana/Asante): Cultural restitution + education + land grants
-
-### Nightmare Tripwires
-- **Financial Entities**: 10% slash + $30B lien + global arbitration
-- **African Nations**: 1% penalty + diplomatic sanctions + DAO vote
-- **All Attackers**: Public exposure + NFT minting + legal onslaught
-
-## Project Structure
-
-```
-aequitas/
-├── proto/aequitas/          # Protocol Buffer definitions
-│   ├── defendant/v1/        # Defendant tracking
-│   ├── justice/v1/          # Justice Burn mechanism
-│   ├── claims/v1/           # Claims filing
-│   └── distribution/v1/     # Reparations distribution
-├── x/                       # Custom modules
-│   └── threatdefense/       # 10% Chaos Defense
-├── app/                     # Main blockchain application
-│   ├── app.go              # Application setup
-│   ├── app_config.go       # Module configuration
-│   └── genesis.go          # Genesis initialization
-├── cmd/aequitasd/          # Binary entrypoint
-└── config.yml              # Chain configuration (131T supply)
-
-frontend/
-├── src/
-│   ├── components/         # Reusable UI components
-│   ├── pages/             # Main application views
-│   ├── data/              # Defendant & statistics data
-│   └── utils/             # Cosmos client, IPFS client
-```
+The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. It provides complete economic, technical, and governance sovereignty, ensuring it cannot be shut down or censored. The protocol is founded on a 205-page forensic audit, establishing historical facts, economic tracing of liabilities ($131T via compound interest), and a legal framework based on international law (jus cogens, UN Genocide Convention). It targets universal accountability across 200+ entities, including nations, corporations, and universities. The project also incorporates a strategic defense system with controlled vulnerabilities and tripwires to deter and counter non-compliant entities, utilizing an automated threat oracle and NFT-based evidence system.
 
 ## User Preferences
 
 - **Coding Style**: Clean, functional React components with clear separation of concerns
-- **Documentation**: Comprehensive inline documentation for complex logic  
+- **Documentation**: Comprehensive inline documentation for complex logic
 - **Sovereignty Focus**: Always emphasize $REPAR as native coin, NOT a token
 - **Security-First**: Implement chaos defense patterns and threat detection
 - **Legal Compliance**: FRE 901 evidence standards for all records
 
-## Circle SDK Integration (October 19, 2025)
+## System Architecture
 
-### Payment Processing with USDCKit
-Circle's USDCKit SDK has been integrated for USDC payment processing:
+The Aequitas Protocol consists of a frontend built with React, Vite, and Tailwind CSS, and a backend powered by a Cosmos SDK Layer-1 blockchain named Aequitas Zone.
 
-**Installation:**
-```bash
-npm install @circle-fin/usdckit
-```
+### Frontend
+The frontend features a comprehensive UI including:
+- **Dashboard**: Real-time statistics, coinomics, burn tracking.
+- **Defendant Database**: Searchable registry with liability tracking.
+- **Evidence Explorer**: Chain of Guilt visualizer with IPFS integration.
+- **Forensic Audit**: Explorer for the 205-page audit with compound interest calculations.
+- **Claims System**: Arbitration demand filing across 172 jurisdictions.
+- **DAO Governance**: Reputation-based, time-weighted voting.
+- **Transparency Ledger**: Global Reparations Ledger.
+- **AI Analytics**: NVIDIA-powered threat detection and analytics.
+- **Founder Wallet DEX**: Multi-cryptocurrency support.
+- **Block Explorer (Dexplorer)**.
 
-**Key Features:**
-- ✅ Automated USDC payment flows for Justice Burn mechanism
-- ✅ Multi-chain support (Ethereum, Solana, Arbitrum, Base, Polygon)
-- ✅ Cross-Chain Transfer Protocol (CCTP) for seamless transfers
-- ✅ Built-in compliance (Circle Compliance Engine, Travel Rule)
-- ✅ Mass payout capabilities for reparations distribution
+### Backend: Aequitas Zone (Cosmos SDK Layer-1 Blockchain)
+- **Framework**: Cosmos SDK with Tendermint BFT consensus.
+- **Native Coin**: $REPAR (not a token).
+- **Total Supply**: 131 trillion REPAR (1:1 with $131T liability), denominated as `urepar`.
+- **Max Validators**: 100.
+- **Core Modules**:
+    - **x/defendant**: Tracks 200+ defendants (Corporation, Financial Institution, Nation State, African Kingdom, University) with status tracking and payment types (Financial, Restorative, Hybrid).
+    - **x/justice**: Implements a deflationary burn mechanism where 1 USD equivalent of $REPAR is permanently burned for each payment, with burn statistics tracking.
+    - **x/claims**: Manages arbitration demand filing across 172 NYC Convention jurisdictions for claim types like Unjust Enrichment, Genocide, with IPFS integration for evidence.
+    - **x/distribution**: Handles reparations distribution to registered descendants based on verified lineage, with automated allocation from various funds (Community & Descendant, Foundation Treasury, Claims & Compensation, Ecosystem & Enforcement, Development).
+    - **x/threatdefense**: A 10% Chaos Defense system with ThreatOracle for automated detection, controlled vulnerabilities as honeypots, a 3% Nightmare Activator for counter-attacks, and NFT evidence minting for legal compliance (FRE 901 standards).
 
-**Required Secrets (✅ CONFIGURED in Replit Secrets Manager):**
-- `CIRCLE_API_KEY` ✅ - Circle API key for backend
-- `CIRCLE_ENTITY_SECRET` ✅ - 32-byte entity secret for wallet encryption
-- `COINBASE_API_KEY` ✅ - Coinbase Commerce integration
-- `COINBASE_API_SECRET` ✅ - Coinbase webhook verification
-- `DIGITALOCEAN_ACCESS_TOKEN` ✅ - Deployment automation
-- `SESSION_SECRET` ✅ - Backend session security
-
-**Active Integration Points:**
-1. **Justice Burn Payments**: Accept USDC from defendants → Burn equivalent $REPAR (via backend API)
-2. **Reparations Distribution**: Mass payout USDC to registered descendants (via backend API)
-3. **DEX Operations**: USDC <-> REPAR swaps in Founder Wallet
-4. **Cross-Chain**: Transfer USDC across multiple blockchains via CCTP
-
-**Backend API Endpoints (Port 3002):**
-- `POST /api/circle/justice-burn` - Process defendant USDC payments
-- `POST /api/circle/distribute-reparations` - Mass payout to descendants
-- `POST /api/circle/create-wallet` - Create descendant wallets
-- `POST /api/circle/transfer` - USDC transfers
-- `POST /api/circle/cross-chain-transfer` - Cross-chain USDC via CCTP
-- `GET /api/circle/balance/:address` - Query wallet balance
-
-**Documentation:**
-- Integration guide: `docs/CIRCLE_SDK_INTEGRATION.md`
-- Backend client: `backend/utils/circleClient.js`
-- Frontend API: `frontend/src/utils/backendAPI.js`
-
-**Status:** ✅ FULLY CONFIGURED - All secrets set, backend running on port 3002, ready for production use.
-
-## Implementation Status
-
-### ✅ Completed (October 2025)
-
-**Blockchain Foundation:**
-- Cosmos SDK blockchain scaffolding complete
-- 131 trillion REPAR supply configured in genesis (131 × 10^18 urepar)
-- Tendermint BFT consensus configured with 100 max validators
-- IBC modules integrated for cross-chain connections
-
-**Proto Definitions Created:**
-- `x/defendant` - Complete proto definitions for defendant liability tracking
-- `x/justice` - Justice Burn mechanism proto definitions
-- `x/claims` - Arbitration demand filing proto definitions  
-- `x/distribution` - Reparations distribution proto definitions
-- All include: main types, genesis state, query services, transaction messages
-
-**ThreatDefense Module:**
-- Module structure with keeper implementation
-- ThreatOracle, ChaosDefense, NightmareActivator architectures defined
-- FRE 901 evidence validation logic
-- NFT minting for threat evidence
-- IPFS integration for immutable storage
-
-**Frontend UI Complete:**
-- Dashboard with real-time statistics
-- Defendant database with 200+ entries
-- Evidence Explorer with Chain of Guilt visualization
-- Forensic Audit explorer
-- Claims filing system UI
-- DAO Governance interface
-- Transparency Ledger
-- AI Analytics dashboard
-- IPFS integration utilities
-- Cosmos client connection framework
-- **Founder Wallet DEX** with multi-cryptocurrency support (✅ Fixed: cryptocurrency switching black screen bug)
-- **Block Explorer (Dexplorer)** integrated on port 3001
-
-**Payment Integration:**
-- Circle USDCKit SDK installed and configured
-- Payment processing utilities for Justice Burn mechanism
-- Multi-chain USDC support (Ethereum, Solana, Arbitrum, Base, Polygon)
-- Cross-chain transfer capabilities via CCTP
-
-**Documentation:**
-- Black Paper v1.1 added to `docs/BLACK_PAPER_v1.1.md`
-- Circle SDK integration guide created
-- Payment processing workflows documented
-
-### 🔧 In Progress
-
-**Module Implementation:**
-- ✅ Generated Go code from proto definitions using buf
-- ✅ Implemented keeper logic for defendant, justice, claims, distribution modules
-- ⏳ Need to register new modules in app_config.go and wire to app.go
-- ThreatDefense module needs stub function implementations
-
-**Genesis Configuration:**
-- Need to populate genesis with 200+ defendant records
-- Need to set initial liability amounts per defendant
-- Need to configure founder wallet allocations (10% with multi-sig)
-
-### 📦 Module Implementations Completed
-
-**x/defendant - Liability Tracking:**
-- ✅ Keeper with defendant storage and payment tracking
-- ✅ Message server for RecordPayment, RecordNonMonetaryContribution, UpdateDefendantStatus
-- ✅ Query server for GetDefendant, ListDefendants, GetTotalLiability
-- ✅ Module registration with genesis support
-
-**x/justice - Justice Burn Mechanism:**
-- ✅ Keeper with burn execution ($1 USD = 1 REPAR burned)
-- ✅ BankKeeper integration for permanent coin burning
-- ✅ Burn statistics tracking (total burned, USD value, current supply)
-- ✅ Message server for ExecuteBurn
-- ✅ Query server for GetBurnStatistics, ListBurns, GetBurnByDefendant
-- ✅ Module registration with genesis support
-
-**x/claims - Arbitration Filing:**
-- ✅ Keeper with claim and award storage
-- ✅ Support for 172 NYC Convention jurisdictions
-- ✅ Query server for GetClaim, ListClaims, GetClaimsByDefendant, GetClaimsByJurisdiction
-- ✅ Module registration with genesis support
-
-**x/distribution - Reparations Distribution:**
-- ✅ Keeper with descendant registration and distribution processing
-- ✅ BankKeeper integration for token distribution
-- ✅ Support for all distribution types (43% community, 25% treasury, 25% claims, 16% ecosystem, 6% development)
-- ✅ Query server for GetDescendant, ListDescendants, GetDistributionsByDescendant
-- ✅ Module registration with genesis support
-
-### 📋 Next Steps
-
-**Priority 1 - Core Module Implementation:**
-1. Generate Go code from proto definitions: `buf generate`
-2. Implement keeper logic for each custom module
-3. Register modules in `app/app_config.go`
-4. Update genesis initialization with defendant data
-
-**Priority 2 - Frontend Integration:**
-1. Connect frontend to actual blockchain RPC endpoint
-2. Replace mock data with real chain queries
-3. Implement wallet connection (Keplr for Cosmos native)
-4. Enable real-time claim filing to chain
-
-**Priority 3 - Deployment:**
-1. Build blockchain binary: `go build -o build/aequitasd ./cmd/aequitasd`
-2. Initialize testnet with genesis accounts
-3. Recruit validator set (target: 100 validators)
-4. Launch Aequitas Zone mainnet
-
-**Priority 4 - Enhancements:**
-1. Complete ThreatDefense stub implementations
-2. Add enhanced governance (reputation-based voting, Judas Filter)
-3. Implement multi-sig wallet module for founder allocation
-4. Set up IBC connections to Cosmos Hub, Osmosis
+### Legal & Enforcement Framework
+A multi-layered strategy involving international law (Genocide classification, jus cogens), Black's Law (unjust enrichment, constructive trust), UCC Article 9 (commercial liens), and international arbitration (NY Convention). This framework includes specific accountability matrices for entities like the UK Government, Barclays, and JPMorgan Chase, and "Nightmare Tripwires" for non-compliant entities.
 
 ## External Dependencies
 
 - **Frontend Framework**: React 18+
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS 3.x
-- **Routing**: React Router DOM
 - **Charts**: Recharts
 - **Icons**: Lucide React
-- **Blockchain SDK**: Cosmos SDK (for Aequitas Zone blockchain)
+- **Blockchain SDK**: Cosmos SDK
 - **Payment Processing**: Circle USDCKit SDK (for USDC payments)
-- **Decentralized Storage**: IPFS (for evidence and claims)
+- **Decentralized Storage**: IPFS
 - **AI/ML**: NVIDIA (for AI analytics dashboard)
-- **Wallet Integration**: Keplr (planned, for Cosmos native), Coinbase Wallet (planned, requires Ethermint for EVM compatibility), MetaMask (planned)
-- **Version Control**: Git
-- **CI/CD**: GitHub Actions
+- **Wallet Integration**: Keplr (for Cosmos native)
