@@ -33,60 +33,41 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     'LINK': Chainlink
   };
 
-  // Handle REPAR with error boundary
   if (symbol === 'REPAR') {
     return (
       <img 
         src={reparLogo} 
         alt={symbol} 
-        className={className + " rounded-full object-cover"} 
-        onError={(e) => {
-          e.target.style.display = 'none';
-          console.warn('REPAR logo failed to load');
-        }}
+        className={`${className} rounded-full object-cover`}
       />
     );
   }
 
-  // Handle coins with fallback letters (USDC, XRP)
   if (symbol === 'USDC' || symbol === 'XRP') {
     return (
-      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+      <div className={`${className} bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs`}>
         {symbol.charAt(0)}
       </div>
     );
   }
 
-  // Handle cryptocons library icons
   const Icon = iconMap[symbol];
   if (Icon) {
-    try {
-      return <Icon className={className} />;
-    } catch (error) {
-      console.warn(`Failed to render icon for ${symbol}:`, error);
-      return (
-        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
-          {symbol.charAt(0)}
-        </div>
-      );
-    }
+    return <Icon className={className} />;
   }
 
-  // Default fallback
   return (
-    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
-      {symbol.charAt(0)}
+    <div className={`${className} bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs`}>
+      {symbol ? symbol.charAt(0) : '?'}
     </div>
   );
 };
 
 export default function LiquidityInterface() {
-  const [mode, setMode] = useState('add'); // 'add' or 'remove'
+  const [mode, setMode] = useState('add');
   const [coinAAmount, setCoinAAmount] = useState('');
   const [coinBAmount, setCoinBAmount] = useState('');
   const [removePercent, setRemovePercent] = useState(25);
-
-  // State for selected coins
   const [coinA, setCoinA] = useState('REPAR');
   const [coinB, setCoinB] = useState('USDC');
 
@@ -108,12 +89,11 @@ export default function LiquidityInterface() {
     { symbol: 'USDC', name: 'USD Coin', balance: '50,000' },
   ];
 
-  const mockPoolShare = 2.5; // User owns 2.5% of the pool
+  const mockPoolShare = 2.5;
   const mockLPCoinS = 125000;
 
   const handleCoinAChange = (value) => {
     setCoinAAmount(value);
-    // Auto-calculate coinB based on pool ratio (1 REPAR = 18.33 USDC)
     if (value) {
       setCoinBAmount((parseFloat(value) * 18.33).toFixed(2));
     } else {
@@ -123,7 +103,6 @@ export default function LiquidityInterface() {
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md mx-auto">
-      {/* Mode Toggle */}
       <div className="flex gap-2 mb-6">
         <button
           onClick={() => setMode('add')}
@@ -151,7 +130,6 @@ export default function LiquidityInterface() {
 
       {mode === 'add' ? (
         <>
-          {/* Add Liquidity Form */}
           <div className="space-y-4 mb-6">
             <div>
               <div className="flex justify-between mb-2">
@@ -228,7 +206,6 @@ export default function LiquidityInterface() {
             </div>
           </div>
 
-          {/* Pool Info */}
           {coinAAmount && (
             <div className="bg-blue-50 rounded-lg p-4 mb-4 space-y-2">
               <div className="flex justify-between text-sm">
@@ -259,7 +236,6 @@ export default function LiquidityInterface() {
         </>
       ) : (
         <>
-          {/* Remove Liquidity Form */}
           <div className="mb-6">
             <div className="mb-4">
               <div className="flex justify-between mb-2">
@@ -292,7 +268,6 @@ export default function LiquidityInterface() {
               </div>
             </div>
 
-            {/* Position Info */}
             <div className="bg-purple-50 rounded-lg p-4 mb-4 space-y-3">
               <h4 className="font-semibold text-purple-900 mb-2">Your Position</h4>
               <div className="flex justify-between text-sm">
@@ -305,7 +280,6 @@ export default function LiquidityInterface() {
               </div>
             </div>
 
-            {/* Withdrawal Preview */}
             <div className="bg-blue-50 rounded-lg p-4 mb-4 space-y-2">
               <h4 className="font-semibold text-blue-900 mb-2">You Will Receive</h4>
               <div className="flex justify-between text-sm">
@@ -329,7 +303,6 @@ export default function LiquidityInterface() {
         </>
       )}
 
-      {/* Info Box */}
       <div className="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
         <Info className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
         <p className="text-xs text-amber-800">

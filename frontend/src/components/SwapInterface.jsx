@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { ArrowDownUp, Settings, AlertCircle, Loader } from 'lucide-react';
 import {
@@ -17,6 +18,7 @@ import {
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
 const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
+  // Define icon mapping
   const iconMap = {
     'BTC': Bitcoin,
     'ETH': Ethereum,
@@ -32,49 +34,36 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     'LINK': Chainlink
   };
 
-  // Handle REPAR with error boundary
+  // REPAR - use image
   if (symbol === 'REPAR') {
     return (
       <img 
         src={reparLogo} 
         alt={symbol} 
-        className={className + " rounded-full object-cover"} 
-        onError={(e) => {
-          e.target.style.display = 'none';
-          console.warn('REPAR logo failed to load');
-        }}
+        className={`${className} rounded-full object-cover`}
       />
     );
   }
 
-  // Handle coins with no icon library support
+  // USDC and XRP - use letter fallback
   if (symbol === 'USDC' || symbol === 'XRP') {
     return (
-      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+      <div className={`${className} bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs`}>
         {symbol.charAt(0)}
       </div>
     );
   }
 
-  // Handle cryptocons library icons with error boundary
+  // Try to get icon from cryptocons library
   const Icon = iconMap[symbol];
   if (Icon) {
-    try {
-      return <Icon className={className} />;
-    } catch (error) {
-      console.warn(`Failed to render icon for ${symbol}:`, error);
-      return (
-        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
-          {symbol.charAt(0)}
-        </div>
-      );
-    }
+    return <Icon className={className} />;
   }
 
-  // Default fallback
+  // Fallback for any unknown symbols
   return (
-    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
-      {symbol.charAt(0)}
+    <div className={`${className} bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs`}>
+      {symbol ? symbol.charAt(0) : '?'}
     </div>
   );
 };
@@ -155,7 +144,6 @@ export default function SwapInterface() {
     };
 
     fetchPrices();
-    // Update prices every 30 seconds
     const interval = setInterval(fetchPrices, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -184,7 +172,6 @@ export default function SwapInterface() {
 
   const handleSwap = async () => {
     setIsSwapping(true);
-    // Simulate blockchain transaction
     await new Promise(resolve => setTimeout(resolve, 2000));
     setIsSwapping(false);
     alert(`Swapped ${fromAmount} ${fromCoin} for ${toAmount} ${toCoin}`);
@@ -194,7 +181,6 @@ export default function SwapInterface() {
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 max-w-md mx-auto w-full">
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Swap</h2>
         <button
@@ -205,7 +191,6 @@ export default function SwapInterface() {
         </button>
       </div>
 
-      {/* Settings */}
       {showSettings && (
         <div className="mb-4 p-4 bg-gray-50 rounded-lg">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -237,7 +222,6 @@ export default function SwapInterface() {
         </div>
       )}
 
-      {/* From Coin */}
       <div className="mb-2">
         <div className="flex justify-between mb-2">
           <label className="text-sm font-medium text-gray-700">From</label>
@@ -273,7 +257,6 @@ export default function SwapInterface() {
         </div>
       </div>
 
-      {/* Swap Button */}
       <div className="flex justify-center -my-2 relative z-10">
         <button
           onClick={handleSwapCoins}
@@ -283,7 +266,6 @@ export default function SwapInterface() {
         </button>
       </div>
 
-      {/* To Coin */}
       <div className="mb-4">
         <div className="flex justify-between mb-2">
           <label className="text-sm font-medium text-gray-700">To</label>
@@ -318,7 +300,6 @@ export default function SwapInterface() {
         </div>
       </div>
 
-      {/* Swap Details */}
       {fromAmount && (
         <div className="bg-blue-50 rounded-lg p-4 mb-4 space-y-2">
           <div className="flex justify-between text-sm">
@@ -346,7 +327,6 @@ export default function SwapInterface() {
         </div>
       )}
 
-      {/* Warning */}
       {parseFloat(priceImpact) > 1 && (
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 flex items-start gap-2">
           <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
@@ -356,7 +336,6 @@ export default function SwapInterface() {
         </div>
       )}
 
-      {/* Swap Button */}
       <button
         onClick={handleSwap}
         disabled={!fromAmount || parseFloat(fromAmount) <= 0 || isSwapping}
@@ -372,7 +351,6 @@ export default function SwapInterface() {
         )}
       </button>
 
-      {/* Disclaimer */}
       <p className="text-xs text-center text-gray-500 mt-4">
         Connected to Aequitas DEX • Network: Aequitas Zone • $REPAR is the native coin
       </p>
