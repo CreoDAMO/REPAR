@@ -8,6 +8,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
 import rateLimit from 'express-rate-limit';
+import { csrf } from 'lusca';
 import morgan from 'morgan';
 import { config, validateConfig } from './config/index.js';
 import circleRoutes from './routes/circle.js';
@@ -73,6 +74,9 @@ app.use(session({
     sameSite: 'lax',
   },
 }));
+
+// CSRF protection (must go after session)
+app.use(csrf());
 
 // Logging
 if (config.nodeEnv === 'development') {
