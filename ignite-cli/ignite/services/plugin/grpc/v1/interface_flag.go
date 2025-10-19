@@ -72,23 +72,12 @@ func (f *Flag) ExportToFlagSet(fs *pflag.FlagSet) error {
 			}
 		}
 	case Flag_TYPE_FLAG_UINT:
-		v, err := strconv.ParseUint(f.DefaultValue, 10, 64)
+		// Parse with bit size matching the target type to prevent overflow
+		v, err := strconv.ParseUint(f.DefaultValue, 10, 32)
 		if err != nil {
 			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
 		}
-		// Check upper bound before converting to platform uint
-		var maxUint uint64
-		switch strconv.IntSize {
-		case 32:
-			maxUint = math.MaxUint32
-		case 64:
-			maxUint = math.MaxUint64
-		default:
-			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
-		}
-		if v > maxUint {
-			return newDefaultFlagValueError(cobraFlagTypeUint, f.DefaultValue)
-		}
+		// Safe conversion since we parsed with correct bit size
 		fs.UintP(f.Name, f.Shorthand, uint(v), f.Usage)
 		if f.Value != "" {
 			if err := fs.Set(f.Name, f.Value); err != nil {
