@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navigation from './components/Navigation';
+import ErrorBoundary from './components/ErrorBoundary';
 import Dashboard from './pages/Dashboard';
 import ForensicAudit from './pages/ForensicAudit';
 import Defendants from './pages/Defendants';
@@ -44,7 +45,7 @@ function App() {
           <Route path="/superpay" element={<AequitasSuperPay />} />
           <Route path="/endowment" element={<EndowmentDashboard />} />
           <Route path="/validator-subsidy" element={<ValidatorSubsidy />} />
-          <Route path="/founder-endowment" element={<FounderEndowment />} />
+          <Route path="/founder-endowment" element={<ErrorBoundary><FounderEndowment /></ErrorBoundary>} />
           <Route path="/onramp" element={<Onramper />} />
           <Route path="/black-paper" element={<BlackPaper />} />
         </Routes>

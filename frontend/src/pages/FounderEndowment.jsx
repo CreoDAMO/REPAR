@@ -8,6 +8,8 @@ export default function FounderEndowment() {
     founderVested: 11790000000000, // 9% of 131T = 11.79T REPAR (vested over 4 years)
     founderDiscretionary: 1310000000000, // 1% of 131T = 1.31T REPAR (founder discretionary)
     devDiscretionary: 2620000000000, // 2% of 131T = 2.62T REPAR (dev fund discretionary)
+    discretionary: 3930000000000, // 3% total discretionary (1% founder + 2% dev)
+    renewalBonus: 7860000000000, // 6% of 131T = 7.86T REPAR (renewal bonus after 8 years)
     totalControl: 23580000000000, // 18% total = 23.58T REPAR
     targetAPY: 4.5,
     yieldAccumulated: 0,
@@ -75,6 +77,9 @@ export default function FounderEndowment() {
   }, [endowment]);
 
   const formatCurrency = (amount) => {
+    if (amount === undefined || amount === null || isNaN(amount)) {
+      return '$0.00';
+    }
     if (amount >= 1000000000000) {
       return `$${(amount / 1000000000000).toFixed(2)}T`;
     } else if (amount >= 1000000000) {
