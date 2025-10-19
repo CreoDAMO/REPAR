@@ -8,48 +8,68 @@ import "aequitas/founderendowment/v1/founderendowment.proto";
 option go_package = "aequitas/x/founderendowment/types";
 
 service Query {
-  rpc Endowment(QueryEndowmentRequest) returns (QueryEndowmentResponse) {
+  rpc GetEndowment(QueryGetEndowmentRequest) returns (QueryGetEndowmentResponse) {
     option (google.api.http).get = "/aequitas/founderendowment/v1/endowment";
   }
 
-  rpc Statistics(QueryStatisticsRequest) returns (QueryStatisticsResponse) {
+  rpc GetDistributionConfig(QueryGetDistributionConfigRequest) returns (QueryGetDistributionConfigResponse) {
+    option (google.api.http).get = "/aequitas/founderendowment/v1/distribution_config";
+  }
+
+  rpc GetProtocolAllocation(QueryGetProtocolAllocationRequest) returns (QueryGetProtocolAllocationResponse) {
+    option (google.api.http).get = "/aequitas/founderendowment/v1/protocol_allocation";
+  }
+
+  rpc GetStatistics(QueryGetStatisticsRequest) returns (QueryGetStatisticsResponse) {
     option (google.api.http).get = "/aequitas/founderendowment/v1/statistics";
   }
 
-  rpc Distributions(QueryDistributionsRequest) returns (QueryDistributionsResponse) {
-    option (google.api.http).get = "/aequitas/founderendowment/v1/distributions";
-  }
-
-  rpc ProjectedYield(QueryProjectedYieldRequest) returns (QueryProjectedYieldResponse) {
+  rpc GetProjectedYield(QueryGetProjectedYieldRequest) returns (QueryGetProjectedYieldResponse) {
     option (google.api.http).get = "/aequitas/founderendowment/v1/projected_yield";
   }
+
+  rpc GetDistribution(QueryGetDistributionRequest) returns (QueryGetDistributionResponse) {
+    option (google.api.http).get = "/aequitas/founderendowment/v1/distribution/{id}";
+  }
 }
 
-message QueryEndowmentRequest {}
+message QueryGetEndowmentRequest {}
 
-message QueryEndowmentResponse {
+message QueryGetEndowmentResponse {
   FounderEndowment endowment = 1;
-  DistributionConfig distribution_config = 2;
-  ProtocolAllocation protocol_allocation = 3;
 }
 
-message QueryStatisticsRequest {}
+message QueryGetDistributionConfigRequest {}
 
-message QueryStatisticsResponse {
+message QueryGetDistributionConfigResponse {
+  DistributionConfig distribution_config = 1;
+}
+
+message QueryGetProtocolAllocationRequest {}
+
+message QueryGetProtocolAllocationResponse {
+  ProtocolAllocation protocol_allocation = 1;
+}
+
+message QueryGetStatisticsRequest {}
+
+message QueryGetStatisticsResponse {
   EndowmentStats statistics = 1;
 }
 
-message QueryDistributionsRequest {}
+message QueryGetProjectedYieldRequest {}
 
-message QueryDistributionsResponse {
-  repeated YieldDistribution distributions = 1;
-}
-
-message QueryProjectedYieldRequest {}
-
-message QueryProjectedYieldResponse {
+message QueryGetProjectedYieldResponse {
   string annual_yield = 1;
   string quarterly_yield = 2;
   string founder_annual_dividend = 3;
   string protocol_annual_funding = 4;
+}
+
+message QueryGetDistributionRequest {
+  string id = 1;
+}
+
+message QueryGetDistributionResponse {
+  YieldDistribution distribution = 1;
 }

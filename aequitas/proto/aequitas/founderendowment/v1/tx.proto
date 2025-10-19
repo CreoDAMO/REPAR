@@ -47,7 +47,14 @@ message MsgDistributeYieldResponse {
 }
 
 message MsgUpdateDistributionConfig {
+  option (cosmos.msg.v1.signer) = "authority";
 
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  DistributionConfig distribution_config = 2;
+  ProtocolAllocation protocol_allocation = 3;
+}
+
+message MsgUpdateDistributionConfigResponse {}
 
 message MsgRenewEndowment {
   option (cosmos.msg.v1.signer) = "authority";
@@ -60,12 +67,3 @@ message MsgRenewEndowmentResponse {
   uint64 renewal_count = 2;
   int64 next_renewal_time = 3;
 }
-
-  option (cosmos.msg.v1.signer) = "authority";
-
-  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  DistributionConfig distribution_config = 2;
-  ProtocolAllocation protocol_allocation = 3;
-}
-
-message MsgUpdateDistributionConfigResponse {}
