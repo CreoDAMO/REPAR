@@ -24,6 +24,41 @@ const FounderWallet = () => {
     layer4: FOUNDER_WALLETS.layer4.address,
   });
 
+  // Helper function to format currency, assuming REPAR is represented as a large number
+  const formatCurrency = (amount) => {
+    if (typeof amount !== 'number') {
+      return '$0.00';
+    }
+    // Assuming REPAR is in trillions for display purposes
+    const trillion = 1e12;
+    if (amount >= trillion) {
+      return `${(amount / trillion).toFixed(2)}T $REPAR`;
+    }
+    return `${amount.toLocaleString()} $REPAR`;
+  };
+
+  const [endowment, setEndowment] = useState({
+    // Founder Allocation: 10% (13.1T REPAR)
+    founderVested: 11790000000000, // 9% of 131T = 11.79T REPAR (vested over 4 years)
+    founderDiscretionary: 1310000000000, // 1% of 131T = 1.31T REPAR (immediate access)
+
+    // Development Fund: 8% (10.48T REPAR)
+    devEndowment: 7860000000000, // 6% of 131T = 7.86T REPAR (locked 8 years, renewable)
+    devDiscretionary: 2620000000000, // 2% of 131T = 2.62T REPAR (immediate access)
+
+    // Totals
+    totalDiscretionary: 3930000000000, // 3% total immediate (1% founder + 2% dev)
+    totalControl: 23580000000000, // 18% total = 23.58T REPAR
+
+    // Endowment specifics
+    targetAPY: 4.5,
+    yieldAccumulated: 0,
+    unlockYear: 8, // 8-year renewal period for dev endowment
+    isLocked: true,
+    renewalCount: 0
+  });
+
+
   useEffect(() => {
     if (connectedWallet?.address) {
       fetchWalletBalance(connectedWallet.address);
@@ -217,7 +252,7 @@ const FounderWallet = () => {
           </div>
           <WalletConnect onWalletConnected={handleWalletConnected} />
         </div>
-        
+
         {connectedWallet && (
           <div className="mt-4 p-4 bg-white/10 rounded-lg">
             <div className="flex items-center justify-between">
@@ -268,7 +303,7 @@ const FounderWallet = () => {
           <Lock className="h-8 w-8 text-amber-600 flex-shrink-0" />
           <div className="flex-1">
             <h2 className="text-xl font-bold text-gray-900 mb-3">Total Founder Allocation: {totalAllocation.percentOfSupply}</h2>
-            
+
             {/* Current State */}
             <div className="bg-white rounded-lg p-4 mb-4">
               <h3 className="text-md font-semibold text-green-700 mb-2">✅ Current Allocation</h3>
@@ -313,7 +348,76 @@ const FounderWallet = () => {
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Allocation Breakdown */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-400/30 rounded-2xl p-6">
+            <h3 className="text-lg font-bold mb-4 text-purple-300">Founder Allocation (10%)</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Vested (4 years)</span>
+                <span className="font-bold text-purple-400">9%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Amount</span>
+                <span className="font-bold">{formatCurrency(endowment.founderVested)}</span>
+              </div>
+              <div className="flex justify-between items-center border-t border-purple-400/20 pt-2">
+                <span className="text-sm text-gray-300">Discretionary</span>
+                <span className="font-bold text-green-400">1%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Amount</span>
+                <span className="font-bold">{formatCurrency(endowment.founderDiscretionary)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-2xl p-6">
+            <h3 className="text-lg font-bold mb-4 text-amber-300">Development Fund (8%)</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Endowment (8yr lock)</span>
+                <span className="font-bold text-amber-400">6%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Amount</span>
+                <span className="font-bold">{formatCurrency(endowment.devEndowment)}</span>
+              </div>
+              <div className="flex justify-between items-center border-t border-amber-400/20 pt-2">
+                <span className="text-sm text-gray-300">Discretionary</span>
+                <span className="font-bold text-green-400">2%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Amount</span>
+                <span className="font-bold">{formatCurrency(endowment.devDiscretionary)}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Total Control Summary */}
+        <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-400/30 rounded-2xl p-6 mb-8">
+          <h3 className="text-lg font-bold mb-4 text-green-300">Total Control (18%)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <p className="text-sm text-gray-300">Locked (Vested + Endowment)</p>
+              <p className="text-2xl font-bold text-purple-400">15%</p>
+              <p className="text-xs text-gray-400">{formatCurrency(endowment.founderVested + endowment.devEndowment)}</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-300">Immediate Access</p>
+              <p className="text-2xl font-bold text-green-400">3%</p>
+              <p className="text-xs text-gray-400">{formatCurrency(endowment.totalDiscretionary)}</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-300">Total Allocation</p>
+              <p className="text-2xl font-bold text-green-400">18%</p>
+              <p className="text-xs text-gray-400">{formatCurrency(endowment.totalControl)}</p>
+            </div>
+          </div>
+        </div>
+
 
       {/* Tabs for different sections */}
       <div className="flex space-x-4 mb-8 overflow-x-auto">
