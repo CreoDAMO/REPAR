@@ -1,14 +1,77 @@
 
 import { useState } from 'react';
 import { Plus, Minus, Info } from 'lucide-react';
+import {
+  Bitcoin,
+  Ethereum,
+  Solana,
+  Polygon,
+  Avalanche,
+  Cosmos,
+  Binance,
+  Cardano,
+  Polkadot,
+  Dogecoin,
+  Tron,
+  Chainlink
+} from 'cryptocons';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
-import btcLogo from '../assets/btc-logo.jpg';
-import ethLogo from '../assets/eth-logo.jpg';
-import solLogo from '../assets/sol-logo.jpg';
-import polLogo from '../assets/pol-logo.jpg';
-import avaxLogo from '../assets/avax-logo.jpg';
-import atomLogo from '../assets/atom-logo.jpg';
-import usdcLogo from '../assets/usdc-logo.jpg';
+
+const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
+  const iconMap = {
+    'BTC': Bitcoin,
+    'ETH': Ethereum,
+    'SOL': Solana,
+    'POL': Polygon,
+    'AVAX': Avalanche,
+    'ATOM': Cosmos,
+    'BNB': Binance,
+    'ADA': Cardano,
+    'DOT': Polkadot,
+    'DOGE': Dogecoin,
+    'TRX': Tron,
+    'LINK': Chainlink
+  };
+
+  // Handle REPAR with local logo
+  if (symbol === 'REPAR') {
+    return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} onError={(e) => {
+      e.target.style.display = 'none';
+      e.target.nextSibling?.classList.remove('hidden');
+    }} />;
+  }
+
+  // Handle coins with fallback letters (USDC, XRP)
+  if (symbol === 'USDC' || symbol === 'XRP') {
+    return (
+      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+        {symbol.charAt(0)}
+      </div>
+    );
+  }
+
+  // Handle cryptocons library icons
+  const Icon = iconMap[symbol];
+  if (Icon) {
+    try {
+      return <Icon className={className} />;
+    } catch (error) {
+      console.warn(`Failed to render icon for ${symbol}:`, error);
+      return (
+        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+          {symbol.charAt(0)}
+        </div>
+      );
+    }
+  }
+
+  // Default fallback
+  return (
+    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
+      {symbol.charAt(0)}
+    </div>
+  );
+};
 
 export default function LiquidityInterface() {
   const [mode, setMode] = useState('add'); // 'add' or 'remove'
@@ -20,17 +83,23 @@ export default function LiquidityInterface() {
   const [tokenA, setTokenA] = useState('REPAR');
   const [tokenB, setTokenB] = useState('USDC');
 
-  // Crypto logos mapping
-  const cryptoLogos = {
-    'REPAR': reparLogo,
-    'BTC': btcLogo,
-    'ETH': ethLogo,
-    'SOL': solLogo,
-    'POL': polLogo,
-    'AVAX': avaxLogo,
-    'ATOM': atomLogo,
-    'USDC': usdcLogo
-  };
+  const tokens = [
+    { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000' },
+    { symbol: 'BTC', name: 'Bitcoin', balance: '0.5' },
+    { symbol: 'ETH', name: 'Ethereum', balance: '5.2' },
+    { symbol: 'BNB', name: 'Binance Coin', balance: '12.5' },
+    { symbol: 'SOL', name: 'Solana', balance: '125' },
+    { symbol: 'ADA', name: 'Cardano', balance: '5,000' },
+    { symbol: 'AVAX', name: 'Avalanche', balance: '45' },
+    { symbol: 'DOT', name: 'Polkadot', balance: '350' },
+    { symbol: 'POL', name: 'Polygon', balance: '8,500' },
+    { symbol: 'ATOM', name: 'Cosmos', balance: '500' },
+    { symbol: 'XRP', name: 'Ripple', balance: '10,000' },
+    { symbol: 'DOGE', name: 'Dogecoin', balance: '50,000' },
+    { symbol: 'TRX', name: 'Tron', balance: '25,000' },
+    { symbol: 'LINK', name: 'Chainlink', balance: '250' },
+    { symbol: 'USDC', name: 'USD Coin', balance: '50,000' },
+  ];
 
   const mockPoolShare = 2.5; // User owns 2.5% of the pool
   const mockLPTokens = 125000;
@@ -79,8 +148,10 @@ export default function LiquidityInterface() {
           <div className="space-y-4 mb-6">
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">REPAR Amount</label>
-                <span className="text-sm text-gray-500">Balance: 1,250,000</span>
+                <label className="text-sm font-medium text-gray-700">Token A</label>
+                <span className="text-sm text-gray-500">
+                  Balance: {tokens.find(t => t.symbol === tokenA)?.balance || '0'}
+                </span>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center justify-between">
@@ -91,18 +162,18 @@ export default function LiquidityInterface() {
                     placeholder="0.0"
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
-                  <div className="flex items-center gap-2">
-                    <img src={cryptoLogos[tokenA]} alt={tokenA} className="w-6 h-6 rounded-full object-cover" />
+                  <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
+                    <CryptoIcon symbol={tokenA} />
                     <select
                       value={tokenA}
                       onChange={(e) => setTokenA(e.target.value)}
-                      className="bg-transparent text-xl font-semibold outline-none cursor-pointer"
+                      className="bg-transparent font-medium outline-none cursor-pointer"
                     >
-                      <option>REPAR</option>
-                      <option>BTC</option>
-                      <option>ETH</option>
-                      <option>SOL</option>
-                      <option>USDC</option>
+                      {tokens.map((token) => (
+                        <option key={token.symbol} value={token.symbol}>
+                          {token.symbol}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -117,8 +188,10 @@ export default function LiquidityInterface() {
 
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-gray-700">USDC Amount</label>
-                <span className="text-sm text-gray-500">Balance: 50,000</span>
+                <label className="text-sm font-medium text-gray-700">Token B</label>
+                <span className="text-sm text-gray-500">
+                  Balance: {tokens.find(t => t.symbol === tokenB)?.balance || '0'}
+                </span>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <div className="flex items-center justify-between">
@@ -129,18 +202,18 @@ export default function LiquidityInterface() {
                     placeholder="0.0"
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
-                  <div className="flex items-center gap-2">
-                    <img src={cryptoLogos[tokenB]} alt={tokenB} className="w-6 h-6 rounded-full object-cover" />
+                  <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
+                    <CryptoIcon symbol={tokenB} />
                     <select
                       value={tokenB}
                       onChange={(e) => setTokenB(e.target.value)}
-                      className="bg-transparent text-xl font-semibold outline-none cursor-pointer"
+                      className="bg-transparent font-medium outline-none cursor-pointer"
                     >
-                      <option>BTC</option>
-                      <option>ETH</option>
-                      <option>SOL</option>
-                      <option>USDC</option>
-                      <option>REPAR</option>
+                      {tokens.map((token) => (
+                        <option key={token.symbol} value={token.symbol}>
+                          {token.symbol}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -165,7 +238,7 @@ export default function LiquidityInterface() {
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Exchange Rate</span>
-                <span className="font-medium">1 REPAR = 18.33 USDC</span>
+                <span className="font-medium">1 {tokenA} = 18.33 {tokenB}</span>
               </div>
             </div>
           )}
@@ -229,13 +302,13 @@ export default function LiquidityInterface() {
             <div className="bg-blue-50 rounded-lg p-4 mb-4 space-y-2">
               <h4 className="font-semibold text-blue-900 mb-2">You Will Receive</h4>
               <div className="flex justify-between text-sm">
-                <span className="text-blue-700">REPAR</span>
+                <span className="text-blue-700">{tokenA}</span>
                 <span className="font-medium text-blue-900">
                   {((mockLPTokens * removePercent) / 100 / 10).toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-blue-700">USDC</span>
+                <span className="text-blue-700">{tokenB}</span>
                 <span className="font-medium text-blue-900">
                   {((mockLPTokens * removePercent) / 100 / 10 * 18.33).toFixed(2)}
                 </span>

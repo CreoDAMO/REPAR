@@ -2,13 +2,69 @@ import { useState } from 'react';
 import { ArrowLeftRight, Globe, Wallet, TrendingUp, Lock, Zap, CheckCircle, BarChart3 } from 'lucide-react';
 import SwapInterface from '../components/SwapInterface';
 import LiquidityInterface from '../components/LiquidityInterface';
+import {
+  Bitcoin,
+  Ethereum,
+  Solana,
+  Polygon,
+  Avalanche,
+  Cosmos,
+  Binance,
+  Cardano,
+  Polkadot,
+  Dogecoin,
+  Tron,
+  Chainlink
+} from 'cryptocons';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
-import btcLogo from '../assets/btc-logo.jpg';
-import ethLogo from '../assets/eth-logo.jpg';
-import solLogo from '../assets/sol-logo.jpg';
-import polLogo from '../assets/pol-logo.jpg';
-import avaxLogo from '../assets/avax-logo.jpg';
-import atomLogo from '../assets/atom-logo.jpg';
+
+const CryptoIcon = ({ symbol, className = "w-10 h-10" }) => {
+  const iconMap = {
+    'BTC': Bitcoin,
+    'ETH': Ethereum,
+    'SOL': Solana,
+    'POL': Polygon,
+    'AVAX': Avalanche,
+    'ATOM': Cosmos,
+    'BNB': Binance,
+    'ADA': Cardano,
+    'DOT': Polkadot,
+    'DOGE': Dogecoin,
+    'TRX': Tron,
+    'LINK': Chainlink
+  };
+
+  if (symbol === 'REPAR') {
+    return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
+  }
+
+  if (symbol === 'USDC' || symbol === 'XRP') {
+    return (
+      <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold"}>
+        {symbol.charAt(0)}
+      </div>
+    );
+  }
+
+  const Icon = iconMap[symbol];
+  if (Icon) {
+    try {
+      return <Icon className={className} />;
+    } catch (error) {
+      return (
+        <div className={className + " bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold"}>
+          {symbol.charAt(0)}
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold"}>
+      {symbol.charAt(0)}
+    </div>
+  );
+};
 
 export default function AequitasDEX() {
   const [activeTab, setActiveTab] = useState('swap');
@@ -100,23 +156,31 @@ export default function AequitasDEX() {
 
               <div className="space-y-4">
                 {[
-                  { pair: 'REPAR/BTC', tvl: '$125.5M', volume24h: '$8.5M', apr: '18.2%', myShare: '0%', icon2: btcLogo },
-                  { pair: 'REPAR/ETH', tvl: '$89.3M', volume24h: '$5.2M', apr: '15.2%', myShare: '0%', icon2: ethLogo },
-                  { pair: 'REPAR/SOL', tvl: '$52.8M', volume24h: '$3.1M', apr: '14.5%', myShare: '0%', icon2: solLogo },
-                  { pair: 'REPAR/POL', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%', icon2: polLogo },
-                  { pair: 'REPAR/AVAX', tvl: '$38.6M', volume24h: '$1.8M', apr: '13.8%', myShare: '0%', icon2: avaxLogo },
-                  { pair: 'REPAR/ATOM', tvl: '$28.4M', volume24h: '$1.2M', apr: '11.3%', myShare: '0%', icon2: atomLogo },
+                  { pair: 'REPAR/USDC', tvl: '$145.8M', volume24h: '$12.3M', apr: '22.5%', myShare: '0%', coin2: 'USDC' },
+                  { pair: 'REPAR/BTC', tvl: '$125.5M', volume24h: '$8.5M', apr: '18.2%', myShare: '0%', coin2: 'BTC' },
+                  { pair: 'REPAR/ETH', tvl: '$89.3M', volume24h: '$5.2M', apr: '15.2%', myShare: '0%', coin2: 'ETH' },
+                  { pair: 'REPAR/BNB', tvl: '$72.1M', volume24h: '$4.8M', apr: '16.7%', myShare: '0%', coin2: 'BNB' },
+                  { pair: 'REPAR/SOL', tvl: '$52.8M', volume24h: '$3.1M', apr: '14.5%', myShare: '0%', coin2: 'SOL' },
+                  { pair: 'REPAR/ADA', tvl: '$48.3M', volume24h: '$2.5M', apr: '13.2%', myShare: '0%', coin2: 'ADA' },
+                  { pair: 'REPAR/POL', tvl: '$45.2M', volume24h: '$2.1M', apr: '12.5%', myShare: '2.5%', coin2: 'POL' },
+                  { pair: 'REPAR/AVAX', tvl: '$38.6M', volume24h: '$1.8M', apr: '13.8%', myShare: '0%', coin2: 'AVAX' },
+                  { pair: 'REPAR/DOT', tvl: '$35.7M', volume24h: '$1.6M', apr: '12.8%', myShare: '0%', coin2: 'DOT' },
+                  { pair: 'REPAR/ATOM', tvl: '$28.4M', volume24h: '$1.2M', apr: '11.3%', myShare: '0%', coin2: 'ATOM' },
+                  { pair: 'REPAR/XRP', tvl: '$24.9M', volume24h: '$1.0M', apr: '10.8%', myShare: '0%', coin2: 'XRP' },
+                  { pair: 'REPAR/DOGE', tvl: '$18.5M', volume24h: '$0.8M', apr: '9.5%', myShare: '0%', coin2: 'DOGE' },
+                  { pair: 'REPAR/TRX', tvl: '$15.2M', volume24h: '$0.6M', apr: '8.9%', myShare: '0%', coin2: 'TRX' },
+                  { pair: 'REPAR/LINK', tvl: '$12.7M', volume24h: '$0.5M', apr: '8.2%', myShare: '0%', coin2: 'LINK' },
                 ].map((pool, index) => (
                   <div key={index} className="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition">
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center -space-x-2">
-                          <img src={reparLogo} alt="REPAR" className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-                          <img src={pool.icon2} alt={pool.pair.split('/')[1]} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
+                          <CryptoIcon symbol="REPAR" className="w-10 h-10 border-2 border-white" />
+                          <CryptoIcon symbol={pool.coin2} className="w-10 h-10 border-2 border-white" />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{pool.pair}</h4>
-                          <p className="text-sm text-gray-500">0.3% fee • Lightning Network</p>
+                          <p className="text-sm text-gray-500">0.3% fee • Native Coin Swap</p>
                         </div>
                       </div>
                       <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition">
