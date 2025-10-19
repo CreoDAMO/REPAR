@@ -231,10 +231,10 @@ export default function SwapInterface() {
               <select
                 value={fromToken}
                 onChange={(e) => setFromToken(e.target.value)}
-                className="bg-transparent font-medium outline-none cursor-pointer text-sm sm:text-base"
+                className="bg-white font-medium outline-none cursor-pointer text-sm sm:text-base text-gray-900"
               >
                 {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol}>
+                  <option key={token.symbol} value={token.symbol} className="bg-white text-gray-900">
                     {token.symbol}
                   </option>
                 ))}
@@ -276,10 +276,10 @@ export default function SwapInterface() {
               <select
                 value={toToken}
                 onChange={(e) => setToToken(e.target.value)}
-                className="bg-transparent font-medium outline-none cursor-pointer"
+                className="bg-white font-medium outline-none cursor-pointer text-gray-900"
               >
                 {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol}>
+                  <option key={token.symbol} value={token.symbol} className="bg-white text-gray-900">
                     {token.symbol}
                   </option>
                 ))}
