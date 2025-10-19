@@ -24,7 +24,7 @@ args = "Block Explorer"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Backend API"
+args = "Circle API Backend"
 
 [[workflows.workflow]]
 name = "Frontend"
@@ -51,13 +51,12 @@ args = "cd dexplorer && npm run dev"
 waitForPort = 3001
 
 [[workflows.workflow]]
-name = "Backend API"
+name = "Circle API Backend"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd backend && npm start"
-waitForPort = 3002
 
 [workflows.workflow.metadata]
 outputType = "console"

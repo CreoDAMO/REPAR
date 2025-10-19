@@ -1,95 +1,47 @@
 /**
- * Circle USDCKit Client Configuration
+ * Circle API Client - Frontend Proxy
  * 
- * This module provides the Circle SDK client for USDC payment processing
- * in the Aequitas Protocol.
+ * ⚠️ SECURITY NOTICE:
+ * This module calls the secure backend API instead of using Circle SDK directly.
+ * Circle API keys are stored server-side and never exposed to the browser.
  * 
- * Required Environment Variables:
- * - VITE_CIRCLE_API_KEY: Your Circle API key from https://console.circle.com
- * - VITE_CIRCLE_ENTITY_SECRET: Your 32-byte entity secret
+ * Backend API handles:
+ * - Secure credential management
+ * - Request validation
+ * - Business rule enforcement
+ * - Rate limiting
+ * - Idempotency
  */
 
-import { createCircleClient } from '@circle-fin/usdckit';
-import { ETH_SEPOLIA, ETH_MAINNET, SOLANA_MAINNET } from '@circle-fin/usdckit/chains';
-
-// Determine environment
-const isDevelopment = import.meta.env.MODE === 'development';
+import * as backendAPI from './backendAPI.js';
 
 /**
  * Initialize Circle client
- * Defaults to testnet in development, mainnet in production
+ * Note: This now connects to the backend API instead of Circle directly
  */
 export const initCircleClient = (options = {}) => {
-  const apiKey = import.meta.env.VITE_CIRCLE_API_KEY;
-  const entitySecret = import.meta.env.VITE_CIRCLE_ENTITY_SECRET;
-
-  if (!apiKey || !entitySecret) {
-    console.warn('⚠️ Circle SDK: API key or entity secret not configured');
-    console.warn('Add VITE_CIRCLE_API_KEY and VITE_CIRCLE_ENTITY_SECRET to Replit Secrets');
-    return null;
-  }
-
-  const defaultChain = isDevelopment ? ETH_SEPOLIA : ETH_MAINNET;
-
-  try {
-    const client = createCircleClient({
-      apiKey,
-      entitySecret,
-      chain: options.chain || defaultChain,
-    });
-
-    console.log('✅ Circle SDK initialized:', {
-      chain: options.chain?.name || defaultChain.name,
-      environment: isDevelopment ? 'testnet' : 'mainnet',
-    });
-
-    return client;
-  } catch (error) {
-    console.error('❌ Failed to initialize Circle SDK:', error);
-    return null;
-  }
+  console.log('✅ Circle API client initialized (via secure backend proxy)');
+  return {
+    isBackendProxy: true,
+    ...backendAPI,
+  };
 };
 
 /**
  * Create multiple chain clients for cross-chain operations
+ * Note: All chain operations now route through the backend API
  */
 export const createMultiChainClients = () => {
-  const apiKey = import.meta.env.VITE_CIRCLE_API_KEY;
-  const entitySecret = import.meta.env.VITE_CIRCLE_ENTITY_SECRET;
-
-  if (!apiKey || !entitySecret) {
-    console.warn('⚠️ Circle SDK: Cannot create multi-chain clients without credentials');
-    return {};
-  }
-
-  try {
-    return {
-      ethereum: createCircleClient({
-        apiKey,
-        entitySecret,
-        chain: isDevelopment ? ETH_SEPOLIA : ETH_MAINNET,
-      }),
-      solana: createCircleClient({
-        apiKey,
-        entitySecret,
-        chain: SOLANA_MAINNET,
-      }),
-    };
-  } catch (error) {
-    console.error('❌ Failed to create multi-chain clients:', error);
-    return {};
-  }
+  console.log('✅ Multi-chain clients initialized (via backend API)');
+  return {
+    ethereum: backendAPI,
+    solana: backendAPI,
+  };
 };
 
 /**
  * Process a justice burn payment via USDC
- * 
- * @param {Object} params - Payment parameters
- * @param {string} params.defendantId - Defendant making the payment
- * @param {string} params.amount - Amount in USD (will burn equivalent REPAR)
- * @param {string} params.fromAddress - USDC sender address
- * @param {string} params.toAddress - Aequitas treasury address
- * @returns {Promise<Object>} Payment result
+ * Now routes through secure backend API
  */
 export const processJusticeBurnPayment = async ({
   defendantId,
@@ -97,34 +49,17 @@ export const processJusticeBurnPayment = async ({
   fromAddress,
   toAddress,
 }) => {
-  const client = initCircleClient();
-  
-  if (!client) {
-    throw new Error('Circle client not initialized');
-  }
-
   try {
-    // Transfer USDC to Aequitas treasury
-    const transfer = await client.transfer({
-      from: fromAddress,
-      to: toAddress,
-      amount: amount.toString(),
-    });
-
-    console.log('✅ USDC payment received:', {
+    const result = await backendAPI.processJusticeBurn({
       defendantId,
-      amount,
-      txHash: transfer.txHash,
+      amount: amount.toString(),
+      fromAddress,
+      toAddress,
+      idempotencyKey: crypto.randomUUID(),
     });
 
-    // In production, this would trigger the Justice Burn mechanism
-    // on the Aequitas blockchain via the x/justice module
-    
-    return {
-      success: true,
-      transaction: transfer,
-      burnAmount: amount, // 1 USD = 1 REPAR burned
-    };
+    console.log('✅ Justice burn payment processed via backend:', result);
+    return result;
   } catch (error) {
     console.error('❌ Payment processing failed:', error);
     throw error;
@@ -133,28 +68,17 @@ export const processJusticeBurnPayment = async ({
 
 /**
  * Create a wallet for a descendant
- * 
- * @param {string} descendantId - Unique identifier for the descendant
- * @returns {Promise<Object>} Wallet details
+ * Now routes through secure backend API
  */
 export const createDescendantWallet = async (descendantId) => {
-  const client = initCircleClient();
-  
-  if (!client) {
-    throw new Error('Circle client not initialized');
-  }
-
   try {
-    const account = await client.createAccount({
-      refId: `descendant-${descendantId}`,
-    });
-
-    console.log('✅ Descendant wallet created:', {
+    const result = await backendAPI.createDescendantWallet(
       descendantId,
-      address: account.address,
-    });
+      `descendant-${descendantId}`
+    );
 
-    return account;
+    console.log('✅ Descendant wallet created via backend:', result);
+    return result.data;
   } catch (error) {
     console.error('❌ Wallet creation failed:', error);
     throw error;
@@ -163,37 +87,17 @@ export const createDescendantWallet = async (descendantId) => {
 
 /**
  * Distribute reparations to multiple descendants
- * 
- * @param {Array<Object>} distributions - Array of { address, amount } objects
- * @returns {Promise<Object>} Distribution result
+ * Now routes through secure backend API
  */
 export const distributeReparations = async (distributions) => {
-  const client = initCircleClient();
-  
-  if (!client) {
-    throw new Error('Circle client not initialized');
-  }
-
   try {
-    const transfers = await Promise.all(
-      distributions.map(({ address, amount }) =>
-        client.transfer({
-          to: address,
-          amount: amount.toString(),
-        })
-      )
+    const result = await backendAPI.distributeReparations(
+      distributions.map(d => ({ ...d, amount: d.amount.toString() })),
+      crypto.randomUUID()
     );
 
-    console.log('✅ Reparations distributed:', {
-      count: distributions.length,
-      totalAmount: distributions.reduce((sum, d) => sum + parseFloat(d.amount), 0),
-    });
-
-    return {
-      success: true,
-      transfers,
-      count: transfers.length,
-    };
+    console.log('✅ Reparations distributed via backend:', result);
+    return result.data;
   } catch (error) {
     console.error('❌ Distribution failed:', error);
     throw error;
@@ -202,25 +106,12 @@ export const distributeReparations = async (distributions) => {
 
 /**
  * Query wallet balance
- * 
- * @param {string} address - Wallet address
- * @returns {Promise<Object>} Balance information
+ * Now routes through secure backend API
  */
 export const getWalletBalance = async (address) => {
-  const client = initCircleClient();
-  
-  if (!client) {
-    throw new Error('Circle client not initialized');
-  }
-
   try {
-    const account = await client.getAccounts({ address });
-    
-    return {
-      address,
-      balance: account?.balance || '0',
-      currency: 'USDC',
-    };
+    const result = await backendAPI.getWalletBalance(address);
+    return result.data;
   } catch (error) {
     console.error('❌ Balance query failed:', error);
     throw error;
@@ -229,13 +120,7 @@ export const getWalletBalance = async (address) => {
 
 /**
  * Cross-chain USDC transfer via CCTP
- * 
- * @param {Object} params - Transfer parameters
- * @param {string} params.from - Source address
- * @param {string} params.to - Destination address
- * @param {string} params.amount - Amount in USDC
- * @param {Object} params.destinationChain - Target chain object
- * @returns {Promise<Object>} Transfer result
+ * Now routes through secure backend API
  */
 export const crossChainTransfer = async ({
   from,
@@ -243,36 +128,31 @@ export const crossChainTransfer = async ({
   amount,
   destinationChain,
 }) => {
-  const client = initCircleClient();
-  
-  if (!client) {
-    throw new Error('Circle client not initialized');
-  }
-
   try {
-    const transfer = await client.crossChainTransfer({
+    const chainName = typeof destinationChain === 'string' 
+      ? destinationChain 
+      : destinationChain.name?.toLowerCase();
+    
+    const result = await backendAPI.crossChainTransfer({
       from,
       to,
       amount: amount.toString(),
-      destinationChain,
+      destinationChain: chainName,
+      idempotencyKey: crypto.randomUUID(),
     });
 
-    console.log('✅ Cross-chain transfer initiated:', {
-      from,
-      to,
-      amount,
-      destinationChain: destinationChain.name,
-    });
-
-    return transfer;
+    console.log('✅ Cross-chain transfer initiated via backend:', result);
+    return result.data;
   } catch (error) {
     console.error('❌ Cross-chain transfer failed:', error);
     throw error;
   }
 };
 
-// Export chain constants for convenience
-export { ETH_SEPOLIA, ETH_MAINNET, SOLANA_MAINNET };
+// Export for compatibility (these are handled by the backend now)
+export const ETH_SEPOLIA = { name: 'ETH_SEPOLIA' };
+export const ETH_MAINNET = { name: 'ethereum' };
+export const SOLANA_MAINNET = { name: 'solana' };
 
 export default {
   initCircleClient,
