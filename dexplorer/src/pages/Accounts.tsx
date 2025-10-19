@@ -99,7 +99,7 @@ const Accounts: React.FC = () => {
     setTimeout(() => {
       setIsSearching(false)
       // Navigate to account detail page
-      window.location.href = `/accounts/${searchAddress}`
+      window.location.href = `/accounts/${encodeURIComponent(searchAddress)}`
     }, 1000)
   }
 
