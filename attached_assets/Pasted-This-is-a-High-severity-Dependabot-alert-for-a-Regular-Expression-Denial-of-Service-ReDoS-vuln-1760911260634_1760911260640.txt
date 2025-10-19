@@ -1,0 +1,86 @@
+This is a **High severity** Dependabot alert for a Regular Expression Denial of Service (ReDoS) vulnerability in the `parse-duration` package. Here's what you need to know:
+
+## Vulnerability Summary
+
+**Package:** `parse-duration` (npm)  
+**Affected versions:** < 2.1.3  
+**Patched version:** 2.1.3  
+**CVE:** CVE-2025-25283  
+**Your dependency chain:** `ipfs-http-client 60.0.1` → `parse-duration 1.1.2`
+
+## The Problem
+
+The vulnerability exists in the regex pattern used by `parse-duration`:
+```javascript
+/(-?(?:\d+\.?\d*|\d*\.?\d+)(?:e[-+]?\d+)?)\s*([\p{L}]*)/giu
+```
+
+This creates two critical issues:
+
+1. **Event Loop Blocking:** CPU-intensive regex matching causes delays (0.5ms to 50ms+ per operation)
+2. **Out of Memory Crashes:** Specially crafted strings (~10MB with Unicode) can crash Node.js
+
+## Real-World Impact
+
+- **0.01 MB input** → 1ms delay (vulnerable to request flooding)
+- **3-4 MB input** → 43-728ms delay per request
+- **10 MB input with Unicode** → Application crash (RangeError)
+- **200 MB input** → Out of memory crash
+
+Even with default Express limits (100kb), attackers sending concurrent requests could cause significant service degradation.
+
+## Resolution Options
+
+### Option 1: Update the Transitive Dependency (Recommended)
+Dependabot indicates it **cannot auto-update** because `ipfs-http-client 60.0.1` depends on the vulnerable version. You need to:
+
+1. Check if there's a newer version of `ipfs-http-client` that uses `parse-duration >= 2.1.3`
+2. Update `ipfs-http-client` in your `package.json`
+
+```bash
+npm update ipfs-http-client
+```
+
+### Option 2: Use npm Overrides (Temporary Fix)
+Add to your `package.json`:
+
+```json
+{
+  "overrides": {
+    "parse-duration": "^2.1.3"
+  }
+}
+```
+
+Then run:
+```bash
+npm install
+```
+
+**⚠️ Warning:** This may cause compatibility issues if `ipfs-http-client` relies on specific behavior from the older version.
+
+### Option 3: Replace ipfs-http-client
+If updates aren't available, consider:
+- Using a different IPFS client library
+- Forking and updating the dependency yourself
+- Waiting for the maintainer to update
+
+## Immediate Mitigation
+
+While you work on the fix, implement these security controls:
+
+1. **Rate limiting** on endpoints that process user input
+2. **Request size limits** (keep below 100kb if possible)
+3. **Input validation** to reject suspiciously large or malformed duration strings
+4. **Timeouts** on operations that parse durations
+
+## Verification
+
+After updating, verify the fix:
+
+```bash
+npm audit
+npm ls parse-duration
+```
+
+Would you like help implementing any of these solutions or need assistance checking for updated versions of `ipfs-http-client`?
