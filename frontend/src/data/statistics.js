@@ -18,16 +18,19 @@ export const reparStatistics = {
 export const coinAllocation = [
   { name: 'Community & Descendant Fund', percentage: 43, amount: 56330000000000, color: '#3b82f6' },
   { name: 'Claims & Compensation Fund', percentage: 25, amount: 32750000000000, color: '#10b981' },
-  { name: 'Protocol Funding (90%)', percentage: 10, amount: 13100000000000, color: '#f59e0b', 
+  { name: "Founder's Allocation", percentage: 10, amount: 13100000000000, color: '#8b5cf6',
     breakdown: [
-      { name: 'DEX Liquidity', percentage: 25, color: '#3b82f6' },
-      { name: 'DAO Treasury', percentage: 25, color: '#10b981' },
-      { name: 'Social Endowment', percentage: 25, color: '#22c55e' },
-      { name: 'Validator Subsidy', percentage: 15, color: '#eab308' }
+      { name: 'Vested (4 years)', percentage: 90, amount: 11790000000000, color: '#7c3aed' },
+      { name: 'Discretionary', percentage: 10, amount: 1310000000000, color: '#a78bfa' }
     ]
   },
-  { name: "Founder's Allocation", percentage: 10, amount: 13100000000000, color: '#8b5cf6' },
-  { name: 'Development Fund', percentage: 8, amount: 10480000000000, color: '#ec4899' },
+  { name: 'Development Fund', percentage: 8, amount: 10480000000000, color: '#ec4899',
+    breakdown: [
+      { name: 'Founder Endowment (8yr renewable)', percentage: 75, amount: 7860000000000, color: '#db2777' },
+      { name: 'Discretionary', percentage: 25, amount: 2620000000000, color: '#f472b6' }
+    ]
+  },
+  { name: 'Ecosystem & Enforcement Treasury', percentage: 10, amount: 13100000000000, color: '#f59e0b' },
   { name: 'Foundation Treasury & Reserves', percentage: 4, amount: 5240000000000, color: '#6366f1' }
 ];
 

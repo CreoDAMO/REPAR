@@ -252,7 +252,7 @@ export default function Dashboard() {
                     cy="50%"
                     labelLine={false}
                     label={({ name, percentage }) => `${name}: ${percentage}%`}
-                    outerRadius={80}
+                    outerRadius={100}
                     fill="#8884d8"
                     dataKey="amount"
                   >
@@ -260,7 +260,32 @@ export default function Dashboard() {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => formatCurrency(value)} />
+                  <Tooltip
+                    formatter={(value) => `${(value / 1000000000000).toFixed(2)}T REPAR`}
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white p-3 border border-gray-200 rounded shadow-lg">
+                            <p className="font-bold text-gray-900">{data.name}</p>
+                            <p className="text-sm text-gray-600">{data.percentage}% ({(data.amount / 1000000000000).toFixed(2)}T REPAR)</p>
+                            {data.breakdown && (
+                              <div className="mt-2 pt-2 border-t border-gray-200">
+                                <p className="text-xs font-semibold text-gray-700 mb-1">Breakdown:</p>
+                                {data.breakdown.map((item, idx) => (
+                                  <p key={idx} className="text-xs text-gray-600">
+                                    • {item.name}: {item.percentage}%
+                                    {item.amount && ` (${(item.amount / 1000000000000).toFixed(2)}T)`}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>

@@ -4,9 +4,11 @@ import StatCard from '../components/StatCard';
 
 export default function FounderEndowment() {
   const [endowment, setEndowment] = useState({
-    principal: 7860000000000, // 6% of 131T = 7.86T REPAR (from 8% dev fund)
-    founderAllocation: 13100000000000, // 10% of 131T = 13.1T REPAR (9% vested + 1% discretionary)
+    principal: 7860000000000, // 6% of 131T = 7.86T REPAR (Founder Endowment from 8% dev fund)
+    founderVested: 11790000000000, // 9% of 131T = 11.79T REPAR (vested over 4 years)
+    founderDiscretionary: 1310000000000, // 1% of 131T = 1.31T REPAR (founder discretionary)
     devDiscretionary: 2620000000000, // 2% of 131T = 2.62T REPAR (dev fund discretionary)
+    totalControl: 23580000000000, // 18% total = 23.58T REPAR
     targetAPY: 4.5,
     yieldAccumulated: 0,
     unlockYear: 8, // 8-year renewal period
