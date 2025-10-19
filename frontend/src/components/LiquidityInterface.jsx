@@ -20,7 +20,7 @@ export default function LiquidityInterface() {
   const [tokenA, setTokenA] = useState('REPAR');
   const [tokenB, setTokenB] = useState('USDC');
 
-  // Crypto logos mapping
+  // Crypto logos mapping with fallback
   const cryptoLogos = {
     'REPAR': reparLogo,
     'BTC': btcLogo,
@@ -30,6 +30,11 @@ export default function LiquidityInterface() {
     'AVAX': avaxLogo,
     'ATOM': atomLogo,
     'USDC': usdcLogo
+  };
+
+  // Safe logo getter with fallback
+  const getLogo = (symbol) => {
+    return cryptoLogos[symbol] || reparLogo;
   };
 
   const mockPoolShare = 2.5; // User owns 2.5% of the pool
@@ -92,7 +97,14 @@ export default function LiquidityInterface() {
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
                   <div className="flex items-center gap-2">
-                    <img src={cryptoLogos[tokenA]} alt={tokenA} className="w-6 h-6 rounded-full object-cover" />
+                    <img 
+                      src={getLogo(tokenA)} 
+                      alt={tokenA} 
+                      className="w-6 h-6 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.src = reparLogo;
+                      }}
+                    />
                     <select
                       value={tokenA}
                       onChange={(e) => setTokenA(e.target.value)}
@@ -130,7 +142,14 @@ export default function LiquidityInterface() {
                     className="bg-transparent text-2xl font-semibold outline-none w-full"
                   />
                   <div className="flex items-center gap-2">
-                    <img src={cryptoLogos[tokenB]} alt={tokenB} className="w-6 h-6 rounded-full object-cover" />
+                    <img 
+                      src={getLogo(tokenB)} 
+                      alt={tokenB} 
+                      className="w-6 h-6 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.src = reparLogo;
+                      }}
+                    />
                     <select
                       value={tokenB}
                       onChange={(e) => setTokenB(e.target.value)}
