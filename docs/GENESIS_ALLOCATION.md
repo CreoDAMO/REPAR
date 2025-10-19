@@ -37,9 +37,9 @@
 - **Annual Yield:** ~531M REPAR (~$531M in USDC)
 - **Distribution:**
   - **90% to Protocol:** ~$478M/year
-    - 40% → DEX Liquidity (~$191M)
+    - 25% → DEX Liquidity (~$119M)
     - 25% → DAO Treasury (~$119M)
-    - 20% → Social Endowment (~$96M)
+    - 25% → Social Endowment (~$119M)
     - 15% → Validator Subsidy (~$72M)
   - **10% to Founder:** ~$53M/year (paid quarterly in USDC)
 

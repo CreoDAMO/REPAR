@@ -691,9 +691,9 @@ The founder has placed **75% of his earned 8% Development Fund** (6% of total su
 
 **Endowment Yield Distribution:**
 - **90% of annual yield** (~$121.5M/year at 4.5%) → Protocol operations
-  - 40% → DEX liquidity bootstrapping
+  - 25% → DEX liquidity bootstrapping
   - 25% → DAO Treasury
-  - 20% → Social Infrastructure Endowment
+  - 25% → Social Infrastructure Endowment
   - 15% → Validator Subsidy Fund
 - **10% of annual yield** (~$13.5M/year) → Founder's perpetual dividend
 

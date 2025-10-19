@@ -114,12 +114,12 @@ func (k Keeper) InitializeEndowment(ctx context.Context, principalAmount math.In
 		return err
 	}
 
-	// Initialize protocol allocation: 40/25/20/15
-	// 40% DEX Liquidity, 25% DAO Treasury, 20% Social Endowment, 15% Validator Subsidy
+	// Initialize protocol allocation: 25/25/25/15
+	// 25% DEX Liquidity, 25% DAO Treasury, 25% Social Endowment, 15% Validator Subsidy
 	protocolAlloc := types.ProtocolAllocation{
-		DexLiquidityPercentage:    40,
+		DexLiquidityPercentage:    25,
 		DaoTreasuryPercentage:     25,
-		SocialEndowmentPercentage: 20,
+		SocialEndowmentPercentage: 25,
 		ValidatorSubsidyPercentage: 15,
 	}
 	if err := k.ProtocolAllocation.Set(ctx, protocolAlloc); err != nil {

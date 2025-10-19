@@ -39,17 +39,17 @@ export default function FounderEndowment() {
     });
 
     // Calculate protocol sub-allocations
-    const dexLiquidity = protocolAnnualFunding * 0.40;
+    const dexLiquidity = protocolAnnualFunding * 0.25;
     const daoTreasury = protocolAnnualFunding * 0.25;
-    const socialEndowment = protocolAnnualFunding * 0.20;
+    const socialEndowment = protocolAnnualFunding * 0.25;
     const validatorSubsidy = protocolAnnualFunding * 0.15;
 
-    // Protocol distribution: 40/25/20/15
+    // Protocol distribution: 25/25/25/15
     setDistributions([
       { 
         name: 'DEX Liquidity', 
         amount: dexLiquidity, 
-        percentage: 40,
+        percentage: 25,
         color: 'bg-blue-500'
       },
       { 
@@ -61,7 +61,7 @@ export default function FounderEndowment() {
       { 
         name: 'Social Endowment', 
         amount: socialEndowment, 
-        percentage: 20,
+        percentage: 25,
         color: 'bg-green-500'
       },
       { 
@@ -117,7 +117,8 @@ export default function FounderEndowment() {
               <p className="text-3xl font-bold text-purple-400">∞</p>
               <p className="text-xs text-gray-500 mt-1">Infinite return on investment</p>
             </div>
-
+          </div>
+        </div>
 
         {/* Allocation Breakdown */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
