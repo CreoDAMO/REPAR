@@ -15,6 +15,7 @@ import {
   Chainlink
 } from 'cryptocons';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
+import { COINS, getCoinBySymbol, getCoinLogo } from '../config/coins';
 
 const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
   const iconMap = {
@@ -66,49 +67,17 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
 };
 
 export default function SwapInterface() {
-  const [fromCoin, setFromCoin] = useState('REPAR');
-  const [toCoin, setToCoin] = useState('USDC');
+  const [fromCoin, setFromCoin] = useState(COINS[0]);
+  const [toCoin, setToCoin] = useState(COINS[1]);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [slippage, setSlippage] = useState(0.5);
   const [showSettings, setShowSettings] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
+  const [error, setError] = useState(null);
 
-  const coins = [
-    { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000', isNative: true },
-    { symbol: 'BTC', name: 'Bitcoin', balance: '0.5', isNative: true },
-    { symbol: 'ETH', name: 'Ethereum', balance: '5.2', isNative: true },
-    { symbol: 'BNB', name: 'Binance Coin', balance: '12.5', isNative: true },
-    { symbol: 'SOL', name: 'Solana', balance: '125', isNative: true },
-    { symbol: 'ADA', name: 'Cardano', balance: '5,000', isNative: true },
-    { symbol: 'AVAX', name: 'Avalanche', balance: '45', isNative: true },
-    { symbol: 'DOT', name: 'Polkadot', balance: '350', isNative: true },
-    { symbol: 'POL', name: 'Polygon', balance: '8,500', isNative: true },
-    { symbol: 'ATOM', name: 'Cosmos', balance: '500', isNative: true },
-    { symbol: 'XRP', name: 'Ripple', balance: '10,000', isNative: true },
-    { symbol: 'DOGE', name: 'Dogecoin', balance: '50,000', isNative: true },
-    { symbol: 'TRX', name: 'Tron', balance: '25,000', isNative: true },
-    { symbol: 'LINK', name: 'Chainlink', balance: '250', isNative: false },
-    { symbol: 'USDC', name: 'USD Coin', balance: '50,000', isNative: false },
-  ];
-
-  const [prices, setPrices] = useState({
-    'REPAR': 18.33,
-    'BTC': 95000,
-    'ETH': 3500,
-    'BNB': 620,
-    'SOL': 140,
-    'ADA': 0.58,
-    'AVAX': 42,
-    'DOT': 7.2,
-    'POL': 0.85,
-    'ATOM': 9.5,
-    'XRP': 0.65,
-    'DOGE': 0.12,
-    'TRX': 0.18,
-    'LINK': 16.5,
-    'USDC': 1
-  });
+  // Centralized coin configuration - assuming COINS is imported from '../config/coins'
+  const coins = COINS;
 
   // Fetch real-time crypto prices
   useEffect(() => {
@@ -146,40 +115,115 @@ export default function SwapInterface() {
     return () => clearInterval(interval);
   }, []);
 
-  const mockPrice = prices[fromCoin] / prices[toCoin];
+  const [prices, setPrices] = useState({
+    'REPAR': 18.33,
+    'BTC': 95000,
+    'ETH': 3500,
+    'BNB': 620,
+    'SOL': 140,
+    'ADA': 0.58,
+    'AVAX': 42,
+    'DOT': 7.2,
+    'POL': 0.85,
+    'ATOM': 9.5,
+    'XRP': 0.65,
+    'DOGE': 0.12,
+    'TRX': 0.18,
+    'LINK': 16.5,
+    'USDC': 1
+  });
+
+  // Validate coins on mount and when they change
+  useEffect(() => {
+    try {
+      if (!fromCoin || !toCoin) {
+        setError('Please select both coins');
+        return;
+      }
+      // Ensure we don't have the same coin selected for both from and to
+      if (fromCoin.symbol === toCoin.symbol) {
+        // Auto-switch to the next available coin if they are the same
+        const nextCoinIndex = coins.findIndex(c => c.symbol === fromCoin.symbol) + 1;
+        const nextCoin = coins[nextCoinIndex % coins.length];
+        if (nextCoin) setToCoin(nextCoin);
+      }
+      setError(null); // Clear error if validation passes
+    } catch (err) {
+      console.error('Coin validation error:', err);
+      setError('Failed to load coins');
+    }
+  }, [fromCoin, toCoin, coins]);
+
+
+  const mockPrice = prices[fromCoin.symbol] / prices[toCoin.symbol];
 
   const handleFromAmountChange = (value) => {
     setFromAmount(value);
     if (value) {
-      const calculated = (parseFloat(value) * mockPrice).toFixed(6);
-      setToAmount(calculated);
+      try {
+        const calculated = (parseFloat(value) * mockPrice).toFixed(6);
+        setToAmount(calculated);
+        setError(null); // Clear error on successful calculation
+      } catch (err) {
+        console.error('Error calculating to amount:', err);
+        setError('Failed to calculate swap amount');
+        setToAmount('');
+      }
     } else {
       setToAmount('');
     }
   };
 
-  const handleSwapCoins = () => {
-    setFromCoin(toCoin);
-    setToCoin(fromCoin);
-    setFromAmount(toAmount);
-    setToAmount(fromAmount);
+  const switchCoins = () => {
+    try {
+      const temp = fromCoin;
+      setFromCoin(toCoin);
+      setToCoin(temp);
+      setFromAmount(toAmount);
+      setToAmount(fromAmount);
+      setError(null); // Clear error on successful switch
+    } catch (err) {
+      console.error('Error switching coins:', err);
+      setError('Failed to switch coins');
+    }
   };
 
   const priceImpact = fromAmount ? (parseFloat(fromAmount) / 1000000 * 100).toFixed(3) : '0.000';
   const fee = fromAmount ? (parseFloat(fromAmount) * 0.003).toFixed(6) : '0';
 
   const handleSwap = async () => {
+    if (!fromCoin || !toCoin || !fromAmount || parseFloat(fromAmount) <= 0) {
+      setError('Please select coins and enter a valid amount to swap.');
+      return;
+    }
+    if (fromCoin.symbol === toCoin.symbol) {
+      setError('Cannot swap a coin with itself.');
+      return;
+    }
+
     setIsSwapping(true);
-    // Simulate blockchain transaction
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsSwapping(false);
-    alert(`Swapped ${fromAmount} ${fromCoin} for ${toAmount} ${toCoin}`);
-    setFromAmount('');
-    setToAmount('');
+    setError(null); // Clear previous errors
+    try {
+      // Simulate blockchain transaction
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      alert(`Swapped ${fromAmount} ${fromCoin.symbol} for ${toAmount} ${toCoin.symbol}`);
+      setFromAmount('');
+      setToAmount('');
+    } catch (err) {
+      console.error('Swap failed:', err);
+      setError('Swap failed. Please try again.');
+    } finally {
+      setIsSwapping(false);
+    }
   };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 max-w-md mx-auto w-full">
+      {error && (
+        <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 text-sm">
+          {error}
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900">Swap</h2>
@@ -201,7 +245,7 @@ export default function SwapInterface() {
             {[0.1, 0.5, 1.0].map((value) => (
               <button
                 key={value}
-                onClick={() => setSlippage(value)}
+                onClick={() => { setSlippage(value); setError(null); }}
                 className={`px-4 py-2 rounded-lg text-sm font-medium ${
                   slippage === value
                     ? 'bg-indigo-600 text-white'
@@ -214,7 +258,11 @@ export default function SwapInterface() {
             <input
               type="number"
               value={slippage}
-              onChange={(e) => setSlippage(parseFloat(e.target.value))}
+              onChange={(e) => {
+                const value = parseFloat(e.target.value);
+                if (!isNaN(value)) setSlippage(value);
+                setError(null);
+              }}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
               placeholder="Custom"
               step="0.1"
@@ -228,7 +276,7 @@ export default function SwapInterface() {
         <div className="flex justify-between mb-2">
           <label className="text-sm font-medium text-gray-700">From</label>
           <span className="text-sm text-gray-500">
-            Balance: {coins.find(c => c.symbol === fromCoin)?.balance}
+            Balance: {coins.find(c => c.symbol === fromCoin.symbol)?.balance}
           </span>
         </div>
         <div className="bg-gray-50 rounded-xl p-4">
@@ -242,10 +290,16 @@ export default function SwapInterface() {
               className="bg-transparent text-gray-900 text-xl sm:text-2xl font-semibold outline-none w-full"
             />
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-2 sm:px-3 py-2 ml-2 sm:ml-4">
-              <CryptoIcon symbol={fromCoin} />
+              <CryptoIcon symbol={fromCoin.symbol} />
               <select
-                value={fromCoin}
-                onChange={(e) => setFromCoin(e.target.value)}
+                value={fromCoin.symbol}
+                onChange={(e) => {
+                  const selectedCoin = getCoinBySymbol(e.target.value);
+                  if (selectedCoin) {
+                    setFromCoin(selectedCoin);
+                    setError(null);
+                  }
+                }}
                 className="bg-white font-medium outline-none cursor-pointer text-sm sm:text-base text-gray-900"
               >
                 {coins.map((coin) => (
@@ -262,7 +316,7 @@ export default function SwapInterface() {
       {/* Swap Button */}
       <div className="flex justify-center -my-2 relative z-10">
         <button
-          onClick={handleSwapCoins}
+          onClick={switchCoins}
           className="bg-indigo-600 hover:bg-indigo-700 text-white p-2 rounded-full shadow-lg transition"
         >
           <ArrowDownUp className="h-5 w-5" />
@@ -274,7 +328,7 @@ export default function SwapInterface() {
         <div className="flex justify-between mb-2">
           <label className="text-sm font-medium text-gray-700">To</label>
           <span className="text-sm text-gray-500">
-            Balance: {coins.find(c => c.symbol === toCoin)?.balance}
+            Balance: {coins.find(c => c.symbol === toCoin.symbol)?.balance}
           </span>
         </div>
         <div className="bg-gray-50 rounded-xl p-4">
@@ -287,10 +341,16 @@ export default function SwapInterface() {
               className="bg-transparent text-gray-900 text-2xl font-semibold outline-none w-full"
             />
             <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 ml-4">
-              <CryptoIcon symbol={toCoin} />
+              <CryptoIcon symbol={toCoin.symbol} />
               <select
-                value={toCoin}
-                onChange={(e) => setToCoin(e.target.value)}
+                value={toCoin.symbol}
+                onChange={(e) => {
+                  const selectedCoin = getCoinBySymbol(e.target.value);
+                  if (selectedCoin) {
+                    setToCoin(selectedCoin);
+                    setError(null);
+                  }
+                }}
                 className="bg-white font-medium outline-none cursor-pointer text-gray-900"
               >
                 {coins.map((coin) => (
@@ -310,7 +370,7 @@ export default function SwapInterface() {
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Price</span>
             <span className="font-medium">
-              1 {fromCoin} = {mockPrice.toFixed(2)} {toCoin}
+              1 {fromCoin.symbol} = {mockPrice.toFixed(2)} {toCoin.symbol}
             </span>
           </div>
           <div className="flex justify-between text-sm">
@@ -321,12 +381,12 @@ export default function SwapInterface() {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Trading Fee (0.3%)</span>
-            <span className="font-medium">{fee} {fromCoin}</span>
+            <span className="font-medium">{fee} {fromCoin.symbol}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Minimum Received</span>
             <span className="font-medium">
-              {(parseFloat(toAmount) * (1 - slippage / 100)).toFixed(6)} {toCoin}
+              {(parseFloat(toAmount) * (1 - slippage / 100)).toFixed(6)} {toCoin.symbol}
             </span>
           </div>
         </div>
@@ -345,7 +405,7 @@ export default function SwapInterface() {
       {/* Swap Button */}
       <button
         onClick={handleSwap}
-        disabled={!fromAmount || parseFloat(fromAmount) <= 0 || isSwapping}
+        disabled={!fromAmount || parseFloat(fromAmount) <= 0 || isSwapping || !!error || fromCoin.symbol === toCoin.symbol}
         className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-4 rounded-xl transition flex items-center justify-center gap-2"
       >
         {isSwapping ? (

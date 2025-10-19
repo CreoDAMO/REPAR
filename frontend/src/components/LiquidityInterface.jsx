@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, Minus, Info } from 'lucide-react';
 import {
@@ -16,6 +15,7 @@ import {
   Chainlink
 } from 'cryptocons';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
+import { COINS, getREPARPairs, getCoinLogo } from '../config/coins';
 
 const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
   const iconMap = {
@@ -83,23 +83,7 @@ export default function LiquidityInterface() {
   const [coinA, setCoinA] = useState('REPAR');
   const [coinB, setCoinB] = useState('USDC');
 
-  const coins = [
-    { symbol: 'REPAR', name: 'Aequitas REPAR', balance: '1,250,000' },
-    { symbol: 'BTC', name: 'Bitcoin', balance: '0.5' },
-    { symbol: 'ETH', name: 'Ethereum', balance: '5.2' },
-    { symbol: 'BNB', name: 'Binance Coin', balance: '12.5' },
-    { symbol: 'SOL', name: 'Solana', balance: '125' },
-    { symbol: 'ADA', name: 'Cardano', balance: '5,000' },
-    { symbol: 'AVAX', name: 'Avalanche', balance: '45' },
-    { symbol: 'DOT', name: 'Polkadot', balance: '350' },
-    { symbol: 'POL', name: 'Polygon', balance: '8,500' },
-    { symbol: 'ATOM', name: 'Cosmos', balance: '500' },
-    { symbol: 'XRP', name: 'Ripple', balance: '10,000' },
-    { symbol: 'DOGE', name: 'Dogecoin', balance: '50,000' },
-    { symbol: 'TRX', name: 'Tron', balance: '25,000' },
-    { symbol: 'LINK', name: 'Chainlink', balance: '250' },
-    { symbol: 'USDC', name: 'USD Coin', balance: '50,000' },
-  ];
+  const coins = COINS; // Use centralized coin configuration
 
   const mockPoolShare = 2.5; // User owns 2.5% of the pool
   const mockLPCoinS = 125000;
