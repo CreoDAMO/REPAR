@@ -16,38 +16,40 @@
 | **Initial Liquidity Pools** | 2% | 2.62T | DEX initial liquidity |
 | **TOTAL** | **100%** | **131T** | |
 
-## Founder's Total Allocation: 12% → 18%
+## Founder's Allocation Structure
 
-### Initial Allocation (Genesis)
-- **Total Founder Allocation:** 12% (15.72T REPAR)
-  - **Endowment (9%):** 11.79T REPAR → Locked perpetually, generates 4.5% APY
-  - **Discretionary (3%):** 3.93T REPAR → Fully vested, immediate access
+### Founder Allocation (10% of Total Supply)
+- **Total:** 10% (13.1T REPAR)
+  - **Vested (9%):** 11.79T REPAR → 4-year vesting schedule
+  - **Discretionary (1%):** 1.31T REPAR → Immediate access
 
-### After 8-Year Renewal (Governance Vote)
-- **Renewal Bonus:** +6% (7.86T REPAR)
-- **Total Discretionary Allocation:** 9% (11.79T REPAR)
-- **Total Founder Allocation:** 18% (23.58T REPAR)
-  - **Endowment (9%):** Still locked, still generating yield
-  - **Discretionary (9%):** 3% initial + 6% renewal bonus
+### Development Fund Allocation (8% of Total Supply)
+*Awarded to founder as sole developer*
+- **Total:** 8% (10.48T REPAR)
+  - **Founder Endowment (6%):** 7.86T REPAR → Locked for 8 years, renewable
+  - **Discretionary (2%):** 2.62T REPAR → Immediate access
+
+### Total Founder Control: 18%
+- **Immediate Access:** 3% (3.93T REPAR) → 1% founder + 2% dev
+- **Vested (4 years):** 9% (11.79T REPAR) → Founder allocation
+- **Endowment (8 years):** 6% (7.86T REPAR) → Development fund endowment
 
 ## Founder's Endowment Mechanics
 
 ### Annual Yield (4.5% APY)
-- **Endowment Principal:** 11.79T REPAR (~$11.79B at $1 peg)
-- **Annual Yield:** ~531M REPAR (~$531M in USDC)
-- **Distribution:**
-  - **90% to Protocol:** ~$478M/year
-    - 25% → DEX Liquidity (~$119M)
-    - 25% → DAO Treasury (~$119M)
-    - 25% → Social Endowment (~$119M)
-    - 15% → Validator Subsidy (~$72M)
-  - **10% to Founder:** ~$53M/year (paid quarterly in USDC)
+- **Endowment Principal:** 7.86T REPAR (~$7.86B at $1 peg)
+- **Annual Yield:** ~354M REPAR (~$354M in USDC)
+- **Distribution (25/25/25/15 Split):**
+  - **25% → DEX Liquidity:** ~$89M/year
+  - **25% → DAO Treasury:** ~$89M/year
+  - **25% → Social Endowment:** ~$89M/year
+  - **15% → Validator Subsidy:** ~$53M/year
 
 ### Renewal Process
 1. **Every 8 years:** Governance proposal to renew endowment
-2. **If approved:** Founder receives 6% renewal bonus (7.86T REPAR)
-3. **Incentive:** Aligns founder's long-term success with protocol health
-4. **Result:** Total allocation grows from 12% → 18%
+2. **If approved:** Endowment continues for another 8 years
+3. **If rejected:** 6% (7.86T REPAR) released to founder
+4. **Incentive:** Aligns founder's long-term success with protocol health
 
 ## Economic Justification
 

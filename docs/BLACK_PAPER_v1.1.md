@@ -682,20 +682,22 @@ Annual yield at 4.5%: $675K paid to social programs in USDC (perpetual)
 
 **Voluntary Perpetual Contribution:**
 
-The founder has placed **75% of his earned 8% Development Fund** (6% of total supply) into a separate perpetual endowment.
+As the sole developer, the founder receives the **8% Development Fund allocation**. Of this, **75% (6% of total supply)** has been placed into a separate perpetual endowment.
 
 **Structure:**
-- **Total Founder Allocation:** 8% (10.48T $REPAR)
-- **Kept Immediately:** 2% (2.62T $REPAR, 4-year vest)
-- **Placed in Endowment:** 6% (7.86T $REPAR, perpetual)
+- **Founder Allocation:** 10% (13.1T $REPAR)
+  - **Vested (9%):** 11.79T $REPAR → 4-year vesting
+  - **Discretionary (1%):** 1.31T $REPAR → Immediate access
+- **Development Fund Allocation:** 8% (10.48T $REPAR)
+  - **Endowment (6%):** 7.86T $REPAR → 8-year renewable lock
+  - **Discretionary (2%):** 2.62T $REPAR → Immediate access
 
-**Endowment Yield Distribution:**
-- **90% of annual yield** (~$121.5M/year at 4.5%) → Protocol operations
-  - 25% → DEX liquidity bootstrapping
-  - 25% → DAO Treasury
-  - 25% → Social Infrastructure Endowment
-  - 15% → Validator Subsidy Fund
-- **10% of annual yield** (~$13.5M/year) → Founder's perpetual dividend
+**Endowment Yield Distribution (25/25/25/15 Split):**
+- **25% → DEX Liquidity:** ~$89M/year
+- **25% → DAO Treasury:** ~$89M/year
+- **25% → Social Endowment:** ~$89M/year
+- **15% → Validator Subsidy:** ~$53M/year
+- **Total Protocol Funding:** ~$320M/year
 
 **Why This Matters:**
 1. **Day 1 Funding:** Protocol is self-sufficient from genesis (no ICO, no VCs)

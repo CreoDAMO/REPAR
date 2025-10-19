@@ -4,9 +4,9 @@ import StatCard from '../components/StatCard';
 
 export default function FounderEndowment() {
   const [endowment, setEndowment] = useState({
-    principal: 11790000000000, // 9% of 131T = 11.79T REPAR (endowment)
-    discretionary: 3930000000000, // 3% of 131T = 3.93T REPAR (vested)
-    renewalBonus: 7860000000000, // 6% of 131T = 7.86T REPAR (after 8 years)
+    principal: 7860000000000, // 6% of 131T = 7.86T REPAR (from 8% dev fund)
+    founderAllocation: 13100000000000, // 10% of 131T = 13.1T REPAR (9% vested + 1% discretionary)
+    devDiscretionary: 2620000000000, // 2% of 131T = 2.62T REPAR (dev fund discretionary)
     targetAPY: 4.5,
     yieldAccumulated: 0,
     unlockYear: 8, // 8-year renewal period
@@ -93,7 +93,7 @@ export default function FounderEndowment() {
             Founder's Endowment
           </h1>
           <p className="text-xl text-gray-300">
-            12% Initial Allocation (9% Endowment + 3% Discretionary) → 18% After 8-Year Renewal
+            18% Total: 10% Founder (9% vested + 1% discretionary) + 8% Dev Fund (6% endowment + 2% discretionary)
           </p>
         </div>
 
