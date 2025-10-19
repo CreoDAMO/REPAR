@@ -112,9 +112,7 @@ export default function AequitasDEX() {
                       <div className="flex items-center gap-3">
                         <div className="flex items-center -space-x-2">
                           <img src={reparLogo} alt="REPAR" className="w-10 h-10 rounded-full border-2 border-white object-cover" />
-                          <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center border-2 border-white">
-                            <img src={pool.icon2} alt="Pool Logo" className="w-full h-full object-cover rounded-full" />
-                          </div>
+                          <img src={pool.icon2} alt={pool.pair.split('/')[1]} className="w-10 h-10 rounded-full border-2 border-white object-cover" />
                         </div>
                         <div>
                           <h4 className="font-bold text-lg">{pool.pair}</h4>
