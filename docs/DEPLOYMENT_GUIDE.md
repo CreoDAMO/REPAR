@@ -30,14 +30,15 @@
    ```bash
    doctl auth init
    # Enter your API token when prompted
+   # IMPORTANT: DO NOT set your DO token as a VITE_ variable - it would be exposed to browsers!
    ```
 
-3. **Set Environment Variables**
+3. **Optional: Set Cosmos RPC URL (if blockchain node is running)**
    ```bash
-   export VITE_DO_ACCESS_TOKEN="your_digitalocean_token"
-   export VITE_CIRCLE_API_KEY="your_circle_api_key"
-   export VITE_CIRCLE_ENTITY_SECRET="your_circle_secret"
+   export COSMOS_RPC_URL="https://rpc.yourdomain.com:26657"
    ```
+   
+   Note: Circle API keys should be set in the DigitalOcean dashboard AFTER deployment, not as shell variables.
 
 ### Automated Deployment
 
@@ -64,22 +65,23 @@ chmod +x deploy-to-digitalocean.sh
    - Select branch: `main`
 
 3. **Configure Frontend Service**
-   - Source Directory: `/frontend`
+   - Source Directory: `frontend` (relative path, no leading slash)
    - Build Command: `npm install && npm run build`
-   - Run Command: `npm run preview -- --host 0.0.0.0 --port 8080`
+   - Run Command: `npx vite preview --host 0.0.0.0 --port 8080`
    - HTTP Port: `8080`
    - Instance Size: `Basic (512MB RAM, $5/mo)`
 
 4. **Configure Block Explorer Service**
-   - Source Directory: `/dexplorer`
+   - Source Directory: `dexplorer` (relative path, no leading slash)
    - Build Command: `npm install && npm run build`
-   - Run Command: `npm run preview -- --host 0.0.0.0 --port 8081`
+   - Run Command: `npx vite preview --host 0.0.0.0 --port 8081`
    - HTTP Port: `8081`
    - Instance Size: `Basic (512MB RAM, $5/mo)`
 
 5. **Set Environment Variables**
-   - Add secrets in the "Environment Variables" section
-   - See [Environment Variables](#environment-variables) section below
+   - Public variables only (see security note below)
+   - `VITE_COINBASE_APP_ID`: `aequitas-protocol`
+   - `NODE_ENV`: `production`
 
 6. **Deploy**
    - Click "Create Resources"
@@ -166,8 +168,7 @@ module.exports = {
       args: 'run preview -- --host 0.0.0.0 --port 3000',
       env: {
         NODE_ENV: 'production',
-        VITE_CIRCLE_API_KEY: process.env.VITE_CIRCLE_API_KEY,
-        VITE_CIRCLE_ENTITY_SECRET: process.env.VITE_CIRCLE_ENTITY_SECRET,
+        VITE_COINBASE_APP_ID: 'aequitas-protocol'
       }
     },
     {
@@ -233,22 +234,49 @@ certbot --nginx -d repar.network -d www.repar.network
 
 ## Environment Variables
 
-### Required Secrets
+### Public Environment Variables (Safe for Frontend)
 
-Set these in DigitalOcean dashboard or `.env` file:
+These can be set in DigitalOcean dashboard or `.env` file:
 
 ```bash
-# Circle SDK (Payment Processing)
-VITE_CIRCLE_API_KEY=your_circle_api_key_here
-VITE_CIRCLE_ENTITY_SECRET=your_32_byte_entity_secret_here
-
-# Optional - Coinbase Integration
+# Coinbase Integration (Public App ID - Safe)
 VITE_COINBASE_APP_ID=aequitas-protocol
 
-# Blockchain RPC (if running local node)
-VITE_COSMOS_RPC_URL=http://your-node-ip:26657
-VITE_COSMOS_API_URL=http://your-node-ip:1317
+# Blockchain RPC (Public endpoint - Safe)
+VITE_COSMOS_RPC_URL=https://rpc.yourdomain.com:26657
+
+# Environment
+NODE_ENV=production
 ```
+
+### ⚠️ CRITICAL SECURITY WARNING - Payment Integration
+
+**Circle SDK Cannot Be Used in Frontend-Only Deployment**
+
+The Circle payment integration (`VITE_CIRCLE_API_KEY`, `VITE_CIRCLE_ENTITY_SECRET`) is currently **DISABLED** for security reasons:
+
+- ❌ **DO NOT** set Circle API keys as `VITE_` environment variables
+- ❌ All `VITE_` variables are bundled into JavaScript and visible to anyone
+- ❌ Exposing Circle API keys allows attackers to make unauthorized payments
+- ❌ This would result in financial loss and API key compromise
+
+**To Enable Circle Payments Safely:**
+1. Implement a backend API server (Node.js, Python, Go, etc.)
+2. Store Circle API keys server-side as environment variables (not `VITE_` prefixed)
+3. Frontend calls your backend API, which then calls Circle API
+4. Backend validates requests and handles sensitive operations
+
+**Architecture Example:**
+```
+Frontend → Your Backend API → Circle API
+  (public)   (private keys)    (secure)
+```
+
+**Other Security Rules:**
+- ⚠️ **NEVER** set DigitalOcean API tokens as `VITE_` variables
+- ⚠️ Use `doctl auth init` for DO authentication (local deployment only)
+- ⚠️ Any secret API key should be backend-only
+- ✅ Only public identifiers and endpoints can be `VITE_` variables
 
 ### Setting Secrets in DigitalOcean App Platform
 
