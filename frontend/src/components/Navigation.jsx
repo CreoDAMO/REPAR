@@ -9,6 +9,7 @@ export default function Navigation() {
 
   const navLinks = [
     { to: '/', icon: TrendingUp, label: 'Dashboard' },
+    { to: '/black-paper', icon: FileText, label: 'Black Paper' },
     { to: '/audit', icon: FileText, label: 'Forensic Audit' },
     { to: '/defendants', icon: Database, label: 'Defendants' },
     { to: '/ledger', icon: Scale, label: 'Transparency Ledger' },

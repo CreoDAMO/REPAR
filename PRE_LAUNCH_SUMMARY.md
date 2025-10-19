@@ -133,6 +133,9 @@ Created comprehensive genesis configuration:
 - **Ports**: 22 (SSH), 26656 (P2P), 26657 (RPC), 1317 (REST), 9090 (gRPC)
 
 ### Cloudflare DNS (Configured)
+**See `docs/CLOUDFLARE_SUBDOMAIN_CONFIGURATION.md` for complete list (60+ subdomains)**
+
+Core Infrastructure:
 - Root: `aequitasprotocol.zone`
 - WWW: `www.aequitasprotocol.zone`
 - App: `app.aequitasprotocol.zone`
@@ -140,6 +143,8 @@ Created comprehensive genesis configuration:
 - RPC: `rpc.aequitasprotocol.zone` (pending droplet IP)
 - API: `api.aequitasprotocol.zone` (pending droplet IP)
 - gRPC: `grpc.aequitasprotocol.zone` (pending droplet IP)
+- Explorer: `explorer.aequitasprotocol.zone` (Dexplorer)
+- Black Paper: `paper.aequitasprotocol.zone`
 
 ### GitHub Pages
 - Custom domain: `aequitasprotocol.zone`
