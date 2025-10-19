@@ -5,11 +5,14 @@ import StatCard from '../components/StatCard';
 
 export default function FounderEndowment() {
   const [endowment, setEndowment] = useState({
-    principal: 7860000000000, // 6% of 131T = 7.86T REPAR
+    principal: 11790000000000, // 9% of 131T = 11.79T REPAR (endowment)
+    discretionary: 3930000000000, // 3% of 131T = 3.93T REPAR (vested)
+    renewalBonus: 7860000000000, // 6% of 131T = 7.86T REPAR (after 8 years)
     targetAPY: 4.5,
     yieldAccumulated: 0,
-    unlockYear: 5,
-    isLocked: true
+    unlockYear: 8, // 8-year renewal period
+    isLocked: true,
+    renewalCount: 0
   });
 
   const [projectedYields, setProjectedYields] = useState({
@@ -36,17 +39,17 @@ export default function FounderEndowment() {
     });
 
     // Calculate protocol sub-allocations
-    const dexLiquidity = protocolAnnualFunding * 0.25;
+    const dexLiquidity = protocolAnnualFunding * 0.40;
     const daoTreasury = protocolAnnualFunding * 0.25;
-    const socialEndowment = protocolAnnualFunding * 0.25;
+    const socialEndowment = protocolAnnualFunding * 0.20;
     const validatorSubsidy = protocolAnnualFunding * 0.15;
 
-    // Mock distribution data
+    // Protocol distribution: 40/25/20/15
     setDistributions([
       { 
         name: 'DEX Liquidity', 
         amount: dexLiquidity, 
-        percentage: 25,
+        percentage: 40,
         color: 'bg-blue-500'
       },
       { 
@@ -58,7 +61,7 @@ export default function FounderEndowment() {
       { 
         name: 'Social Endowment', 
         amount: socialEndowment, 
-        percentage: 25,
+        percentage: 20,
         color: 'bg-green-500'
       },
       { 
@@ -91,7 +94,7 @@ export default function FounderEndowment() {
             Founder's Endowment
           </h1>
           <p className="text-xl text-gray-300">
-            6% Development Fund | 75% Locked Forever | 4.5% Annual Yield
+            12% Initial Allocation (9% Endowment + 3% Discretionary) → 18% After 8-Year Renewal
           </p>
         </div>
 
@@ -114,6 +117,69 @@ export default function FounderEndowment() {
               <p className="text-3xl font-bold text-purple-400">∞</p>
               <p className="text-xs text-gray-500 mt-1">Infinite return on investment</p>
             </div>
+
+
+        {/* Allocation Breakdown */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-400/30 rounded-2xl p-6">
+            <h3 className="text-lg font-bold mb-4 text-purple-300">Initial Allocation (12%)</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Endowment (Locked)</span>
+                <span className="font-bold text-purple-400">9%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Amount</span>
+                <span className="font-bold">{formatCurrency(endowment.principal)}</span>
+              </div>
+              <div className="flex justify-between items-center border-t border-purple-400/20 pt-2">
+                <span className="text-sm text-gray-300">Discretionary (Vested)</span>
+                <span className="font-bold text-green-400">3%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Amount</span>
+                <span className="font-bold">{formatCurrency(endowment.discretionary)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-400/30 rounded-2xl p-6">
+            <h3 className="text-lg font-bold mb-4 text-amber-300">8-Year Renewal Bonus</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Bonus Percentage</span>
+                <span className="font-bold text-amber-400">+6%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Bonus Amount</span>
+                <span className="font-bold">{formatCurrency(endowment.renewalBonus)}</span>
+              </div>
+              <div className="flex justify-between items-center border-t border-amber-400/20 pt-2">
+                <span className="text-sm text-gray-300">Next Renewal</span>
+                <span className="font-bold text-orange-400">8 years</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-400/30 rounded-2xl p-6">
+            <h3 className="text-lg font-bold mb-4 text-green-300">After Renewal (18%)</h3>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Endowment (Still Locked)</span>
+                <span className="font-bold text-purple-400">9%</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-300">Total Discretionary</span>
+                <span className="font-bold text-green-400">9%</span>
+              </div>
+              <div className="flex justify-between items-center border-t border-green-400/20 pt-2">
+                <span className="text-sm text-gray-300">Total Allocation</span>
+                <span className="text-2xl font-bold text-green-400">18%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
           </div>
         </div>
 

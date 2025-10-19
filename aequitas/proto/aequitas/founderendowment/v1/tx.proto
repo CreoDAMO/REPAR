@@ -16,6 +16,7 @@ service Msg {
   rpc InitializeEndowment(MsgInitializeEndowment) returns (MsgInitializeEndowmentResponse);
   rpc DistributeYield(MsgDistributeYield) returns (MsgDistributeYieldResponse);
   rpc UpdateDistributionConfig(MsgUpdateDistributionConfig) returns (MsgUpdateDistributionConfigResponse);
+  rpc RenewEndowment(MsgRenewEndowment) returns (MsgRenewEndowmentResponse);
 }
 
 message MsgInitializeEndowment {
@@ -46,6 +47,20 @@ message MsgDistributeYieldResponse {
 }
 
 message MsgUpdateDistributionConfig {
+
+
+message MsgRenewEndowment {
+  option (cosmos.msg.v1.signer) = "authority";
+
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+message MsgRenewEndowmentResponse {
+  string renewal_bonus = 1;
+  uint64 renewal_count = 2;
+  int64 next_renewal_time = 3;
+}
+
   option (cosmos.msg.v1.signer) = "authority";
 
   string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
