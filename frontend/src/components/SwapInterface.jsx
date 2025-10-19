@@ -234,7 +234,7 @@ export default function SwapInterface() {
                 className="bg-white font-medium outline-none cursor-pointer text-sm sm:text-base text-gray-900"
               >
                 {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol} className="bg-white text-gray-900">
+                  <option key={token.symbol} value={token.symbol}>
                     {token.symbol}
                   </option>
                 ))}
@@ -279,7 +279,7 @@ export default function SwapInterface() {
                 className="bg-white font-medium outline-none cursor-pointer text-gray-900"
               >
                 {tokens.map((token) => (
-                  <option key={token.symbol} value={token.symbol} className="bg-white text-gray-900">
+                  <option key={token.symbol} value={token.symbol}>
                     {token.symbol}
                   </option>
                 ))}
