@@ -33,12 +33,19 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     'LINK': Chainlink
   };
 
-  // Handle REPAR with local logo
+  // Handle REPAR with error boundary
   if (symbol === 'REPAR') {
-    return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} onError={(e) => {
-      e.target.style.display = 'none';
-      e.target.nextSibling?.classList.remove('hidden');
-    }} />;
+    return (
+      <img 
+        src={reparLogo} 
+        alt={symbol} 
+        className={className + " rounded-full object-cover"} 
+        onError={(e) => {
+          e.target.style.display = 'none';
+          console.warn('REPAR logo failed to load');
+        }}
+      />
+    );
   }
 
   // Handle coins with fallback letters (USDC, XRP)

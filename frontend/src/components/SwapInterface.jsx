@@ -32,10 +32,22 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     'LINK': Chainlink
   };
 
+  // Handle REPAR with error boundary
   if (symbol === 'REPAR') {
-    return <img src={reparLogo} alt={symbol} className={className + " rounded-full object-cover"} />;
+    return (
+      <img 
+        src={reparLogo} 
+        alt={symbol} 
+        className={className + " rounded-full object-cover"} 
+        onError={(e) => {
+          e.target.style.display = 'none';
+          console.warn('REPAR logo failed to load');
+        }}
+      />
+    );
   }
 
+  // Handle coins with no icon library support
   if (symbol === 'USDC' || symbol === 'XRP') {
     return (
       <div className={className + " bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
@@ -44,6 +56,7 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     );
   }
 
+  // Handle cryptocons library icons with error boundary
   const Icon = iconMap[symbol];
   if (Icon) {
     try {
@@ -58,6 +71,7 @@ const CryptoIcon = ({ symbol, className = "w-6 h-6" }) => {
     }
   }
 
+  // Default fallback
   return (
     <div className={className + " bg-gradient-to-br from-gray-400 to-gray-500 rounded-full flex items-center justify-center text-white font-bold text-xs"}>
       {symbol.charAt(0)}
