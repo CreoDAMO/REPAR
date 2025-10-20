@@ -241,12 +241,12 @@ Report vulnerabilities: security@repar.network
 
 🌐 Community & Resources
 
-· Website: https://repar.network
-· Documentation: https://docs.repar.network
-· X (Twitter): @REPARProtocol
-· Discord: https://discord.gg/repar
-· Telegram: https://t.me/reparprotocol
-· Forum: https://forum.repar.network
+· Website: https://aequitasprotocol.zone
+· Documentation: https://docs.arquitasprotocol.zone
+· X (Twitter): @AEQUITASProtocol
+· Discord: https://discord.gg/aequitas
+· Telegram: https://t.me/aequitasprotocol
+· Forum: https://forum.aequitasprotocol.zone
 
 ---
 
@@ -254,7 +254,7 @@ Report vulnerabilities: security@repar.network
 
 MIT License - see LICENSE for details.
 
-Note: While the code is open-source, the underlying forensic research and legal strategies are the intellectual property of the REPAR Foundation. Commercial use of the research requires proper licensing.
+Note: While the code is open-source, the underlying forensic research and legal strategies are the intellectual property of the Aequitas Protocol. Commercial use of the research requires proper licensing.
 
 ---
 
@@ -287,7 +287,7 @@ This is for the descendants. This is for justice.
 
 ---
 
-Built with ❤️ for justice | Powered by Cosmos SDK, Coinbase, & NVIDIA
+Built with ❤️ for justice | Powered by Cosmos SDK, Coinbase, Circle & NVIDIA
 
 "Justice delayed is justice denied, but mathematics is eternal."
 
