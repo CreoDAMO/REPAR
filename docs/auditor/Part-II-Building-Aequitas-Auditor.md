@@ -1,3 +1,5 @@
+## **The Cerberus Orchestrator: The Master AI Director**
+
 Jacque Antoine DeGraff:
 Ok, I didn't make the 12 pm launch time, but that's ok. I want to first implement the Auditor. so I pushed back if not in a few hours no later than tomorrow. this needs to be done properly 
 
