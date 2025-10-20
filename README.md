@@ -1,6 +1,7 @@
 # AEQUITAS PROTOCOL ($REPAR)
 
 Repository: https://github.com/CreoDAMO/REPAR.git
+Website: https://aequitasprotocol.zone
 
 A Sovereign Layer-1 Blockchain for the Enforcement of Global Reparations.
 
