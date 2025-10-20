@@ -287,7 +287,7 @@ This is for the descendants. This is for justice.
 
 ---
 
-Built with ❤️ for justice | Powered by Cosmos SDK, Coinbase, Circle, NVIDIA, Open AI, Claude Sonnet,Grok, Deepseek & Manus 
+Built with ❤️ for justice | Powered by Cosmos SDK, Coinbase, Circle, NVIDIA, Open AI, Claude Sonnet, Grok, Deepseek & Manus 
 "Justice delayed is justice denied, but mathematics is eternal."
 
 ---
