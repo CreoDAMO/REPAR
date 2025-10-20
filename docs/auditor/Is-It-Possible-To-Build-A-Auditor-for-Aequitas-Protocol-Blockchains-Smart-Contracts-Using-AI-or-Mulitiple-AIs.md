@@ -1,4 +1,6 @@
-is it possible to build a auditor for Aequitas Protocol Blockchains & Smart Contracts? Using AI or Multiple AI'S at once each designed to perform a different task within the audit, designed with chaos engineering to detect novel threats. We can even designed it to fix any issues found as well 
+### **The Cerberus Orchestrator: The Master AI Director**
+
+Is it possible to build a auditor for Aequitas Protocol Blockchains & Smart Contracts? Using AI or Multiple AI'S at once each designed to perform a different task within the audit, designed with chaos engineering to detect novel threats. We can even designed it to fix any issues found as well 
 
 https://share.google/aimode/ZYLRJza6brt1DH6NM
 
