@@ -1,0 +1,153 @@
+syntax = "proto3";
+package aequitas.nftmarketplace.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/nftmarketplace/types";
+
+// NFT represents a non-fungible token in the Aequitas ecosystem
+message NFT {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1; // Unique NFT identifier
+  string token_id = 2; // Token ID within collection
+  string collection_id = 3; // Collection identifier
+  string owner = 4 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string creator = 5 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  NFTCategory category = 6;
+  string name = 7;
+  string description = 8;
+  string metadata_uri = 9; // IPFS CID for metadata
+  string image_uri = 10; // IPFS CID for image/media
+  int64 created_at = 11;
+  int64 updated_at = 12;
+  
+  // Evidence-specific fields (for Evidence NFTs)
+  string defendant_id = 13; // Reference to defendant if applicable
+  string claim_id = 14; // Reference to claim if applicable
+  bool certified = 15; // FRE 901 certification status
+  string certifier = 16; // Address of certifying authority
+  
+  // Justice Burn specific fields
+  string burn_amount = 17 [ // Amount of REPAR burned
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string burn_tx_hash = 18; // Reference to burn transaction
+  
+  // Royalty configuration
+  uint32 royalty_percentage = 19; // Creator royalty (basis points, e.g., 500 = 5%)
+  
+  // Attributes for filtering and display
+  repeated NFTAttribute attributes = 20;
+}
+
+// NFTCategory defines the type of NFT
+enum NFTCategory {
+  NFT_CATEGORY_UNSPECIFIED = 0;
+  NFT_CATEGORY_EVIDENCE = 1; // Legal evidence NFTs (FRE 901 compliant)
+  NFT_CATEGORY_JUSTICE_BURN = 2; // Commemorative burn event NFTs
+  NFT_CATEGORY_DESCENDANT_ID = 3; // Verified descendant identity NFTs
+  NFT_CATEGORY_HISTORICAL_ARCHIVE = 4; // Forensic audit artifacts
+  NFT_CATEGORY_COMMEMORATIVE = 5; // General commemorative NFTs
+  NFT_CATEGORY_ART = 6; // Community art and culture
+}
+
+// NFTAttribute represents metadata attributes
+message NFTAttribute {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string trait_type = 1;
+  string value = 2;
+  string display_type = 3; // Optional: "boost_number", "date", etc.
+}
+
+// Listing represents an NFT listed for sale on the marketplace
+message Listing {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1; // Unique listing identifier
+  string nft_id = 2; // Reference to NFT
+  string seller = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string price = 4 [ // Price in REPAR
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  ListingStatus status = 5;
+  int64 created_at = 6;
+  int64 expires_at = 7; // Optional expiration timestamp
+}
+
+enum ListingStatus {
+  LISTING_STATUS_UNSPECIFIED = 0;
+  LISTING_STATUS_ACTIVE = 1;
+  LISTING_STATUS_SOLD = 2;
+  LISTING_STATUS_CANCELLED = 3;
+  LISTING_STATUS_EXPIRED = 4;
+}
+
+// Collection represents a group of related NFTs
+message Collection {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string name = 2;
+  string symbol = 3;
+  string description = 4;
+  string creator = 5 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string image_uri = 6; // Collection banner image
+  NFTCategory category = 7;
+  uint32 royalty_percentage = 8; // Collection-wide royalty
+  int64 created_at = 9;
+  uint64 total_supply = 10; // Total NFTs in collection
+  bool verified = 11; // Official verification status
+}
+
+// Sale represents a completed NFT sale transaction
+message Sale {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  string id = 1;
+  string nft_id = 2;
+  string listing_id = 3;
+  string seller = 4 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string buyer = 5 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string price = 6 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string royalty_amount = 7 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string marketplace_fee = 8 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 timestamp = 9;
+  string tx_hash = 10;
+}
+
+// MarketplaceParams defines marketplace-wide parameters
+message MarketplaceParams {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_getters) = false;
+
+  uint32 marketplace_fee_percentage = 1; // Marketplace fee in basis points (e.g., 250 = 2.5%)
+  string fee_collector = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"]; // Ecosystem treasury
+  uint32 max_royalty_percentage = 3; // Maximum allowed royalty (e.g., 1000 = 10%)
+  uint64 min_listing_duration = 4; // Minimum listing duration in seconds
+  uint64 max_listing_duration = 5; // Maximum listing duration in seconds
+  bool certification_required = 6; // Require certification for evidence NFTs
+}

@@ -1,0 +1,193 @@
+syntax = "proto3";
+package aequitas.nftmarketplace.v1;
+
+import "cosmos/msg/v1/msg.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "aequitas/nftmarketplace/v1/nftmarketplace.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/nftmarketplace/types";
+
+// Msg defines the nftmarketplace Msg service
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // MintNFT mints a new NFT
+  rpc MintNFT(MsgMintNFT) returns (MsgMintNFTResponse);
+
+  // TransferNFT transfers NFT ownership
+  rpc TransferNFT(MsgTransferNFT) returns (MsgTransferNFTResponse);
+
+  // BurnNFT permanently destroys an NFT
+  rpc BurnNFT(MsgBurnNFT) returns (MsgBurnNFTResponse);
+
+  // ListNFT creates a marketplace listing
+  rpc ListNFT(MsgListNFT) returns (MsgListNFTResponse);
+
+  // DelistNFT cancels a marketplace listing
+  rpc DelistNFT(MsgDelistNFT) returns (MsgDelistNFTResponse);
+
+  // BuyNFT purchases a listed NFT
+  rpc BuyNFT(MsgBuyNFT) returns (MsgBuyNFTResponse);
+
+  // UpdateMetadata updates NFT metadata
+  rpc UpdateMetadata(MsgUpdateMetadata) returns (MsgUpdateMetadataResponse);
+
+  // CreateCollection creates a new NFT collection
+  rpc CreateCollection(MsgCreateCollection) returns (MsgCreateCollectionResponse);
+
+  // CertifyEvidence certifies an evidence NFT (FRE 901)
+  rpc CertifyEvidence(MsgCertifyEvidence) returns (MsgCertifyEvidenceResponse);
+}
+
+// MsgMintNFT mints a new NFT
+message MsgMintNFT {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string collection_id = 2;
+  string recipient = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"]; // Can mint to another address
+  NFTCategory category = 4;
+  string name = 5;
+  string description = 6;
+  string metadata_uri = 7; // IPFS CID
+  string image_uri = 8; // IPFS CID
+  uint32 royalty_percentage = 9;
+  repeated NFTAttribute attributes = 10;
+  
+  // Optional evidence-specific fields
+  string defendant_id = 11;
+  string claim_id = 12;
+  
+  // Optional justice burn fields
+  string burn_amount = 13 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string burn_tx_hash = 14;
+}
+
+message MsgMintNFTResponse {
+  string nft_id = 1;
+  string token_id = 2;
+}
+
+// MsgTransferNFT transfers NFT ownership
+message MsgTransferNFT {
+  option (cosmos.msg.v1.signer) = "sender";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string sender = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string recipient = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string nft_id = 3;
+}
+
+message MsgTransferNFTResponse {}
+
+// MsgBurnNFT permanently destroys an NFT
+message MsgBurnNFT {
+  option (cosmos.msg.v1.signer) = "owner";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string nft_id = 2;
+}
+
+message MsgBurnNFTResponse {}
+
+// MsgListNFT creates a marketplace listing
+message MsgListNFT {
+  option (cosmos.msg.v1.signer) = "seller";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string seller = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string nft_id = 2;
+  string price = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 expires_at = 4; // Optional expiration timestamp
+}
+
+message MsgListNFTResponse {
+  string listing_id = 1;
+}
+
+// MsgDelistNFT cancels a marketplace listing
+message MsgDelistNFT {
+  option (cosmos.msg.v1.signer) = "seller";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string seller = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string listing_id = 2;
+}
+
+message MsgDelistNFTResponse {}
+
+// MsgBuyNFT purchases a listed NFT
+message MsgBuyNFT {
+  option (cosmos.msg.v1.signer) = "buyer";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string buyer = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string listing_id = 2;
+}
+
+message MsgBuyNFTResponse {
+  string nft_id = 1;
+  string sale_id = 2;
+}
+
+// MsgUpdateMetadata updates NFT metadata
+message MsgUpdateMetadata {
+  option (cosmos.msg.v1.signer) = "owner";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string owner = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string nft_id = 2;
+  string metadata_uri = 3;
+  string description = 4;
+}
+
+message MsgUpdateMetadataResponse {}
+
+// MsgCreateCollection creates a new NFT collection
+message MsgCreateCollection {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string name = 2;
+  string symbol = 3;
+  string description = 4;
+  string image_uri = 5;
+  NFTCategory category = 6;
+  uint32 royalty_percentage = 7;
+}
+
+message MsgCreateCollectionResponse {
+  string collection_id = 1;
+}
+
+// MsgCertifyEvidence certifies an evidence NFT for FRE 901 compliance
+message MsgCertifyEvidence {
+  option (cosmos.msg.v1.signer) = "certifier";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string certifier = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string nft_id = 2;
+}
+
+message MsgCertifyEvidenceResponse {}

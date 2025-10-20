@@ -1,0 +1,166 @@
+syntax = "proto3";
+package aequitas.nftmarketplace.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "aequitas/nftmarketplace/v1/nftmarketplace.proto";
+
+option go_package = "github.com/aequitas/aequitas/x/nftmarketplace/types";
+
+// Query defines the nftmarketplace Query service
+service Query {
+  // NFT queries a specific NFT by ID
+  rpc NFT(QueryNFTRequest) returns (QueryNFTResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/nfts/{id}";
+  }
+
+  // NFTs queries all NFTs with optional filtering
+  rpc NFTs(QueryNFTsRequest) returns (QueryNFTsResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/nfts";
+  }
+
+  // NFTsByOwner queries all NFTs owned by a specific address
+  rpc NFTsByOwner(QueryNFTsByOwnerRequest) returns (QueryNFTsByOwnerResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/nfts/owner/{owner}";
+  }
+
+  // NFTsByCollection queries all NFTs in a collection
+  rpc NFTsByCollection(QueryNFTsByCollectionRequest) returns (QueryNFTsByCollectionResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/nfts/collection/{collection_id}";
+  }
+
+  // Listing queries a specific listing
+  rpc Listing(QueryListingRequest) returns (QueryListingResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/listings/{id}";
+  }
+
+  // Listings queries all active listings
+  rpc Listings(QueryListingsRequest) returns (QueryListingsResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/listings";
+  }
+
+  // Collection queries a specific collection
+  rpc Collection(QueryCollectionRequest) returns (QueryCollectionResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/collections/{id}";
+  }
+
+  // Collections queries all collections
+  rpc Collections(QueryCollectionsRequest) returns (QueryCollectionsResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/collections";
+  }
+
+  // Sales queries recent sales history
+  rpc Sales(QuerySalesRequest) returns (QuerySalesResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/sales";
+  }
+
+  // Params queries marketplace parameters
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/aequitas/nftmarketplace/v1/params";
+  }
+}
+
+// QueryNFTRequest is the request for querying a specific NFT
+message QueryNFTRequest {
+  string id = 1;
+}
+
+message QueryNFTResponse {
+  NFT nft = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryNFTsRequest is the request for querying all NFTs
+message QueryNFTsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  NFTCategory category = 2; // Optional category filter
+  string owner = 3; // Optional owner filter
+}
+
+message QueryNFTsResponse {
+  repeated NFT nfts = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryNFTsByOwnerRequest queries NFTs by owner
+message QueryNFTsByOwnerRequest {
+  string owner = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryNFTsByOwnerResponse {
+  repeated NFT nfts = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryNFTsByCollectionRequest queries NFTs in a collection
+message QueryNFTsByCollectionRequest {
+  string collection_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+message QueryNFTsByCollectionResponse {
+  repeated NFT nfts = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryListingRequest is the request for querying a specific listing
+message QueryListingRequest {
+  string id = 1;
+}
+
+message QueryListingResponse {
+  Listing listing = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryListingsRequest is the request for querying all listings
+message QueryListingsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  ListingStatus status = 2; // Optional status filter
+  NFTCategory category = 3; // Optional category filter
+}
+
+message QueryListingsResponse {
+  repeated Listing listings = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryCollectionRequest is the request for querying a collection
+message QueryCollectionRequest {
+  string id = 1;
+}
+
+message QueryCollectionResponse {
+  Collection collection = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryCollectionsRequest is the request for querying all collections
+message QueryCollectionsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  NFTCategory category = 2; // Optional category filter
+}
+
+message QueryCollectionsResponse {
+  repeated Collection collections = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QuerySalesRequest is the request for querying sales history
+message QuerySalesRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  string nft_id = 2; // Optional: filter by NFT
+  string buyer = 3; // Optional: filter by buyer
+  string seller = 4; // Optional: filter by seller
+}
+
+message QuerySalesResponse {
+  repeated Sale sales = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryParamsRequest is the request for querying marketplace params
+message QueryParamsRequest {}
+
+message QueryParamsResponse {
+  MarketplaceParams params = 1 [(gogoproto.nullable) = false];
+}
