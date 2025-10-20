@@ -235,7 +235,7 @@ Best Practices
 · Validator Stake Slashing
 · Regular Security Reviews
 
-Report vulnerabilities: security@repar.network
+Report vulnerabilities: security@aequistaprotocol.zone
 
 ---
 
@@ -287,8 +287,7 @@ This is for the descendants. This is for justice.
 
 ---
 
-Built with ❤️ for justice | Powered by Cosmos SDK, Coinbase, Circle & NVIDIA
-
+Built with ❤️ for justice | Powered by Cosmos SDK, Coinbase, Circle, NVIDIA, Open AI, Claude Sonnet,Grok, Deepseek & Manus 
 "Justice delayed is justice denied, but mathematics is eternal."
 
 ---
