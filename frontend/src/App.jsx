@@ -19,6 +19,7 @@ import AequitasSuperPay from './pages/AequitasSuperPay';
 import EndowmentDashboard from './pages/EndowmentDashboard';
 import ValidatorSubsidy from './pages/ValidatorSubsidy';
 import FounderEndowment from './pages/FounderEndowment';
+import NFTMarketplace from './pages/NFTMarketplace';
 import Onramper from './components/Onramper';
 import BlackPaper from './pages/BlackPaper';
 import IconTest from './pages/IconTest';
@@ -43,6 +44,7 @@ function App() {
           <Route path="/economics" element={<REPAREconomics />} />
           <Route path="/crypto-comparison" element={<CryptoComparison />} />
           <Route path="/dex" element={<AequitasDEX />} />
+          <Route path="/nft-marketplace" element={<NFTMarketplace />} />
           <Route path="/superpay" element={<AequitasSuperPay />} />
           <Route path="/endowment" element={<EndowmentDashboard />} />
           <Route path="/validator-subsidy" element={<ValidatorSubsidy />} />
