@@ -1,0 +1,45 @@
+{
+  "chainId": "aequitas-1",
+  "chainName": "Aequitas Zone",
+  "rpc": "http://localhost:26657",
+  "rest": "http://localhost:1317",
+  "bip44": {
+    "coinType": 118
+  },
+  "bech32Config": {
+    "bech32PrefixAccAddr": "aequitas",
+    "bech32PrefixAccPub": "aequitaspub",
+    "bech32PrefixValAddr": "aequitasvaloper",
+    "bech32PrefixValPub": "aequitasvaloperpub",
+    "bech32PrefixConsAddr": "aequitasvalcons",
+    "bech32PrefixConsPub": "aequitasvalconspub"
+  },
+  "currencies": [
+    {
+      "coinDenom": "REPAR",
+      "coinMinimalDenom": "urepar",
+      "coinDecimals": 6,
+      "coinGeckoId": "aequitas-repar"
+    }
+  ],
+  "feeCurrencies": [
+    {
+      "coinDenom": "REPAR",
+      "coinMinimalDenom": "urepar",
+      "coinDecimals": 6,
+      "coinGeckoId": "aequitas-repar",
+      "gasPriceStep": {
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.04
+      }
+    }
+  ],
+  "stakeCurrency": {
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinGeckoId": "aequitas-repar"
+  },
+  "features": ["ibc-transfer", "ibc-go"]
+}
