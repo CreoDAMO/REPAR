@@ -20,6 +20,7 @@ import EndowmentDashboard from './pages/EndowmentDashboard';
 import ValidatorSubsidy from './pages/ValidatorSubsidy';
 import FounderEndowment from './pages/FounderEndowment';
 import NFTMarketplace from './pages/NFTMarketplace';
+import ChainIntegration from './pages/ChainIntegration';
 import Onramper from './components/Onramper';
 import BlackPaper from './pages/BlackPaper';
 import IconTest from './pages/IconTest';
@@ -45,6 +46,7 @@ function App() {
           <Route path="/crypto-comparison" element={<CryptoComparison />} />
           <Route path="/dex" element={<AequitasDEX />} />
           <Route path="/nft-marketplace" element={<NFTMarketplace />} />
+          <Route path="/chain-integration" element={<ChainIntegration />} />
           <Route path="/superpay" element={<AequitasSuperPay />} />
           <Route path="/endowment" element={<EndowmentDashboard />} />
           <Route path="/validator-subsidy" element={<ValidatorSubsidy />} />

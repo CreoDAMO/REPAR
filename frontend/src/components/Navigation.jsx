@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server, ExternalLink, Image } from 'lucide-react';
+import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server, ExternalLink, Image, Network } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
@@ -25,6 +25,7 @@ export default function Navigation() {
     { to: '/crypto-comparison', icon: BarChart3, label: 'Comparison' },
     { to: '/dex', icon: ArrowLeftRight, label: 'DEX' },
     { to: '/nft-marketplace', icon: Image, label: 'NFT Marketplace' },
+    { to: '/chain-integration', icon: Network, label: 'Add to Wallet' },
     { to: '/onramp', icon: Coins, label: 'Buy $REPAR' },
     { to: '/superpay', icon: CreditCard, label: 'SuperPay' },
     { to: '/validator-subsidy', icon: Server, label: 'Validators' },
