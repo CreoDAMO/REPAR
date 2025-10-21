@@ -17,7 +17,7 @@ import time
 import asyncio
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
@@ -29,6 +29,15 @@ from agents.vulnerability_scanner import VulnerabilityScanner
 from agents.smart_contract_analyzer import SmartContractAnalyzer
 from agents.protocol_tuner import ProtocolTuner
 from db_models import DatabaseManager
+
+# Git and GitHub integration
+try:
+    from git import Repo
+    import requests
+    GIT_AVAILABLE = True
+except ImportError:
+    GIT_AVAILABLE = False
+    print("⚠️  GitPython not available - automated PR creation disabled")
 
 
 class CerberusOrchestrator:
@@ -47,15 +56,15 @@ class CerberusOrchestrator:
         # Create reports directory if it doesn't exist
         self.reports_path.mkdir(exist_ok=True)
         
-        # Initialize database manager
+        # Initialize database manager (REQUIRED - no fallback)
         try:
             self.db = DatabaseManager()
-            print("✅ Database connected successfully")
+            print("✅ PostgreSQL database connected successfully")
         except Exception as e:
-            print(f"⚠️  Database connection failed: {e}")
-            print("   Falling back to JSON-based threat ledger")
-            self.db = None
-            self.threat_ledger_path = self.repo_path / "auditor" / "threat_ledger.json"
+            print(f"❌ CRITICAL: PostgreSQL database connection failed: {e}")
+            print("   PostgreSQL is REQUIRED for production use")
+            print("   Please ensure DATABASE_URL environment variable is set")
+            raise RuntimeError("PostgreSQL database required - cannot start without database") from e
         
         # Initialize all security agents
         print("\n🎯 Initializing AI Security Agents...")
@@ -159,6 +168,16 @@ class CerberusOrchestrator:
                 gov_file = self.protocol_tuner.generate_governance_json(governance_proposals)
                 print(self.protocol_tuner.get_proposal_summary(governance_proposals))
                 report['governance_proposals'] = governance_proposals
+        
+        # Create Pull Request with patches if there are fixes
+        if all_fixes:
+            print("\n📤 Creating Pull Request with security patches...")
+            pr_url = self.create_security_pr(all_fixes, report)
+            if pr_url:
+                report['pull_request_url'] = pr_url
+                print(f"✅ Pull Request created: {pr_url}")
+            else:
+                print("ℹ️  Pull Request not created (check logs for details)")
         
         print("=" * 80)
         
@@ -463,6 +482,229 @@ class CerberusOrchestrator:
             'findings': findings,
             'patches': fixes
         }
+    
+    def create_security_pr(self, patches: List[Dict], audit_report: Dict) -> Optional[str]:
+        """
+        Create a Pull Request with security patches
+        
+        Args:
+            patches: List of patches to apply
+            audit_report: Full audit report for PR description
+            
+        Returns:
+            PR URL if successful, None otherwise
+        """
+        if not GIT_AVAILABLE:
+            print("⚠️  Git not available - skipping PR creation")
+            return None
+        
+        if not patches:
+            print("ℹ️  No patches to apply - skipping PR creation")
+            return None
+        
+        try:
+            # Get GitHub token
+            github_token = os.getenv("GITHUB_TOKEN")
+            if not github_token:
+                print("⚠️  GITHUB_TOKEN not set - cannot create PR")
+                return None
+            
+            # Initialize repo
+            repo = Repo(self.repo_path)
+            
+            # Ensure we're on a clean state
+            if repo.is_dirty():
+                print("⚠️  Repository has uncommitted changes - cannot create PR")
+                return None
+            
+            # Create branch name
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            branch_name = f"security/cerberus-audit-{timestamp}"
+            
+            # Create and checkout new branch
+            print(f"🌿 Creating branch: {branch_name}")
+            current = repo.active_branch
+            new_branch = repo.create_head(branch_name)
+            new_branch.checkout()
+            
+            # Apply patches
+            files_modified = []
+            for patch in patches:
+                file_path = self.repo_path / patch.get('file', '')
+                if not file_path.exists():
+                    continue
+                
+                # Apply the patch
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                
+                # Apply patch (simple replacement for now)
+                patched_content = patch.get('patched_code', content)
+                
+                with open(file_path, 'w') as f:
+                    f.write(patched_content)
+                
+                files_modified.append(str(file_path.relative_to(self.repo_path)))
+            
+            # Stage all changes
+            repo.index.add(files_modified)
+            
+            # Commit
+            commit_msg = f"""🛡️ Security: Apply Cerberus audit patches
+
+Automatically generated security patches from Cerberus AI Auditor.
+
+Findings:
+- Total vulnerabilities: {audit_report['summary']['total_findings']}
+- Critical: {audit_report['summary']['by_severity']['CRITICAL']}
+- High: {audit_report['summary']['by_severity']['HIGH']}
+- Medium: {audit_report['summary']['by_severity']['MEDIUM']}
+
+Security Score: {audit_report['summary']['security_score']}/100
+
+Generated by: Aequitas Cerberus Auditor
+Timestamp: {audit_report['timestamp']}
+"""
+            repo.index.commit(commit_msg)
+            
+            # Push to remote
+            print(f"⬆️  Pushing branch to remote...")
+            origin = repo.remote('origin')
+            origin.push(branch_name)
+            
+            # Create PR via GitHub API
+            print(f"📝 Creating Pull Request...")
+            pr_url = self._create_github_pr(
+                branch_name=branch_name,
+                base_branch="main",
+                title=f"🛡️ Security: Cerberus Audit Patches ({timestamp})",
+                body=self._generate_pr_body(audit_report, patches),
+                github_token=github_token
+            )
+            
+            # Switch back to original branch
+            current.checkout()
+            
+            if pr_url:
+                print(f"✅ Pull Request created: {pr_url}")
+                return pr_url
+            else:
+                print("❌ Failed to create Pull Request")
+                return None
+            
+        except Exception as e:
+            print(f"❌ Error creating PR: {e}")
+            # Try to switch back to original branch
+            try:
+                repo.heads['main'].checkout()
+            except:
+                pass
+            return None
+    
+    def _create_github_pr(
+        self,
+        branch_name: str,
+        base_branch: str,
+        title: str,
+        body: str,
+        github_token: str
+    ) -> Optional[str]:
+        """Create PR via GitHub API"""
+        
+        # Get repo info from git remote
+        try:
+            repo = Repo(self.repo_path)
+            remote_url = repo.remote('origin').url
+            
+            # Parse owner/repo from URL
+            # Handle both HTTPS and SSH URLs
+            if 'github.com/' in remote_url:
+                parts = remote_url.split('github.com/')[-1]
+                parts = parts.replace('.git', '').split('/')
+                owner, repo_name = parts[0], parts[1]
+            else:
+                print("⚠️  Could not parse GitHub repo from remote")
+                return None
+            
+            # Create PR
+            api_url = f"https://api.github.com/repos/{owner}/{repo_name}/pulls"
+            headers = {
+                "Authorization": f"token {github_token}",
+                "Accept": "application/vnd.github.v3+json"
+            }
+            data = {
+                "title": title,
+                "body": body,
+                "head": branch_name,
+                "base": base_branch
+            }
+            
+            response = requests.post(api_url, headers=headers, json=data)
+            
+            if response.status_code == 201:
+                pr_data = response.json()
+                return pr_data['html_url']
+            else:
+                print(f"❌ GitHub API error: {response.status_code}")
+                print(response.text)
+                return None
+                
+        except Exception as e:
+            print(f"❌ Error creating GitHub PR: {e}")
+            return None
+    
+    def _generate_pr_body(self, audit_report: Dict, patches: List[Dict]) -> str:
+        """Generate PR description"""
+        
+        body = f"""## 🛡️ Cerberus Security Audit Patches
+
+**Automated security patches generated by the Aequitas Cerberus AI Auditor.**
+
+### Summary
+
+- **Total Vulnerabilities**: {audit_report['summary']['total_findings']}
+- **Security Score**: {audit_report['summary']['security_score']}/100
+- **Patches Applied**: {len(patches)}
+
+### Severity Breakdown
+
+| Severity | Count |
+|----------|-------|
+| CRITICAL | {audit_report['summary']['by_severity']['CRITICAL']} |
+| HIGH     | {audit_report['summary']['by_severity']['HIGH']} |
+| MEDIUM   | {audit_report['summary']['by_severity']['MEDIUM']} |
+| LOW      | {audit_report['summary']['by_severity']['LOW']} |
+
+### Patches Included
+
+"""
+        
+        for i, patch in enumerate(patches, 1):
+            body += f"{i}. **{patch.get('file', 'Unknown')}**: {patch.get('description', 'Security fix')}\n"
+        
+        body += f"""
+
+### Review Checklist
+
+- [ ] Review all patches for correctness
+- [ ] Run full test suite
+- [ ] Verify no functionality breaks
+- [ ] Check for any unintended side effects
+
+### Audit Report
+
+Full audit report available in: `auditor/reports/`
+
+Generated: {audit_report['timestamp']}
+Duration: {audit_report['duration_seconds']:.2f} seconds
+
+---
+
+*This PR was automatically generated by the Aequitas Cerberus Auditor.*
+*Review carefully before merging.*
+"""
+        
+        return body
     
     def _generate_recommendations(self, findings: List[Dict]) -> List[str]:
         """Generate security recommendations based on findings"""
