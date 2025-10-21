@@ -77,13 +77,24 @@ class CerberusOrchestrator:
         print(f"\n📊 Found {len(go_files)} Go files to audit")
         print(f"🎯 Target: {target_path}")
         
-        # Audit each file
-        for idx, go_file in enumerate(go_files[:10], 1):  # Limit to 10 files for demo
-            print(f"\n[{idx}/{min(len(go_files), 10)}] Auditing: {go_file.relative_to(self.repo_path)}")
+        # Audit each file (all files, batched for performance)
+        batch_size = 5
+        for i in range(0, len(go_files), batch_size):
+            batch = go_files[i:i+batch_size]
+            print(f"\n📦 Processing batch {i//batch_size + 1}/{(len(go_files) + batch_size - 1)//batch_size}")
             
-            findings = await self._audit_single_file(str(go_file))
-            if findings:
-                all_findings.extend(findings)
+            # Process files in batch asynchronously
+            batch_tasks = [self._audit_single_file(str(go_file)) for go_file in batch]
+            batch_results = await asyncio.gather(*batch_tasks)
+            
+            for idx, (go_file, result) in enumerate(zip(batch, batch_results)):
+                findings = result['findings']
+                fixes = result['fixes']
+                print(f"  [{i+idx+1}/{len(go_files)}] {go_file.relative_to(self.repo_path)}: {len(findings)} findings, {len(fixes)} fixes")
+                if findings:
+                    all_findings.extend(findings)
+                if fixes:
+                    all_fixes.extend(fixes)
         
         # Generate report
         elapsed = time.time() - start_time
@@ -203,33 +214,47 @@ class CerberusOrchestrator:
         consensus_threats = self._get_consensus_threats(analysis_results)
         
         if not consensus_threats:
-            return []
+            return {'findings': [], 'fixes': []}
         
         # Phase 3: Adversarial Testing
         confirmed = []
+        generated_fixes = []
+        
         for threat in consensus_threats:
-            if self.adversaries.run_exploit_poc(threat):
-                threat['file'] = file_path
+            # Enrich threat with file context BEFORE exploit confirmation
+            threat['file'] = file_path
+            
+            # Now test exploitability with full context
+            exploit_confirmation = self.adversaries.run_exploit_poc(threat)
+            
+            if exploit_confirmation:
+                # Mark as confirmed and add evidence
                 threat['confirmed'] = True
+                threat['exploit_evidence'] = exploit_confirmation['evidence']
                 confirmed.append(threat)
                 self._update_threat_ledger(threat)
+                
+                # Phase 4: Generate Fix for confirmed exploit
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    code = f.read()
+                
+                # Get code snippet around the vulnerability
+                lines = code.split('\n')
+                line_num = threat.get('line_number', 1)
+                start = max(0, line_num - 5)
+                end = min(len(lines), line_num + 5)
+                snippet = '\n'.join(lines[start:end])
+                
+                fix = self.engineers.generate_patch(threat, snippet)
+                
+                fix_entry = {
+                    'vulnerability': threat,
+                    'patch': fix,
+                    'file': file_path
+                }
+                generated_fixes.append(fix_entry)
         
-        # Phase 4: Generate Fixes
-        for vuln in confirmed:
-            with open(file_path, 'r', encoding='utf-8') as f:
-                code = f.read()
-            
-            # Get code snippet around the vulnerability
-            lines = code.split('\n')
-            line_num = vuln.get('line_number', 1)
-            start = max(0, line_num - 5)
-            end = min(len(lines), line_num + 5)
-            snippet = '\n'.join(lines[start:end])
-            
-            fix = self.engineers.generate_patch(vuln, snippet)
-            vuln['fix'] = fix
-        
-        return confirmed
+        return {'findings': confirmed, 'fixes': generated_fixes}
     
     def _get_consensus_threats(self, results: Dict[str, List[Dict]]) -> List[Dict]:
         """
