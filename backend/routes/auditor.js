@@ -147,4 +147,4 @@ router.get('/nft/auctions/active', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
