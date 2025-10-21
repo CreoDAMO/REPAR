@@ -10,6 +10,10 @@ export default function NFTMarketplace() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('recent');
   const [selectedNFT, setSelectedNFT] = useState(null);
+  const [viewMode, setViewMode] = useState('grid'); // grid, list, ar
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 10000000 });
+  const [showAuctions, setShowAuctions] = useState(false);
+  const [arPreview, setArPreview] = useState(false);
 
   // NFT Categories matching the proto definitions
   const categories = [
@@ -103,6 +107,30 @@ export default function NFTMarketplace() {
     { id: 'listing-4', nft_id: 'nft-4', price: '750000', seller: 'aequitas1mno...', status: 'active' },
   ]);
 
+  // Mock auctions
+  const [auctions, setAuctions] = useState([
+    {
+      id: 'auction-1',
+      nft_id: 'nft-1',
+      current_bid: '600000',
+      min_bid_increment: '50000',
+      bidder_count: 12,
+      ends_at: Date.now() + 86400000, // 24 hours
+      seller: 'aequitas1xyz...',
+      status: 'active'
+    },
+    {
+      id: 'auction-2',
+      nft_id: 'nft-3',
+      current_bid: '1200000',
+      min_bid_increment: '100000',
+      bidder_count: 8,
+      ends_at: Date.now() + 172800000, // 48 hours
+      seller: 'aequitas1ghi...',
+      status: 'active'
+    }
+  ]);
+
   // Mock sales activity
   const recentSales = [
     { nft_name: 'JPMorgan Evidence #045', price: '1500000', buyer: 'aequitas1...', seller: 'aequitas1...', timestamp: '2 hours ago' },
@@ -113,8 +141,11 @@ export default function NFTMarketplace() {
   // Filter NFTs
   const filteredNFTs = nfts.filter(nft => {
     const matchesCategory = selectedCategory === 'all' || nft.category === selectedCategory;
-    const matchesSearch = nft.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    const matchesSearch = nft.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         nft.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const nftPrice = parseInt(nft.price);
+    const matchesPrice = nftPrice >= priceRange.min && nftPrice <= priceRange.max;
+    return matchesCategory && matchesSearch && matchesPrice;
   });
 
   // Format REPAR price
@@ -200,6 +231,17 @@ export default function NFTMarketplace() {
             My NFTs
           </button>
           <button
+            onClick={() => setActiveTab('auctions')}
+            className={`px-6 py-3 font-semibold transition border-b-2 ${
+              activeTab === 'auctions'
+                ? 'border-purple-600 text-purple-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <Gavel className="inline h-5 w-5 mr-2" />
+            Auctions
+          </button>
+          <button
             onClick={() => setActiveTab('activity')}
             className={`px-6 py-3 font-semibold transition border-b-2 ${
               activeTab === 'activity'
@@ -217,7 +259,7 @@ export default function NFTMarketplace() {
           <div>
             {/* Filters and Search */}
             <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                 {/* Search */}
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -253,7 +295,79 @@ export default function NFTMarketplace() {
                   <option value="price-low">Price: Low to High</option>
                   <option value="price-high">Price: High to Low</option>
                   <option value="popular">Most Popular</option>
+                  <option value="ending-soon">Auctions Ending Soon</option>
                 </select>
+
+                {/* View Mode */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`flex-1 px-4 py-2 rounded-lg transition ${
+                      viewMode === 'grid' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    Grid
+                  </button>
+                  <button
+                    onClick={() => setViewMode('ar')}
+                    className={`flex-1 px-4 py-2 rounded-lg transition ${
+                      viewMode === 'ar' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-700'
+                    }`}
+                  >
+                    AR View
+                  </button>
+                </div>
+              </div>
+
+              {/* Advanced Filters */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200">
+                {/* Price Range */}
+                <div>
+                  <label className="text-sm font-semibold mb-2 block">Price Range (REPAR)</label>
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={priceRange.min}
+                      onChange={(e) => setPriceRange({ ...priceRange, min: parseInt(e.target.value) || 0 })}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    />
+                    <span className="text-gray-500">-</span>
+                    <input
+                      type="number"
+                      placeholder="Max"
+                      value={priceRange.max}
+                      onChange={(e) => setPriceRange({ ...priceRange, max: parseInt(e.target.value) || 10000000 })}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/* Show Auctions Toggle */}
+                <div className="flex items-end">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={showAuctions}
+                      onChange={(e) => setShowAuctions(e.target.checked)}
+                      className="w-4 h-4 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                    />
+                    <span className="text-sm font-semibold">Show Auctions Only</span>
+                  </label>
+                </div>
+
+                {/* AR Preview Toggle */}
+                <div className="flex items-end">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={arPreview}
+                      onChange={(e) => setArPreview(e.target.checked)}
+                      className="w-4 h-4 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                    />
+                    <span className="text-sm font-semibold">AR/VR Preview Mode</span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -282,6 +396,30 @@ export default function NFTMarketplace() {
                 );
               })}
             </div>
+
+            {/* AR/VR Preview Banner */}
+            {arPreview && (
+              <div className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-xl p-6 mb-6">
+                <h3 className="text-xl font-bold mb-2">🥽 AR/VR Preview Mode Enabled</h3>
+                <p className="text-sm mb-4">
+                  NFTs with 3D models will display holographic previews. Click any NFT to view in AR or VR.
+                </p>
+                <div className="flex gap-3">
+                  <button className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-semibold transition">
+                    Launch WebXR Viewer
+                  </button>
+                  <button className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-semibold transition">
+                    Connect VR Headset
+                  </button>
+                  <button
+                    onClick={() => setArPreview(false)}
+                    className="bg-red-500/30 hover:bg-red-500/40 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-semibold transition"
+                  >
+                    Exit AR Mode
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* NFT Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -359,6 +497,96 @@ export default function NFTMarketplace() {
                     <option value="justice_burn">Justice Burn NFT</option>
                     <option value="descendant_id">Descendant ID NFT</option>
                     <option value="historical_archive">Historical Archive NFT</option>
+
+
+        {/* Auctions Tab */}
+        {activeTab === 'auctions' && (
+          <div>
+            <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <Gavel className="h-6 w-6 text-purple-600" />
+                Live Auctions
+              </h2>
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div className="bg-purple-50 rounded-lg p-4">
+                  <div className="text-3xl font-bold text-purple-600">{auctions.length}</div>
+                  <div className="text-sm text-gray-600">Active Auctions</div>
+                </div>
+                <div className="bg-green-50 rounded-lg p-4">
+                  <div className="text-3xl font-bold text-green-600">₹2.8M</div>
+                  <div className="text-sm text-gray-600">Total Bids</div>
+                </div>
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <div className="text-3xl font-bold text-blue-600">24</div>
+                  <div className="text-sm text-gray-600">Active Bidders</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {auctions.map((auction) => {
+                const auctionNFT = nfts.find(n => n.id === auction.nft_id);
+                if (!auctionNFT) return null;
+
+                const timeRemaining = auction.ends_at - Date.now();
+                const hoursRemaining = Math.floor(timeRemaining / 3600000);
+                const minutesRemaining = Math.floor((timeRemaining % 3600000) / 60000);
+
+                return (
+                  <div key={auction.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition">
+                    <div className="relative aspect-video bg-gradient-to-br from-purple-100 to-blue-100 rounded-t-xl overflow-hidden">
+                      <img src={auctionNFT.image} alt={auctionNFT.name} className="w-full h-full object-cover" />
+                      <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-semibold animate-pulse">
+                        Live Auction
+                      </div>
+                      <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white px-3 py-2 rounded-lg">
+                        <div className="text-xs text-gray-300">Ends in</div>
+                        <div className="font-bold">{hoursRemaining}h {minutesRemaining}m</div>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4">
+                      <h3 className="font-bold text-lg mb-2">{auctionNFT.name}</h3>
+                      
+                      <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-3">
+                        <div className="text-xs text-gray-600 mb-1">Current Bid</div>
+                        <div className="text-2xl font-bold text-purple-600">{formatREPAR(auction.current_bid)}</div>
+                        <div className="text-xs text-gray-500 mt-1">
+                          {auction.bidder_count} bidders • Min increment: {formatREPAR(auction.min_bid_increment)}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2">
+                        <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition">
+                          Place Bid
+                        </button>
+                        <button className="px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 rounded-lg font-semibold transition">
+                          Watch
+                        </button>
+                      </div>
+
+                      <div className="text-xs text-gray-500 mt-3 flex items-center justify-between">
+                        <span>Seller: {auction.seller.slice(0, 12)}...</span>
+                        <TrendingUp className="h-4 w-4 text-green-500" />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Create Auction Button */}
+            <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-dashed border-purple-300 rounded-xl p-8 text-center">
+              <Gavel className="h-12 w-12 mx-auto text-purple-600 mb-3" />
+              <h3 className="text-xl font-bold mb-2">Start Your Own Auction</h3>
+              <p className="text-gray-600 mb-4">List your NFT for auction and let the market decide its value</p>
+              <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold transition">
+                Create Auction
+              </button>
+            </div>
+          </div>
+        )}
+
                     <option value="commemorative">Commemorative NFT</option>
                   </select>
                 </div>
