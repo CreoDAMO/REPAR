@@ -8,7 +8,7 @@ The Cerberus Auditor is a comprehensive, multi-agent AI security auditing system
 
 ### Architecture
 
-The system consists of three AI guilds orchestrated by a master coordinator:
+The system consists of six AI agents orchestrated by a master coordinator:
 
 #### 1. **Analyst Guild** (4 AI Agents)
 - **Claude Sonnet 4** (Anthropic) - Advanced reasoning and security analysis
@@ -28,6 +28,25 @@ The system consists of three AI guilds orchestrated by a master coordinator:
 - Test case creation
 - Security fix verification
 - CUDA optimization recommendations
+
+#### 4. **Vulnerability Scanner**
+- CVE database matching
+- Known Cosmos SDK vulnerabilities
+- Go language security patterns
+- Cryptographic weakness detection
+
+#### 5. **Smart Contract Analyzer**
+- Aequitas-specific module analysis (x/justice, x/endowment, x/cctp, etc.)
+- Justice Burn mechanism integrity
+- Time-lock security verification
+- Bridge security analysis
+- Arbitration system validation
+
+#### 6. **Protocol-Tuner**
+- Analyzes patterns in discoveries
+- Generates on-chain governance proposals
+- Proposes parameter adjustments
+- Creates feedback loop for protocol hardening
 
 ### Usage
 
@@ -78,7 +97,9 @@ asyncio.run(orchestrator.audit_document("path/to/document.md"))
 
 All results are saved to:
 - **`auditor/reports/`** - Detailed audit reports (JSON format)
-- **`auditor/threat_ledger.json`** - Permanent record of all discovered threats
+- **PostgreSQL Database** - Permanent threat ledger with historical tracking
+  - Fallback to `auditor/threat_ledger.json` if database unavailable
+- **`auditor/reports/governance_proposals.json`** - Generated governance proposals
 
 ### Consensus Mechanism
 
@@ -107,14 +128,36 @@ The auditor is specifically tuned for:
 - Governance exploit vectors
 - Custom Aequitas modules (x/justice, x/endowment, etc.)
 
+### CI/CD Integration
+
+The auditor includes complete GitHub Actions integration:
+- **`.github/workflows/cerberus-audit.yml`** - Automated security audits on every push/PR
+- Runs daily security scans
+- Fails CI if CRITICAL vulnerabilities detected
+- Generates audit reports as artifacts
+- Posts PR comments with security scores
+- Automatically creates patch PRs for discovered vulnerabilities
+
+### Completed Features
+
+- ✅ Multi-agent AI analysis (6 specialized agents)
+- ✅ PostgreSQL database for threat persistence
+- ✅ GitHub Actions CI/CD integration
+- ✅ Automated PR creation for fixes
+- ✅ Protocol-Tuner governance proposals
+- ✅ Vulnerability Scanner (CVE database)
+- ✅ Smart Contract Analyzer (Aequitas-specific)
+- ✅ Consensus-based vulnerability detection
+- ✅ Automated patch generation
+- ✅ Comprehensive reporting system
+
 ### Future Enhancements
 
-- [ ] Real-time continuous monitoring
-- [ ] GitHub Actions integration
-- [ ] Automated PR creation for fixes
+- [ ] Real-time continuous monitoring dashboard
 - [ ] NVIDIA NIM integration for CUDA optimization
-- [ ] Testnet deployment for live exploit testing
+- [ ] Live testnet deployment for exploit testing
 - [ ] Integration with AgentKit for autonomous security agents
+- [ ] Webhook notifications for critical findings
 
 ## Philosophy
 

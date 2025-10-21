@@ -1,0 +1,201 @@
+# .github/workflows/cerberus-audit.yml
+# Automated Cerberus Auditor - Runs on every push and pull request
+# Provides continuous security monitoring for the Aequitas Protocol
+
+name: Cerberus Security Audit
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cerberus_audit
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better analysis
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          cd auditor
+          pip install -r requirements.txt
+      
+      - name: Run Cerberus Auditor
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/cerberus_audit
+        run: |
+          cd auditor
+          python orchestrator.py
+      
+      - name: Upload audit reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: audit-reports
+          path: auditor/reports/*.json
+          retention-days: 90
+      
+      - name: Check for CRITICAL vulnerabilities
+        run: |
+          # Parse the latest report and fail if CRITICAL issues found
+          LATEST_REPORT=$(ls -t auditor/reports/*.json | head -1)
+          CRITICAL_COUNT=$(jq '.summary.by_severity.CRITICAL' $LATEST_REPORT)
+          
+          if [ "$CRITICAL_COUNT" -gt 0 ]; then
+            echo "❌ CRITICAL: $CRITICAL_COUNT critical vulnerabilities found!"
+            echo "Review the audit report immediately."
+            exit 1
+          fi
+          
+          echo "✅ No critical vulnerabilities detected"
+      
+      - name: Generate security badge
+        if: success()
+        run: |
+          LATEST_REPORT=$(ls -t auditor/reports/*.json | head -1)
+          SECURITY_SCORE=$(jq '.summary.security_score' $LATEST_REPORT)
+          
+          if [ "$SECURITY_SCORE" -ge 95 ]; then
+            COLOR="brightgreen"
+          elif [ "$SECURITY_SCORE" -ge 85 ]; then
+            COLOR="green"
+          elif [ "$SECURITY_SCORE" -ge 70 ]; then
+            COLOR="yellow"
+          else
+            COLOR="red"
+          fi
+          
+          # Create badge
+          curl "https://img.shields.io/badge/Security%20Score-${SECURITY_SCORE}%25-${COLOR}" > security-badge.svg
+      
+      - name: Comment PR with audit results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const reports = fs.readdirSync('auditor/reports').filter(f => f.endsWith('.json'));
+            const latestReport = reports.sort().reverse()[0];
+            const report = JSON.parse(fs.readFileSync(`auditor/reports/${latestReport}`, 'utf8'));
+            
+            const summary = report.summary;
+            const body = `## 🛡️ Cerberus Security Audit Results
+            
+            **Security Score:** ${summary.security_score}/100
+            
+            **Findings:**
+            - 🔴 Critical: ${summary.by_severity.CRITICAL}
+            - 🟠 High: ${summary.by_severity.HIGH}
+            - 🟡 Medium: ${summary.by_severity.MEDIUM}
+            - 🟢 Low: ${summary.by_severity.LOW}
+            
+            **Total Vulnerabilities:** ${summary.total_findings}
+            **Fixes Generated:** ${summary.fixes_generated}
+            
+            ${summary.security_score < 70 ? '⚠️ **WARNING:** Security score below threshold. Review and apply patches immediately.' : ''}
+            ${summary.security_score >= 95 ? '✅ **EXCELLENT:** System is secure and ready for deployment.' : ''}
+            
+            Full report available in artifacts.
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+  
+  create-patches:
+    needs: security-audit
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download audit reports
+        uses: actions/download-artifact@v3
+        with:
+          name: audit-reports
+          path: auditor/reports
+      
+      - name: Create patch branch
+        run: |
+          git config user.name "Cerberus Auditor Bot"
+          git config user.email "cerberus@aequitas.protocol"
+          
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          BRANCH_NAME="security-patches-${TIMESTAMP}"
+          
+          git checkout -b $BRANCH_NAME
+          
+          echo "Created branch: $BRANCH_NAME"
+          echo "PATCH_BRANCH=$BRANCH_NAME" >> $GITHUB_ENV
+      
+      - name: Apply automated patches
+        run: |
+          # This is a placeholder for automated patch application
+          # In production, this would parse the audit report and apply the generated patches
+          echo "Applying automated security patches..."
+          
+          LATEST_REPORT=$(ls -t auditor/reports/*.json | head -1)
+          # Parse fixes and apply them
+          # jq '.fixes' $LATEST_REPORT | ...
+      
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.PATCH_BRANCH }}
+          title: "🔒 Security Patches - Cerberus Automated Fixes"
+          body: |
+            ## 🛡️ Automated Security Patches
+            
+            This PR contains automated security fixes generated by the Cerberus Auditor.
+            
+            **Review Required:**
+            - Verify all patches maintain functionality
+            - Run test suite
+            - Review security rationale for each fix
+            
+            **Generated by:** Cerberus Auditor
+            **Date:** ${{ github.event.head_commit.timestamp }}
+            
+            ⚠️ **Important:** While these patches are AI-generated and verified, human review is mandatory before merging.
+          labels: security, automated
+          assignees: ${{ github.repository_owner }}

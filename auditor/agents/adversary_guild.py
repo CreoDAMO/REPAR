@@ -12,7 +12,7 @@ class AdversaryGuild:
         self.testnet_rpc = testnet_rpc
         self.confirmed_exploits = []
     
-    def run_exploit_poc(self, vulnerability: Dict) -> Dict:
+    def run_exploit_poc(self, vulnerability: Dict):
         """
         Attempt to create a proof-of-concept exploit for the vulnerability
         

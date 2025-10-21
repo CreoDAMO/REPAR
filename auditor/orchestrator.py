@@ -25,6 +25,10 @@ sys.path.append(str(Path(__file__).parent))
 from agents.analyst_guild import AnalystGuild
 from agents.adversary_guild import AdversaryGuild
 from agents.engineer_guild import EngineerGuild
+from agents.vulnerability_scanner import VulnerabilityScanner
+from agents.smart_contract_analyzer import SmartContractAnalyzer
+from agents.protocol_tuner import ProtocolTuner
+from db_models import DatabaseManager
 
 
 class CerberusOrchestrator:
@@ -38,19 +42,37 @@ class CerberusOrchestrator:
         print("=" * 80)
         
         self.repo_path = Path(repo_path)
-        self.threat_ledger_path = self.repo_path / "auditor" / "threat_ledger.json"
         self.reports_path = self.repo_path / "auditor" / "reports"
         
         # Create reports directory if it doesn't exist
         self.reports_path.mkdir(exist_ok=True)
         
-        # Initialize the three guilds
-        print("\n🎯 Initializing AI Guilds...")
+        # Initialize database manager
+        try:
+            self.db = DatabaseManager()
+            print("✅ Database connected successfully")
+        except Exception as e:
+            print(f"⚠️  Database connection failed: {e}")
+            print("   Falling back to JSON-based threat ledger")
+            self.db = None
+            self.threat_ledger_path = self.repo_path / "auditor" / "threat_ledger.json"
+        
+        # Initialize all security agents
+        print("\n🎯 Initializing AI Security Agents...")
         self.analysts = AnalystGuild(api_keys)
         self.adversaries = AdversaryGuild()
         self.engineers = EngineerGuild(api_keys["openai"])
+        self.vuln_scanner = VulnerabilityScanner()
+        self.contract_analyzer = SmartContractAnalyzer()
+        self.protocol_tuner = ProtocolTuner()
         
-        print("✅ All guilds initialized successfully")
+        print("✅ All agents initialized successfully")
+        print("  - Analyst Guild (4 AI agents)")
+        print("  - Adversary Guild (Chaos Engineering)")
+        print("  - Engineer Guild (Patch Generation)")
+        print("  - Vulnerability Scanner (CVE Database)")
+        print("  - Smart Contract Analyzer (Aequitas Modules)")
+        print("  - Protocol-Tuner (Governance Proposals)")
         print("=" * 80)
     
     async def run_full_audit(self, target_directory: str = "aequitas") -> Dict:
@@ -108,10 +130,36 @@ class CerberusOrchestrator:
         # Save report
         report_file = self._save_report(report, "full_audit")
         
+        # Save report to database
+        if self.db:
+            try:
+                self.db.save_audit_report(report)
+                print("✅ Report saved to database")
+            except Exception as e:
+                print(f"⚠️  Database report save failed: {e}")
+        
         print("\n" + "=" * 80)
         print("✅ AUDIT COMPLETE")
         print(f"📄 Report saved to: {report_file}")
         print(f"⏱️  Time elapsed: {elapsed:.2f} seconds")
+        
+        # Show threat statistics if using database
+        if self.db:
+            stats = self.db.get_threat_statistics()
+            print(f"\n📊 Threat Statistics:")
+            print(f"   Total threats in database: {stats['total_threats']}")
+            print(f"   Unpatched threats: {stats['unpatched']}")
+        
+        # Generate governance proposals if there are findings
+        if all_findings:
+            print("\n🔧 Generating governance proposals...")
+            governance_proposals = self.protocol_tuner.analyze_findings_for_governance(all_findings)
+            
+            if governance_proposals:
+                gov_file = self.protocol_tuner.generate_governance_json(governance_proposals)
+                print(self.protocol_tuner.get_proposal_summary(governance_proposals))
+                report['governance_proposals'] = governance_proposals
+        
         print("=" * 80)
         
         return report
@@ -204,14 +252,22 @@ class CerberusOrchestrator:
         
         return report
     
-    async def _audit_single_file(self, file_path: str) -> List[Dict]:
+    async def _audit_single_file(self, file_path: str) -> Dict:
         """Audit a single file through all phases"""
         
-        # Phase 1: Analysis
+        # Phase 1: Multi-source Analysis
+        # Run AI analysis, vulnerability scanning, and contract analysis in parallel
         analysis_results = await self.analysts.audit_file(file_path)
+        vuln_scan_results = self.vuln_scanner.scan_file(file_path)
+        contract_analysis_results = self.contract_analyzer.analyze_file(file_path)
+        
+        # Merge all findings
+        all_findings = analysis_results.copy()
+        all_findings['vulnerability_scanner'] = vuln_scan_results
+        all_findings['contract_analyzer'] = contract_analysis_results
         
         # Phase 2: Consensus
-        consensus_threats = self._get_consensus_threats(analysis_results)
+        consensus_threats = self._get_consensus_threats(all_findings)
         
         if not consensus_threats:
             return {'findings': [], 'fixes': []}
@@ -310,7 +366,22 @@ class CerberusOrchestrator:
         return consensus
     
     def _update_threat_ledger(self, threat: Dict):
-        """Record threat in the permanent ledger"""
+        """Record threat in the permanent ledger (PostgreSQL or JSON fallback)"""
+        
+        if self.db:
+            # Use PostgreSQL database
+            try:
+                db_threat = self.db.add_threat(threat)
+                print(f"  📝 Threat ledger (DB) updated: {threat.get('description', 'Unknown')} [ID: {db_threat.threat_id}]")
+            except Exception as e:
+                print(f"  ⚠️  Database write failed: {e}")
+                self._fallback_json_ledger(threat)
+        else:
+            # Fallback to JSON file
+            self._fallback_json_ledger(threat)
+    
+    def _fallback_json_ledger(self, threat: Dict):
+        """Fallback to JSON-based threat ledger"""
         ledger = []
         
         if self.threat_ledger_path.exists():
@@ -328,7 +399,7 @@ class CerberusOrchestrator:
         with open(self.threat_ledger_path, 'w') as f:
             json.dump(ledger, f, indent=2)
         
-        print(f"  📝 Threat ledger updated: {threat.get('description', 'Unknown')}")
+        print(f"  📝 Threat ledger (JSON) updated: {threat.get('description', 'Unknown')}")
     
     def _generate_comprehensive_report(
         self,
