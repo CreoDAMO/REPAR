@@ -306,34 +306,34 @@ export default function AIAnalytics() {
 
         {/* Prediction Results */}
         {predictionResult && (
-          <div className="bg-white border-2 border-green-400 rounded-lg shadow-lg p-6 mb-8">
+          <div className="bg-white border-2 border-green-300 rounded-lg shadow-lg p-6 mb-8">
             <div className="flex items-center gap-3 mb-4">
               <Target className="h-8 w-8 text-green-600" />
-              <h2 className="text-2xl font-bold text-gray-900">AI Prediction Results</h2>
+              <h2 className="text-2xl font-bold text-green-900">AI Prediction Results</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-gray-700 mb-1">Success Probability</p>
-                <p className="text-3xl font-bold text-green-700">{predictionResult.successProbability}%</p>
+              <div className="bg-green-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600 mb-1">Success Probability</p>
+                <p className="text-3xl font-bold text-green-600">{predictionResult.successProbability}%</p>
               </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-gray-700 mb-1">Est. Settlement</p>
-                <p className="text-3xl font-bold text-blue-700">{predictionResult.estimatedSettlement}</p>
+              <div className="bg-blue-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600 mb-1">Est. Settlement</p>
+                <p className="text-3xl font-bold text-blue-600">{predictionResult.estimatedSettlement}</p>
               </div>
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-gray-700 mb-1">Optimal Jurisdiction</p>
-                <p className="text-xl font-bold text-purple-700">{predictionResult.optimalJurisdiction}</p>
+              <div className="bg-purple-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600 mb-1">Optimal Jurisdiction</p>
+                <p className="text-xl font-bold text-purple-600">{predictionResult.optimalJurisdiction}</p>
               </div>
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <p className="text-sm font-semibold text-gray-700 mb-1">Key Evidence Found</p>
-                <p className="text-3xl font-bold text-amber-700">{predictionResult.keyEvidence}</p>
+              <div className="bg-amber-50 rounded-lg p-4">
+                <p className="text-sm text-gray-600 mb-1">Key Evidence Found</p>
+                <p className="text-3xl font-bold text-amber-600">{predictionResult.keyEvidence}</p>
               </div>
             </div>
 
-            <div className="bg-gray-100 border border-gray-300 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-lg p-4">
               <h3 className="font-bold text-gray-900 mb-2">Recommended Action Plan</h3>
-              <ul className="space-y-2 text-gray-800">
+              <ul className="space-y-2 text-gray-700">
                 <li>• <strong>Filing Date:</strong> {predictionResult.recommendedFilingDate}</li>
                 <li>• <strong>Defendant:</strong> {predictionResult.defendant}</li>
                 <li>• <strong>Risk Factors:</strong> {predictionResult.riskFactors.join(', ')}</li>
@@ -480,42 +480,42 @@ export default function AIAnalytics() {
             
             {/* Real-time AI Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Cpu className="h-5 w-5 text-cyan-300" />
-                  <p className="text-white font-semibold text-sm">GPU Utilization</p>
+                  <Cpu className="h-5 w-5 text-cyan-400" />
+                  <p className="text-cyan-300 text-sm">GPU Utilization</p>
                 </div>
                 <p className="text-2xl font-bold text-white">{aiProcessingMetrics.gpuUtilization}%</p>
-                <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
+                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
                   <div 
                     className="bg-gradient-to-r from-cyan-400 to-blue-500 h-2 rounded-full transition-all duration-500"
                     style={{ width: `${aiProcessingMetrics.gpuUtilization}%` }}
                   />
                 </div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Zap className="h-5 w-5 text-yellow-300" />
-                  <p className="text-white font-semibold text-sm">Inference Speed</p>
+                  <Zap className="h-5 w-5 text-yellow-400" />
+                  <p className="text-cyan-300 text-sm">Inference Speed</p>
                 </div>
                 <p className="text-2xl font-bold text-white">{aiProcessingMetrics.inferenceSpeed} TFLOPS</p>
-                <p className="text-xs text-cyan-100 mt-1">TensorRT Optimized</p>
+                <p className="text-xs text-cyan-200 mt-1">TensorRT Optimized</p>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Brain className="h-5 w-5 text-purple-300" />
-                  <p className="text-white font-semibold text-sm">Active Models</p>
+                  <Brain className="h-5 w-5 text-purple-400" />
+                  <p className="text-cyan-300 text-sm">Active Models</p>
                 </div>
                 <p className="text-2xl font-bold text-white">{aiProcessingMetrics.modelsActive}</p>
-                <p className="text-xs text-cyan-100 mt-1">NVIDIA NeMo + RAPIDS</p>
+                <p className="text-xs text-cyan-200 mt-1">NVIDIA NeMo + RAPIDS</p>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg p-4">
+              <div className="bg-white/10 backdrop-blur rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <Database className="h-5 w-5 text-green-300" />
-                  <p className="text-white font-semibold text-sm">Network Depth</p>
+                  <Database className="h-5 w-5 text-green-400" />
+                  <p className="text-cyan-300 text-sm">Network Depth</p>
                 </div>
                 <p className="text-2xl font-bold text-white">{aiProcessingMetrics.neuralNetworkDepth}</p>
-                <p className="text-xs text-cyan-100 mt-1">Layers Active</p>
+                <p className="text-xs text-cyan-200 mt-1">Layers Active</p>
               </div>
             </div>
 
