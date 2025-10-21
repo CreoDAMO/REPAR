@@ -1,4 +1,5 @@
 import express, { type Express } from "express";
+import rateLimit from "express-rate-limit";
 import fs from "fs";
 import { type Server } from "http";
 import { nanoid } from "nanoid";
@@ -60,8 +61,16 @@ export function serveStatic(app: Express) {
 
   app.use(express.static(distPath));
 
+  // Rate limiter: max 100 requests per 15 minutes per IP
+  const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+
   // fall through to index.html if the file doesn't exist
-  app.use("*", (_req, res) => {
+  app.use("*", limiter, (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }
