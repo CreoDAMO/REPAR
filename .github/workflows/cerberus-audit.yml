@@ -3,6 +3,8 @@
 # Provides continuous security monitoring for the Aequitas Protocol
 
 name: Cerberus Security Audit
+permissions:
+  contents: read
 
 on:
   push:
@@ -141,6 +143,9 @@ jobs:
   
   create-patches:
     needs: security-audit
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     
