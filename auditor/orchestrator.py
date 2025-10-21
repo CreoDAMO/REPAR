@@ -18,6 +18,7 @@ import asyncio
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Optional
+import urllib.parse
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
@@ -618,11 +619,22 @@ Timestamp: {audit_report['timestamp']}
             
             # Parse owner/repo from URL
             # Handle both HTTPS and SSH URLs
-            if 'github.com/' in remote_url:
-                parts = remote_url.split('github.com/')[-1]
-                parts = parts.replace('.git', '').split('/')
-                owner, repo_name = parts[0], parts[1]
+            owner, repo_name = None, None
+            if remote_url.startswith("git@github.com:"):
+                # SSH format: git@github.com:owner/repo.git
+                path = remote_url[len("git@github.com:"):]
+                parts = path.replace(".git", "").split("/")
+                if len(parts) >= 2:
+                    owner, repo_name = parts[0], parts[1]
             else:
+                # Try HTTPS/HTTP
+                parsed = urllib.parse.urlparse(remote_url)
+                if parsed.scheme in ("https", "http") and parsed.hostname == "github.com":
+                    # path is "/owner/repo.git"
+                    parts = parsed.path.lstrip("/").replace(".git", "").split("/")
+                    if len(parts) >= 2:
+                        owner, repo_name = parts[0], parts[1]
+            if not owner or not repo_name:
                 print("⚠️  Could not parse GitHub repo from remote")
                 return None
             
