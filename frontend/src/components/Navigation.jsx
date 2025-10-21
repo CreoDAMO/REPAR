@@ -25,6 +25,7 @@ export default function Navigation() {
     { to: '/crypto-comparison', icon: BarChart3, label: 'Comparison' },
     { to: '/dex', icon: ArrowLeftRight, label: 'DEX' },
     { to: '/nft-marketplace', icon: Image, label: 'NFT Marketplace' },
+    { to: '/agentkit', icon: Brain, label: 'AgentKit' }, // Added AgentKit link
     { to: '/chain-integration', icon: Network, label: 'Add to Wallet' },
     { to: '/onramp', icon: Coins, label: 'Buy $REPAR' },
     { to: '/superpay', icon: CreditCard, label: 'SuperPay' },

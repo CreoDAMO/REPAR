@@ -1,6 +1,6 @@
 /**
  * Aequitas Backend API Server
- * Secure proxy for Circle USDC payment integration
+ * Secure proxy for Circle payment integration
  */
 
 import express from 'express';
@@ -111,7 +111,7 @@ app.get('/api', (req, res) => {
   res.json({
     name: 'Aequitas Circle API',
     version: '1.0.0',
-    description: 'Secure backend proxy for Circle USDC payment integration',
+    description: 'Secure backend proxy for Circle payment integration',
     endpoints: {
       health: 'GET /health',
       auth: 'POST /api/auth/session',
@@ -128,6 +128,11 @@ app.get('/api', (req, res) => {
         analyze: 'POST /api/auditor/analyze',
         consensus: 'POST /api/auditor/consensus',
       },
+      agentkit: {
+        deployAgent: 'POST /api/agentkit/deploy-agent',
+        agentStatus: 'GET /api/agentkit/agent-status/:agentId',
+        agentAction: 'POST /api/agentkit/agent-action',
+      },
     },
   });
 });
@@ -140,6 +145,9 @@ app.use('/api/circle', circleRoutes);
 
 // Auditor API routes
 app.use('/api/auditor', auditorRoutes);
+
+// AgentKit API routes
+app.use('/api/agentkit', require('./routes/agentkit'));
 
 // 404 handler
 app.use((req, res) => {
@@ -189,6 +197,7 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   console.log(`  CSRF Token: http://localhost:${config.port}/api/csrf-token`);
   console.log(`  Circle: http://localhost:${config.port}/api/circle/*`);
   console.log(`  Auditor: http://localhost:${config.port}/api/auditor/*`);
+  console.log(`  AgentKit: http://localhost:${config.port}/api/agentkit/*`);
   console.log('');
   console.log('Security:');
   console.log(`  ✅ CORS enabled for: ${config.cors.origins.join(', ')}`);
