@@ -31,6 +31,31 @@ export default function NFTMarketplace() {
     { id: 'commemorative', name: 'Commemorative', icon: Award, count: 28, description: 'Special commemorative NFTs' },
   ];
 
+  // Generate NFT image based on category
+  const generateNFTImage = (category, name) => {
+    const colors = {
+      evidence: 'from-blue-500 to-indigo-600',
+      justice_burn: 'from-orange-500 to-red-600',
+      descendant_id: 'from-purple-500 to-pink-600',
+      historical_archive: 'from-amber-500 to-yellow-600',
+      commemorative: 'from-green-500 to-teal-600',
+    };
+    
+    const icons = {
+      evidence: '📋',
+      justice_burn: '🔥',
+      descendant_id: '👤',
+      historical_archive: '📜',
+      commemorative: '🏆',
+    };
+    
+    return {
+      gradient: colors[category] || 'from-gray-500 to-gray-600',
+      icon: icons[category] || '📄',
+      initials: name.substring(0, 2).toUpperCase()
+    };
+  };
+
   // Mock NFT data (will be replaced with blockchain data)
   const mockNFTs = [
     {
@@ -38,7 +63,7 @@ export default function NFTMarketplace() {
       name: 'Barclays Evidence Package #001',
       category: 'evidence',
       price: '500000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
       creator: 'aequitas1abc...',
       owner: 'aequitas1xyz...',
       certified: true,
@@ -56,7 +81,7 @@ export default function NFTMarketplace() {
       name: 'Justice Burn: $10M REPAR',
       category: 'justice_burn',
       price: '250000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
       creator: 'aequitas1def...',
       owner: 'aequitas1abc...',
       certified: true,
@@ -74,7 +99,7 @@ export default function NFTMarketplace() {
       name: 'Descendant Certificate #156',
       category: 'descendant_id',
       price: '1000000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
       creator: 'aequitas1ghi...',
       owner: 'aequitas1ghi...',
       certified: true,
@@ -90,7 +115,7 @@ export default function NFTMarketplace() {
       name: 'Forensic Audit Page 127',
       category: 'historical_archive',
       price: '750000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
       creator: 'aequitas1jkl...',
       owner: 'aequitas1mno...',
       certified: true,
@@ -497,29 +522,38 @@ export default function NFTMarketplace() {
 
             {/* NFT Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredNFTs.map((nft) => (
-                <div
-                  key={nft.id}
-                  className="bg-white rounded-xl shadow-md hover:shadow-xl transition cursor-pointer group"
-                  onClick={() => setSelectedNFT(nft)}
-                >
-                  {/* NFT Image */}
-                  <div className="relative aspect-square bg-gradient-to-br from-purple-100 to-blue-100 rounded-t-xl overflow-hidden">
-                    <img
-                      src={nft.image}
-                      alt={nft.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
-                    />
-                    {nft.certified && (
-                      <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
-                        <Shield className="h-3 w-3" />
-                        FRE 901
+              {filteredNFTs.map((nft) => {
+                const imageData = generateNFTImage(nft.category, nft.name);
+                return (
+                  <div
+                    key={nft.id}
+                    className="bg-white rounded-xl shadow-md hover:shadow-xl transition cursor-pointer group"
+                    onClick={() => setSelectedNFT(nft)}
+                  >
+                    {/* NFT Image */}
+                    <div className={`relative aspect-square bg-gradient-to-br ${imageData.gradient} rounded-t-xl overflow-hidden flex items-center justify-center`}>
+                      {nft.image ? (
+                        <img
+                          src={nft.image}
+                          alt={nft.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                        />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-white">
+                          <div className="text-6xl mb-4">{imageData.icon}</div>
+                          <div className="text-4xl font-bold opacity-90">{imageData.initials}</div>
+                        </div>
+                      )}
+                      {nft.certified && (
+                        <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
+                          <Shield className="h-3 w-3" />
+                          FRE 901
+                        </div>
+                      )}
+                      <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-xs">
+                        {categories.find(c => c.id === nft.category)?.name}
                       </div>
-                    )}
-                    <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-xs">
-                      {categories.find(c => c.id === nft.category)?.name}
                     </div>
-                  </div>
 
                   {/* NFT Info */}
                   <div className="p-4">
@@ -658,10 +692,22 @@ export default function NFTMarketplace() {
                 const hoursRemaining = Math.floor(timeRemaining / 3600000);
                 const minutesRemaining = Math.floor((timeRemaining % 3600000) / 60000);
 
+                const imageData = generateNFTImage(auctionNFT.category, auctionNFT.name);
                 return (
                   <div key={auction.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition">
-                    <div className="relative aspect-video bg-gradient-to-br from-purple-100 to-blue-100 rounded-t-xl overflow-hidden">
-                      <img src={auctionNFT.image} alt={auctionNFT.name} className="w-full h-full object-cover" />
+                    <div className={`relative aspect-video rounded-t-xl overflow-hidden flex items-center justify-center ${
+                      auctionNFT.image 
+                        ? 'bg-gray-100' 
+                        : `bg-gradient-to-br ${imageData.gradient}`
+                    }`}>
+                      {auctionNFT.image ? (
+                        <img src={auctionNFT.image} alt={auctionNFT.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-white">
+                          <div className="text-5xl mb-3">{imageData.icon}</div>
+                          <div className="text-3xl font-bold opacity-90">{imageData.initials}</div>
+                        </div>
+                      )}
                       <div className="absolute top-2 right-2 bg-red-500 text-white px-3 py-1 rounded-lg text-sm font-semibold animate-pulse">
                         Live Auction
                       </div>
@@ -739,15 +785,42 @@ export default function NFTMarketplace() {
 
                 {/* Image Upload */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Image Upload *</label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                    <Image className="h-12 w-12 mx-auto text-gray-400 mb-2" />
-                    <p className="text-gray-600 mb-2">Drag & drop or click to upload</p>
-                    <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB • Will be stored on IPFS</p>
-                    <input type="file" className="hidden" accept="image/*" />
-                    <button type="button" className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-semibold transition">
-                      Choose File
-                    </button>
+                  <label className="block text-sm font-semibold mb-2">NFT Image *</label>
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2"
+                        onClick={() => alert('AI Image Generation: Connect to DALL-E, Stable Diffusion, or Midjourney API to generate unique NFT artwork based on your description.')}
+                      >
+                        <Sparkles className="h-5 w-5" />
+                        Generate with AI
+                      </button>
+                      <button
+                        type="button"
+                        className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2"
+                      >
+                        <Image className="h-5 w-5" />
+                        Upload Manually
+                      </button>
+                    </div>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                      <Image className="h-12 w-12 mx-auto text-gray-400 mb-2" />
+                      <p className="text-gray-600 mb-2">Drag & drop or click to upload</p>
+                      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB • Will be stored on IPFS</p>
+                      <input type="file" className="hidden" accept="image/*" />
+                      <button type="button" className="mt-4 bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                        Choose File
+                      </button>
+                    </div>
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                      <p className="text-sm font-semibold text-purple-900 mb-2">✨ AI Generation Options:</p>
+                      <ul className="text-xs text-purple-700 space-y-1">
+                        <li>• DALL-E 3: Photorealistic historical documents</li>
+                        <li>• Stable Diffusion: Artistic commemorative NFTs</li>
+                        <li>• Midjourney: High-quality identity certificates</li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
 
@@ -846,17 +919,30 @@ export default function NFTMarketplace() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {userNFTs.map((nft) => (
-                <div key={nft.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition">
-                  <div className="relative aspect-square bg-gradient-to-br from-purple-100 to-blue-100 rounded-t-xl overflow-hidden">
-                    <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
-                    {nft.certified && (
-                      <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
-                        <Shield className="h-3 w-3" />
-                        Certified
-                      </div>
-                    )}
-                  </div>
+              {userNFTs.map((nft) => {
+                const imageData = generateNFTImage(nft.category, nft.name);
+                return (
+                  <div key={nft.id} className="bg-white rounded-xl shadow-md hover:shadow-xl transition">
+                    <div className={`relative aspect-square rounded-t-xl overflow-hidden flex items-center justify-center ${
+                      nft.image 
+                        ? 'bg-gray-100' 
+                        : `bg-gradient-to-br ${imageData.gradient}`
+                    }`}>
+                      {nft.image ? (
+                        <img src={nft.image} alt={nft.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-white">
+                          <div className="text-6xl mb-4">{imageData.icon}</div>
+                          <div className="text-4xl font-bold opacity-90">{imageData.initials}</div>
+                        </div>
+                      )}
+                      {nft.certified && (
+                        <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
+                          <Shield className="h-3 w-3" />
+                          Certified
+                        </div>
+                      )}
+                    </div>
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-2">{nft.name}</h3>
                     <div className="flex gap-2 mb-3">
@@ -930,8 +1016,19 @@ export default function NFTMarketplace() {
           >
             <div className="grid md:grid-cols-2 gap-6 p-6">
               {/* Image */}
-              <div className="aspect-square bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl overflow-hidden">
-                <img src={selectedNFT.image} alt={selectedNFT.name} className="w-full h-full object-cover" />
+              <div className={`aspect-square rounded-xl overflow-hidden flex items-center justify-center ${
+                selectedNFT.image 
+                  ? 'bg-gray-100' 
+                  : `bg-gradient-to-br ${generateNFTImage(selectedNFT.category, selectedNFT.name).gradient}`
+              }`}>
+                {selectedNFT.image ? (
+                  <img src={selectedNFT.image} alt={selectedNFT.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-white">
+                    <div className="text-8xl mb-6">{generateNFTImage(selectedNFT.category, selectedNFT.name).icon}</div>
+                    <div className="text-6xl font-bold opacity-90">{generateNFTImage(selectedNFT.category, selectedNFT.name).initials}</div>
+                  </div>
+                )}
               </div>
 
               {/* Details */}
