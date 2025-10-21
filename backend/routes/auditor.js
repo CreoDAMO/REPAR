@@ -1,4 +1,3 @@
-
 const express = require('express');
 const router = express.Router();
 const { spawn } = require('child_process');
@@ -16,7 +15,6 @@ router.post('/scan', async (req, res) => {
       return res.status(400).json({ error: 'No files provided for audit' });
     }
 
-    // Run the Python auditor
     const auditorPath = path.join(__dirname, '../../auditor/orchestrator.py');
     const python = spawn('python3', [auditorPath, '--files', files.join(','), '--threat-level', threatLevel || 'medium']);
 
@@ -70,7 +68,7 @@ router.get('/history', async (req, res) => {
   try {
     const fs = require('fs').promises;
     const reportsPath = path.join(__dirname, '../../auditor/reports');
-    
+
     const files = await fs.readdir(reportsPath);
     const reports = [];
 
@@ -93,69 +91,13 @@ router.get('/history', async (req, res) => {
   }
 });
 
-module.exports = router;
-import express from 'express';
-
-const router = express.Router();
-
-// Placeholder routes for Cerberus Auditor
-// These will be connected to the Python auditor service
-
-router.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'cerberus-auditor' });
-});
-
-router.post('/audit/file', async (req, res) => {
-  try {
-    const { file_path, file_content } = req.body;
-    
-    // TODO: Call Python auditor service
-    res.json({
-      success: true,
-      audit_id: `audit-${Date.now()}`,
-      status: 'queued'
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.post('/audit/project', async (req, res) => {
-  try {
-    const { project_path } = req.body;
-    
-    // TODO: Call Python auditor service
-    res.json({
-      success: true,
-      audit_id: `audit-${Date.now()}`,
-      status: 'queued'
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-router.get('/audit/:audit_id/status', async (req, res) => {
-  try {
-    const { audit_id } = req.params;
-    
-    // TODO: Query Python auditor service
-    res.json({
-      audit_id,
-      status: 'completed',
-      vulnerabilities: [],
-      consensus_reached: true
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// NFT Auction endpoints
+/**
+ * NFT Auction endpoints
+ */
 router.post('/nft/auction/create', async (req, res) => {
   try {
     const { nft_id, starting_bid, min_increment, duration_hours } = req.body;
-    
+
     res.json({
       success: true,
       auction_id: `auction-${Date.now()}`,
@@ -173,7 +115,7 @@ router.post('/nft/auction/:auction_id/bid', async (req, res) => {
   try {
     const { auction_id } = req.params;
     const { bid_amount, bidder } = req.body;
-    
+
     res.json({
       success: true,
       auction_id,
@@ -188,7 +130,6 @@ router.post('/nft/auction/:auction_id/bid', async (req, res) => {
 
 router.get('/nft/auctions/active', async (req, res) => {
   try {
-    // Mock data - replace with actual blockchain query
     res.json({
       auctions: [
         {
@@ -206,4 +147,4 @@ router.get('/nft/auctions/active', async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

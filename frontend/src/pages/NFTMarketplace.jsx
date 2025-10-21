@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Image, ShoppingBag, Sparkles, Activity, Filter, Search, 
-  TrendingUp, Award, Shield, FileText, Gavel, Users, Calendar, Zap
+  TrendingUp, Award, Shield, FileText, Gavel, Users, Calendar, Zap,
+  Mic, Video, Volume2, Headphones
 } from 'lucide-react';
+import ARPreview from '../components/ARPreview';
 
 export default function NFTMarketplace() {
   const [activeTab, setActiveTab] = useState('browse');
@@ -14,6 +16,10 @@ export default function NFTMarketplace() {
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000000 });
   const [showAuctions, setShowAuctions] = useState(false);
   const [arPreview, setArPreview] = useState(false);
+  const [showARModal, setShowARModal] = useState(false);
+  const [narrateMode, setNarrateMode] = useState(false);
+  const [currentNarration, setCurrentNarration] = useState(null);
+  const [videoMode, setVideoMode] = useState(false);
 
   // NFT Categories matching the proto definitions
   const categories = [
@@ -153,6 +159,42 @@ export default function NFTMarketplace() {
     const num = parseInt(amount) / 1000000; // Convert from urepar
     return new Intl.NumberFormat().format(num) + ' REPAR';
   };
+
+  // Text-to-Speech narration
+  const narrateNFTStory = async (nft) => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(
+        `NFT: ${nft.name}. Category: ${categories.find(c => c.id === nft.category)?.name}. 
+        Price: ${formatREPAR(nft.price)}. 
+        ${nft.certified ? 'This NFT is FRE 901 certified.' : ''}`
+      );
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+      setCurrentNarration(nft.id);
+    } else {
+      alert('Text-to-speech not supported in this browser');
+    }
+  };
+
+  const stopNarration = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setCurrentNarration(null);
+    }
+  };
+
+  // Generate holographic video (simulated)
+  const generateHolographicVideo = async (nft) => {
+    console.log('Generating holographic video for:', nft.name);
+    alert(`Holographic video generation started for ${nft.name}. This will use Omniverse for AR rendering.`);
+  };
+
+  useEffect(() => {
+    return () => {
+      stopNarration();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -368,6 +410,38 @@ export default function NFTMarketplace() {
                     <span className="text-sm font-semibold">AR/VR Preview Mode</span>
                   </label>
                 </div>
+
+                {/* TTS Narration Toggle */}
+                <div className="flex items-end">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={narrateMode}
+                      onChange={(e) => setNarrateMode(e.target.checked)}
+                      className="w-4 h-4 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                    />
+                    <span className="text-sm font-semibold flex items-center gap-1">
+                      <Volume2 className="h-4 w-4" />
+                      Narration Mode
+                    </span>
+                  </label>
+                </div>
+
+                {/* Video Generation Toggle */}
+                <div className="flex items-end">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={videoMode}
+                      onChange={(e) => setVideoMode(e.target.checked)}
+                      className="w-4 h-4 text-purple-600 rounded focus:ring-2 focus:ring-purple-500"
+                    />
+                    <span className="text-sm font-semibold flex items-center gap-1">
+                      <Video className="h-4 w-4" />
+                      Holographic Video
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -460,6 +534,58 @@ export default function NFTMarketplace() {
                         Buy Now
                       </button>
                     </div>
+
+                    {/* TTS and Video Controls */}
+                    {(narrateMode || videoMode || arPreview) && (
+                      <div className="flex gap-2 mb-3">
+                        {narrateMode && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (currentNarration === nft.id) {
+                                stopNarration();
+                              } else {
+                                narrateNFTStory(nft);
+                              }
+                            }}
+                            className={`flex-1 flex items-center justify-center gap-1 px-3 py-2 rounded-lg text-xs font-semibold transition ${
+                              currentNarration === nft.id
+                                ? 'bg-red-500 hover:bg-red-600 text-white'
+                                : 'bg-blue-500 hover:bg-blue-600 text-white'
+                            }`}
+                          >
+                            {currentNarration === nft.id ? (
+                              <>Stop <Volume2 className="h-3 w-3" /></>
+                            ) : (
+                              <>Narrate <Mic className="h-3 w-3" /></>
+                            )}
+                          </button>
+                        )}
+                        {videoMode && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              generateHolographicVideo(nft);
+                            }}
+                            className="flex-1 flex items-center justify-center gap-1 bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-xs font-semibold transition"
+                          >
+                            Video <Video className="h-3 w-3" />
+                          </button>
+                        )}
+                        {arPreview && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedNFT(nft);
+                              setShowARModal(true);
+                            }}
+                            className="flex-1 flex items-center justify-center gap-1 bg-cyan-500 hover:bg-cyan-600 text-white px-3 py-2 rounded-lg text-xs font-semibold transition"
+                          >
+                            AR View
+                          </button>
+                        )}
+                      </div>
+                    )}
 
                     <div className="flex items-center justify-between text-xs text-gray-500 border-t border-gray-100 pt-2">
                       <div>
@@ -781,8 +907,19 @@ export default function NFTMarketplace() {
         )}
       </div>
 
+      {/* AR Preview Modal */}
+      {showARModal && selectedNFT && (
+        <ARPreview 
+          nft={selectedNFT} 
+          onClose={() => {
+            setShowARModal(false);
+            setSelectedNFT(null);
+          }} 
+        />
+      )}
+
       {/* NFT Detail Modal (simplified - would be more detailed in production) */}
-      {selectedNFT && (
+      {selectedNFT && !showARModal && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           onClick={() => setSelectedNFT(null)}
