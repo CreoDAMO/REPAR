@@ -11,6 +11,7 @@ import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import { config, validateConfig } from './config/index.js';
 import circleRoutes from './routes/circle.js';
+import auditorRoutes from './routes/auditor.js';
 import { createSession } from './middleware/auth.js';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
@@ -123,6 +124,10 @@ app.get('/api', (req, res) => {
         getBalance: 'GET /api/circle/balance/:address',
         crossChainTransfer: 'POST /api/circle/cross-chain-transfer',
       },
+      auditor: {
+        analyze: 'POST /api/auditor/analyze',
+        consensus: 'POST /api/auditor/consensus',
+      },
     },
   });
 });
@@ -132,6 +137,9 @@ app.post('/api/auth/session', createSession);
 
 // Circle API routes
 app.use('/api/circle', circleRoutes);
+
+// Auditor API routes
+app.use('/api/auditor', auditorRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -147,8 +155,8 @@ app.use((err, req, res, next) => {
   console.error('❌ Server error:', err);
 
   const statusCode = err.statusCode || 500;
-  const message = config.nodeEnv === 'production' 
-    ? 'Internal server error' 
+  const message = config.nodeEnv === 'production'
+    ? 'Internal server error'
     : err.message;
 
   // Handle CSRF errors specifically
@@ -180,6 +188,7 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   console.log(`  API Info: http://localhost:${config.port}/api`);
   console.log(`  CSRF Token: http://localhost:${config.port}/api/csrf-token`);
   console.log(`  Circle: http://localhost:${config.port}/api/circle/*`);
+  console.log(`  Auditor: http://localhost:${config.port}/api/auditor/*`);
   console.log('');
   console.log('Security:');
   console.log(`  ✅ CORS enabled for: ${config.cors.origins.join(', ')}`);

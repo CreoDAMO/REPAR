@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Brain, TrendingUp, Target, Zap, Database, LineChart, Upload, Play, Download, Settings, Eye, Globe, Cpu, Activity } from 'lucide-react';
 import OracleQuery from '../components/ai/OracleQuery';
 import WarRoomVisualization from '../components/ai/WarRoomVisualization';
+import CerberusAuditor from '../components/ai/CerberusAuditor';
 
 export default function AIAnalytics() {
   const [activeModel, setActiveModel] = useState('predictive');
@@ -411,6 +412,11 @@ export default function AIAnalytics() {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Cerberus Security Auditor */}
+        <div className="mb-8">
+          <CerberusAuditor />
         </div>
 
         {/* Interactive Oracle Query */}
