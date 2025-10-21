@@ -1,0 +1,388 @@
+# Aequitas Protocol - DigitalOcean Deployment Specification v1.0
+#
+# This file outlines the automated setup for a DigitalOcean Droplet to host
+# the Aequitas Protocol's core web services and applications.
+#
+# Prerequisites:
+# 1. A DigitalOcean Droplet (Ubuntu 22.04 recommended, 4GB+ RAM).
+# 2. A domain name (e.g., aequitasprotocol.io) managed by Cloudflare.
+# 3. A Cloudflare API Token with "DNS:Edit" permissions.
+# 4. The Droplet's IP address.
+# 5. Git, Docker, and Docker Compose installed on the Droplet.
+
+variables:
+  # Core Domain & Subdomains (Inferred from GitHub Pages & Docs)
+  domain: "aequitasprotocol.io" # Replace with your actual domain
+  subdomains:
+    - "www"
+    - "black-paper"
+    - "audit"
+    - "defendants"
+    - "ledger"
+    - "founder-wallet"
+    - "roadmap"
+    - "ifr"
+    - "grc"
+    - "dao"
+    - "ai-analytics"
+    - "endowment"
+    - "alliances"
+    - "economics"
+    - "crypto-comparison"
+    - "dex"
+    - "nft-marketplace"
+    - "chain-integration"
+    - "onramp"
+    - "superpay"
+    - "validator-subsidy"
+    - "founder-endowment"
+    - "explorer"
+  
+  # Cloudflare & DigitalOcean Credentials (To be stored as secure environment variables)
+  cloudflare_api_token: "{{ env.CLOUDFLARE_API_TOKEN }}"
+  digitalocean_droplet_ip: "{{ env.DROPLET_IP }}"
+
+# --- STAGE 1: ENVIRONMENT SETUP ---
+#
+# These are the variables and initial setup steps required on the Droplet.
+
+initial_setup:
+  - name: "Update and upgrade system packages"
+    command: "sudo apt update && sudo apt upgrade -y"
+  
+  - name: "Install required software: Docker, Docker Compose, Git"
+    command: |
+      sudo apt install -y docker.io docker-compose git curl wget
+      sudo systemctl start docker
+      sudo systemctl enable docker
+      sudo usermod -aG docker $USER
+  
+  - name: "Create project directory"
+    command: "mkdir -p /opt/aequitas"
+  
+  - name: "Clone all required repositories"
+    command: |
+      cd /opt/aequitas
+      git clone https://github.com/CreoDAMO/REPAR.git main_site
+      git clone https://github.com/CreoDAMO/black-paper.git black-paper_site
+      git clone https://github.com/CreoDAMO/audit.git audit_site
+      git clone https://github.com/CreoDAMO/defendants.git defendants_site
+      git clone https://github.com/CreoDAMO/ledger.git ledger_site
+      git clone https://github.com/CreoDAMO/founder-wallet.git founder_wallet_site
+      git clone https://github.com/CreoDAMO/roadmap.git roadmap_site
+      git clone https://github.com/CreoDAMO/ifr.git ifr_site
+      git clone https://github.com/CreoDAMO/grc.git grc_site
+      git clone https://github.com/CreoDAMO/dao.git dao_site
+      git clone https://github.com/CreoDAMO/ai-analytics.git ai_analytics_site
+      git clone https://github.com/CreoDAMO/endowment.git endowment_site
+      git clone https://github.com/CreoDAMO/alliances.git alliances_site
+      git clone https://github.com/CreoDAMO/economics.git economics_site
+      git clone https://github.com/CreoDAMO/crypto-comparison.git crypto_comparison_site
+      git clone https://github.com/CreoDAMO/dex.git dex_site
+      git clone https://github.com/CreoDAMO/nft-marketplace.git nft_marketplace_site
+      git clone https://github.com/CreoDAMO/chain-integration.git chain_integration_site
+      git clone https://github.com/CreoDAMO/onramp.git onramp_site
+      git clone https://github.com/CreoDAMO/superpay.git superpay_site
+      git clone https://github.com/CreoDAMO/validator-subsidy.git validator_subsidy_site
+      git clone https://github.com/CreoDAMO/founder-endowment.git founder_endowment_site
+      git clone https://github.com/CreoDAMO/BlockExplorer.git explorer_app
+
+# --- STAGE 2: CLOUDFLARE DNS CONFIGURATION ---
+#
+# This stage ensures all subdomains point to the DigitalOcean Droplet.
+# This can be automated with a script using the Cloudflare API.
+
+dns_configuration:
+  - name: "Create A Records for all subdomains"
+    description: "For each subdomain in the 'subdomains' list, create an A record pointing to the Droplet IP."
+    type: "A"
+    target: "{{ digitalocean_droplet_ip }}"
+    proxied: true # Use Cloudflare's proxy for security and CDN
+
+# --- STAGE 3: DOCKER COMPOSE DEPLOYMENT ---
+#
+# This is the core of the deployment. A docker-compose.yml file will define
+# and run all services in isolated containers.
+#
+# Create this file at /opt/aequitas/docker-compose.yml
+
+docker_compose_file:
+  version: '3.8'
+  
+  networks:
+    aequitas_net:
+      driver: bridge
+
+  services:
+    # --- Nginx Proxy Manager (The Traffic Controller) ---
+    nginx-proxy-manager:
+      image: 'jc21/nginx-proxy-manager:latest'
+      container_name: nginx-proxy-manager
+      restart: unless-stopped
+      ports:
+        - '80:80'    # Public HTTP
+        - '443:443'  # Public HTTPS
+        - '81:81'    # Admin UI
+      volumes:
+        - ./nginx-proxy-manager/data:/data
+        - ./nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+      networks:
+        - aequitas_net
+      environment:
+        - DB_SQLITE_FILE=/data/database.sqlite
+        - DISABLE_IPV6=true
+
+    # --- Static Site Services ---
+    www_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-www
+      restart: unless-stopped
+      volumes:
+        - ./main_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    black_paper_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-black-paper
+      restart: unless-stopped
+      volumes:
+        - ./black-paper_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    audit_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-audit
+      restart: unless-stopped
+      volumes:
+        - ./audit_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    defendants_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-defendants
+      restart: unless-stopped
+      volumes:
+        - ./defendants_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    ledger_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-ledger
+      restart: unless-stopped
+      volumes:
+        - ./ledger_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    founder_wallet_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-founder-wallet
+      restart: unless-stopped
+      volumes:
+        - ./founder_wallet_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    roadmap_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-roadmap
+      restart: unless-stopped
+      volumes:
+        - ./roadmap_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    ifr_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-ifr
+      restart: unless-stopped
+      volumes:
+        - ./ifr_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    grc_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-grc
+      restart: unless-stopped
+      volumes:
+        - ./grc_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    dao_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-dao
+      restart: unless-stopped
+      volumes:
+        - ./dao_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    ai_analytics_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-ai-analytics
+      restart: unless-stopped
+      volumes:
+        - ./ai_analytics_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    endowment_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-endowment
+      restart: unless-stopped
+      volumes:
+        - ./endowment_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    alliances_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-alliances
+      restart: unless-stopped
+      volumes:
+        - ./alliances_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    economics_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-economics
+      restart: unless-stopped
+      volumes:
+        - ./economics_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    crypto_comparison_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-crypto-comparison
+      restart: unless-stopped
+      volumes:
+        - ./crypto_comparison_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    dex_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-dex
+      restart: unless-stopped
+      volumes:
+        - ./dex_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    nft_marketplace_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-nft-marketplace
+      restart: unless-stopped
+      volumes:
+        - ./nft_marketplace_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    chain_integration_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-chain-integration
+      restart: unless-stopped
+      volumes:
+        - ./chain_integration_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    onramp_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-onramp
+      restart: unless-stopped
+      volumes:
+        - ./onramp_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    superpay_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-superpay
+      restart: unless-stopped
+      volumes:
+        - ./superpay_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    validator_subsidy_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-validator-subsidy
+      restart: unless-stopped
+      volumes:
+        - ./validator_subsidy_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    founder_endowment_site:
+      image: 'nginx:alpine'
+      container_name: aequitas-founder-endowment
+      restart: unless-stopped
+      volumes:
+        - ./founder_endowment_site:/usr/share/nginx/html:ro
+      networks:
+        - aequitas_net
+
+    # --- Block Explorer Application ---
+    explorer_app:
+      build:
+        context: ./explorer_app
+      container_name: aequitas-explorer
+      restart: unless-stopped
+      expose:
+        - "3001"
+      networks:
+        - aequitas_net
+      environment:
+        - NODE_ENV=production
+
+# --- STAGE 4: DEPLOYMENT EXECUTION ---
+#
+# Commands to be run from the DigitalOcean Droplet's terminal.
+
+execution_steps:
+  - name: "Navigate to the project directory"
+    command: "cd /opt/aequitas"
+  
+  - name: "Start all services using Docker Compose"
+    command: "sudo docker-compose up -d"
+  
+  - name: "Verify all containers are running"
+    command: "sudo docker ps"
+
+# --- STAGE 5: NGINX PROXY MANAGER CONFIGURATION (One-Time Manual Setup) ---
+#
+# After deployment, configure the proxy to route traffic and handle SSL.
+
+post_deployment_setup:
+  - name: "Access Nginx Proxy Manager Admin UI"
+    action: "Open a web browser and navigate to http://{{ digitalocean_droplet_ip }}:81"
+    initial_credentials:
+      - "Email: admin@example.com"
+      - "Password: changeme"
+  
+  - name: "Add Proxy Hosts"
+    description: "For each subdomain, create a new Proxy Host."
+    example_config_explorer:
+      domain_names: "explorer.aequitasprotocol.io"
+      scheme: "http"
+      forward_hostname: "aequitas-explorer"
+      forward_port: "3001"
+    
+    example_config_audit:
+      domain_names: "audit.aequitasprotocol.io"
+      scheme: "http"
+      forward_hostname: "aequitas-audit"
+      forward_port: "80"
+  
+  - name: "Enable SSL"
+    description: "In the 'SSL' tab for each host, select 'Request a new SSL Certificate' and enable 'Force SSL'. Nginx Proxy Manager will automatically handle Let's Encrypt."
+
