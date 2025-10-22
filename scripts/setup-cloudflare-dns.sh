@@ -11,7 +11,7 @@
 # Usage:
 #   export CLOUDFLARE_API_TOKEN="your-api-token"
 #   export DROPLET_IP="your-droplet-ip"
-#   export DOMAIN="aequitasprotocol.io"
+#   export DOMAIN="aequitasprotocol.zone"
 #   ./scripts/setup-cloudflare-dns.sh
 
 set -e

@@ -75,7 +75,7 @@ Set up your environment variables:
 ```bash
 export CLOUDFLARE_API_TOKEN="your-cloudflare-api-token"
 export DROPLET_IP="your-droplet-ip"
-export DOMAIN="aequitasprotocol.io"
+export DOMAIN="aequitasprotocol.zone"
 ```
 
 Clone the repository and run the DNS setup script:
@@ -110,7 +110,7 @@ The GitHub Actions workflow will automatically deploy when you push to the main 
 3. Add Proxy Hosts for each subdomain:
 
    **Example for Calculator:**
-   - Domain Names: `calculator.aequitasprotocol.io`
+   - Domain Names: `calculator.aequitasprotocol.zone`
    - Scheme: `http`
    - Forward Hostname / IP: `aequitas-calculator`
    - Forward Port: `3001`
@@ -118,15 +118,15 @@ The GitHub Actions workflow will automatically deploy when you push to the main 
    - Enable `Websockets Support`
 
    **Example for Frontend:**
-   - Domain Names: `www.aequitasprotocol.io`
+   - Domain Names: `www.aequitasprotocol.zone`
    - Scheme: `http`
    - Forward Hostname / IP: `aequitas-frontend`
    - Forward Port: `5173`
 
    **Repeat for all services:**
-   - Backend: `api.aequitasprotocol.io` → `aequitas-backend:3000`
-   - Explorer: `explorer.aequitasprotocol.io` → `aequitas-explorer:3002`
-   - Auditor: `auditor.aequitasprotocol.io` → `aequitas-auditor:8000`
+   - Backend: `api.aequitasprotocol.zone` → `aequitas-backend:3000`
+   - Explorer: `explorer.aequitasprotocol.zone` → `aequitas-explorer:3002`
+   - Auditor: `auditor.aequitasprotocol.zone` → `aequitas-auditor:8000`
 
 4. Enable SSL for each proxy host:
    - Go to the `SSL` tab
@@ -155,9 +155,9 @@ docker-compose logs -f backend
 
 Visit your subdomains to verify they're accessible:
 
-- https://www.aequitasprotocol.io
-- https://calculator.aequitasprotocol.io
-- https://explorer.aequitasprotocol.io
+- https://www.aequitasprotocol.zone
+- https://calculator.aequitasprotocol.zone
+- https://explorer.aequitasprotocol.zone
 
 ## Subdomain Mapping
 
@@ -247,7 +247,7 @@ docker-compose up --build -d [service-name]
 - Verify A records in Cloudflare dashboard
 - Check Cloudflare proxy is enabled
 - Wait for DNS propagation (up to 24 hours)
-- Test with `dig calculator.aequitasprotocol.io`
+- Test with `dig calculator.aequitasprotocol.zone`
 
 ### SSL Certificate Issues
 

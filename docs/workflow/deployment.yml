@@ -5,14 +5,14 @@
 #
 # Prerequisites:
 # 1. A DigitalOcean Droplet (Ubuntu 22.04 recommended, 4GB+ RAM).
-# 2. A domain name (e.g., aequitasprotocol.io) managed by Cloudflare.
+# 2. A domain name (e.g., aequitasprotocol.zone) managed by Cloudflare.
 # 3. A Cloudflare API Token with "DNS:Edit" permissions.
 # 4. The Droplet's IP address.
 # 5. Git, Docker, and Docker Compose installed on the Droplet.
 
 variables:
   # Core Domain & Subdomains (Inferred from GitHub Pages & Docs)
-  domain: "aequitasprotocol.io" # Replace with your actual domain
+  domain: "aequitasprotocol.zone" # Replace with your actual domain
   subdomains:
     - "www"
     - "black-paper"
@@ -372,13 +372,13 @@ post_deployment_setup:
   - name: "Add Proxy Hosts"
     description: "For each subdomain, create a new Proxy Host."
     example_config_explorer:
-      domain_names: "explorer.aequitasprotocol.io"
+      domain_names: "explorer.aequitasprotocol.zone"
       scheme: "http"
       forward_hostname: "aequitas-explorer"
       forward_port: "3001"
     
     example_config_audit:
-      domain_names: "audit.aequitasprotocol.io"
+      domain_names: "audit.aequitasprotocol.zone"
       scheme: "http"
       forward_hostname: "aequitas-audit"
       forward_port: "80"

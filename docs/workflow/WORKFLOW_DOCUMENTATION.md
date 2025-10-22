@@ -205,14 +205,14 @@ The protocol operates across 22 distinct subdomains, each serving a specific fun
 
 # Prerequisites:
 # 1. A DigitalOcean Droplet (Ubuntu 22.04 recommended, 2GB+ RAM).
-# 2. A domain name (e.g., aequitasprotocol.io) managed by Cloudflare.
+# 2. A domain name (e.g., aequitasprotocol.zone) managed by Cloudflare.
 # 3. A Cloudflare API Token with "DNS:Edit" permissions.
 # 4. The Droplet's IP address.
 # 5. Git, Docker, and Docker Compose installed on the Droplet.
 
 variables:
   # Core Domain & Subdomains
-  - domain: "aequitasprotocol.io" # Replace with your actual domain
+  - domain: "aequitasprotocol.zone" # Replace with your actual domain
   - subdomains:
       - "www"
       - "black-paper"
@@ -341,8 +341,8 @@ post_deployment_setup:
       - "Password: changeme"
   - name: "Add Proxy Hosts"
     description: "For each subdomain, create a new Proxy Host."
-    example_config (for explorer.aequitasprotocol.io):
-      - "Domain Names: explorer.aequitasprotocol.io"
+    example_config (for explorer.aequitasprotocol.zone):
+      - "Domain Names: explorer.aequitasprotocol.zone"
       - "Scheme: http"
       - "Forward Hostname / IP: aequitas-explorer"
       - "Forward Port: 3001"
