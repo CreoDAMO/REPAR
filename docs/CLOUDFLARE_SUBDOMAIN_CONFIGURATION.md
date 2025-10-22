@@ -11,7 +11,7 @@ This document lists all required subdomains for the complete Aequitas Protocol e
 |-----------|------|-----------|---------|
 | `@` | A | DigitalOcean Droplet IP | Main website root |
 | `www` | CNAME | `aequitasprotocol.zone` | WWW redirect |
-| `app` | A | DigitalOcean Droplet IP | Main application frontend |
+| `app` | A | DigitalOcean Droplet IP | Main application frontend (port 5000) |
 
 ## Blockchain Infrastructure
 
@@ -22,6 +22,8 @@ This document lists all required subdomains for the complete Aequitas Protocol e
 | `grpc` | A | DigitalOcean Droplet IP | gRPC endpoint (port 9090) |
 | `ws` | A | DigitalOcean Droplet IP | WebSocket endpoint (port 26657) |
 | `explorer` | A | DigitalOcean Droplet IP | Block Explorer (Dexplorer) (port 3001) |
+| `backend` | A | DigitalOcean Droplet IP | Circle API Backend (port 3002) |
+| `auditor-api` | A | DigitalOcean Droplet IP | Cerberus Auditor API (port 8000) |
 
 ## Dashboard Panels & Features
 
@@ -37,6 +39,8 @@ This document lists all required subdomains for the complete Aequitas Protocol e
 | `paper` | CNAME | `app.aequitasprotocol.zone` | Black Paper viewer |
 | `docs` | A | DigitalOcean Droplet IP | Technical documentation |
 | `whitepaper` | CNAME | `paper.aequitasprotocol.zone` | Alternative Black Paper URL |
+| `actions` | CNAME | `app.aequitasprotocol.zone` | Action Items dashboard |
+| `roadmap` | CNAME | `app.aequitasprotocol.zone` | Project roadmap |
 
 ### Forensic Audit System
 | Subdomain | Type | Points To | Purpose |
@@ -88,6 +92,8 @@ This document lists all required subdomains for the complete Aequitas Protocol e
 | `analytics` | CNAME | `ai.aequitasprotocol.zone` | NVIDIA-powered analytics |
 | `oracle` | CNAME | `ai.aequitasprotocol.zone` | Threat Oracle queries |
 | `warroom` | CNAME | `ai.aequitasprotocol.zone` | War Room visualization |
+| `agentkit` | CNAME | `app.aequitasprotocol.zone` | AgentKit agent factory |
+| `agents` | CNAME | `agentkit.aequitasprotocol.zone` | Agent management |
 
 ### Endowment System
 | Subdomain | Type | Points To | Purpose |
@@ -241,6 +247,30 @@ TTL: Auto
 
 ## Total Subdomain Count
 
-**Estimated Total:** 60+ subdomains
+**Estimated Total:** 65+ subdomains
+
+### Summary by Category:
+- **Root & Core Infrastructure:** 3 subdomains
+- **Blockchain Infrastructure:** 7 subdomains
+- **Dashboard Panels:** 2 subdomains
+- **Documentation:** 5 subdomains
+- **Forensic Audit System:** 3 subdomains
+- **Defendant Database:** 3 subdomains
+- **Transparency & Ledger:** 3 subdomains
+- **Founder Wallet:** 2 subdomains
+- **Legal & Arbitration:** 6 subdomains
+- **Governance:** 3 subdomains
+- **AI & Analytics:** 6 subdomains
+- **Endowment System:** 3 subdomains
+- **Alliances & Organizations:** 4 subdomains
+- **$REPAR Economics:** 4 subdomains
+- **Crypto Comparison:** 2 subdomains
+- **DEX & Trading:** 4 subdomains
+- **Payment Systems:** 6 subdomains
+- **Validator Subsidy:** 3 subdomains
+- **Development & Testing:** 4 subdomains
+- **IPFS & Storage:** 3 subdomains
+- **Monitoring & Status:** 3 subdomains
+- **API & Services:** 3 subdomains
 
 This comprehensive subdomain structure ensures every feature of the Aequitas Protocol has a dedicated, memorable URL while maintaining proper organization and scalability.
