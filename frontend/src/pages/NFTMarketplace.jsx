@@ -38,7 +38,8 @@ export default function NFTMarketplace() {
       name: 'Barclays Evidence Package #001',
       category: 'evidence',
       price: '500000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
+      gradient: 'from-blue-500 via-purple-500 to-pink-500',
       creator: 'aequitas1abc...',
       owner: 'aequitas1xyz...',
       certified: true,
@@ -56,7 +57,8 @@ export default function NFTMarketplace() {
       name: 'Justice Burn: $10M REPAR',
       category: 'justice_burn',
       price: '250000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
+      gradient: 'from-orange-500 via-red-500 to-pink-600',
       creator: 'aequitas1def...',
       owner: 'aequitas1abc...',
       certified: true,
@@ -74,7 +76,8 @@ export default function NFTMarketplace() {
       name: 'Descendant Certificate #156',
       category: 'descendant_id',
       price: '1000000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
+      gradient: 'from-green-500 via-teal-500 to-cyan-500',
       creator: 'aequitas1ghi...',
       owner: 'aequitas1ghi...',
       certified: true,
@@ -90,7 +93,8 @@ export default function NFTMarketplace() {
       name: 'Forensic Audit Page 127',
       category: 'historical_archive',
       price: '750000',
-      image: 'https://via.placeholder.com/400',
+      image: null,
+      gradient: 'from-indigo-500 via-purple-600 to-blue-600',
       creator: 'aequitas1jkl...',
       owner: 'aequitas1mno...',
       certified: true,
@@ -504,19 +508,28 @@ export default function NFTMarketplace() {
                   onClick={() => setSelectedNFT(nft)}
                 >
                   {/* NFT Image */}
-                  <div className="relative aspect-square bg-gradient-to-br from-purple-100 to-blue-100 rounded-t-xl overflow-hidden">
-                    <img
-                      src={nft.image}
-                      alt={nft.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
-                    />
+                  <div className={`relative aspect-square rounded-t-xl overflow-hidden bg-gradient-to-br ${nft.gradient || 'from-purple-100 to-blue-100'} flex items-center justify-center`}>
+                    {nft.image ? (
+                      <img
+                        src={nft.image}
+                        alt={nft.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                      />
+                    ) : (
+                      <div className="text-white/80 group-hover:scale-110 transition duration-300">
+                        {(() => {
+                          const Icon = categories.find(c => c.id === nft.category)?.icon;
+                          return Icon ? <Icon className="h-32 w-32" /> : null;
+                        })()}
+                      </div>
+                    )}
                     {nft.certified && (
-                      <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1">
+                      <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-lg text-xs font-semibold flex items-center gap-1 shadow-lg">
                         <Shield className="h-3 w-3" />
                         FRE 901
                       </div>
                     )}
-                    <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-xs">
+                    <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-lg text-xs font-semibold shadow-lg">
                       {categories.find(c => c.id === nft.category)?.name}
                     </div>
                   </div>
