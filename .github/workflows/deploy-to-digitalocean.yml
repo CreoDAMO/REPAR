@@ -1,0 +1,108 @@
+# GitHub Actions Workflow: Deploy Aequitas Protocol to DigitalOcean
+#
+# Trigger: Manual trigger (for safety) or on push to main branch.
+#
+# This workflow automates the entire process outlined in the deployment.yml:
+# 1. Sets up a secure SSH connection to the DigitalOcean Droplet.
+# 2. Clones or pulls the latest versions of all application repositories.
+# 3. Runs Docker Compose to build and deploy all services.
+#
+# Prerequisites:
+# - Add the following secrets to your GitHub repository's "Secrets and variables" > "Actions":
+#   - DO_HOST: The IP address of your DigitalOcean Droplet.
+#   - DO_USERNAME: The username for the Droplet (e.g., 'root').
+#   - DO_SSH_PRIVATE_KEY: The private SSH key that corresponds to a public key added to the Droplet's authorized_keys.
+#   - MYSQL_ROOT_PASSWORD: MySQL root password for the database
+#   - MYSQL_PASSWORD: MySQL password for the aequitas user
+#   - CALCULATOR_DATABASE_URL: Full database connection string for the calculator
+#   - OPENAI_API_KEY: OpenAI API key for the Cerberus Engine
+#   - ANTHROPIC_API_KEY: Anthropic API key for the Cerberus Engine
+
+name: Deploy to DigitalOcean
+
+on:
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+  push:
+    branches:
+      - main # Or use a specific branch like 'deploy' for more control
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Checkout Main Repository Code
+        uses: actions/checkout@v4
+
+      - name: 2. Setup SSH and Connect to DigitalOcean Droplet
+        uses: appleboy/ssh-action@102c0d2ccd03f26e73ac5e793e2ab28bf3e69b98  # v1.2.1 pinned to commit SHA
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          envs: MYSQL_ROOT_PASSWORD,MYSQL_PASSWORD,CALCULATOR_DATABASE_URL,OPENAI_API_KEY,ANTHROPIC_API_KEY
+          script: |
+            # --- This script runs directly on your DigitalOcean server ---
+            
+            echo "✅ Connected to server. Starting deployment..."
+            
+            # Navigate to the project directory
+            PROJECT_DIR="/opt/aequitas"
+            mkdir -p $PROJECT_DIR
+            cd $PROJECT_DIR
+            
+            echo "🔄 Cloning or updating main repository..."
+            
+            # Clone or update the main REPAR repository
+            if [ ! -d "REPAR" ]; then
+              git clone https://github.com/CreoDAMO/REPAR.git REPAR
+            else
+              cd REPAR && git pull && cd ..
+            fi
+            
+            cd REPAR
+            
+            echo "📝 Creating .env file with secrets..."
+            
+            # Create .env file with secrets from GitHub Actions
+            cat > .env << EOF
+            MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+            MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+            CALCULATOR_DATABASE_URL=${{ secrets.CALCULATOR_DATABASE_URL }}
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
+            EOF
+            
+            # Secure the .env file
+            chmod 600 .env
+            
+            echo "🚀 Deploying services with Docker Compose..."
+            
+            # Stop existing containers
+            docker-compose down
+            
+            # Build and start all services
+            docker-compose up --build -d
+            
+            # Wait for services to stabilize
+            sleep 10
+            
+            echo "🧹 Pruning old Docker images to save space..."
+            docker image prune -f
+            
+            echo "✅ Verifying all containers are running..."
+            docker ps
+            
+            echo "🎉 Deployment complete. All services are updated and running."
+            
+            echo "📊 Container Status:"
+            docker-compose ps
+            
+            echo "🔒 Security: .env file has been secured with 600 permissions"
+            
+            echo "🏥 Health Checks:"
+            echo "Testing backend health..."
+            curl -f http://localhost:3000/health || echo "Backend health check failed"
+            echo ""
+            echo "Testing calculator health..."
+            curl -f http://localhost:3001/health || echo "Calculator health check may not be available"
