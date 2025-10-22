@@ -65,7 +65,7 @@ export default function Navigation() {
               </NavLink>
             ))}
             <a
-              href="http://localhost:3001"
+              href={import.meta.env.PROD ? "https://explorer.aequitasprotocol.zone" : "http://localhost:3001"}
               target="_blank"
               rel="noopener noreferrer"
               className="px-3 py-2 rounded-md flex items-center space-x-2 transition text-sm hover:bg-indigo-800"
@@ -117,10 +117,10 @@ export default function Navigation() {
                 </NavLink>
               ))}
               <a
-                href="http://localhost:3001"
+                href={import.meta.env.PROD ? "https://explorer.aequitasprotocol.zone" : "http://localhost:3001"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-3 rounded-md flex items-center space-x-3 transition hover:bg-indigo-800"
+                className="px-4 py-3 rounded-md flex items-center space-x-3 transition hover:bg-indigo-808"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <Database className="h-5 w-5" />
