@@ -48,7 +48,7 @@ class ThreatLedger(Base):
     module = Column(String(100))
     
     # Additional metadata
-    metadata = Column(JSON)
+    threat_metadata = Column(JSON)
     
     def to_dict(self):
         """Convert to dictionary for JSON serialization"""
@@ -70,7 +70,7 @@ class ThreatLedger(Base):
             'fix_generated': self.fix_generated == 'true',
             'fix_applied': self.fix_applied == 'true',
             'module': self.module,
-            'metadata': self.metadata
+            'metadata': self.threat_metadata
         }
 
 
@@ -177,7 +177,7 @@ class DatabaseManager:
             exploit_evidence=threat_data.get('exploit_evidence', {}),
             fix_recommendation=threat_data.get('fix_recommendation', ''),
             module=threat_data.get('module', ''),
-            metadata=threat_data.get('metadata', {})
+            threat_metadata=threat_data.get('metadata', {})
         )
         
         self.session.add(threat)
