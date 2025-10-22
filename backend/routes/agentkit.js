@@ -1,5 +1,5 @@
+import express from 'express';
 
-const express = require('express');
 const router = express.Router();
 
 // Mock agent storage (in production, this would interact with the blockchain)

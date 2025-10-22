@@ -12,6 +12,7 @@ import morgan from 'morgan';
 import { config, validateConfig } from './config/index.js';
 import circleRoutes from './routes/circle.js';
 import auditorRoutes from './routes/auditor.js';
+import agentkitRoutes from './routes/agentkit.js';
 import { createSession } from './middleware/auth.js';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
@@ -147,7 +148,7 @@ app.use('/api/circle', circleRoutes);
 app.use('/api/auditor', auditorRoutes);
 
 // AgentKit API routes
-app.use('/api/agentkit', require('./routes/agentkit'));
+app.use('/api/agentkit', agentkitRoutes);
 
 // 404 handler
 app.use((req, res) => {

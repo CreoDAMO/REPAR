@@ -1,7 +1,13 @@
-const express = require('express');
+import express from 'express';
+import { spawn } from 'child_process';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { promises as fs } from 'fs';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const router = express.Router();
-const { spawn } = require('child_process');
-const path = require('path');
 
 /**
  * Run Cerberus Auditor on uploaded files
@@ -66,7 +72,6 @@ router.post('/scan', async (req, res) => {
  */
 router.get('/history', async (req, res) => {
   try {
-    const fs = require('fs').promises;
     const reportsPath = path.join(__dirname, '../../auditor/reports');
 
     const files = await fs.readdir(reportsPath);
