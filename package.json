@@ -4,10 +4,14 @@
     "@cosmjs/proto-signing": "^0.36.1",
     "@cosmjs/stargate": "^0.36.1",
     "@cosmjs/tendermint-rpc": "^0.36.1",
-    "ipfs-http-client": "^60.0.1",
+    "ipfs-http-client": "^39.0.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.9.4"
+  },
+  "overrides": {
+    "nanoid": "^5.0.9",
+    "parse-duration": "^2.1.3"
   }
 }
