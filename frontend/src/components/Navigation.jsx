@@ -64,17 +64,17 @@ export default function Navigation() {
                 <span>{label}</span>
               </NavLink>
             ))}
-            <a
-              href={import.meta.env.PROD ? "https://explorer.aequitasprotocol.zone" : "http://localhost:3001"}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-3 py-2 rounded-md flex items-center space-x-2 transition text-sm hover:bg-indigo-800"
-              title="Open Block Explorer (Dexplorer)"
+            <NavLink
+              to="/explorer"
+              className={({ isActive }) =>
+                `px-3 py-2 rounded-md flex items-center space-x-2 transition text-sm ${
+                  isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                }`
+              }
             >
               <Database className="h-4 w-4" />
               <span>Explorer</span>
-              <ExternalLink className="h-3 w-3" />
-            </a>
+            </NavLink>
           </div>
 
           {/* Mobile & Tablet - Wallet + Hamburger */}
@@ -116,17 +116,18 @@ export default function Navigation() {
                   <span>{label}</span>
                 </NavLink>
               ))}
-              <a
-                href={import.meta.env.PROD ? "https://explorer.aequitasprotocol.zone" : "http://localhost:3001"}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-3 rounded-md flex items-center space-x-3 transition hover:bg-indigo-808"
+              <NavLink
+                to="/explorer"
                 onClick={() => setMobileMenuOpen(false)}
+                className={({ isActive }) =>
+                  `px-4 py-3 rounded-md flex items-center space-x-3 transition ${
+                    isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'
+                  }`
+                }
               >
                 <Database className="h-5 w-5" />
                 <span>Block Explorer</span>
-                <ExternalLink className="h-4 w-4" />
-              </a>
+              </NavLink>
               <div className="md:hidden pt-3 border-t border-indigo-700">
                 <WalletConnect />
               </div>

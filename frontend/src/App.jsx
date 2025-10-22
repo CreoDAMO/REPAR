@@ -25,6 +25,7 @@ import Onramper from './components/Onramper';
 import BlackPaper from './pages/BlackPaper';
 import IconTest from './pages/IconTest';
 import AgentKit from './pages/AgentKit';
+import BlockExplorer from './pages/BlockExplorer';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
           <Route path="/black-paper" element={<BlackPaper />} />
           <Route path="/icon-test" element={<IconTest />} />
           <Route path="/agentkit" element={<AgentKit />} />
+          <Route path="/explorer" element={<BlockExplorer />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">
