@@ -55,7 +55,7 @@ class CerberusOrchestrator:
         self.reports_path = self.repo_path / "auditor" / "reports"
         
         # Create reports directory if it doesn't exist
-        self.reports_path.mkdir(exist_ok=True)
+        self.reports_path.mkdir(parents=True, exist_ok=True)
         
         # Initialize database manager (REQUIRED - no fallback)
         try:
