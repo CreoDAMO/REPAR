@@ -4,15 +4,13 @@ package keeper
 import (
         "time"
 
-        "cosmossdk.io/store/types"
+        storetypes "cosmossdk.io/store/types"
         "github.com/cosmos/cosmos-sdk/codec"
         sdk "github.com/cosmos/cosmos-sdk/types"
         sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
         "github.com/creodamo/aequitas/x/validatorsubsidy/types"
 )
-
-type storetypes = types
 
 type Keeper struct {
         cdc        codec.BinaryCodec
