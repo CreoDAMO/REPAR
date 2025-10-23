@@ -139,17 +139,25 @@ async def audit_document(file_path: str, background_tasks: BackgroundTasks):
             status_code=503,
             detail="Orchestrator not available"
         )
-    
-    if not Path(file_path).exists():
+
+    AUDIT_ROOT = os.path.abspath("auditable_documents")
+    # Always resolve file_path relative to AUDIT_ROOT, and prevent traversal
+    safe_path = os.path.normpath(os.path.join(AUDIT_ROOT, file_path))
+    if not safe_path.startswith(AUDIT_ROOT):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file path."
+        )
+    if not os.path.isfile(safe_path):
         raise HTTPException(
             status_code=404,
             detail=f"File not found: {file_path}"
         )
-    
+
     audit_id = f"doc_audit_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
-    
-    background_tasks.add_task(run_document_audit, audit_id, file_path)
-    
+
+    background_tasks.add_task(run_document_audit, audit_id, safe_path)
+
     return AuditResponse(
         audit_id=audit_id,
         status="started",
