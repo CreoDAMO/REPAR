@@ -67,6 +67,15 @@ export default function InvestorDashboard() {
     return `$${value.toLocaleString()}`;
   };
 
+  const formatNumberWithCommas = (value) => {
+    if (!value) return '';
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const parseNumberInput = (value) => {
+    return Number(value.replace(/,/g, ''));
+  };
+
   const calculateCustomMetrics = () => {
     const safeInvestment = customInvestment || 0;
     const safeValuation = customValuation || 0;
@@ -232,30 +241,40 @@ export default function InvestorDashboard() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Investment Amount
               </label>
-              <input
-                type="number"
-                value={customInvestment}
-                onChange={(e) => setCustomInvestment(Math.max(0, Number(e.target.value) || 0))}
-                min="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="22000000"
-              />
-              <p className="text-sm text-gray-500 mt-1">Enter amount in USD</p>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-gray-500 font-semibold">$</span>
+                <input
+                  type="text"
+                  value={formatNumberWithCommas(customInvestment)}
+                  onChange={(e) => {
+                    const numValue = parseNumberInput(e.target.value);
+                    setCustomInvestment(Math.max(0, numValue || 0));
+                  }}
+                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg font-semibold"
+                  placeholder="22,000,000"
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-1">Formatted: {formatCurrency(customInvestment)}</p>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Pre-Money Valuation
               </label>
-              <input
-                type="number"
-                value={customValuation}
-                onChange={(e) => setCustomValuation(Math.max(0, Number(e.target.value) || 0))}
-                min="0"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                placeholder="7000000000"
-              />
-              <p className="text-sm text-gray-500 mt-1">Current: $7B</p>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-gray-500 font-semibold">$</span>
+                <input
+                  type="text"
+                  value={formatNumberWithCommas(customValuation)}
+                  onChange={(e) => {
+                    const numValue = parseNumberInput(e.target.value);
+                    setCustomValuation(Math.max(0, numValue || 0));
+                  }}
+                  className="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-lg font-semibold"
+                  placeholder="7,000,000,000"
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-1">Formatted: {formatCurrency(customValuation)}</p>
             </div>
           </div>
 

@@ -216,46 +216,48 @@ export default function AIAnalytics() {
           ))}
         </div>
 
-        {/* Interactive Simulation Panel */}
-        <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-lg p-6 mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Play className="h-8 w-8 text-blue-600" />
-            <h2 className="text-2xl font-bold text-blue-900">Run AI Simulation</h2>
+        {/* Interactive Simulation Panel - Enhanced Visibility */}
+        <div className="bg-gradient-to-br from-indigo-100 via-blue-100 to-cyan-100 border-2 border-indigo-300 rounded-lg p-6 mb-8 shadow-lg">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="bg-indigo-600 p-2 rounded-lg">
+              <Play className="h-6 w-6 text-white" />
+            </div>
+            <h2 className="text-3xl font-bold text-indigo-900">Run AI Simulation</h2>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Select Defendant</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">Select Defendant</label>
               <select
                 value={selectedDefendant}
                 onChange={(e) => setSelectedDefendant(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none shadow-sm text-gray-900 font-medium"
               >
-                <option value="">Choose a defendant...</option>
+                <option value="" className="text-gray-500">Choose a defendant...</option>
                 {defendants.map(d => (
-                  <option key={d} value={d}>{d}</option>
+                  <option key={d} value={d} className="text-gray-900">{d}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">AI Model</label>
+              <label className="block text-sm font-bold text-gray-900 mb-2">AI Model</label>
               <select
                 value={activeModel}
                 onChange={(e) => setActiveModel(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none shadow-sm text-gray-900 font-medium"
               >
                 {aiModels.map(model => (
-                  <option key={model.id} value={model.id}>{model.name}</option>
+                  <option key={model.id} value={model.id} className="text-gray-900">{model.name}</option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Evidence (Optional)</label>
-              <label className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition flex items-center justify-center gap-2">
-                <Upload className="h-5 w-5 text-gray-600" />
-                <span className="text-sm text-gray-700">
+              <label className="block text-sm font-bold text-gray-900 mb-2">Upload Evidence (Optional)</label>
+              <label className="w-full px-4 py-3 bg-white border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 hover:border-indigo-400 transition shadow-sm flex items-center justify-center gap-2">
+                <Upload className="h-5 w-5 text-indigo-600" />
+                <span className="text-sm font-medium text-gray-900">
                   {uploadedFile ? uploadedFile.name : 'Upload Document'}
                 </span>
                 <input
