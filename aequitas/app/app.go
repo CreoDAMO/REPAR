@@ -78,6 +78,43 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"aequitas/docs"
+	
+	// Custom modules
+	claimskeeper "github.com/aequitas/aequitas/x/claims/keeper"
+	claimsmodule "github.com/aequitas/aequitas/x/claims"
+	claimstypes "github.com/aequitas/aequitas/x/claims/types"
+	
+	defendantkeeper "github.com/aequitas/aequitas/x/defendant/keeper"
+	defendantmodule "github.com/aequitas/aequitas/x/defendant"
+	defendanttypes "github.com/aequitas/aequitas/x/defendant/types"
+	
+	dexkeeper "github.com/aequitas/aequitas/x/dex/keeper"
+	dexmodule "github.com/aequitas/aequitas/x/dex"
+	dextypes "github.com/aequitas/aequitas/x/dex/types"
+	
+	distributionkeeper "github.com/aequitas/aequitas/x/distribution/keeper"
+	distributionmodule "github.com/aequitas/aequitas/x/distribution"
+	distributiontypes "github.com/aequitas/aequitas/x/distribution/types"
+	
+	endowmentkeeper "github.com/aequitas/aequitas/x/endowment/keeper"
+	endowmentmodule "github.com/aequitas/aequitas/x/endowment"
+	endowmenttypes "github.com/aequitas/aequitas/x/endowment/types"
+	
+	founderendowmentkeeper "github.com/aequitas/aequitas/x/founderendowment/keeper"
+	founderendowmentmodule "github.com/aequitas/aequitas/x/founderendowment"
+	founderendowmenttypes "github.com/aequitas/aequitas/x/founderendowment/types"
+	
+	justicekeeper "github.com/aequitas/aequitas/x/justice/keeper"
+	justicemodule "github.com/aequitas/aequitas/x/justice"
+	justicetypes "github.com/aequitas/aequitas/x/justice/types"
+	
+	nftmarketplacekeeper "github.com/aequitas/aequitas/x/nftmarketplace/keeper"
+	nftmarketplacemodule "github.com/aequitas/aequitas/x/nftmarketplace"
+	nftmarketplacetypes "github.com/aequitas/aequitas/x/nftmarketplace/types"
+	
+	validatorsubsidykeeper "github.com/aequitas/aequitas/x/validatorsubsidy/keeper"
+	validatorsubsidymodule "github.com/aequitas/aequitas/x/validatorsubsidy"
+	validatorsubsidytypes "github.com/aequitas/aequitas/x/validatorsubsidy/types"
 )
 
 const (
@@ -92,6 +129,20 @@ const (
 var (
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome string
+	
+	// Module account permissions
+	moduleAccPerms = []struct {
+		Account     string
+		Permissions []string
+	}{
+		{Account: dextypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
+		{Account: justicetypes.ModuleName, Permissions: []string{authtypes.Burner}},
+		{Account: endowmenttypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
+		{Account: founderendowmenttypes.ModuleName, Permissions: []string{authtypes.Minter}},
+		{Account: distributiontypes.ModuleName, Permissions: []string{authtypes.Minter}},
+		{Account: nftmarketplacetypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
+		{Account: validatorsubsidytypes.ModuleName, Permissions: []string{authtypes.Minter}},
+	}
 )
 
 var (
@@ -144,7 +195,16 @@ type App struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 	ScopedKeepers             map[string]capabilitykeeper.ScopedKeeper
 
-	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
+	// Custom module keepers
+	ClaimsKeeper            claimskeeper.Keeper
+	DefendantKeeper         defendantkeeper.Keeper
+	DexKeeper               dexkeeper.Keeper
+	DistributionKeeper      distributionkeeper.Keeper
+	EndowmentKeeper         endowmentkeeper.Keeper
+	FounderEndowmentKeeper  founderendowmentkeeper.Keeper
+	JusticeKeeper           justicekeeper.Keeper
+	NftMarketplaceKeeper    nftmarketplacekeeper.Keeper
+	ValidatorSubsidyKeeper  validatorsubsidykeeper.Keeper
 
 	// simulation manager
 	sm *module.SimulationManager
@@ -247,7 +307,15 @@ func New(
 		&app.NFTKeeper,
 		&app.GroupKeeper,
 		&app.CircuitBreakerKeeper,
-		// this line is used by starport scaffolding # stargate/app/keeperDefinition
+		&app.ClaimsKeeper,
+		&app.DefendantKeeper,
+		&app.DexKeeper,
+		&app.DistributionKeeper,
+		&app.EndowmentKeeper,
+		&app.FounderEndowmentKeeper,
+		&app.JusticeKeeper,
+		&app.NftMarketplaceKeeper,
+		&app.ValidatorSubsidyKeeper,
 	); err != nil {
 		panic(err)
 	}
