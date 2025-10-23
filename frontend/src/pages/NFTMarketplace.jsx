@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { 
   Image, ShoppingBag, Sparkles, Activity, Filter, Search, 
   TrendingUp, Award, Shield, FileText, Gavel, Users, Calendar, Zap,
-  Mic, Video, Volume2, Headphones
+  Mic, Video, Volume2, Headphones, Brain, Plus
 } from 'lucide-react';
 import ARPreview from '../components/ARPreview';
+import NFTGenerator from '../components/AIFeatures/NFTGenerator';
 
 export default function NFTMarketplace() {
   const [activeTab, setActiveTab] = useState('browse');
@@ -255,6 +256,17 @@ export default function NFTMarketplace() {
             Browse
           </button>
           <button
+            onClick={() => setActiveTab('ai-generate')}
+            className={`px-6 py-3 font-semibold transition border-b-2 ${
+              activeTab === 'ai-generate'
+                ? 'border-purple-600 text-purple-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            <Brain className="inline h-5 w-5 mr-2" />
+            AI Generate
+          </button>
+          <button
             onClick={() => setActiveTab('mint')}
             className={`px-6 py-3 font-semibold transition border-b-2 ${
               activeTab === 'mint'
@@ -262,8 +274,8 @@ export default function NFTMarketplace() {
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
-            <Sparkles className="inline h-5 w-5 mr-2" />
-            Mint
+            <Plus className="inline h-5 w-5 mr-2" />
+            Manual Mint
           </button>
           <button
             onClick={() => setActiveTab('my-nfts')}
@@ -613,6 +625,98 @@ export default function NFTMarketplace() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* AI Generate Tab */}
+        {activeTab === 'ai-generate' && (
+          <div>
+            <div className="mb-8 bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-2xl p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Brain className="h-10 w-10 text-purple-600" />
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900">AI-Powered NFT Generation</h2>
+                  <p className="text-gray-600">Generate unique justice-themed NFTs using NVIDIA Stable Diffusion XL</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div className="bg-white rounded-lg p-4 border border-purple-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Sparkles className="h-5 w-5 text-yellow-500" />
+                    <h3 className="font-semibold text-gray-900">AI-Powered</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">Stable Diffusion XL generates high-quality, unique artwork</p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-purple-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Shield className="h-5 w-5 text-green-500" />
+                    <h3 className="font-semibold text-gray-900">Justice-Themed</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">Automatically styled for reparations and justice themes</p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-purple-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="h-5 w-5 text-blue-500" />
+                    <h3 className="font-semibold text-gray-900">IPFS Ready</h3>
+                  </div>
+                  <p className="text-sm text-gray-600">Generated images ready for IPFS storage and blockchain minting</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <NFTGenerator />
+              </div>
+              <div className="space-y-6">
+                <div className="bg-white rounded-xl shadow-lg p-6">
+                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-purple-600" />
+                    Example Prompts
+                  </h3>
+                  <div className="space-y-3">
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                      <p className="text-sm font-medium text-purple-900 mb-1">Evidence Package</p>
+                      <p className="text-xs text-gray-600">"Historic courthouse with scales of justice, golden documents, legal evidence artifacts"</p>
+                    </div>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-sm font-medium text-blue-900 mb-1">Justice Burn</p>
+                      <p className="text-xs text-gray-600">"Burning REPAR coins, flames of justice, commemorative memorial, abstract digital art"</p>
+                    </div>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <p className="text-sm font-medium text-green-900 mb-1">Descendant ID</p>
+                      <p className="text-xs text-gray-600">"Ancestral tree with DNA helix, verified identity badge, genealogical certification"</p>
+                    </div>
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <p className="text-sm font-medium text-amber-900 mb-1">Historical Archive</p>
+                      <p className="text-xs text-gray-600">"Ancient manuscript pages, forensic audit documents, historical slavery records"</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl shadow-lg p-6">
+                  <h3 className="font-bold text-lg mb-3">💡 Pro Tips</h3>
+                  <ul className="text-sm text-gray-700 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span>Be specific with colors, lighting, and style</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span>Include justice and reparations themes</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span>Use descriptive adjectives for better results</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-600 mt-1">•</span>
+                      <span>Generated images are automatically themed for justice</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         )}
