@@ -1,0 +1,84 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+6
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Restored to '5052f55e7283ccfb3157937e33ee6905998facbc' #36
+Jobs
+Run details
+Annotations
+1 error
+Build & Test Blockchain
+failed 1 minute ago in 40s
+Search logs
+2s
+2s
+1s
+24s
+5s
+3s
+##[debug]Evaluating condition for step: 'Tidy dependencies'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Tidy dependencies
+##[debug]Loading inputs
+##[debug]Loading env
+Run echo "🧹 Tidying Go modules..."
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/160e884b-c5aa-40b1-9cf7-56eeba144d85.sh
+🧹 Tidying Go modules...
+go: finding module for package github.com/cometbft/cometbft/libs/os
+go: finding module for package github.com/cometbft/cometbft/proto/tendermint/crypto
+go: finding module for package github.com/cometbft/cometbft/proto/tendermint/version
+go: finding module for package github.com/cometbft/cometbft/proto/tendermint/types
+go: finding module for package github.com/tetratelabs/wazero/experimental/gojs
+go: finding module for package buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate/priv
+go: github.com/CreoDAMO/REPAR/aequitas/app imports
+	github.com/cometbft/cometbft/proto/tendermint/types: module github.com/cometbft/cometbft@latest found (v1.0.1), but does not contain package github.com/cometbft/cometbft/proto/tendermint/types
+go: github.com/CreoDAMO/REPAR/aequitas/cmd/aequitasd/cmd imports
+	github.com/cometbft/cometbft/libs/os: module github.com/cometbft/cometbft@latest found (v1.0.1), but does not contain package github.com/cometbft/cometbft/libs/os
+go: github.com/CreoDAMO/REPAR/aequitas/app imports
+	github.com/cosmos/ibc-go/v8/modules/core/02-client/types imports
+	github.com/cosmos/ibc-go/v8/modules/core/23-commitment/types imports
+	github.com/cometbft/cometbft/proto/tendermint/crypto: module github.com/cometbft/cometbft@latest found (v1.0.1), but does not contain package github.com/cometbft/cometbft/proto/tendermint/crypto
+go: github.com/CreoDAMO/REPAR/aequitas/app imports
+	github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts tested by
+	github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts.test imports
+	github.com/cosmos/ibc-go/v8/testing imports
+	github.com/cometbft/cometbft/proto/tendermint/version: module github.com/cometbft/cometbft@latest found (v1.0.1), but does not contain package github.com/cometbft/cometbft/proto/tendermint/version
+go: github.com/CreoDAMO/REPAR/aequitas/tools imports
+	github.com/bufbuild/buf/cmd/buf imports
+	github.com/bufbuild/buf/private/buf/cmd/buf imports
+	github.com/bufbuild/buf/private/buf/cmd/buf/command/alpha/protoc imports
+	github.com/bufbuild/buf/private/bufpkg/bufwasm imports
+	github.com/tetratelabs/wazero/experimental/gojs: module github.com/tetratelabs/wazero@latest found (v1.9.0), but does not contain package github.com/tetratelabs/wazero/experimental/gojs
+go: github.com/CreoDAMO/REPAR/aequitas/tools imports
+	github.com/bufbuild/buf/cmd/buf imports
+	github.com/bufbuild/buf/private/buf/cmd/buf imports
+	github.com/bufbuild/buf/private/buf/cmd/buf/command/curl imports
+	github.com/bufbuild/buf/private/pkg/protoencoding imports
+	github.com/bufbuild/protoyaml-go imports
+	github.com/bufbuild/protovalidate-go imports
+	github.com/bufbuild/protovalidate-go/internal/evaluator imports
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
