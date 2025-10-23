@@ -1,5 +1,8 @@
-
 import { create } from 'ipfs-http-client';
+
+// NOTE: ipfs-http-client is deprecated in favor of Helia (https://github.com/ipfs/helia)
+// Current implementation still works but consider migrating to Helia in future updates
+// Migration guide: https://github.com/ipfs/helia/wiki/Migrating-from-js-IPFS
 
 // Connect to a public IPFS gateway (can be replaced with your own node)
 const client = create({
