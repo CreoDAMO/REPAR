@@ -1,9 +1,59 @@
-# AEQUITAS PROTOCOL ($REPAR)
+# AEQUITAS PROTOCOL ($REPAR) - The Justice Machine
 
-Repository: https://github.com/CreoDAMO/REPAR.git
-Website: https://aequitasprotocol.zone
+The Aequitas Protocol is a sovereign Layer-1 blockchain designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. The protocol provides complete economic, technical, and governance sovereignty to ensure it cannot be shut down or censored.
 
-A Sovereign Layer-1 Blockchain for the Enforcement of Global Reparations.
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18+ and npm
+- Go 1.21+ (for blockchain development)
+- Git
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/aequitas-protocol.git
+cd aequitas-protocol
+
+# Install frontend dependencies
+cd frontend && npm install
+
+# Start development server
+npm run dev
+```
+
+The application will be available at `http://localhost:5000`
+
+### Running the Block Explorer
+
+```bash
+cd dexplorer && npm install && npm run dev
+```
+
+Block explorer available at `http://localhost:3001`
+
+## ✨ Key Features
+
+### 💰 Justice Burn Mechanism
+Automated REPAR burn when defendants make payments, creating deflationary pressure proportional to accountability.
+
+### 🏛️ Defendant Database
+Comprehensive tracking of 200+ entities including nations, corporations, and universities with evidence-backed liability calculations.
+
+### 🤖 AI-Powered Analytics
+- NVIDIA NIM integration for multimodal search
+- Automated defendant risk scoring
+- NFT evidence generation
+- Trading signal analysis
+
+### 🔗 Multi-Chain Integration
+- Native USDC support via Circle SDK
+- Cross-chain bridge capabilities
+- IBC-enabled for Cosmos ecosystem
+
+### 📊 Investor Dashboard
+Real-time metrics, ROI projections, and financial modeling with AI-powered investment analysis.
 
 ---
 
