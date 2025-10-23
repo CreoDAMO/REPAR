@@ -1,6 +1,6 @@
 module github.com/CreoDAMO/REPAR/aequitas
 
-go 1.23.2
+go 1.23
 
 require (
         cosmossdk.io/api v1.0.0-alpha.1
@@ -18,7 +18,7 @@ require (
         cosmossdk.io/x/feegrant v0.2.0
         cosmossdk.io/x/nft v0.2.0
         cosmossdk.io/x/upgrade v0.2.0
-        github.com/bufbuild/buf v1.40.1
+        github.com/bufbuild/buf v1.54.0
         github.com/cometbft/cometbft v0.38.19
         github.com/cosmos/cosmos-db v1.1.3
         github.com/cosmos/cosmos-proto v1.0.0-beta.5
@@ -40,8 +40,11 @@ require (
 )
 
 require (
+        buf.build/gen/go/bufbuild/bufplugin/protocolbuffers/go v1.36.10-20250718181942-e35f9b667443.1 // indirect
         buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250717185734-6c6e0d3c608e.1 // indirect
+        buf.build/gen/go/bufbuild/registry/connectrpc/go v1.19.0-20250924144421-cb55f06efbd2.1 // indirect
         buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.10-20250924144421-cb55f06efbd2.1 // indirect
+        buf.build/gen/go/pluginrpc/pluginrpc/protocolbuffers/go v1.36.9-20241007202033-cf42259fcbfc.1 // indirect
         buf.build/go/app v0.1.0 // indirect
         buf.build/go/bufplugin v0.9.0 // indirect
         buf.build/go/interrupt v1.1.0 // indirect
@@ -248,7 +251,7 @@ require (
         github.com/zondax/ledger-go v0.14.3 // indirect
         go.etcd.io/bbolt v1.4.0 // indirect
         go.lsp.dev/jsonrpc2 v0.10.0 // indirect
-        go.lsp.dev/pkg v0.0.0-20210717090340-384b27a5f2b2 // indirect
+        go.lsp.dev/pkg v0.0.0-20210717090340-384b27a52fb2 // indirect
         go.lsp.dev/protocol v0.12.0 // indirect
         go.lsp.dev/uri v0.3.0 // indirect
         go.opencensus.io v0.24.0 // indirect
@@ -274,7 +277,7 @@ require (
         golang.org/x/oauth2 v0.30.0 // indirect
         golang.org/x/sync v0.17.0 // indirect
         golang.org/x/sys v0.36.0 // indirect
-        golang.org/x/telemetry v0.0.0-20250908211612-aef8a4d4d053 // indirect
+        golang.org/x/telemetry v0.0.0-20250908211612-aef8a434d053 // indirect
         golang.org/x/term v0.35.0 // indirect
         golang.org/x/text v0.29.0 // indirect
         golang.org/x/time v0.10.0 // indirect
@@ -293,15 +296,4 @@ require (
         sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace (
-	github.com/CreoDAMO/REPAR/aequitas => ./
-	github.com/CreoDAMO/REPAR/aequitas/x/claims => ./x/claims
-	github.com/CreoDAMO/REPAR/aequitas/x/defendant => ./x/defendant
-	github.com/CreoDAMO/REPAR/aequitas/x/dex => ./x/dex
-	github.com/CreoDAMO/REPAR/aequitas/x/distribution => ./x/distribution
-	github.com/CreoDAMO/REPAR/aequitas/x/endowment => ./x/endowment
-	github.com/CreoDAMO/REPAR/aequitas/x/founderendowment => ./x/founderendowment
-	github.com/CreoDAMO/REPAR/aequitas/x/justice => ./x/justice
-	github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace => ./x/nftmarketplace
-	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy => ./x/validatorsubsidy
-)
+replace github.com/CreoDAMO/REPAR/aequitas => ./
