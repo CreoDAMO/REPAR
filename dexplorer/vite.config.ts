@@ -15,5 +15,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 3001,
+    allowedHosts: true,
+    hmr: {
+      clientPort: process.env.REPLIT_DEV_DOMAIN ? 443 : 3001,
+      protocol: process.env.REPLIT_DEV_DOMAIN ? 'wss' : 'ws',
+      host: process.env.REPLIT_DEV_DOMAIN || 'localhost',
+    },
   },
 })
