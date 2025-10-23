@@ -55,5 +55,9 @@
     "typescript-eslint": "^8.30.1",
     "vite": "^6.3.5",
     "vite-tsconfig-paths": "^5.1.4"
+  },
+  "overrides": {
+    "nanoid": "^5.0.9",
+    "parse-duration": "^2.1.3"
   }
 }
