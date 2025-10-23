@@ -1,11 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Server, DollarSign, Shield, AlertCircle, TrendingUp, Clock, CheckCircle, Wallet } from 'lucide-react';
 import StatCard from '../components/StatCard';
-
-// Assume tmClient is available globally or imported from a context
-// For demonstration purposes, we'll assume it's imported from a shared context or utility
-// In a real application, this would be handled more robustly, e.g., via React Context
-import { tmClient } from '../utils/tmClient'; // Placeholder for actual tmClient import
+import { cosmosClient } from '../utils/cosmosClient';
 
 export default function ValidatorSubsidy() {
   // State variables for subsidy pool, validators, payments, and schedule
@@ -32,8 +28,9 @@ export default function ValidatorSubsidy() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Attempt to get the Stargate client
-        // Ensure tmClient is properly initialized and accessible
+        // Get the Tendermint client from cosmosClient
+        const tmClient = await cosmosClient.getStargateClient();
+        
         if (tmClient) {
           // Query validator subsidy pool state
           try {
@@ -211,7 +208,7 @@ export default function ValidatorSubsidy() {
     fetchData();
     const interval = setInterval(fetchData, 30000); // Refresh data every 30 seconds
     return () => clearInterval(interval);
-  }, [tmClient]); // Depend on tmClient to refetch if it changes
+  }, []); // Run once on mount and refresh every 30 seconds
 
 
   const formatUSDC = (amount) => {
