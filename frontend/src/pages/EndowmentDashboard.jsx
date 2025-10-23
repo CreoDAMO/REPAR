@@ -116,20 +116,34 @@ export default function EndowmentDashboard() {
         analyzeSentiment(strategyText)
       ]);
 
-      const lpRiskScore = Math.abs(lpRiskResult.score);
-      const socialRiskScore = Math.abs(socialRiskResult.score);
+      // Directional risk: negative sentiment = high risk, positive = low risk
+      const lpScore = lpRiskResult.score;
+      const socialScore = socialRiskResult.score;
       const marketScore = marketResult.score;
+
+      // Determine risk levels based on sentiment direction
+      const getLpRiskLevel = (score) => {
+        if (score < -0.3) return 'High';      // Negative = High risk
+        if (score > 0.3) return 'Low';         // Positive = Low risk
+        return 'Medium';                       // Neutral = Medium risk
+      };
+
+      const getSocialRiskLevel = (score) => {
+        if (score < -0.3) return 'High';
+        if (score > 0.3) return 'Low';
+        return 'Medium';
+      };
 
       setAiAnalysis({
         lpRisk: {
-          score: lpRiskScore,
-          level: lpRiskScore > 0.7 ? 'High' : lpRiskScore > 0.4 ? 'Medium' : 'Low',
+          score: Math.abs(lpScore),  // Absolute value for confidence display only
+          level: getLpRiskLevel(lpScore),
           analysis: lpRiskResult.sentiment,
           timestamp: lpRiskResult.timestamp
         },
         socialRisk: {
-          score: socialRiskScore,
-          level: socialRiskScore > 0.7 ? 'High' : socialRiskScore > 0.4 ? 'Medium' : 'Low',
+          score: Math.abs(socialScore),  // Absolute value for confidence display only
+          level: getSocialRiskLevel(socialScore),
           analysis: socialRiskResult.sentiment,
           timestamp: socialRiskResult.timestamp
         },

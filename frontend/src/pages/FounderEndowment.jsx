@@ -140,13 +140,29 @@ export default function FounderEndowment() {
         analyzeSentiment(sustainabilityText)
       ]);
 
-      const healthScore = Math.abs(healthResult.score);
-      const sustainabilityScore = Math.abs(sustainabilityResult.score);
+      // Directional scoring: positive sentiment = good health, negative = poor health
+      const healthScore = healthResult.score;
+      const sustainabilityScore = sustainabilityResult.score;
+
+      // Determine health status based on sentiment direction
+      const getHealthStatus = (score) => {
+        if (score > 0.5) return 'Excellent';   // Positive = Excellent
+        if (score > 0) return 'Good';          // Slightly positive = Good
+        if (score > -0.3) return 'Moderate';   // Neutral/slightly negative = Moderate
+        return 'Poor';                         // Negative = Poor
+      };
+
+      const getSustainabilityRating = (score) => {
+        if (score > 0.6) return 'A+';          // High positive = A+
+        if (score > 0.3) return 'A';           // Positive = A
+        if (score > -0.2) return 'B';          // Neutral = B
+        return 'C';                            // Negative = C
+      };
 
       setAiInsights({
         protocolHealth: {
-          score: healthScore,
-          status: healthScore > 0.7 ? 'Excellent' : healthScore > 0.5 ? 'Good' : 'Moderate',
+          score: Math.abs(healthScore),  // Absolute value for confidence display only
+          status: getHealthStatus(healthScore),
           analysis: healthResult.sentiment,
           timestamp: healthResult.timestamp
         },
@@ -156,8 +172,8 @@ export default function FounderEndowment() {
           timestamp: scenarioResult.timestamp
         },
         sustainabilityScore: {
-          score: sustainabilityScore,
-          rating: sustainabilityScore > 0.8 ? 'A+' : sustainabilityScore > 0.6 ? 'A' : sustainabilityScore > 0.4 ? 'B' : 'C',
+          score: Math.abs(sustainabilityScore),  // Absolute value for confidence display only
+          rating: getSustainabilityRating(sustainabilityScore),
           analysis: sustainabilityResult.sentiment,
           timestamp: sustainabilityResult.timestamp
         }
@@ -176,6 +192,7 @@ export default function FounderEndowment() {
       case 'Excellent': return 'bg-green-100 text-green-800 border-green-300';
       case 'Good': return 'bg-blue-100 text-blue-800 border-blue-300';
       case 'Moderate': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'Poor': return 'bg-red-100 text-red-800 border-red-300';
       default: return 'bg-gray-100 text-gray-800 border-gray-300';
     }
   };

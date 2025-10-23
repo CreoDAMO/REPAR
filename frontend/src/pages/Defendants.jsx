@@ -67,13 +67,21 @@ export default function Defendants() {
       
       const result = await analyzeSentiment(analysisText);
       
-      const riskScore = Math.abs(result.score);
-      const riskLevel = riskScore > 0.7 ? 'High' : riskScore > 0.4 ? 'Medium' : 'Low';
+      // Directional risk: negative sentiment = high risk, positive = low risk
+      const score = result.score;
+      let riskLevel;
+      if (score < -0.3) {
+        riskLevel = 'High';  // Negative sentiment indicates high risk
+      } else if (score > 0.3) {
+        riskLevel = 'Low';   // Positive sentiment indicates low risk
+      } else {
+        riskLevel = 'Medium'; // Neutral sentiment is medium risk
+      }
       
       setRiskAnalysis(prev => ({
         ...prev,
         [defendant.id]: {
-          score: riskScore,
+          score: Math.abs(score),  // Absolute value for confidence display only
           level: riskLevel,
           analysis: result.sentiment,
           timestamp: result.timestamp
