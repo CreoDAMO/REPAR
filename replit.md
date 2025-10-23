@@ -58,6 +58,14 @@ The frontend provides a comprehensive user interface including:
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub
 ## Recent Changes (October 23, 2025)
 
+### CometBFT Version Fix (Latest - October 23, 2025, 11:30 PM EDT)
+- **Critical Dependency Fix**: Downgraded CometBFT from v1.0.1 to v0.38.16 for ibc-go v8 compatibility
+  - **Root Cause**: ibc-go v8.7.0 requires CometBFT v0.38.x, NOT v1.0.x (breaking proto import changes)
+  - **Fixed**: All proto import paths now use `github.com/cometbft/cometbft/proto/tendermint/*` (v0.38 format)
+  - **Removed**: Buf tool from tools.go (caused experimental/gojs and protovalidate path conflicts)
+  - **Impact**: GitHub Actions `go mod tidy` now completes successfully
+  - **Status**: ✅ Ready for blockchain build in CI/CD pipeline
+
 ### DEX Module Implementation (x/dex)
 - **Complete DEX Module**: Fully implemented Founder Wallet DEX module for $REPAR native coin swaps
   - $REPAR is the **native coin** of Aequitas Zone L1, used for gas fees and all on-chain operations
