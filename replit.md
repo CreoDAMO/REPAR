@@ -502,27 +502,132 @@ build = ["sh", "-c", "cd aequitas && make install && cd ../frontend && npm insta
 
 Use this checklist to track completion:
 
-**Backend (50% of remaining work)**
-- [ ] Task 1.1: Fix Validator Subsidy Module (3-4 hours)
-- [ ] Task 1.2: Complete Module Wiring (2 hours)
-- [ ] Task 1.3: Write Comprehensive Tests (4-5 hours)
+### **Priority 1: Backend (50% of remaining work - 11-13 hours)**
 
-**Frontend Integration (30% of remaining work)**
-- [ ] Task 2.1: Replace Mock Data (3-4 hours)
-- [ ] Task 2.2: Complete Wallet Integration (3 hours)
-- [ ] Task 2.3: Implement AI Features Fully (4 hours)
+#### Task 1.1: Fix Validator Subsidy Module (3-4 hours)
+- [ ] 1.1.1: Replace `time.Now()` with `ctx.BlockTime()` in keeper.go (30 min)
+- [ ] 1.1.2: Implement `bankKeeper.SendCoinsFromModuleToAccount()` for REPAR transfers (45 min)
+- [ ] 1.1.3: Add dynamic cost calculation from operator expenses (1 hour)
+- [ ] 1.1.4: Implement pool state updates after distributions (45 min)
+- [ ] 1.1.5: Add payment record persistence to blockchain state (1 hour)
 
-**Deployment (10% of remaining work)**
-- [ ] Task 3.1: Complete Environment Config (1 hour)
-- [ ] Task 3.2: Setup Production Deployment (2-3 hours)
-- [ ] Task 3.3: Implement Monitoring (2 hours)
+#### Task 1.2: Complete Module Wiring (2 hours)
+- [ ] 1.2.1: Add ValidatorSubsidyKeeper to App struct in app.go (15 min)
+- [ ] 1.2.2: Configure depinject for validatorsubsidy module (30 min)
+- [ ] 1.2.3: Register module in module manager (30 min)
+- [ ] 1.2.4: Verify module appears in CLI help output (15 min)
+- [ ] 1.2.5: Test query and tx commands execute without errors (30 min)
 
-**Security & Testing (8% of remaining work)**
-- [ ] Task 4.1: Security Hardening (2-3 hours)
-- [ ] Task 4.2: End-to-End Testing (3-4 hours)
+#### Task 1.3: Write Comprehensive Tests (4-5 hours)
+- [ ] 1.3.1: Create TestDistributeSubsidies test (1 hour)
+- [ ] 1.3.2: Create TestCheckDistribution interval logic test (1 hour)
+- [ ] 1.3.3: Create TestInsufficientFunds error handling test (45 min)
+- [ ] 1.3.4: Create TestPoolUpdate state persistence test (45 min)
+- [ ] 1.3.5: Create TestGenesisImportExport test (45 min)
+- [ ] 1.3.6: Run test coverage report and verify 80%+ coverage (30 min)
 
-**Documentation (2% of remaining work)**
-- [ ] Task 5.1: API Documentation (2 hours)
-- [ ] Task 5.2: User Documentation (2 hours)
+---
 
-**Estimated Total Time**: 35-45 hours to completion
+### **Priority 2: Frontend Integration (30% of remaining work - 10-11 hours)**
+
+#### Task 2.1: Replace Mock Data with Real API Calls (3-4 hours)
+- [ ] 2.1.1: Set up gRPC query client in cosmosClient.js (1 hour)
+- [ ] 2.1.2: Replace mock data in ValidatorSubsidy.jsx with live queries (1 hour)
+- [ ] 2.1.3: Replace mock data in InvestorDashboard.jsx (45 min)
+- [ ] 2.1.4: Replace mock data in Dashboard.jsx (45 min)
+- [ ] 2.1.5: Implement real-time updates every 6 seconds (30 min)
+- [ ] 2.1.6: Add error handling for failed queries (30 min)
+- [ ] 2.1.7: Add loading states during data fetch (30 min)
+
+#### Task 2.2: Complete Keplr Wallet Integration (3 hours)
+- [ ] 2.2.1: Implement wallet connection in WalletConnect.jsx (45 min)
+- [ ] 2.2.2: Add account balance queries (45 min)
+- [ ] 2.2.3: Implement transaction signing logic (1 hour)
+- [ ] 2.2.4: Add transaction broadcast functionality (30 min)
+- [ ] 2.2.5: Display transaction history (1 hour)
+
+#### Task 2.3: Implement NVIDIA AI Features Fully (4 hours)
+- [ ] 2.3.1: Complete AI search with error handling in nvidiaAI.js (1 hour)
+- [ ] 2.3.2: Implement rate limiting (100 req/day) (45 min)
+- [ ] 2.3.3: Add NFT generation with IPFS upload (1.5 hours)
+- [ ] 2.3.4: Implement trading signals display (45 min)
+
+---
+
+### **Priority 3: Deployment (10% of remaining work - 5-6 hours)**
+
+#### Task 3.1: Complete Environment Configuration (1 hour)
+- [ ] 3.1.1: Document all required API keys in .env.template (15 min)
+- [ ] 3.1.2: Add deployment verification checks (30 min)
+- [ ] 3.1.3: Separate development from production configs (15 min)
+
+#### Task 3.2: Setup Production Deployment (2-3 hours)
+- [ ] 3.2.1: Configure CORS headers in backend (30 min)
+- [ ] 3.2.2: Set up health check endpoints (30 min)
+- [ ] 3.2.3: Configure Replit deployment settings (45 min)
+- [ ] 3.2.4: Test production build process (45 min)
+
+#### Task 3.3: Implement Monitoring & Logging (2 hours)
+- [ ] 3.3.1: Integrate Sentry for frontend error tracking (45 min)
+- [ ] 3.3.2: Set up blockchain metrics export (45 min)
+- [ ] 3.3.3: Configure uptime alerts (30 min)
+
+---
+
+### **Priority 4: Security & Testing (8% of remaining work - 5-7 hours)**
+
+#### Task 4.1: Security Hardening (2-3 hours)
+- [ ] 4.1.1: Add CSRF tokens on state-changing operations (1 hour)
+- [ ] 4.1.2: Implement input sanitization on all user inputs (1 hour)
+- [ ] 4.1.3: Add API rate limiting (100 req/min per IP) (45 min)
+- [ ] 4.1.4: Move API keys to backend only (15 min)
+
+#### Task 4.2: End-to-End Testing (3-4 hours)
+- [ ] 4.2.1: Create wallet connect → transaction → confirmation test (1 hour)
+- [ ] 4.2.2: Create justice → burn → distribution flow test (1 hour)
+- [ ] 4.2.3: Create insufficient funds error scenario test (30 min)
+- [ ] 4.2.4: Create network failure handling test (30 min)
+- [ ] 4.2.5: Generate test coverage report (1 hour)
+
+---
+
+### **Priority 5: Documentation (2% of remaining work - 4 hours)**
+
+#### Task 5.1: API Documentation (2 hours)
+- [ ] 5.1.1: Document all REST API endpoints (1 hour)
+- [ ] 5.1.2: Document WebSocket events (30 min)
+- [ ] 5.1.3: Create error code reference (30 min)
+
+#### Task 5.2: User Documentation (2 hours)
+- [ ] 5.2.1: Write getting started guide with screenshots (1 hour)
+- [ ] 5.2.2: Create wallet setup instructions (30 min)
+- [ ] 5.2.3: Write transaction tutorials (30 min)
+
+---
+
+### **Summary by Week**
+
+**Week 1 (16-18 hours):**
+- Backend: Tasks 1.1, 1.2, 1.3
+- Frontend: Task 2.1
+
+**Week 2 (14-16 hours):**
+- Frontend: Tasks 2.2, 2.3
+- Deployment: Tasks 3.1, 3.2
+
+**Week 3 (9-11 hours):**
+- Deployment: Task 3.3
+- Security: Tasks 4.1, 4.2
+- Documentation: Tasks 5.1, 5.2
+
+**Estimated Total Time**: 39-45 hours to completion (1.5-2 weeks at 20-30 hrs/week)
+
+---
+
+### **Quick Win Tasks (Complete These First)**
+1. Task 1.2.4: Verify CLI commands (15 min) ✅ Easy validation
+2. Task 3.1.3: Separate dev/prod configs (15 min) ✅ Quick setup
+3. Task 4.1.4: Move API keys to backend (15 min) ✅ Security quick win
+4. Task 2.1.7: Add loading states (30 min) ✅ UX improvement
+
+**Total Quick Wins**: ~1.5 hours for immediate progress
