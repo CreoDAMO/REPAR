@@ -8,7 +8,7 @@ channel = "stable-25_05"
 packages = ["buf", "openssh_gssapi"]
 
 [workflows]
-runButton = "Build & Deploy"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"
@@ -36,7 +36,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd frontend && npm install --prefer-offline --no-audit && npm run dev"
+args = "cd frontend && npm run dev -- --host 0.0.0.0 --port 5000"
 waitForPort = 5000
 
 [[workflows.workflow]]
@@ -48,7 +48,8 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd dexplorer && npm install --prefer-offline --no-audit && npm run dev"
+args = "cd dexplorer && npm run dev -- --host 0.0.0.0 --port 3001"
+waitForPort = 3001
 
 [[workflows.workflow]]
 name = "Circle API Backend"
@@ -59,7 +60,8 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && npm install --prefer-offline --no-audit && npm start"
+args = "cd backend && PORT=3002 npm run dev"
+waitForPort = 3002
 
 [[workflows.workflow]]
 name = "Build & Deploy"
@@ -80,14 +82,10 @@ args = "cd ../frontend && npm install --prefer-offline --no-audit && npm run dev
 
 [[ports]]
 localPort = 3001
-externalPort = 8081
+externalPort = 3001
 
 [[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 5001
+localPort = 3002
 externalPort = 3002
 
 [[ports]]
@@ -129,6 +127,10 @@ externalPort = 8099
 [[ports]]
 localPort = 42461
 externalPort = 8000
+
+[[ports]]
+localPort = 43161
+externalPort = 80
 
 [[ports]]
 localPort = 44863

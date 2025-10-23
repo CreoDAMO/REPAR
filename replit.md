@@ -33,6 +33,7 @@ The frontend provides a comprehensive user interface including:
     - `x/justice`: Implements a deflationary $REPAR burn mechanism.
     - `x/claims`: Handles arbitration demand filing across 172 jurisdictions, integrating IPFS for evidence.
     - `x/distribution`: Manages reparations distribution to verified descendants.
+    - `x/dex`: Founder Wallet DEX for $REPAR token swaps with constant product formula (x*y=k) and 55/30/15 fee distribution.
     - `x/threatdefense`: A 10% Chaos Defense system featuring a ThreatOracle, controlled vulnerabilities, and NFT evidence minting.
 
 ### System Design Choices
@@ -56,6 +57,17 @@ The frontend provides a comprehensive user interface including:
 - **Infrastructure**: Cloudflare, DigitalOcean
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub
 ## Recent Changes (October 23, 2025)
+
+### DEX Module Implementation (x/dex)
+- **Complete DEX Module**: Fully implemented Founder Wallet DEX module for $REPAR token swaps
+  - Created `module.go` with proper Cosmos SDK AppModule structure
+  - Implemented all type definitions: `msgs.go`, `query.go`, `models.go`, `interfaces.go`, `codec.go`, `genesis.go`
+  - Keeper logic with pool management, liquidity provision, and constant product formula swaps
+  - MsgServer with CreatePool, AddLiquidity, RemoveLiquidity, and Swap handlers
+  - QueryServer for pool queries, liquidity positions, and swap estimation
+  - Fee distribution system (55% to LPs, 30% to Endowment, 15% to Treasury)
+  - Initial REPAR/USDC pool with $18.33 pricing built into genesis
+- **Go Dependency Updates**: Migrated to Go 1.24 toolchain, downgraded incompatible dependencies
 
 ### GitHub Actions Workflow Fixes
 - **DigitalOcean Deployment:** Updated appleboy/ssh-action to v1.0.3 (fixed invalid SHA)
