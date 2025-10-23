@@ -40,8 +40,8 @@ require (
 )
 
 require (
-        buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.32.0-20231115204500-e097f827e652.1 // indirect
-        buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.32.0-20240329170042-fe0cda5a75ca.1 // indirect
+        buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250717185734-6c6e0d3c608e.1 // indirect
+        buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.10-20250924144421-cb55f06efbd2.1 // indirect
         buf.build/go/app v0.1.0 // indirect
         buf.build/go/bufplugin v0.9.0 // indirect
         buf.build/go/interrupt v1.1.0 // indirect
@@ -248,7 +248,7 @@ require (
         github.com/zondax/ledger-go v0.14.3 // indirect
         go.etcd.io/bbolt v1.4.0 // indirect
         go.lsp.dev/jsonrpc2 v0.10.0 // indirect
-        go.lsp.dev/pkg v0.0.0-20210717090340-384b27a52fb2 // indirect
+        go.lsp.dev/pkg v0.0.0-20210717090340-384b27a5f2b2 // indirect
         go.lsp.dev/protocol v0.12.0 // indirect
         go.lsp.dev/uri v0.3.0 // indirect
         go.opencensus.io v0.24.0 // indirect
@@ -274,7 +274,7 @@ require (
         golang.org/x/oauth2 v0.30.0 // indirect
         golang.org/x/sync v0.17.0 // indirect
         golang.org/x/sys v0.36.0 // indirect
-        golang.org/x/telemetry v0.0.0-20250908211612-aef8a434d053 // indirect
+        golang.org/x/telemetry v0.0.0-20250908211612-aef8a4d4d053 // indirect
         golang.org/x/term v0.35.0 // indirect
         golang.org/x/text v0.29.0 // indirect
         golang.org/x/time v0.10.0 // indirect
