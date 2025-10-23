@@ -8,7 +8,7 @@ channel = "stable-25_05"
 packages = ["buf", "openssh_gssapi"]
 
 [workflows]
-runButton = "Project"
+runButton = "Build & Deploy"
 
 [[workflows.workflow]]
 name = "Project"
@@ -60,6 +60,23 @@ outputType = "console"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd backend && npm install --prefer-offline --no-audit && npm start"
+
+[[workflows.workflow]]
+name = "Build & Deploy"
+author = 48926778
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd aequitas && go mod tidy && go build -o ../repar-node ./cmd/aequitasd"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd ../backend && npm install --prefer-offline --no-audit"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd ../frontend && npm install --prefer-offline --no-audit && npm run dev -- --host 0.0.0.0 --port 5000"
 
 [[ports]]
 localPort = 3001
@@ -127,5 +144,5 @@ externalPort = 6800
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "cd frontend && npm run preview -- --host 0.0.0.0 --port 5000"]
+run = ["sh", "-c", "cd frontend && npm run dev -- --host 0.0.0.0 --port 5000"]
 build = ["npm", "install", "--prefix", "frontend"]

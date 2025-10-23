@@ -31,12 +31,24 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: 1. Checkout Main Repository Code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: 2. Setup SSH and Connect to DigitalOcean Droplet
+      - name: Validate Required Secrets
+        env:
+          DO_HOST: ${{ secrets.DO_HOST }}
+          DO_USERNAME: ${{ secrets.DO_USERNAME }}
+          DO_SSH_PRIVATE_KEY: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+        run: |
+          if [ -z "$DO_HOST" ] || [ -z "$DO_USERNAME" ] || [ -z "$DO_SSH_PRIVATE_KEY" ]; then
+            echo "Error: Missing required DigitalOcean secrets"
+            exit 1
+          fi
+          echo "All required secrets are configured"
+
+      - name: Deploy to DigitalOcean
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.DO_HOST }}
@@ -45,27 +57,27 @@ jobs:
           envs: MYSQL_ROOT_PASSWORD,MYSQL_PASSWORD,CALCULATOR_DATABASE_URL,OPENAI_API_KEY,ANTHROPIC_API_KEY
           script: |
             # --- This script runs directly on your DigitalOcean server ---
-            
+
             echo "✅ Connected to server. Starting deployment..."
-            
+
             # Navigate to the project directory
             PROJECT_DIR="/opt/aequitas"
             mkdir -p $PROJECT_DIR
             cd $PROJECT_DIR
-            
+
             echo "🔄 Cloning or updating main repository..."
-            
+
             # Clone or update the main REPAR repository
             if [ ! -d "REPAR" ]; then
               git clone https://github.com/CreoDAMO/REPAR.git REPAR
             else
               cd REPAR && git pull && cd ..
             fi
-            
+
             cd REPAR
-            
+
             echo "📝 Creating .env file with secrets..."
-            
+
             # Create .env file with secrets from GitHub Actions
             cat > .env << EOF
             MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
@@ -74,34 +86,34 @@ jobs:
             OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
             ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}
             EOF
-            
+
             # Secure the .env file
             chmod 600 .env
-            
+
             echo "🚀 Deploying services with Docker Compose..."
-            
+
             # Stop existing containers
             docker-compose down
-            
+
             # Build and start all services
             docker-compose up --build -d
-            
+
             # Wait for services to stabilize
             sleep 10
-            
+
             echo "🧹 Pruning old Docker images to save space..."
             docker image prune -f
-            
+
             echo "✅ Verifying all containers are running..."
             docker ps
-            
+
             echo "🎉 Deployment complete. All services are updated and running."
-            
+
             echo "📊 Container Status:"
             docker-compose ps
-            
+
             echo "🔒 Security: .env file has been secured with 600 permissions"
-            
+
             echo "🏥 Health Checks:"
             echo "Testing backend health..."
             curl -f http://localhost:3000/health || echo "Backend health check failed"

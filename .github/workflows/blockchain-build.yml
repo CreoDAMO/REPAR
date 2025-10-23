@@ -19,17 +19,17 @@ jobs:
     permissions:
       contents: read
       actions: read
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.x'
           cache-dependency-path: aequitas/go.sum
-      
+
       - name: Cache Go modules
         uses: actions/cache@v4
         with:
@@ -39,7 +39,7 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('aequitas/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      
+
       - name: Download dependencies
         working-directory: ./aequitas
         timeout-minutes: 15
@@ -47,7 +47,7 @@ jobs:
           echo "📦 Downloading Cosmos SDK dependencies (this may take 5-10 minutes)..."
           go mod download
           echo "✅ Dependencies downloaded"
-      
+
       - name: Tidy dependencies
         working-directory: ./aequitas
         timeout-minutes: 10
@@ -56,7 +56,7 @@ jobs:
           go mod tidy
           go mod verify
           echo "✅ Modules verified"
-      
+
       - name: Build blockchain daemon
         working-directory: ./aequitas
         timeout-minutes: 20
@@ -69,7 +69,7 @@ jobs:
             -X github.com/cosmos/cosmos-sdk/version.Commit=$(git rev-parse HEAD)" \
             -o ./build/aequitasd ./cmd/aequitasd
           echo "✅ Binary built successfully"
-      
+
       - name: Run tests
         working-directory: ./aequitas
         timeout-minutes: 15
@@ -77,7 +77,7 @@ jobs:
         run: |
           echo "🧪 Running unit tests..."
           go test -v -timeout 10m ./... || echo "⚠️ Some tests pending - blockchain under active development"
-      
+
       - name: Verify binary
         working-directory: ./aequitas
         run: |
@@ -92,7 +92,7 @@ jobs:
             echo "❌ Binary not found!"
             exit 1
           fi
-      
+
       - name: Upload blockchain binary
         uses: actions/upload-artifact@v4
         with:
@@ -100,7 +100,7 @@ jobs:
           path: aequitas/build/aequitasd
           retention-days: 90
           compression-level: 9
-      
+
       - name: Upload blockchain binary (latest)
         uses: actions/upload-artifact@v4
         with:
@@ -108,7 +108,7 @@ jobs:
           path: aequitas/build/aequitasd
           retention-days: 90
           compression-level: 9
-      
+
       - name: Build summary
         if: always()
         working-directory: ./aequitas
@@ -148,34 +148,34 @@ jobs:
     if: success()
     permissions:
       contents: read
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.x'
-      
+
       - name: Download blockchain binary
         uses: actions/download-artifact@v4
         with:
           name: aequitasd-latest
           path: ./bin
-      
+
       - name: Make binary executable
         run: chmod +x ./bin/aequitasd
-      
+
       - name: Initialize testnet
         run: |
           echo "🌐 Initializing local testnet..."
           ./bin/aequitasd init validator --chain-id aequitas-testnet-1 --home ~/.aequitas-test
           echo "✅ Testnet initialized"
-          
+
           echo "📋 Chain configuration:"
           ls -la ~/.aequitas-test/config/
-      
+
       - name: Generate genesis
         continue-on-error: true
         run: |
@@ -183,7 +183,7 @@ jobs:
           ./bin/aequitasd keys add validator --keyring-backend test --home ~/.aequitas-test || echo "Key already exists"
           ./bin/aequitasd genesis add-genesis-account validator 131000000000000repar --keyring-backend test --home ~/.aequitas-test || echo "Genesis account exists"
           echo "✅ Genesis configured"
-      
+
       - name: Testnet summary
         if: always()
         run: |
