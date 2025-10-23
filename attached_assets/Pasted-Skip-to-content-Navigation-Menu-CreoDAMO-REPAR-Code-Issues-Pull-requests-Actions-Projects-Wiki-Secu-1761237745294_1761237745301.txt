@@ -1,0 +1,89 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+6
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Update dependencies to resolve security vulnerabilities and improve s… #25
+Jobs
+Run details
+Annotations
+1 error
+Build & Test Blockchain
+failed 1 minute ago in 31s
+Search logs
+1s
+1s
+3s
+11s
+4s
+8s
+Run echo "🧹 Tidying Go modules..."
+  echo "🧹 Tidying Go modules..."
+  go mod tidy
+  go mod verify
+  echo "✅ Modules verified"
+  shell: /usr/bin/bash -e {0}
+🧹 Tidying Go modules...
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/dex/types
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/defendant/types
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/distribution
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/claims/types
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/endowment/types
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/founderendowment/types
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/justice/types
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/nftmarketplace/types
+go: finding module for package github.com/Aequitas-Finance/Aequitas/x/validatorsubsidy/types
+go: finding module for package github.com/aequitas/aequitas/x/dex
+go: finding module for package github.com/aequitasprotocol/aequitas/x/agentkit/types
+go: finding module for package github.com/creodamo/aequitas/x/infrastructure/types
+go: finding module for package github.com/creodamo/aequitas/x/validatorsubsidy/types
+go: finding module for package github.com/creodamo/aequitas/x/infrastructure/keeper
+go: finding module for package github.com/creodamo/aequitas/x/validatorsubsidy/keeper
+go: github.com/aequitas/aequitas/app imports
+	github.com/Aequitas-Finance/Aequitas/x/claims/types: cannot find module providing package github.com/Aequitas-Finance/Aequitas/x/claims/types: module github.com/Aequitas-Finance/Aequitas/x/claims/types: git ls-remote -q origin in /home/runner/go/pkg/mod/cache/vcs/b710d1861840192daf0d4654c3165a2d99a39ca77c25b7525994261acfb94580: exit status 128:
+	fatal: could not read Username for 'https://github.com': terminal prompts disabled
+Confirm the import path was entered correctly.
+If this is a private repository, see https://golang.org/doc/faq#git_https for additional information.
+go: github.com/aequitas/aequitas/app imports
+	github.com/Aequitas-Finance/Aequitas/x/defendant/types: cannot find module providing package github.com/Aequitas-Finance/Aequitas/x/defendant/types: module github.com/Aequitas-Finance/Aequitas/x/defendant/types: git ls-remote -q origin in /home/runner/go/pkg/mod/cache/vcs/b710d1861840192daf0d4654c3165a2d99a39ca77c25b7525994261acfb94580: exit status 128:
+	fatal: could not read Username for 'https://github.com': terminal prompts disabled
+Confirm the import path was entered correctly.
+If this is a private repository, see https://golang.org/doc/faq#git_https for additional information.
+go: github.com/aequitas/aequitas/app imports
+	github.com/Aequitas-Finance/Aequitas/x/dex/types: cannot find module providing package github.com/Aequitas-Finance/Aequitas/x/dex/types: module github.com/Aequitas-Finance/Aequitas/x/dex/types: git ls-remote -q origin in /home/runner/go/pkg/mod/cache/vcs/b710d1861840192daf0d4654c3165a2d99a39ca77c25b7525994261acfb94580: exit status 128:
+	fatal: could not read Username for 'https://github.com': terminal prompts disabled
+Confirm the import path was entered correctly.
+If this is a private repository, see https://golang.org/doc/faq#git_https for additional information.
+go: github.com/aequitas/aequitas/app imports
+	github.com/Aequitas-Finance/Aequitas/x/distribution: cannot find module providing package github.com/Aequitas-Finance/Aequitas/x/distribution: module github.com/Aequitas-Finance/Aequitas/x/distribution: git ls-remote -q origin in /home/runner/go/pkg/mod/cache/vcs/b710d1861840192daf0d4654c3165a2d99a39ca77c25b7525994261acfb94580: exit status 128:
+	fatal: could not read Username for 'https://github.com': terminal prompts disabled
+Confirm the import path was entered correctly.
+If this is a private repository, see https://golang.org/doc/faq#git_https for additional information.
+go: github.com/aequitas/aequitas/app imports
+	github.com/Aequitas-Finance/Aequitas/x/endowment/types: cannot find module providing package github.com/Aequitas-Finance/Aequitas/x/endowment/types: module github.com/Aequitas-Finance/Aequitas/x/endowment/types: git ls-remote -q origin in /home/runner/go/pkg/mod/cache/vcs/b710d1861840192daf0d4654c3165a2d99a39ca77c25b7525994261acfb94580: exit status 128:
+	fatal: could not read Username for 'https://github.com': terminal prompts disabled
+Confirm the import path was entered correctly.
+If this is a private repository, see https://golang.org/doc/faq#git_https for additional information.
+go: github.com/aequitas/aequitas/app imports
+	github.com/Aequitas-Finance/Aequitas/x/founderendowment/types: cannot find module providing package github.com/Aequitas-Finance/Aequitas/x/founderendowment/types: module github.com/Aequitas-Finance/Aequitas/x/founderendowment/types: git ls-remote -q origin in /home/runner/go/pkg/mod/cache/vcs/b710d1861840192daf0d4654c3165a2d99a39ca77c25b7525994261acfb94580: exit status 128:
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s

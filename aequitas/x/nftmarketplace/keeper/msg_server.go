@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/aequitas/aequitas/x/nftmarketplace/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types"
 )
 
 type msgServer struct {

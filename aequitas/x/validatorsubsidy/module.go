@@ -14,8 +14,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	"github.com/aequitas/aequitas/x/validatorsubsidy/keeper"
-	"github.com/aequitas/aequitas/x/validatorsubsidy/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper"
+	"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
 
 var (

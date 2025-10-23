@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/aequitas/aequitas/x/defendant/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/defendant/types"
 )
 
 type Keeper struct {

@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/aequitas/aequitas/x/validatorsubsidy/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
 
 type msgServer struct {

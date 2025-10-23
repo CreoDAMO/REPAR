@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"github.com/aequitas/aequitas/x/nftmarketplace/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types"
 )
 
 // InitGenesis initializes the module's state from a genesis state

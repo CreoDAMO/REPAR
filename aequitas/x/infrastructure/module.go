@@ -6,8 +6,8 @@ import (
         "cosmossdk.io/core/appmodule"
         "github.com/cosmos/cosmos-sdk/codec"
 
-        "github.com/aequitas/aequitas/x/infrastructure/keeper"
-        "github.com/aequitas/aequitas/x/infrastructure/types"
+        "github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper"
+        "github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/types"
 )
 
 var (

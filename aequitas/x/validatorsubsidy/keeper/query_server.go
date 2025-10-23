@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"github.com/aequitas/aequitas/x/validatorsubsidy/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
 
 type queryServer struct {

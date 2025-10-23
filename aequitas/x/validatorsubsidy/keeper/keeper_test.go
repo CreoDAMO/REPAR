@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/creodamo/aequitas/x/validatorsubsidy/keeper"
+	"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper"
 )
 
 func TestDistributeSubsidies(t *testing.T) {

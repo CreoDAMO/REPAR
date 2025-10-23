@@ -9,7 +9,7 @@ import (
         sdk "github.com/cosmos/cosmos-sdk/types"
         sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-        "github.com/creodamo/aequitas/x/validatorsubsidy/types"
+        "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
 
 type Keeper struct {

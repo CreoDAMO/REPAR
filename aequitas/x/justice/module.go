@@ -14,8 +14,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	"github.com/aequitas/aequitas/x/justice/keeper"
-	"github.com/aequitas/aequitas/x/justice/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper"
+	"github.com/CreoDAMO/REPAR/aequitas/x/justice/types"
 )
 
 var (

@@ -80,41 +80,41 @@ import (
 	"aequitas/docs"
 	
 	// Custom modules
-	claimskeeper "github.com/aequitas/aequitas/x/claims/keeper"
-	claimsmodule "github.com/aequitas/aequitas/x/claims"
-	claimstypes "github.com/aequitas/aequitas/x/claims/types"
+	claimskeeper "github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper"
+	claimsmodule "github.com/CreoDAMO/REPAR/aequitas/x/claims"
+	claimstypes "github.com/CreoDAMO/REPAR/aequitas/x/claims/types"
 	
-	defendantkeeper "github.com/aequitas/aequitas/x/defendant/keeper"
-	defendantmodule "github.com/aequitas/aequitas/x/defendant"
-	defendanttypes "github.com/aequitas/aequitas/x/defendant/types"
+	defendantkeeper "github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper"
+	defendantmodule "github.com/CreoDAMO/REPAR/aequitas/x/defendant"
+	defendanttypes "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types"
 	
-	dexkeeper "github.com/aequitas/aequitas/x/dex/keeper"
-	dexmodule "github.com/aequitas/aequitas/x/dex"
-	dextypes "github.com/aequitas/aequitas/x/dex/types"
+	dexkeeper "github.com/CreoDAMO/REPAR/aequitas/x/dex/keeper"
+	dexmodule "github.com/CreoDAMO/REPAR/aequitas/x/dex"
+	dextypes "github.com/CreoDAMO/REPAR/aequitas/x/dex/types"
 	
-	distributionkeeper "github.com/aequitas/aequitas/x/distribution/keeper"
-	distributionmodule "github.com/aequitas/aequitas/x/distribution"
-	distributiontypes "github.com/aequitas/aequitas/x/distribution/types"
+	distributionkeeper "github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper"
+	distributionmodule "github.com/CreoDAMO/REPAR/aequitas/x/distribution"
+	distributiontypes "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types"
 	
-	endowmentkeeper "github.com/aequitas/aequitas/x/endowment/keeper"
-	endowmentmodule "github.com/aequitas/aequitas/x/endowment"
-	endowmenttypes "github.com/aequitas/aequitas/x/endowment/types"
+	endowmentkeeper "github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper"
+	endowmentmodule "github.com/CreoDAMO/REPAR/aequitas/x/endowment"
+	endowmenttypes "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types"
 	
-	founderendowmentkeeper "github.com/aequitas/aequitas/x/founderendowment/keeper"
-	founderendowmentmodule "github.com/aequitas/aequitas/x/founderendowment"
-	founderendowmenttypes "github.com/aequitas/aequitas/x/founderendowment/types"
+	founderendowmentkeeper "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper"
+	founderendowmentmodule "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment"
+	founderendowmenttypes "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types"
 	
-	justicekeeper "github.com/aequitas/aequitas/x/justice/keeper"
-	justicemodule "github.com/aequitas/aequitas/x/justice"
-	justicetypes "github.com/aequitas/aequitas/x/justice/types"
+	justicekeeper "github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper"
+	justicemodule "github.com/CreoDAMO/REPAR/aequitas/x/justice"
+	justicetypes "github.com/CreoDAMO/REPAR/aequitas/x/justice/types"
 	
-	nftmarketplacekeeper "github.com/aequitas/aequitas/x/nftmarketplace/keeper"
-	nftmarketplacemodule "github.com/aequitas/aequitas/x/nftmarketplace"
-	nftmarketplacetypes "github.com/aequitas/aequitas/x/nftmarketplace/types"
+	nftmarketplacekeeper "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper"
+	nftmarketplacemodule "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace"
+	nftmarketplacetypes "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types"
 	
-	validatorsubsidykeeper "github.com/aequitas/aequitas/x/validatorsubsidy/keeper"
-	validatorsubsidymodule "github.com/aequitas/aequitas/x/validatorsubsidy"
-	validatorsubsidytypes "github.com/aequitas/aequitas/x/validatorsubsidy/types"
+	validatorsubsidykeeper "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper"
+	validatorsubsidymodule "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy"
+	validatorsubsidytypes "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
 
 const (

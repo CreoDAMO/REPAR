@@ -9,7 +9,7 @@ import (
 	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	
-	"github.com/aequitasprotocol/aequitas/x/agentkit/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types"
 )
 
 // Keeper handles agent creation and execution

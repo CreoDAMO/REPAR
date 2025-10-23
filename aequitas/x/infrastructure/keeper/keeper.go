@@ -11,7 +11,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/digitalocean/godo"
 
-	"github.com/creodamo/aequitas/x/infrastructure/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/types"
 )
 
 type Keeper struct {

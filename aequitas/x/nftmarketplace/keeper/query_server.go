@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/collections"
 	"github.com/cosmos/cosmos-sdk/types/query"
 
-	"github.com/aequitas/aequitas/x/nftmarketplace/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types"
 )
 
 type queryServer struct {
