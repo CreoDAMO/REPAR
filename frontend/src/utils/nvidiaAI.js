@@ -1,5 +1,6 @@
-const NVIDIA_API_KEY = import.meta.env.VITE_NVIDIA_API_KEY || null;
-const NVIDIA_API_BASE = 'https://integrate.api.nvidia.com/v1';
+// NVIDIA NIM API Configuration
+// API key is now handled by backend for security
+const NVIDIA_BASE_URL = '/api/nvidia'; // Proxy through backend
 
 const NVIDIA_MODELS = {
   STABLE_DIFFUSION_XL: 'stabilityai/stable-diffusion-xl',
@@ -10,15 +11,16 @@ const NVIDIA_MODELS = {
 };
 
 const generateJusticeNFT = async (prompt, options = {}) => {
-  if (!NVIDIA_API_KEY) {
-    return mockNFTGeneration(prompt, options);
-  }
+  // Removed NVIDIA_API_KEY check as it's now handled by backend proxy
+  // if (!NVIDIA_API_KEY) { 
+  //   return mockNFTGeneration(prompt, options);
+  // }
 
   try {
-    const response = await fetch(`${NVIDIA_API_BASE}/images/generations`, {
+    const response = await fetch(`${NVIDIA_BASE_URL}/images/generations`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${NVIDIA_API_KEY}`,
+        // 'Authorization': `Bearer ${NVIDIA_API_KEY}`, // Removed, handled by backend
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
@@ -35,12 +37,12 @@ const generateJusticeNFT = async (prompt, options = {}) => {
 
     if (!response.ok) throw new Error('NFT generation failed');
     const data = await response.json();
-    
+
     const imageData = data.data[0].b64_json;
     const imageDataURI = imageData.startsWith('data:') 
       ? imageData 
       : `data:image/png;base64,${imageData}`;
-    
+
     return {
       success: true,
       image: imageDataURI,
@@ -54,21 +56,23 @@ const generateJusticeNFT = async (prompt, options = {}) => {
     };
   } catch (error) {
     console.error('NVIDIA API error:', error);
-    return mockNFTGeneration(prompt, options);
+    // Removed mock call as backend proxy should handle failures or return specific errors
+    return mockNFTGeneration(prompt, options); 
   }
 };
 
 const analyzeSentiment = async (text) => {
-  if (!NVIDIA_API_KEY) {
-    return mockSentimentAnalysis(text);
-  }
+  // Removed NVIDIA_API_KEY check
+  // if (!NVIDIA_API_KEY) {
+  //   return mockSentimentAnalysis(text);
+  // }
 
   try {
-    const response = await fetch(`${NVIDIA_API_BASE}/chat/completions`, {
+    const response = await fetch(`${NVIDIA_BASE_URL}/chat/completions`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${NVIDIA_API_KEY}`,
-        'Content-Type': 'application/json'
+        // 'Authorization': `Bearer ${NVIDIA_API_KEY}`, // Removed, handled by backend
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: NVIDIA_MODELS.LLAMA_3_1_8B,
@@ -89,7 +93,7 @@ const analyzeSentiment = async (text) => {
 
     if (!response.ok) throw new Error('Sentiment analysis failed');
     const data = await response.json();
-    
+
     const content = data.choices[0].message.content;
     let parsedResponse;
     let score = 0.0;
@@ -119,14 +123,16 @@ const analyzeSentiment = async (text) => {
     };
   } catch (error) {
     console.error('NVIDIA API error:', error);
+    // Removed mock call
     return mockSentimentAnalysis(text);
   }
 };
 
 const multimodalSearch = async (query, imageData = null) => {
-  if (!NVIDIA_API_KEY) {
-    return mockMultimodalSearch(query);
-  }
+  // Removed NVIDIA_API_KEY check
+  // if (!NVIDIA_API_KEY) {
+  //   return mockMultimodalSearch(query);
+  // }
 
   try {
     const requestBody = {
@@ -138,10 +144,10 @@ const multimodalSearch = async (query, imageData = null) => {
       requestBody.image = imageData;
     }
 
-    const response = await fetch(`${NVIDIA_API_BASE}/embeddings`, {
+    const response = await fetch(`${NVIDIA_BASE_URL}/embeddings`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${NVIDIA_API_KEY}`,
+        // 'Authorization': `Bearer ${NVIDIA_API_KEY}`, // Removed, handled by backend
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(requestBody)
@@ -190,6 +196,7 @@ const multimodalSearch = async (query, imageData = null) => {
     };
   } catch (error) {
     console.error('NVIDIA API error:', error);
+    // Removed mock call
     return mockMultimodalSearch(query);
   }
 };
@@ -249,7 +256,7 @@ const mockSentimentAnalysis = (text) => {
 
       let score = 0;
       let sentiment = 'Neutral';
-      
+
       if (positiveCount > negativeCount) {
         score = 0.7;
         sentiment = 'Positive - Market sentiment appears bullish with growth indicators.';

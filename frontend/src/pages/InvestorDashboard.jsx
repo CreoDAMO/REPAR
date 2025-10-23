@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, Calculator, PieChart as PieChartIcon, BarChart3, ArrowUpRight, Target } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
@@ -53,6 +53,7 @@ const FINANCIAL_PARAMETERS = {
 };
 
 export default function InvestorDashboard() {
+  const [loading, setLoading] = useState(true);
   const [customInvestment, setCustomInvestment] = useState(22000000);
   const [customValuation, setCustomValuation] = useState(7000000000);
   const [selectedScenario, setSelectedScenario] = useState('base');
@@ -60,6 +61,12 @@ export default function InvestorDashboard() {
   const [showCrowdfunding, setShowCrowdfunding] = useState(false);
   const [aiAnalyzing, setAiAnalyzing] = useState(false);
   const [aiInsight, setAiInsight] = useState(null);
+  const [metrics, setMetrics] = useState({
+    totalStaked: 0,
+    estimatedAPY: 0,
+    totalReturns: 0,
+    portfolioValue: 0,
+  });
 
   const formatCurrency = (value) => {
     if (!isFinite(value) || value === null || value === undefined || isNaN(value)) {
@@ -83,7 +90,7 @@ export default function InvestorDashboard() {
   const calculateCustomMetrics = () => {
     const safeInvestment = customInvestment || 0;
     const safeValuation = customValuation || 0;
-    
+
     const equity = safeValuation > 0 && safeInvestment > 0 
       ? (safeInvestment / safeValuation) * 100 
       : 0;
@@ -91,7 +98,7 @@ export default function InvestorDashboard() {
     const valuationPerDollar = safeInvestment > 0 
       ? safeValuation / safeInvestment 
       : 0;
-    
+
     return { equity, postMoney, valuationPerDollar };
   };
 
@@ -126,6 +133,32 @@ export default function InvestorDashboard() {
     investorShare: data.investorShare
   }));
 
+  useEffect(() => {
+    setLoading(true);
+    // Simulate fetching data
+    // TODO: Replace with actual API calls to blockchain
+    setTimeout(() => {
+      setMetrics({
+        totalStaked: 150000000,
+        estimatedAPY: 15.5,
+        totalReturns: 45600,
+        portfolioValue: 2345600,
+      });
+      setLoading(false);
+    }, 1000); // Simulate network delay
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-700">Loading investor data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-900 text-white py-12">
@@ -140,7 +173,7 @@ export default function InvestorDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        
+
         {/* Navigation Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <button
@@ -150,7 +183,7 @@ export default function InvestorDashboard() {
             <BarChart3 className="h-6 w-6" />
             {showPitchDeck ? 'Hide' : 'View'} Complete Pitch Deck
           </button>
-          
+
           <button
             onClick={() => setShowCrowdfunding(!showCrowdfunding)}
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center gap-2"
@@ -236,7 +269,7 @@ export default function InvestorDashboard() {
               <PieChartIcon className="h-8 w-8 text-indigo-600" />
               <h2 className="text-3xl font-bold">Use of Funds ($22M)</h2>
             </div>
-            
+
             <div className="mb-6">
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -312,7 +345,7 @@ export default function InvestorDashboard() {
             <h2 className="text-3xl font-bold">Custom Investment Calculator</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Investment Amount
@@ -379,7 +412,7 @@ export default function InvestorDashboard() {
         {showPitchDeck && (
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h2 className="text-3xl font-bold mb-6">Complete Investor Pitch Deck</h2>
-            
+
             <div className="space-y-6">
               {/* Executive Summary */}
               <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-6 border-l-4 border-indigo-600">
@@ -490,7 +523,7 @@ export default function InvestorDashboard() {
         {showCrowdfunding && (
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
             <h2 className="text-3xl font-bold mb-6">Community Crowdfunding Strategy</h2>
-            
+
             <div className="space-y-6">
               {/* Strategy Overview */}
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-6 border-l-4 border-purple-600">
@@ -618,7 +651,7 @@ export default function InvestorDashboard() {
 
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-3xl font-bold mb-6">Detailed Return Scenarios</h2>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>

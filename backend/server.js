@@ -141,14 +141,34 @@ app.get('/api', (req, res) => {
 // Authentication endpoint
 app.post('/api/auth/session', createSession);
 
-// Circle API routes
+// Routes
 app.use('/api/circle', circleRoutes);
-
-// Auditor API routes
 app.use('/api/auditor', auditorRoutes);
-
-// AgentKit API routes
 app.use('/api/agentkit', agentkitRoutes);
+
+// NVIDIA NIM proxy (keeps API key server-side)
+app.post('/api/nvidia/*', async (req, res) => {
+  const nvidiaApiKey = process.env.NVIDIA_API_KEY;
+  if (!nvidiaApiKey) {
+    return res.status(500).json({ error: 'NVIDIA API key not configured' });
+  }
+
+  const endpoint = req.params[0];
+  try {
+    const response = await fetch(`https://integrate.api.nvidia.com/v1/${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${nvidiaApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req.body),
+    });
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // 404 handler
 app.use((req, res) => {
