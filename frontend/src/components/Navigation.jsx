@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server, ExternalLink, Image, Network, Calculator } from 'lucide-react';
+import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server, ExternalLink, Image, Network, Calculator, Settings } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
@@ -32,6 +32,7 @@ export default function Navigation() {
     { to: '/superpay', icon: CreditCard, label: 'SuperPay' },
     { to: '/validator-subsidy', icon: Server, label: 'Validators' },
     { to: '/founder-endowment', icon: Lock, label: 'Founder\'s Endowment' },
+    { to: '/deployment', icon: Settings, label: 'Deployment' },
   ];
 
   return (

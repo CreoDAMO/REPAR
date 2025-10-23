@@ -28,6 +28,7 @@ import AgentKit from './pages/AgentKit';
 import BlockExplorer from './pages/BlockExplorer';
 import Roadmap from './pages/Roadmap';
 import InvestorDashboard from './pages/InvestorDashboard';
+import DeploymentVerification from './pages/DeploymentVerification';
 
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
           <Route path="/explorer" element={<BlockExplorer />} />
           <Route path="/roadmap" element={<Roadmap />} />
           <Route path="/investor" element={<InvestorDashboard />} />
+          <Route path="/deployment" element={<DeploymentVerification />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">
