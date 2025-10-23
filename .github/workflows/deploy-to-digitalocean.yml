@@ -19,6 +19,8 @@
 #   - ANTHROPIC_API_KEY: Anthropic API key for the Cerberus Engine
 
 name: Deploy to DigitalOcean
+permissions:
+  contents: read
 
 on:
   workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
