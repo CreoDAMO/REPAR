@@ -1,6 +1,6 @@
 module github.com/CreoDAMO/REPAR/aequitas
 
-go 1.23
+go 1.23.2
 
 require (
         cosmossdk.io/api v1.0.0-alpha.1
@@ -18,7 +18,7 @@ require (
         cosmossdk.io/x/feegrant v0.2.0
         cosmossdk.io/x/nft v0.2.0
         cosmossdk.io/x/upgrade v0.2.0
-        github.com/bufbuild/buf v1.47.2
+        github.com/bufbuild/buf v1.40.1
         github.com/cometbft/cometbft v0.38.19
         github.com/cosmos/cosmos-db v1.1.3
         github.com/cosmos/cosmos-proto v1.0.0-beta.5
@@ -40,11 +40,8 @@ require (
 )
 
 require (
-        buf.build/gen/go/bufbuild/bufplugin/protocolbuffers/go v1.36.10-20250718181942-e35f9b667443.1 // indirect
-        buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.10-20250717185734-6c6e0d3c608e.1 // indirect
-        buf.build/gen/go/bufbuild/registry/connectrpc/go v1.19.0-20250924144421-cb55f06efbd2.1 // indirect
-        buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.36.10-20250924144421-cb55f06efbd2.1 // indirect
-        buf.build/gen/go/pluginrpc/pluginrpc/protocolbuffers/go v1.36.9-20241007202033-cf42259fcbfc.1 // indirect
+        buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.32.0-20231115204500-e097f827e652.1 // indirect
+        buf.build/gen/go/bufbuild/registry/protocolbuffers/go v1.32.0-20240329170042-fe0cda5a75ca.1 // indirect
         buf.build/go/app v0.1.0 // indirect
         buf.build/go/bufplugin v0.9.0 // indirect
         buf.build/go/interrupt v1.1.0 // indirect
