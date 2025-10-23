@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"aequitas/x/founderendowment/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types"
 )
 
 type msgServer struct {

@@ -6,7 +6,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"aequitas/x/endowment/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/endowment/types"
 )
 
 type msgServer struct {

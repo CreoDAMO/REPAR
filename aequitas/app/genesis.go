@@ -6,7 +6,7 @@ import (
 	"cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	defendanttypes "aequitas/x/defendant/types"
+	defendanttypes "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types"
 )
 
 // GenesisState of the blockchain is represented here as a map of raw json

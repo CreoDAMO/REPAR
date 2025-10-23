@@ -7,7 +7,7 @@ import (
         "cosmossdk.io/math"
         sdk "github.com/cosmos/cosmos-sdk/types"
         
-        "aequitas/x/dex/types"
+        "github.com/CreoDAMO/REPAR/aequitas/x/dex/types"
 )
 
 func (k Keeper) DistributeTradingFees(ctx context.Context, totalFees math.Int, feeDenom string) error {

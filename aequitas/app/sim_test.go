@@ -32,7 +32,7 @@ import (
         "github.com/spf13/viper"
         "github.com/stretchr/testify/require"
 
-        "aequitas/app"
+        "github.com/CreoDAMO/REPAR/aequitas/app"
 )
 
 const (

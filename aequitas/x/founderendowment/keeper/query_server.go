@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"aequitas/x/founderendowment/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types"
 )
 
 type queryServer struct {

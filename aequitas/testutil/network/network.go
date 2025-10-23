@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/testutil/network"
 	"github.com/stretchr/testify/require"
 
-	"aequitas/app"
+	"github.com/CreoDAMO/REPAR/aequitas/app"
 )
 
 type (

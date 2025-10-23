@@ -13,8 +13,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	"aequitas/x/endowment/keeper"
-	"aequitas/x/endowment/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper"
+	"github.com/CreoDAMO/REPAR/aequitas/x/endowment/types"
 )
 
 var (

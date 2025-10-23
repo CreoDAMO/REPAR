@@ -1,0 +1,91 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+1
+Actions
+Projects
+Wiki
+Security
+9
+Insights
+Build Aequitas Zone Blockchain
+Fix GitHub workflow to resolve build errors #37
+Jobs
+Run details
+Build & Test Blockchain
+failed now in 38s
+Search logs
+1s
+2s
+1s
+22s
+4s
+##[debug]Evaluating condition for step: 'Download dependencies'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Download dependencies
+##[debug]Loading inputs
+##[debug]Loading env
+Run echo "📦 Downloading Cosmos SDK dependencies (this may take 5-10 minutes)..."
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/0f376983-63a6-4e1f-b708-38b6c189997f.sh
+📦 Downloading Cosmos SDK dependencies (this may take 5-10 minutes)...
+go: downloading go1.24.9 (linux/amd64)
+✅ Dependencies downloaded
+##[debug]Finishing: Download dependencies
+6s
+##[debug]Evaluating condition for step: 'Tidy dependencies'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Tidy dependencies
+##[debug]Loading inputs
+##[debug]Loading env
+Run echo "🧹 Tidying Go modules..."
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/c90046c6-0738-4fb6-bf09-e37949c64dde.sh
+🧹 Tidying Go modules...
+all modules verified
+✅ Modules verified
+##[debug]Finishing: Tidy dependencies
+0s
+##[debug]Evaluating condition for step: 'Build blockchain daemon'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Build blockchain daemon
+##[debug]Loading inputs
+##[debug]Loading env
+Run echo "🔨 Building aequitasd binary (this may take 10-15 minutes)..."
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/2d042092-c83b-4977-a63a-adfc362eb17a.sh
+🔨 Building aequitasd binary (this may take 10-15 minutes)...
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/app/app.go'. Path does not exist
+Error: app/app.go:80:2: package aequitas/docs is not in std (/home/runner/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64/src/aequitas/docs)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/app/genesis.go'. Path does not exist
+Error: app/genesis.go:9:2: package aequitas/x/defendant/types is not in std (/home/runner/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64/src/aequitas/x/defendant/types)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/dex/keeper/fee_distribution.go'. Path does not exist
+Error: x/dex/keeper/fee_distribution.go:10:9: package aequitas/x/dex/types is not in std (/home/runner/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64/src/aequitas/x/dex/types)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/endowment/genesis.go'. Path does not exist
+Error: x/endowment/genesis.go:6:2: package aequitas/x/endowment/keeper is not in std (/home/runner/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64/src/aequitas/x/endowment/keeper)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/endowment/genesis.go'. Path does not exist
+Error: x/endowment/genesis.go:7:2: package aequitas/x/endowment/types is not in std (/home/runner/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64/src/aequitas/x/endowment/types)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/founderendowment/keeper/keeper.go'. Path does not exist
+Error: x/founderendowment/keeper/keeper.go:17:2: package aequitas/x/founderendowment/types is not in std (/home/runner/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.24.9.linux-amd64/src/aequitas/x/founderendowment/types)
+Error: Process completed with exit code 1.
+##[debug]Finishing: Build blockchain daemon
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s

@@ -7,7 +7,7 @@ import (
         "cosmossdk.io/math"
         sdk "github.com/cosmos/cosmos-sdk/types"
         
-        "aequitas/x/dex/types"
+        "github.com/CreoDAMO/REPAR/aequitas/x/dex/types"
 )
 
 // InitGenesis initializes the DEX module's state from a provided genesis state

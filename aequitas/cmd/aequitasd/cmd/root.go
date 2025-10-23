@@ -20,7 +20,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"aequitas/app"
+	"github.com/CreoDAMO/REPAR/aequitas/app"
 )
 
 // NewRootCmd creates a new root command for aequitasd. It is called once in the main function.

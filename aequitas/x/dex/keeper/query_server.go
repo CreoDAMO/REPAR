@@ -8,7 +8,7 @@ import (
         "google.golang.org/grpc/codes"
         "google.golang.org/grpc/status"
 
-        "aequitas/x/dex/types"
+        "github.com/CreoDAMO/REPAR/aequitas/x/dex/types"
 )
 
 type queryServer struct {

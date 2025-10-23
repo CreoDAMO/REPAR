@@ -3,7 +3,7 @@ package keeper
 import (
 	"context"
 
-	"aequitas/x/endowment/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/endowment/types"
 )
 
 func (k Keeper) InitGenesis(ctx context.Context, genState types.GenesisState) error {

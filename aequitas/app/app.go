@@ -77,7 +77,7 @@ import (
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
-	"aequitas/docs"
+	"github.com/CreoDAMO/REPAR/aequitas/docs"
 	
 	// Custom modules
 	claimskeeper "github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper"

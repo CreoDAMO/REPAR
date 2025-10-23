@@ -11,10 +11,10 @@ import (
 // RegisterLegacyAminoCodec registers the necessary x/dex interfaces and concrete types
 // on the provided LegacyAmino codec. These types are used for Amino JSON serialization.
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	legacy.RegisterAminoMsg(cdc, &MsgCreatePool{}, "aequitas/dex/MsgCreatePool")
-	legacy.RegisterAminoMsg(cdc, &MsgAddLiquidity{}, "aequitas/dex/MsgAddLiquidity")
-	legacy.RegisterAminoMsg(cdc, &MsgRemoveLiquidity{}, "aequitas/dex/MsgRemoveLiquidity")
-	legacy.RegisterAminoMsg(cdc, &MsgSwap{}, "aequitas/dex/MsgSwap")
+	legacy.RegisterAminoMsg(cdc, &MsgCreatePool{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgCreatePool")
+	legacy.RegisterAminoMsg(cdc, &MsgAddLiquidity{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgAddLiquidity")
+	legacy.RegisterAminoMsg(cdc, &MsgRemoveLiquidity{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgRemoveLiquidity")
+	legacy.RegisterAminoMsg(cdc, &MsgSwap{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgSwap")
 }
 
 // RegisterInterfaces registers the x/dex interfaces types with the interface registry

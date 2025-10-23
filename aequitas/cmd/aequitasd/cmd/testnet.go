@@ -26,7 +26,7 @@ import (
         "github.com/spf13/cast"
         "github.com/spf13/cobra"
 
-        "aequitas/app"
+        "github.com/CreoDAMO/REPAR/aequitas/app"
 )
 
 const (

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"cosmossdk.io/math"
-	"aequitas/x/endowment/types"
+	"github.com/CreoDAMO/REPAR/aequitas/x/endowment/types"
 )
 
 type queryServer struct {

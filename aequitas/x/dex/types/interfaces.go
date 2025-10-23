@@ -61,5 +61,5 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	HandlerType: (*MsgServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams:     []grpc.StreamDesc{},
-	Metadata:    "aequitas/dex/v1/tx.proto",
+	Metadata:    "github.com/CreoDAMO/REPAR/aequitas/dex/v1/tx.proto",
 }
