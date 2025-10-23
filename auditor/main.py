@@ -13,6 +13,7 @@ from typing import Optional, Dict, List
 from datetime import datetime
 from pathlib import Path
 import sys
+import logging
 
 # Add the auditor directory to the path
 sys.path.insert(0, str(Path(__file__).parent))
@@ -178,10 +179,11 @@ async def run_audit(audit_id: str, target_directory: str):
         audit_history.append(current_audit)
         
     except Exception as e:
+        logging.error(f"Audit {audit_id} failed: {e}", exc_info=True)
         current_audit = {
             **current_audit,
             "status": "failed",
-            "error": str(e),
+            "error": "An internal error occurred while running the audit.",
             "failed_at": datetime.utcnow().isoformat()
         }
         audit_history.append(current_audit)
