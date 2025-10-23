@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. It provides complete economic, technical, and governance sovereignty, ensuring it cannot be shut down or censored. The protocol is founded on a 205-page forensic audit, establishing historical facts, economic tracing of liabilities ($131T via compound interest), and a legal framework based on international law (jus cogens, UN Genocide Convention). It targets universal accountability across 200+ entities, including nations, corporations, and universities. The project also incorporates a strategic defense system with controlled vulnerabilities and tripwires to deter and counter non-compliant entities, utilizing an automated threat oracle and NFT-based evidence system.
+The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. Its purpose is to provide complete economic, technical, and governance sovereignty, ensuring it cannot be shut down or censored. The protocol is founded on a 205-page forensic audit, establishing historical facts, economic tracing of liabilities ($131T via compound interest), and a legal framework based on international law. It targets universal accountability across 200+ entities including nations, corporations, and universities, and incorporates a strategic defense system with controlled vulnerabilities and an automated threat oracle.
 
 ## User Preferences
 
@@ -14,270 +14,49 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 
 ## System Architecture
 
-The Aequitas Protocol consists of a frontend built with React, Vite, and Tailwind CSS, and a backend powered by a Cosmos SDK Layer-1 blockchain named Aequitas Zone.
+The Aequitas Protocol comprises a frontend built with React, Vite, and Tailwind CSS, and a backend powered by a Cosmos SDK Layer-1 blockchain named Aequitas Zone.
 
-### Frontend
+### UI/UX Decisions
 The frontend features a comprehensive UI including:
-- **Dashboard**: Real-time statistics, coinomics, burn tracking.
-- **Investor Dashboard**: Complete financial analysis & ROI calculator with interactive scenarios.
-- **Defendant Database**: Searchable registry with liability tracking.
-- **Evidence Explorer**: Chain of Guilt visualizer with IPFS integration.
-- **Forensic Audit**: Explorer for the 205-page audit with compound interest calculations.
-- **Claims System**: Arbitration demand filing across 172 jurisdictions.
-- **DAO Governance**: Reputation-based, time-weighted voting.
-- **Transparency Ledger**: Global Reparations Ledger.
+- **Dashboards**: Real-time statistics, investor analytics, founder endowment insights.
+- **Data Explorers**: Defendant database, evidence explorer with IPFS integration, forensic audit explorer.
+- **Transactional Systems**: Claims filing, DAO governance, transparency ledger, Founder Wallet DEX.
 - **AI Analytics**: NVIDIA-powered multimodal search, trading signals, and NFT generation.
-- **Deployment Verification**: Pre-production API key verification system.
-- **Founder Wallet DEX**: Multi-cryptocurrency support.
-- **Block Explorer (Dexplorer)**.
+- **Verification**: Deployment verification system and Block Explorer (Dexplorer).
 
-### Backend: Aequitas Zone (Cosmos SDK Layer-1 Blockchain)
-- **Framework**: Cosmos SDK with Tendermint BFT consensus.
-- **Native Coin**: $REPAR (not a token).
-- **Total Supply**: 131 trillion REPAR (1:1 with $131T liability), denominated as `urepar`.
-- **Max Validators**: 100.
-- **Core Modules**:
-    - **x/defendant**: Tracks 200+ defendants (Corporation, Financial Institution, Nation State, African Kingdom, University) with status tracking and payment types (Financial, Restorative, Hybrid).
-    - **x/justice**: Implements a deflationary burn mechanism where 1 USD equivalent of $REPAR is permanently burned for each payment, with burn statistics tracking.
-    - **x/claims**: Manages arbitration demand filing across 172 NYC Convention jurisdictions for claim types like Unjust Enrichment, Genocide, with IPFS integration for evidence.
-    - **x/distribution**: Handles reparations distribution to registered descendants based on verified lineage, with automated allocation from various funds (Community & Descendant, Foundation Treasury, Claims & Compensation, Ecosystem & Enforcement, Development).
-    - **x/threatdefense**: A 10% Chaos Defense system with ThreatOracle for automated detection, controlled vulnerabilities as honeypots, a 3% Nightmare Activator for counter-attacks, and NFT evidence minting for legal compliance (FRE 901 standards).
+### Technical Implementations
+- **Frontend**: React, Vite, Tailwind CSS. Includes manual code splitting for optimized production builds.
+- **Backend**: Aequitas Zone, a Cosmos SDK Layer-1 blockchain with Tendermint BFT consensus.
+  - **Native Coin**: $REPAR (not a token), total supply 131 trillion.
+  - **Core Modules**:
+    - `x/defendant`: Tracks 200+ defendants and payment types.
+    - `x/justice`: Implements a deflationary $REPAR burn mechanism for payments.
+    - `x/claims`: Manages arbitration demand filing across 172 jurisdictions with IPFS for evidence.
+    - `x/distribution`: Handles reparations distribution to verified descendants.
+    - `x/threatdefense`: A 10% Chaos Defense system with ThreatOracle, controlled vulnerabilities, and NFT evidence minting.
 
-### Legal & Enforcement Framework
-A multi-layered strategy involving international law (Genocide classification, jus cogens), Black's Law (unjust enrichment, constructive trust), UCC Article 9 (commercial liens), and international arbitration (NY Convention). This framework includes specific accountability matrices for entities like the UK Government, Barclays, and JPMorgan Chase, and "Nightmare Tripwires" for non-compliant entities.
-
-### Security: Cerberus Auditor System ✓
-Implemented comprehensive multi-agent AI security auditing system:
-- **Architecture**: 3 AI guilds (Analyst, Adversary, Engineer) coordinated by master orchestrator
-- **Analyst Guild**: 4 AI agents (Claude Sonnet 4, GPT-4 Turbo, Grok, Deepseek) working in parallel
-- **Adversary Guild**: Exploit testing, chaos engineering, Byzantine fault tolerance tests
-- **Engineer Guild**: Automated patch generation with test cases
-- **Features**:
-  - Consensus mechanism (vulnerabilities must be found by multiple AI agents)
-  - Threat ledger for permanent vulnerability tracking
-  - Automated fix generation and verification
-  - Security scoring system (0-100)
-  - Document auditing (for TAST and legal documents)
-  - Codebase auditing (for Cosmos SDK Go modules)
-- **Location**: `/auditor/` directory
-- **Usage**: `python auditor/orchestrator.py`
-- **Reports**: Saved to `/auditor/reports/` in JSON format
-
-## Recent Changes (October 23, 2025)
-
-### AI Dashboard Enhancements (Latest) ✓
-Integrated comprehensive AI features across all major dashboards for enhanced decision-making and analytics:
-
-**Defendant Dashboard AI Features**:
-- **AI-Powered Multimodal Search**: NVIDIA CLIP integration for semantic defendant search
-  - Natural language queries across defendant database
-  - Confidence scoring and evidence matching
-  - Real-time search results with defendant categorization
-- **AI Risk Scoring**: Automated defendant risk assessment using Llama 3.1 8B
-  - Legal and financial risk analysis
-  - Risk level classification (High/Medium/Low)
-  - AI-generated risk summaries and recommendations
-- **Enhanced Evidence Analysis**: AI-powered evidence strength evaluation
-  - Automated analysis of evidence documentation
-  - Descendant impact assessment
-  - Jurisdiction-specific enforcement strategies
-
-**Endowment Dashboard AI Features**:
-- **Investment Strategy Recommendations**: AI-driven portfolio optimization
-  - LP Endowment risk analysis ($153M principal, 7% APY target)
-  - Social Endowment sustainability assessment ($256.5M principal)
-  - Market condition predictions and outlook (Bullish/Bearish/Neutral)
-- **Yield Predictions**: AI forecasting for endowment performance
-  - Best/base/worst case scenario analysis
-  - APY trend analysis and sustainability scoring
-  - Risk-adjusted return recommendations
-- **Real-time Market Analysis**: Sentiment-based market intelligence
-  - DeFi protocol health monitoring
-  - Stablecoin yield sustainability tracking
-  - Protocol failure risk assessment
-
-**Founder Endowment Dashboard AI Features**:
-- **Financial Forecasting**: Long-term protocol health predictions
-  - 90/10 split optimization analysis (90% protocol, 10% founder)
-  - Sustainability rating system (A+, A, B, C grades)
-  - Protocol funding adequacy assessment
-- **Scenario Analysis**: Multi-outcome strategic planning
-  - APY variation impact modeling (3%-6% range)
-  - Protocol funding growth projections
-  - Risk mitigation strategy recommendations
-- **Protocol Health Monitoring**: Comprehensive ecosystem wellness tracking
-  - DEX liquidity allocation analysis (25%)
-  - DAO Treasury sustainability (25%)
-  - Social Programs funding (25%)
-  - Validator Subsidy adequacy (15%)
-
-**NFT Marketplace AI Features**:
-- **AI NFT Generation Tab**: Integrated NVIDIA Stable Diffusion XL
-  - Justice-themed NFT art creation from text prompts
-  - Automatic reparations styling and theming
-  - Download and regeneration capabilities
-  - Example prompts for Evidence, Justice Burn, Descendant ID, Historical Archive NFTs
-- **Enhanced Manual Minting**: Improved manual NFT creation workflow
-  - Separate AI Generate and Manual Mint tabs for better UX
-  - Category-specific metadata fields
-  - IPFS-ready image generation
-- **Better Marketplace Visibility**: AI-powered categorization and discovery
-  - Pro tips for optimal NFT generation
-  - Real-time preview and iteration
-
-**Technical Implementation**:
-- All AI features use NVIDIA Llama 3.1 8B for sentiment analysis and text generation
-- Graceful fallbacks with mock mode for development without API keys
-- Cost-effective: ~$0.005 per 1K tokens for analysis
-- Comprehensive error handling and user feedback
-- Real-time confidence scoring and timestamp tracking
-
-**Files Modified**:
-- `frontend/src/pages/Defendants.jsx` - Added AI search, risk scoring, evidence analysis
-- `frontend/src/pages/EndowmentDashboard.jsx` - Added investment AI, yield predictions, market analysis  
-- `frontend/src/pages/FounderEndowment.jsx` - Added financial forecasting, scenario analysis, health monitoring
-- `frontend/src/pages/NFTMarketplace.jsx` - Integrated AI NFT generator, enhanced minting workflow
-
-### Production Readiness Updates ✓
-- **Dependencies Updated**: All npm packages updated to latest minor versions (Vite 7.1.12, ESLint 9.38.0, Tailwind 3.4.18)
-- **Security**: Zero vulnerabilities detected in dependency scan
-- **Build Optimization**: ✓ IMPLEMENTED - Manual code splitting with 7 vendor chunks:
-  - vendor-react: 44.79 kB (gzip: 16.02 kB)
-  - vendor-crypto: 120.88 kB (gzip: 39.13 kB) - Coinbase/Circle
-  - vendor-ipfs: 290.65 kB (gzip: 73.42 kB) - IPFS client
-  - vendor-charts: 336.86 kB (gzip: 100.12 kB) - Recharts
-  - vendor-blockchain: 1.61 MB (gzip: 303.11 kB) - Cosmos SDK
-  - vendor-ui: 2.06 MB (gzip: 647.60 kB) - Icons (Lucide, Cryptocons)
-  - main bundle: 756.79 kB (gzip: 170.65 kB)
-  - **Total gzipped: ~1.35 MB** (optimized for production)
-- **IPFS Deprecation**: Documented ipfs-http-client deprecation with migration notes to Helia (current implementation still works)
-- **Production Build**: ✓ Verified successful - 33.94s build time with proper chunking
-- **Deployment Guide**: ✓ Created comprehensive 500+ line production deployment guide (PRODUCTION_DEPLOYMENT_GUIDE.md)
-
-### NVIDIA AI Integration ✓
-Integrated NVIDIA NIM AI models for enhanced capabilities across the platform:
-- **NFT Generator**: Stable Diffusion XL for justice-themed NFT art generation (~$0.002/image)
-  - Interactive prompt-based generation
-  - Automatic justice-themed styling
-  - Download and regeneration capabilities
-  - Mock mode for development (real API when NVIDIA_API_KEY configured)
-- **AI Trading Signals**: Llama 3.1 8B for sentiment analysis and market insights (~$0.005/1K tokens)
-  - Real-time sentiment analysis for REPAR token
-  - Bullish/bearish score calculation
-  - Quick example queries for testing
-  - Mock mode with keyword-based analysis
-- **Multimodal Search**: CLIP for liability database queries (~$0.001/search)
-  - Text and image-based evidence search
-  - $131T defendant database integration
-  - Confidence scoring and evidence matching
-  - Mock results for development testing
-
-**Features**:
-- Production-ready architecture with graceful fallbacks
-- Mock API layer for development without real API keys
-- Cost-effective implementation ($100-230/month at scale)
-- Easy integration with existing Cerberus AI system
-- Comprehensive error handling and user feedback
-
-**Files Created**:
-- `frontend/src/utils/nvidiaAI.js` - NVIDIA API wrapper with mock fallbacks
-- `frontend/src/components/AIFeatures/NFTGenerator.jsx` - AI NFT generation component
-- `frontend/src/components/AIFeatures/TradingSignals.jsx` - AI sentiment analysis component
-- `frontend/src/components/AIFeatures/MultimodalSearch.jsx` - AI search component
-- `frontend/src/pages/AIAnalyticsEnhanced.jsx` - Unified NVIDIA AI dashboard
-- `.env.template` - Complete environment configuration template
-
-### Deployment Verification System ✓
-Created comprehensive pre-production API key verification system:
-- **Critical APIs**: Cloudflare, DigitalOcean, AI models (Anthropic, OpenAI, X.AI, DeepSeek), Coinbase, Circle
-- **Recommended APIs**: NVIDIA NIM, GitHub, SendGrid, Infura
-- **Optional APIs**: Sentry, Pinata IPFS, Discord, Twitter/X
-- **Features**:
-  - Automated testing with mock responses
-  - Real-time status indicators and latency reporting
-  - Readiness scoring and production-ready verification
-  - Categorized API organization (MUST HAVE, RECOMMENDED, OPTIONAL)
-  - Visual feedback for connection status
-
-**Files Created**:
-- `frontend/src/pages/DeploymentVerification.jsx` - Full deployment verification dashboard
-- Accessible at `/deployment` route
-
-### Investor Dashboard Enhancements ✓
-Previously implemented (October 23, 2025):
-- Updated React-Vite dependencies to latest versions (React 19.2.0, Vite 7.1.11)
-- Created comprehensive Investor Dashboard with financial calculators
-- Fixed division-by-zero bugs with production-grade input validation
-- All changes architect-reviewed and production-ready
-
-## Recent Changes (October 21, 2025)
-
-### Cerberus Auditor Implementation
-Built the complete AI security auditing system as specified in the documentation:
-- Created `/auditor` directory structure with agents/, reports/ subdirectories
-- Implemented all three guilds (Analyst, Adversary, Engineer)
-- Configured API keys for OpenAI, Anthropic, xAI/Grok, and Deepseek
-- Added consensus mechanism for high-confidence vulnerability detection
-- Integrated automated patch generation and security fix verification
-
-## Recent Changes (October 19, 2025)
-
-### DEX Black Screen Fix ✓
-Fixed critical rendering issue where DEX, Liquidity, and Pools tabs would crash to black screen when switching cryptocurrencies:
-- **Root Cause**: Improper error handling for cryptocons icon library
-- **Solution**: Created shared `CryptoIcon` component with comprehensive fallback system
-- **Files Modified**:
-  - Created: `frontend/src/components/CryptoIcon.jsx` (centralized icon rendering)
-  - Updated: `frontend/src/components/SwapInterface.jsx`
-  - Updated: `frontend/src/components/LiquidityInterface.jsx`
-  - Updated: `frontend/src/pages/AequitasDEX.jsx`
-- **Result**: All tabs now render gracefully with letter-based fallbacks if icons fail
-- **Test Route**: `/icon-test` - displays all 15 cryptocurrency icons
-
-### Workflow Optimization
-Updated all three workflows to auto-install dependencies on startup:
-- Frontend workflow now runs: `npm install --prefer-offline --no-audit && npm run dev`
-- Backend workflow now runs: `npm install --prefer-offline --no-audit && npm start`
-- Block Explorer workflow now runs: `npm install --prefer-offline --no-audit && npm run dev`
-
-This ensures dependencies are always up-to-date without manual intervention.
+### System Design Choices
+- **Legal & Enforcement Framework**: Multi-layered strategy using international law (Genocide, jus cogens), Black's Law, UCC Article 9, and international arbitration (NY Convention).
+- **Security**: Cerberus Auditor System, a multi-agent AI system with Analyst, Adversary, and Engineer guilds, for continuous security auditing, vulnerability detection, automated patch generation, and document/codebase auditing.
+- **AI Integration**: Extensive use of NVIDIA NIM models (Stable Diffusion XL, Llama 3.1 8B, CLIP) for AI-powered features across dashboards (search, risk scoring, investment recommendations, NFT generation).
+- **Deployment Verification**: A pre-production API key verification system to ensure critical and recommended services are configured and operational before deployment.
 
 ## External Dependencies
 
-- **Frontend Framework**: React 19.2.0
-- **Build Tool**: Vite 7.1.11
-- **Styling**: Tailwind CSS 3.x
-- **Charts**: Recharts 3.3.0
-- **Icons**: Lucide React 0.546.0, cryptocons (with fallback handling)
+- **Frontend Framework**: React
+- **Build Tool**: Vite
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
+- **Icons**: Lucide React, cryptocons
 - **Blockchain SDK**: Cosmos SDK
-- **Payment Processing**: Circle USDCKit SDK (for USDC payments)
+- **Payment Processing**: Circle USDCKit SDK
 - **Decentralized Storage**: IPFS
-- **AI/ML**: 
-  - Cerberus Multi-Agent System (Anthropic Claude, OpenAI GPT-4, X.AI Grok, DeepSeek)
-  - NVIDIA NIM (Stable Diffusion XL, Llama 3.1 8B, CLIP, Whisper, Gemma 2)
-- **Wallet Integration**: Keplr (for Cosmos native)
-
-## Deployment Configuration
-
-### Environment Variables
-A comprehensive `.env.template` file is provided with 200+ configuration options including:
-- **Infrastructure**: Cloudflare DNS, DigitalOcean deployment
-- **AI Models**: Anthropic, OpenAI, X.AI, DeepSeek, NVIDIA NIM
-- **Payments**: Coinbase, Circle USDC
-- **Blockchain**: Cosmos Hub, Ethereum, Polygon RPCs
-- **Services**: SendGrid email, Sentry monitoring, IPFS storage
-- **Security**: JWT secrets, CORS origins, rate limiting
-
-### Pre-Deployment Checklist
-Use `/deployment` route to verify:
-1. All critical API keys are configured
-2. AI model endpoints are accessible
-3. Payment systems are operational
-4. Infrastructure services are connected
-5. Production readiness score ≥ 100%
-
-### Cost Estimates
-- **NVIDIA AI**: $100-230/month (NFT generation, trading signals, multimodal search)
-- **Cerberus AI**: Variable based on usage (~$50-200/month)
-- **Infrastructure**: DigitalOcean, Cloudflare (varies by traffic)
-- **Total Estimated**: $300-600/month at moderate scale
+- **AI/ML**:
+  - Anthropic Claude
+  - OpenAI GPT-4
+  - X.AI Grok
+  - DeepSeek
+  - NVIDIA NIM (Stable Diffusion XL, Llama 3.1 8B, CLIP)
+- **Wallet Integration**: Keplr
+- **Infrastructure**: Cloudflare, DigitalOcean (configurable via `.env`)
+- **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub (configurable via `.env`)
