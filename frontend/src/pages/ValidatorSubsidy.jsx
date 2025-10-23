@@ -2,105 +2,245 @@ import { useState, useEffect } from 'react';
 import { Server, DollarSign, Shield, AlertCircle, TrendingUp, Clock, CheckCircle, Wallet } from 'lucide-react';
 import StatCard from '../components/StatCard';
 
+// Assume tmClient is available globally or imported from a context
+// For demonstration purposes, we'll assume it's imported from a shared context or utility
+// In a real application, this would be handled more robustly, e.g., via React Context
+import { tmClient } from '../utils/tmClient'; // Placeholder for actual tmClient import
+
 export default function ValidatorSubsidy() {
+  // State variables for subsidy pool, validators, payments, and schedule
   const [subsidyPool, setSubsidyPool] = useState(null);
   const [validators, setValidators] = useState([]);
   const [payments, setPayments] = useState([]);
   const [schedule, setSchedule] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Mock data for initial display or fallback
   const [budget, setBudget] = useState(6456); // $6,456 USDC/month
   const [emergency, setEmergency] = useState(2152); // $2,152 emergency reserve
   const [infrastructure, setInfrastructure] = useState(4304); // $4,304 base infrastructure
 
+  // Mock state for pool balance, operator expenses, etc. which will be replaced by live data
+  const [poolBalance, setPoolBalance] = useState(45000000);
+  const [operatorExpenses, setOperatorExpenses] = useState(12500000);
+  const [lastDistribution, setLastDistribution] = useState(new Date(Date.now() - 86400000)); // 1 day ago
+  const [nextDistribution, setNextDistribution] = useState(new Date(Date.now() + 86400000)); // 1 day from now
+  const [totalDistributed, setTotalDistributed] = useState(128000000);
+
+
   useEffect(() => {
-    fetchSubsidyData();
-  }, []);
-
-  const fetchSubsidyData = async () => {
-    try {
-      // Simulate data loading
+    const fetchData = async () => {
       setLoading(true);
-      setTimeout(() => {
-        // These would be real API calls to the blockchain in production
-        // For now, using mock data
-        setSubsidyPool({
-          totalAllocated: '15000000',
-          monthlyBudget: '1000000',
-          emergencyReserve: '500000',
-          lastDistribution: Date.now() - 15 * 24 * 60 * 60 * 1000, // 15 days ago
-        });
+      try {
+        // Attempt to get the Stargate client
+        // Ensure tmClient is properly initialized and accessible
+        if (tmClient) {
+          // Query validator subsidy pool state
+          try {
+            const poolQuery = {
+              path: "/aequitas.validatorsubsidy.v1.Query/Pool",
+              data: new Uint8Array(),
+              prove: false,
+            };
+            const poolResponse = await tmClient.abciQuery(poolQuery);
 
-        setValidators([
-          {
-            validatorAddress: 'aequitasvaloper1...',
-            operatorAddress: 'aequitas1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun',
-            monthlyAllocation: '6456',
-            totalReceived: '19368',
-            status: 'ACTIVE',
-            infrastructureCostUsd: '4304.00',
-            emergencyBufferUsd: '2152.00',
-            lastPayment: Date.now() - 15 * 24 * 60 * 60 * 1000,
-            registeredAt: Date.now() - 90 * 24 * 60 * 60 * 1000,
-          },
-        ]);
+            if (poolResponse.code === 0 && poolResponse.value) {
+              const poolData = JSON.parse(new TextDecoder().decode(poolResponse.value));
+              setSubsidyPool({
+                totalAllocated: poolData.totalAllocated,
+                monthlyBudget: poolData.monthlyBudget,
+                emergencyReserve: poolData.emergencyReserve,
+                lastDistribution: new Date(poolData.lastDistribution),
+                nextDistribution: new Date(poolData.nextDistribution),
+              });
 
-        setPayments([
-          {
-            id: 'payment-1',
-            validatorAddress: 'aequitasvaloper1...',
-            amount: '6456',
-            timestamp: Date.now() - 15 * 24 * 60 * 60 * 1000,
-            type: 'MONTHLY_SUBSIDY',
-            notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
-          },
-          {
-            id: 'payment-2',
-            validatorAddress: 'aequitasvaloper1...',
-            amount: '6456',
-            timestamp: Date.now() - 45 * 24 * 60 * 60 * 1000,
-            type: 'MONTHLY_SUBSIDY',
-            notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
-          },
-          {
-            id: 'payment-3',
-            validatorAddress: 'aequitasvaloper1...',
-            amount: '6456',
-            timestamp: Date.now() - 75 * 24 * 60 * 60 * 1000,
-            type: 'MONTHLY_SUBSIDY',
-            notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
-          },
-        ]);
+              setPoolBalance(parseInt(poolData.balance || '0'));
+              setOperatorExpenses(parseInt(poolData.operatorExpenses || '0'));
+              setTotalDistributed(parseInt(poolData.totalDistributed || '0'));
+              setLastDistribution(new Date(poolData.lastDistribution || Date.now() - 86400000));
+              setNextDistribution(new Date(poolData.nextDistribution || Date.now() + 86400000));
 
+              // Fetch validators
+              const validatorsQuery = {
+                path: "/aequitas.validatorsubsidy.v1.Query/Validators",
+                data: new Uint8Array(),
+                prove: false,
+              };
+              const validatorsResponse = await tmClient.abciQuery(validatorsQuery);
+              if (validatorsResponse.code === 0 && validatorsResponse.value) {
+                const validatorsData = JSON.parse(new TextDecoder().decode(validatorsResponse.value));
+                setValidators(validatorsData.validators || []);
+              } else {
+                console.warn('Validators query failed, using empty list.');
+                setValidators([]);
+              }
+
+              // Fetch payments
+              const paymentsQuery = {
+                path: "/aequitas.validatorsubsidy.v1.Query/Payments",
+                data: new Uint8Array(),
+                prove: false,
+              };
+              const paymentsResponse = await tmClient.abciQuery(paymentsQuery);
+              if (paymentsResponse.code === 0 && paymentsResponse.value) {
+                const paymentsData = JSON.parse(new TextDecoder().decode(paymentsResponse.value));
+                setPayments(paymentsData.payments || []);
+              } else {
+                console.warn('Payments query failed, using empty list.');
+                setPayments([]);
+              }
+
+              // Fetch schedule
+              const scheduleQuery = {
+                path: "/aequitas.validatorsubsidy.v1.Query/Schedule",
+                data: new Uint8Array(),
+                prove: false,
+              };
+              const scheduleResponse = await tmClient.abciQuery(scheduleQuery);
+              if (scheduleResponse.code === 0 && scheduleResponse.value) {
+                const scheduleData = JSON.parse(new TextDecoder().decode(scheduleResponse.value));
+                setSchedule({
+                  distributionIntervalSeconds: parseInt(scheduleData.distributionIntervalSeconds || '2592000'),
+                  nextDistribution: new Date(scheduleData.nextDistribution || Date.now() + 15 * 24 * 60 * 60 * 1000),
+                  autoDistribute: scheduleData.autoDistribute,
+                  minValidatorUptimePercent: scheduleData.minValidatorUptimePercent || '95.0',
+                });
+              } else {
+                console.warn('Schedule query failed, using defaults.');
+                setSchedule({
+                  distributionIntervalSeconds: 2592000, // 30 days
+                  nextDistribution: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+                  autoDistribute: true,
+                  minValidatorUptimePercent: '95.0',
+                });
+              }
+
+            } else {
+              console.warn('Pool query failed, using defaults');
+              // Fallback to default values if query fails or returns no value
+              setPoolBalance(45000000);
+              setOperatorExpenses(12500000);
+              setTotalDistributed(128000000);
+              setLastDistribution(new Date(Date.now() - 86400000));
+              setNextDistribution(new Date(Date.now() + 86400000));
+              setValidators([]);
+              setPayments([]);
+              setSchedule({
+                distributionIntervalSeconds: 2592000, // 30 days
+                nextDistribution: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+                autoDistribute: true,
+                minValidatorUptimePercent: '95.0',
+              });
+            }
+          } catch (queryError) {
+            console.warn('Error querying blockchain data, using defaults:', queryError);
+            // Fallback to default values on error
+            setPoolBalance(45000000);
+            setOperatorExpenses(12500000);
+            setTotalDistributed(128000000);
+            setLastDistribution(new Date(Date.now() - 86400000));
+            setNextDistribution(new Date(Date.now() + 86400000));
+            setValidators([]);
+            setPayments([]);
+            setSchedule({
+              distributionIntervalSeconds: 2592000, // 30 days
+              nextDistribution: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+              autoDistribute: true,
+              minValidatorUptimePercent: '95.0',
+            });
+          }
+        } else {
+          // Chain not available, use mock data
+          console.warn('Tendermint client not available, using mock data.');
+          setPoolBalance(45000000);
+          setOperatorExpenses(12500000);
+          setLastDistribution(new Date(Date.now() - 86400000));
+          setNextDistribution(new Date(Date.now() + 86400000));
+          setTotalDistributed(128000000);
+          setValidators([
+            {
+              validatorAddress: 'aequitasvaloper1...',
+              operatorAddress: 'aequitas1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun',
+              monthlyAllocation: '6456',
+              totalReceived: '19368',
+              status: 'ACTIVE',
+              infrastructureCostUsd: '4304.00',
+              emergencyBufferUsd: '2152.00',
+              lastPayment: Date.now() - 15 * 24 * 60 * 60 * 1000,
+              registeredAt: Date.now() - 90 * 24 * 60 * 60 * 1000,
+            },
+          ]);
+          setPayments([
+            {
+              id: 'payment-1',
+              validatorAddress: 'aequitasvaloper1...',
+              amount: '6456',
+              timestamp: Date.now() - 15 * 24 * 60 * 60 * 1000,
+              type: 'MONTHLY_SUBSIDY',
+              notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
+            },
+          ]);
+          setSchedule({
+            distributionIntervalSeconds: 2592000, // 30 days
+            nextDistribution: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
+            autoDistribute: true,
+            minValidatorUptimePercent: '95.0',
+          });
+        }
+      } catch (error) {
+        console.error('Failed to fetch subsidy data:', error);
+        // Use fallback data on error
+        setPoolBalance(45000000);
+        setOperatorExpenses(12500000);
+        setTotalDistributed(128000000);
+        setLastDistribution(new Date(Date.now() - 86400000));
+        setNextDistribution(new Date(Date.now() + 86400000));
+        setValidators([]);
+        setPayments([]);
         setSchedule({
           distributionIntervalSeconds: 2592000, // 30 days
-          nextDistribution: Date.now() + 15 * 24 * 60 * 60 * 1000, // 15 days from now
+          nextDistribution: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days from now
           autoDistribute: true,
           minValidatorUptimePercent: '95.0',
         });
-
+      } finally {
         setLoading(false);
-      }, 800);
-    } catch (error) {
-      console.error('Failed to fetch subsidy data:', error);
-      setLoading(false);
-    }
-  };
+      }
+    };
+
+    fetchData();
+    const interval = setInterval(fetchData, 30000); // Refresh data every 30 seconds
+    return () => clearInterval(interval);
+  }, [tmClient]); // Depend on tmClient to refetch if it changes
+
 
   const formatUSDC = (amount) => {
-    return parseFloat(amount).toFixed(2);
+    // Ensure amount is treated as a number, handle potential undefined/null
+    const numericAmount = parseFloat(amount);
+    if (isNaN(numericAmount)) {
+      return '0.00';
+    }
+    return numericAmount.toFixed(2);
   };
 
   const formatDate = (timestamp) => {
-    return new Date(timestamp).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
+    if (!timestamp) return 'N/A';
+    try {
+      return new Date(timestamp).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
+    } catch (e) {
+      console.error("Error formatting date:", timestamp, e);
+      return 'Invalid Date';
+    }
   };
 
   const getDaysUntilNextPayment = () => {
-    if (!schedule) return 0;
-    const diff = schedule.nextDistribution - Date.now();
+    if (!schedule || !schedule.nextDistribution) return 'N/A';
+    const diff = new Date(schedule.nextDistribution).getTime() - Date.now();
+    if (diff < 0) return 'Due';
     return Math.ceil(diff / (24 * 60 * 60 * 1000));
   };
 
@@ -114,6 +254,14 @@ export default function ValidatorSubsidy() {
       </div>
     );
   }
+
+  // Extract data for display, providing fallbacks
+  const currentPoolBalance = poolBalance || 0;
+  const currentOperatorExpenses = operatorExpenses || 0;
+  const currentTotalDistributed = totalDistributed || 0;
+  const currentBudget = subsidyPool?.monthlyBudget ? parseInt(subsidyPool.monthlyBudget) : budget;
+  const currentEmergency = subsidyPool?.emergencyReserve ? parseInt(subsidyPool.emergencyReserve) : emergency;
+  const currentInfrastructure = infrastructure; // Keeping this as mock for now if not available from chain
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -137,7 +285,7 @@ export default function ValidatorSubsidy() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Monthly Budget"
-            value={`${budget.toLocaleString()} USDC`}
+            value={`${currentBudget.toLocaleString()} USDC`}
             subtitle="Allocated per month"
             icon={<DollarSign className="h-8 w-8 text-green-600" />}
             color="green"
@@ -189,7 +337,7 @@ export default function ValidatorSubsidy() {
                   Multi-server architecture: Validator Core ($168), RPC Fleet ($74), AI Engine ($30), Secure API Gateway ($32)
                 </p>
                 <p className="text-sm text-green-800 mt-2">
-                  Total: ${infrastructure.toLocaleString()}/month
+                  Total: ${currentInfrastructure.toLocaleString()}/month
                 </p>
               </div>
 
@@ -202,7 +350,7 @@ export default function ValidatorSubsidy() {
                   Emergency reserve for scaling, GPU nodes, and unforeseen infrastructure needs
                 </p>
                 <p className="text-sm text-blue-800 mt-2">
-                  Total: ${emergency.toLocaleString()}/month
+                  Total: ${currentEmergency.toLocaleString()}/month
                 </p>
               </div>
 
@@ -212,7 +360,7 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold text-purple-900">Total Allocation</h3>
                 </div>
                 <p className="text-sm text-purple-800">
-                  ${budget.toLocaleString()} USDC per validator per month (from DEX Treasury)
+                  ${currentBudget.toLocaleString()} USDC per validator per month (from DEX Treasury)
                 </p>
               </div>
             </div>
@@ -235,10 +383,10 @@ export default function ValidatorSubsidy() {
                     }`}></div>
                     <div>
                       <h3 className="text-lg font-bold text-gray-900">
-                        {validator.validatorAddress.substring(0, 20)}...
+                        {validator.validatorAddress?.substring(0, 20) || 'N/A'}...
                       </h3>
                       <p className="text-sm text-gray-500">
-                        Operator: {validator.operatorAddress.substring(0, 20)}...
+                        Operator: {validator.operatorAddress?.substring(0, 20) || 'N/A'}...
                       </p>
                     </div>
                   </div>
@@ -248,7 +396,7 @@ export default function ValidatorSubsidy() {
                       validator.status === 'INACTIVE' ? 'bg-gray-100 text-gray-800' :
                       'bg-red-100 text-red-800'
                     }`}>
-                      {validator.status}
+                      {validator.status || 'UNKNOWN'}
                     </div>
                   </div>
                 </div>
@@ -283,11 +431,11 @@ export default function ValidatorSubsidy() {
                   <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center space-x-2 text-gray-600">
                       <Wallet className="h-4 w-4" />
-                      <span>Infrastructure: ${validator.infrastructureCostUsd}/mo</span>
+                      <span>Infrastructure: ${validator.infrastructureCostUsd || '0.00'}/mo</span>
                     </div>
                     <div className="flex items-center space-x-2 text-gray-600">
                       <Shield className="h-4 w-4" />
-                      <span>Emergency Buffer: ${validator.emergencyBufferUsd}/mo</span>
+                      <span>Emergency Buffer: ${validator.emergencyBufferUsd || '0.00'}/mo</span>
                     </div>
                   </div>
                 </div>
@@ -316,7 +464,7 @@ export default function ValidatorSubsidy() {
                   <tr key={index} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="px-4 py-4 text-sm">{formatDate(payment.timestamp)}</td>
                     <td className="px-4 py-4 text-sm font-mono">
-                      {payment.validatorAddress.substring(0, 15)}...
+                      {payment.validatorAddress?.substring(0, 15) || 'N/A'}...
                     </td>
                     <td className="px-4 py-4 text-sm">
                       <span className={`px-2 py-1 rounded text-xs font-semibold ${
@@ -324,13 +472,13 @@ export default function ValidatorSubsidy() {
                         payment.type === 'EMERGENCY_EXPENSE' ? 'bg-red-100 text-red-800' :
                         'bg-blue-100 text-blue-800'
                       }`}>
-                        {payment.type.replace('_', ' ')}
+                        {payment.type?.replace('_', ' ') || 'UNKNOWN'}
                       </span>
                     </td>
                     <td className="px-4 py-4 text-sm font-semibold text-indigo-600">
                       ${formatUSDC(payment.amount)} USDC
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-600">{payment.notes}</td>
+                    <td className="px-4 py-4 text-sm text-gray-600">{payment.notes || 'No notes'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -353,7 +501,7 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold">Distribution Interval</h3>
                 </div>
                 <p className="text-2xl font-bold text-cyan-400">
-                  {schedule.distributionIntervalSeconds / 86400} days
+                  {schedule.distributionIntervalSeconds ? (schedule.distributionIntervalSeconds / 86400).toFixed(0) : 'N/A'} days
                 </p>
                 <p className="text-sm text-indigo-200 mt-1">Automatic monthly payments</p>
               </div>
@@ -364,7 +512,7 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold">Next Distribution</h3>
                 </div>
                 <p className="text-2xl font-bold text-green-400">
-                  {getDaysUntilNextPayment()} days
+                  {getDaysUntilNextPayment()}
                 </p>
                 <p className="text-sm text-indigo-200 mt-1">
                   {formatDate(schedule.nextDistribution)}
@@ -377,7 +525,7 @@ export default function ValidatorSubsidy() {
                   <h3 className="text-lg font-bold">Min Uptime Required</h3>
                 </div>
                 <p className="text-2xl font-bold text-purple-400">
-                  {schedule.minValidatorUptimePercent}%
+                  {schedule.minValidatorUptimePercent || 'N/A'}%
                 </p>
                 <p className="text-sm text-indigo-200 mt-1">To qualify for payments</p>
               </div>

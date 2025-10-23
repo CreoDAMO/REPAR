@@ -157,10 +157,16 @@ const WalletConnect = ({ onWalletConnected }) => {
       setWalletType('keplr');
       setConnected(true);
       
+      // Store signer in cosmosClient for transaction signing
+      const { cosmosClient } = await import('../utils/cosmosClient');
+      cosmosClient.signer = offlineSigner;
+      cosmosClient.account = accounts[0];
+      
       if (onWalletConnected) {
         onWalletConnected({
           address: accounts[0].address,
           wallet: 'keplr',
+          signer: offlineSigner,
         });
       }
     } catch (error) {

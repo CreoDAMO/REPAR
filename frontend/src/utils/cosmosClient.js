@@ -8,6 +8,9 @@ let stargateClient = null;
 let tmClient = null;
 let isChainAvailable = false;
 
+// Export tmClient for use in other modules
+export { tmClient };
+
 const getStargateClient = async () => {
   if (!stargateClient) {
     try {
@@ -234,15 +237,25 @@ export const cosmosClient = {
   estimateDEXSwap,
   getStargateClient,
   getTotalOwed: queryTotalLiability, // Alias for compatibility
+  signer: null,
+  account: null,
 
-  async signAndBroadcast(messages) {
+  async signAndBroadcast(messages, memo = '') {
     try {
-      if (!isChainAvailable) {
-        throw new Error('Client not connected');
+      if (!this.signer || !this.account) {
+        throw new Error('Wallet not connected. Please connect Keplr wallet first.');
       }
 
-      const client = await getStargateClient();
-      const account = await this.getAccount();
+      if (!isChainAvailable) {
+        throw new Error('Chain not available');
+      }
+
+      const { SigningStargateClient } = await import("@cosmjs/stargate");
+      
+      const client = await SigningStargateClient.connectWithSigner(
+        RPC_ENDPOINT,
+        this.signer
+      );
 
       const fee = {
         amount: [{ denom: 'urepar', amount: '5000' }],
@@ -250,10 +263,10 @@ export const cosmosClient = {
       };
 
       const result = await client.signAndBroadcast(
-        account.address,
+        this.account.address,
         messages,
         fee,
-        'Aequitas DEX Transaction'
+        memo
       );
 
       if (result.code !== 0) {
@@ -268,16 +281,52 @@ export const cosmosClient = {
   },
 
   async getAccount() {
-    // Return the connected wallet account
-    // This would integrate with Keplr/Leap wallet
+    if (this.account) {
+      return this.account;
+    }
+    
     if (window.keplr) {
       const chainId = 'aequitas-1';
       await window.keplr.enable(chainId);
       const offlineSigner = window.keplr.getOfflineSigner(chainId);
       const accounts = await offlineSigner.getAccounts();
+      this.account = accounts[0];
+      this.signer = offlineSigner;
       return accounts[0];
     }
     throw new Error('No wallet connected');
+  },
+
+  async getBalance(address) {
+    const client = await getStargateClient();
+    if (!client) return [];
+    
+    try {
+      const balance = await client.getAllBalances(address || this.account?.address);
+      return balance;
+    } catch (error) {
+      console.warn('Failed to fetch balance:', error);
+      return [];
+    }
+  },
+
+  async getTransactionHistory(address, limit = 50) {
+    if (!tmClient) return [];
+    
+    try {
+      const query = `tx.height>0 AND (message.sender='${address}' OR transfer.recipient='${address}')`;
+      const results = await tmClient.txSearchAll({ query, per_page: limit });
+      
+      return results.txs.map(tx => ({
+        hash: tx.hash,
+        height: tx.height,
+        result: tx.result,
+        timestamp: new Date(tx.tx.time),
+      }));
+    } catch (error) {
+      console.warn('Failed to fetch transaction history:', error);
+      return [];
+    }
   }
 };
 
