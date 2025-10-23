@@ -14,6 +14,11 @@ export const config = {
     entitySecret: process.env.CIRCLE_ENTITY_SECRET,
   },
   
+  // NVIDIA NIM API
+  nvidia: {
+    apiKey: process.env.NVIDIA_API_KEY,
+  },
+  
   // Security
   session: {
     secret: process.env.SESSION_SECRET || 'aequitas-session-secret-change-in-production',

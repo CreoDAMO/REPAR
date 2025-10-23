@@ -10,8 +10,10 @@ export default defineConfig({
     port: 5000,
     allowedHosts: true,
     hmr: {
-      clientPort: 443,
-      protocol: 'wss'
+      // Replit environment HMR configuration
+      clientPort: process.env.REPLIT_DEV_DOMAIN ? 443 : 5000,
+      protocol: process.env.REPLIT_DEV_DOMAIN ? 'wss' : 'ws',
+      host: process.env.REPLIT_DEV_DOMAIN || 'localhost',
     },
     proxy: {
       '/api': {

@@ -13,6 +13,7 @@ import { config, validateConfig } from './config/index.js';
 import circleRoutes from './routes/circle.js';
 import auditorRoutes from './routes/auditor.js';
 import agentkitRoutes from './routes/agentkit.js';
+import nvidiaRoutes from './routes/nvidia.js';
 import { createSession } from './middleware/auth.js';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
@@ -134,6 +135,12 @@ app.get('/api', (req, res) => {
         agentStatus: 'GET /api/agentkit/agent-status/:agentId',
         agentAction: 'POST /api/agentkit/agent-action',
       },
+      nvidia: {
+        status: 'GET /api/nvidia/status',
+        imageGeneration: 'POST /api/nvidia/images/generations',
+        chatCompletions: 'POST /api/nvidia/chat/completions',
+        embeddings: 'POST /api/nvidia/embeddings',
+      },
     },
   });
 });
@@ -145,30 +152,7 @@ app.post('/api/auth/session', createSession);
 app.use('/api/circle', circleRoutes);
 app.use('/api/auditor', auditorRoutes);
 app.use('/api/agentkit', agentkitRoutes);
-
-// NVIDIA NIM proxy (keeps API key server-side)
-app.post('/api/nvidia/*', async (req, res) => {
-  const nvidiaApiKey = process.env.NVIDIA_API_KEY;
-  if (!nvidiaApiKey) {
-    return res.status(500).json({ error: 'NVIDIA API key not configured' });
-  }
-
-  const endpoint = req.params[0];
-  try {
-    const response = await fetch(`https://integrate.api.nvidia.com/v1/${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${nvidiaApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(req.body),
-    });
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+app.use('/api/nvidia', nvidiaRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -219,6 +203,7 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   console.log(`  Circle: http://localhost:${config.port}/api/circle/*`);
   console.log(`  Auditor: http://localhost:${config.port}/api/auditor/*`);
   console.log(`  AgentKit: http://localhost:${config.port}/api/agentkit/*`);
+  console.log(`  NVIDIA AI: http://localhost:${config.port}/api/nvidia/*`);
   console.log('');
   console.log('Security:');
   console.log(`  ✅ CORS enabled for: ${config.cors.origins.join(', ')}`);
@@ -228,8 +213,11 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   console.log(`  ✅ CSRF protection enabled`);
   console.log('');
   console.log('Circle SDK:');
-  console.log(`  ✅ API Key: ${config.circle.apiKey ? '***configured***' : '❌ NOT SET'}`);
-  console.log(`  ✅ Entity Secret: ${config.circle.entitySecret ? '***configured***' : '❌ NOT SET'}`);
+  console.log(`  API Key: ${config.circle.apiKey ? '✅ ***configured***' : '❌ NOT SET'}`);
+  console.log(`  Entity Secret: ${config.circle.entitySecret ? '✅ ***configured***' : '❌ NOT SET'}`);
+  console.log('');
+  console.log('NVIDIA NIM API:');
+  console.log(`  API Key: ${config.nvidia.apiKey ? '✅ ***configured***' : '⚠️  NOT SET (AI features will use mocks)'}`);
   console.log('');
   console.log('Ready to accept requests! 🎯');
   console.log('');
