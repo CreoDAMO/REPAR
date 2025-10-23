@@ -1,0 +1,32 @@
+{
+    "development_cost_core": 18000000,
+    "development_cost_bonus": 4000000,
+    "pre_launch_valuation": 7000000000,
+    "operational_war_chest": 22000000,
+    "seed_raise": 22000000,
+    "equity_at_seed_raise_percent": 0.314,
+    "use_of_funds_new": {
+        "cerberus_ai_activation": 10000000,
+        "elite_team": 6000000,
+        "security": 3000000,
+        "marketing": 2000000,
+        "contingency": 1000000
+    },
+    "return_projections_new": {
+        "worst": {"collection_rate": 0.0001, "amount_recovered": 13100000000, "year_3_valuation": 100000000000, "investor_share": 314000000, "return_multiple": 14},
+        "base": {"collection_rate": 0.0005, "amount_recovered": 65500000000, "year_3_valuation": 1000000000000, "investor_share": 3140000000, "return_multiple": 143},
+        "likely": {"collection_rate": 0.0010, "amount_recovered": 131000000000, "year_3_valuation": 3000000000000, "investor_share": 9420000000, "return_multiple": 428},
+        "bull": {"collection_rate": 0.0050, "amount_recovered": 655000000000, "year_3_valuation": 15000000000000, "investor_share": 47100000000, "return_multiple": 2141}
+    },
+    "total_addressable_market": 131000000000000,
+    "justice_burn_mechanisms": {
+        "1b_settlement_repar_burned": 1000000000,
+        "1b_settlement_supply_reduction_percent": 0.00076,
+        "50b_settlement_repar_burned": 50000000000,
+        "50b_settlement_supply_reduction_percent": 0.038,
+        "1t_settlement_repar_burned": 1000000000000,
+        "1t_settlement_supply_reduction_percent": 0.76
+    },
+    "valuation_cap": 7000000000,
+    "discount_next_round_percent": 20
+}
