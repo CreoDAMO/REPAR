@@ -21,4 +21,20 @@ export default defineConfig({
       }
     }
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-charts': ['recharts'],
+          'vendor-blockchain': ['@cosmjs/proto-signing', '@cosmjs/stargate', '@cosmjs/tendermint-rpc'],
+          'vendor-ui': ['lucide-react', 'cryptocons', 'react-icons'],
+          'vendor-ipfs': ['ipfs-http-client'],
+          'vendor-crypto': ['@coinbase/wallet-sdk', '@coinbase/cbpay-js', '@circle-fin/usdckit']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000,
+    sourcemap: false
+  }
 })
