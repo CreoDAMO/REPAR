@@ -18,64 +18,68 @@ export default function ValidatorSubsidy() {
 
   const fetchSubsidyData = async () => {
     try {
-      // These would be real API calls to the blockchain in production
-      // For now, using mock data
-      setSubsidyPool({
-        totalAllocated: '15000000',
-        monthlyBudget: '1000000',
-        emergencyReserve: '500000',
-        lastDistribution: Date.now() - 15 * 24 * 60 * 60 * 1000, // 15 days ago
-      });
+      // Simulate data loading
+      setLoading(true);
+      setTimeout(() => {
+        // These would be real API calls to the blockchain in production
+        // For now, using mock data
+        setSubsidyPool({
+          totalAllocated: '15000000',
+          monthlyBudget: '1000000',
+          emergencyReserve: '500000',
+          lastDistribution: Date.now() - 15 * 24 * 60 * 60 * 1000, // 15 days ago
+        });
 
-      setValidators([
-        {
-          validatorAddress: 'aequitasvaloper1...',
-          operatorAddress: 'aequitas1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun',
-          monthlyAllocation: '6456',
-          totalReceived: '19368',
-          status: 'ACTIVE',
-          infrastructureCostUsd: '4304.00',
-          emergencyBufferUsd: '2152.00',
-          lastPayment: Date.now() - 15 * 24 * 60 * 60 * 1000,
-          registeredAt: Date.now() - 90 * 24 * 60 * 60 * 1000,
-        },
-      ]);
+        setValidators([
+          {
+            validatorAddress: 'aequitasvaloper1...',
+            operatorAddress: 'aequitas1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun',
+            monthlyAllocation: '6456',
+            totalReceived: '19368',
+            status: 'ACTIVE',
+            infrastructureCostUsd: '4304.00',
+            emergencyBufferUsd: '2152.00',
+            lastPayment: Date.now() - 15 * 24 * 60 * 60 * 1000,
+            registeredAt: Date.now() - 90 * 24 * 60 * 60 * 1000,
+          },
+        ]);
 
-      setPayments([
-        {
-          id: 'payment-1',
-          validatorAddress: 'aequitasvaloper1...',
-          amount: '6456',
-          timestamp: Date.now() - 15 * 24 * 60 * 60 * 1000,
-          type: 'MONTHLY_SUBSIDY',
-          notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
-        },
-        {
-          id: 'payment-2',
-          validatorAddress: 'aequitasvaloper1...',
-          amount: '6456',
-          timestamp: Date.now() - 45 * 24 * 60 * 60 * 1000,
-          type: 'MONTHLY_SUBSIDY',
-          notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
-        },
-        {
-          id: 'payment-3',
-          validatorAddress: 'aequitasvaloper1...',
-          amount: '6456',
-          timestamp: Date.now() - 75 * 24 * 60 * 60 * 1000,
-          type: 'MONTHLY_SUBSIDY',
-          notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
-        },
-      ]);
+        setPayments([
+          {
+            id: 'payment-1',
+            validatorAddress: 'aequitasvaloper1...',
+            amount: '6456',
+            timestamp: Date.now() - 15 * 24 * 60 * 60 * 1000,
+            type: 'MONTHLY_SUBSIDY',
+            notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
+          },
+          {
+            id: 'payment-2',
+            validatorAddress: 'aequitasvaloper1...',
+            amount: '6456',
+            timestamp: Date.now() - 45 * 24 * 60 * 60 * 1000,
+            type: 'MONTHLY_SUBSIDY',
+            notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
+          },
+          {
+            id: 'payment-3',
+            validatorAddress: 'aequitasvaloper1...',
+            amount: '6456',
+            timestamp: Date.now() - 75 * 24 * 60 * 60 * 1000,
+            type: 'MONTHLY_SUBSIDY',
+            notes: 'Monthly validator subsidy payment in USDC from DEX Treasury',
+          },
+        ]);
 
-      setSchedule({
-        distributionIntervalSeconds: 2592000, // 30 days
-        nextDistribution: Date.now() + 15 * 24 * 60 * 60 * 1000, // 15 days from now
-        autoDistribute: true,
-        minValidatorUptimePercent: '95.0',
-      });
+        setSchedule({
+          distributionIntervalSeconds: 2592000, // 30 days
+          nextDistribution: Date.now() + 15 * 24 * 60 * 60 * 1000, // 15 days from now
+          autoDistribute: true,
+          minValidatorUptimePercent: '95.0',
+        });
 
-      setLoading(false);
+        setLoading(false);
+      }, 800);
     } catch (error) {
       console.error('Failed to fetch subsidy data:', error);
       setLoading(false);
@@ -102,8 +106,11 @@ export default function ValidatorSubsidy() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-700">Loading validator subsidy data...</p>
+        </div>
       </div>
     );
   }

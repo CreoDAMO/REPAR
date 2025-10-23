@@ -135,8 +135,8 @@ export default function InvestorDashboard() {
 
   useEffect(() => {
     setLoading(true);
-    // Simulate fetching data
     // TODO: Replace with actual API calls to blockchain
+    // Example: const metrics = await cosmosClient.query.endowment.metrics()
     setTimeout(() => {
       setMetrics({
         totalStaked: 150000000,
@@ -145,7 +145,7 @@ export default function InvestorDashboard() {
         portfolioValue: 2345600,
       });
       setLoading(false);
-    }, 1000); // Simulate network delay
+    }, 800);
   }, []);
 
   if (loading) {
