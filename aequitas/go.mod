@@ -18,7 +18,7 @@ require (
         cosmossdk.io/x/feegrant v0.2.0
         cosmossdk.io/x/nft v0.2.0
         cosmossdk.io/x/upgrade v0.2.0
-        github.com/bufbuild/buf v1.54.0
+        github.com/bufbuild/buf v1.47.2
         github.com/cometbft/cometbft v0.38.19
         github.com/cosmos/cosmos-db v1.1.3
         github.com/cosmos/cosmos-proto v1.0.0-beta.5
@@ -296,4 +296,15 @@ require (
         sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace github.com/CreoDAMO/REPAR/aequitas => ./
+replace (
+	github.com/CreoDAMO/REPAR/aequitas => ./
+	github.com/CreoDAMO/REPAR/aequitas/x/claims => ./x/claims
+	github.com/CreoDAMO/REPAR/aequitas/x/defendant => ./x/defendant
+	github.com/CreoDAMO/REPAR/aequitas/x/dex => ./x/dex
+	github.com/CreoDAMO/REPAR/aequitas/x/distribution => ./x/distribution
+	github.com/CreoDAMO/REPAR/aequitas/x/endowment => ./x/endowment
+	github.com/CreoDAMO/REPAR/aequitas/x/founderendowment => ./x/founderendowment
+	github.com/CreoDAMO/REPAR/aequitas/x/justice => ./x/justice
+	github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace => ./x/nftmarketplace
+	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy => ./x/validatorsubsidy
+)
