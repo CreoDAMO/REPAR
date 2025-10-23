@@ -274,7 +274,7 @@ require (
 	golang.org/x/text v0.29.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
 	google.golang.org/api v0.215.0 // indirect
-	google.golang.org/genproto v0.0.0-20241118233622-e639e219e6997 // indirect
+	google.golang.org/genproto v0.0.0-20241118233622-e639e219e697 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250728155136-f173205681a0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250728155136-f173205681a0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
@@ -286,11 +286,4 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-replace (
-	cosmossdk.io/api => cosmossdk.io/api v0.7.3-0.20240815194237-858ec2fcb897
-	cosmossdk.io/store => cosmossdk.io/store v1.1.0
-	cosmossdk.io/x/tx => cosmossdk.io/x/tx v0.13.1
-	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.50.10
-	// Fix protovalidate path
-	buf.build/go/protovalidate/resolve => buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.32.0
-)
+replace github.com/CreoDAMO/REPAR/aequitas => ./
