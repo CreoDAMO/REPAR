@@ -1,0 +1,83 @@
+Error: x/claims/keeper/keeper.go:22:46: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:23:46: undefined: types.ArbitrationAward
+Error: x/claims/keeper/keeper.go:38:135: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:39:135: undefined: types.ArbitrationAward
+Error: x/claims/keeper/keeper.go:57:60: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:62:65: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:71:58: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:81:61: undefined: types.ArbitrationAward
+Error: x/claims/keeper/keeper.go:98:88: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:110:92: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:39:135: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+Error: x/defendant/keeper/keeper.go:22:43: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:23:43: undefined: types.Payment
+Error: x/defendant/keeper/keeper.go:57:69: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:66:67: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:71:62: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:81:66: undefined: types.Payment
+Error: x/defendant/keeper/keeper.go:156:93: undefined: types.DefendantStatus
+Error: x/defendant/keeper/msg_server.go:18:44: undefined: types.MsgServer
+Error: x/defendant/keeper/msg_server.go:22:13: undefined: types.MsgServer
+Error: x/defendant/keeper/msg_server.go:25:69: undefined: types.MsgRecordPayment
+Error: x/defendant/keeper/msg_server.go:25:69: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+# github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+Error: x/dex/types/msgs.go:9:14: cannot use &MsgCreatePool{} (value of type *MsgCreatePool) as "github.com/cosmos/cosmos-sdk/types".Msg value in variable declaration: *MsgCreatePool does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/msgs.go:10:14: cannot use &MsgAddLiquidity{} (value of type *MsgAddLiquidity) as "github.com/cosmos/cosmos-sdk/types".Msg value in variable declaration: *MsgAddLiquidity does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/msgs.go:11:14: cannot use &MsgRemoveLiquidity{} (value of type *MsgRemoveLiquidity) as "github.com/cosmos/cosmos-sdk/types".Msg value in variable declaration: *MsgRemoveLiquidity does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/msgs.go:12:14: cannot use &MsgSwap{} (value of type *MsgSwap) as "github.com/cosmos/cosmos-sdk/types".Msg value in variable declaration: *MsgSwap does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/codec.go:14:31: cannot use &MsgCreatePool{} (value of type *MsgCreatePool) as "github.com/cosmos/cosmos-sdk/types".Msg value in argument to legacy.RegisterAminoMsg: *MsgCreatePool does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/codec.go:15:31: cannot use &MsgAddLiquidity{} (value of type *MsgAddLiquidity) as "github.com/cosmos/cosmos-sdk/types".Msg value in argument to legacy.RegisterAminoMsg: *MsgAddLiquidity does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/codec.go:16:31: cannot use &MsgRemoveLiquidity{} (value of type *MsgRemoveLiquidity) as "github.com/cosmos/cosmos-sdk/types".Msg value in argument to legacy.RegisterAminoMsg: *MsgRemoveLiquidity does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/codec.go:17:31: cannot use &MsgSwap{} (value of type *MsgSwap) as "github.com/cosmos/cosmos-sdk/types".Msg value in argument to legacy.RegisterAminoMsg: *MsgSwap does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/codec.go:23:3: cannot use &MsgCreatePool{} (value of type *MsgCreatePool) as "github.com/cosmos/gogoproto/proto".Message value in argument to registry.RegisterImplementations: *MsgCreatePool does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/codec.go:24:3: cannot use &MsgAddLiquidity{} (value of type *MsgAddLiquidity) as "github.com/cosmos/gogoproto/proto".Message value in argument to registry.RegisterImplementations: *MsgAddLiquidity does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/dex/types/codec.go:24:3: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+github.com/cosmos/cosmos-sdk/x/auth/client/cli
+github.com/cosmos/cosmos-sdk/types/module/testutil
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper
+Error: x/distribution/keeper/keeper.go:42:138: *"github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Descendant does not satisfy "github.com/cosmos/cosmos-sdk/codec".protoMessage["github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Descendant] (missing method ProtoMessage)
+Error: x/distribution/keeper/keeper.go:43:142: *"github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution does not satisfy "github.com/cosmos/cosmos-sdk/codec".protoMessage["github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution] (missing method ProtoMessage)
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+Error: x/endowment/types/genesis.go:7:24: undefined: GenesisState
+Error: x/endowment/types/genesis.go:24:10: undefined: GenesisState
+Error: x/endowment/types/genesis.go:36:22: undefined: Params
+Error: x/endowment/types/codec.go:11:24: undefined: MsgDepositToEndowment
+Error: x/endowment/types/codec.go:12:24: undefined: MsgDistributeYield
+Error: x/endowment/types/codec.go:13:24: undefined: MsgRebalanceStrategies
+Error: x/endowment/types/codec.go:14:24: undefined: MsgUpdateStrategyAllocation
+Error: x/endowment/types/codec.go:15:24: undefined: MsgDistributeToSocialPrograms
+Error: x/endowment/types/codec.go:16:24: undefined: MsgUpdateParams
+Error: x/endowment/types/codec.go:21:4: undefined: MsgDepositToEndowment
+Error: x/endowment/types/codec.go:21:4: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+Error: x/founderendowment/types/genesis.go:8:24: undefined: GenesisState
+Error: x/founderendowment/types/genesis.go:46:10: undefined: GenesisState
+Error: x/founderendowment/types/codec.go:12:32: undefined: MsgInitializeEndowment
+Error: x/founderendowment/types/codec.go:13:32: undefined: MsgDistributeYield
+Error: x/founderendowment/types/codec.go:14:32: undefined: MsgUpdateDistributionConfig
+Error: x/founderendowment/types/codec.go:15:32: undefined: MsgRenewEndowment
+Error: x/founderendowment/types/codec.go:20:4: undefined: MsgInitializeEndowment
+Error: x/founderendowment/types/codec.go:21:4: undefined: MsgDistributeYield
+Error: x/founderendowment/types/codec.go:22:4: undefined: MsgUpdateDistributionConfig
+Error: x/founderendowment/types/codec.go:23:4: undefined: MsgRenewEndowment
+Error: x/founderendowment/types/codec.go:23:4: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+Error: x/nftmarketplace/types/genesis.go:8:24: undefined: GenesisState
+Error: x/nftmarketplace/types/genesis.go:30:10: undefined: GenesisState
+Error: x/nftmarketplace/types/codec.go:12:24: undefined: MsgMintNFT
+Error: x/nftmarketplace/types/codec.go:13:24: undefined: MsgTransferNFT
+Error: x/nftmarketplace/types/codec.go:14:24: undefined: MsgBurnNFT
+Error: x/nftmarketplace/types/codec.go:15:24: undefined: MsgListNFT
+Error: x/nftmarketplace/types/codec.go:16:24: undefined: MsgDelistNFT
+Error: x/nftmarketplace/types/codec.go:17:24: undefined: MsgBuyNFT
+Error: x/nftmarketplace/types/codec.go:18:24: undefined: MsgUpdateMetadata
