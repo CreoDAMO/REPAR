@@ -1,0 +1,90 @@
+Your build is failing due to missing type definitions and interface implementations throughout several modules. Here’s how you can resolve the main issues:
+
+---
+
+### 1. Undefined Types
+
+You have many errors like:
+- `undefined: types.Defendant`
+- `undefined: types.Payment`
+- `undefined: GenesisState`
+- `undefined: MsgDepositToEndowment`
+- ...and more, across multiple modules.
+
+**Solution:**  
+- Ensure that all referenced types are defined in their respective `types` packages. For example, if you use `types.Defendant`, make sure it's defined in `x/defendant/types/defendant.go`.
+- If you recently renamed, moved, or deleted files, restore or update the imports accordingly.
+- If you split proto files, ensure Go code is regenerated (`make proto-gen` or similar).
+
+---
+
+### 2. Protobuf Interface Implementation
+
+Errors like:
+- `*MsgCreatePool does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)`
+- Similar errors for `MsgAddLiquidity`, `MsgRemoveLiquidity`, `MsgSwap`, etc.
+
+**Solution:**  
+- Regenerate your `.pb.go` files from `.proto` definitions using `protoc` with the required plugins:
+  ```sh
+  buf generate
+  # or
+  make proto-gen
+  ```
+- Make sure your message structs embed the `proto.Message` interface and all required methods.
+
+---
+
+### 3. Missing Protobuf Messages
+
+Errors like:
+- `undefined: MsgDepositToEndowment`
+- `undefined: MsgDistributeYield`
+- ...across multiple modules.
+
+**Solution:**  
+- Check that your `.proto` files define all the necessary messages.
+- Regenerate the Go files after editing `.proto` files.
+
+---
+
+### 4. Import Paths
+
+Some errors indicate possible import path mismatches (e.g., Cosmos SDK interfaces).
+
+**Solution:**  
+- Check that all import paths are correct. Use the same SDK version across all modules.
+- Run `go mod tidy` to clean and update dependencies.
+
+---
+
+### 5. Example: Fixing a Type Error
+
+Suppose you have `x/defendant/keeper/keeper.go` referencing `types.Defendant`, but it’s missing.  
+Add this to `x/defendant/types/defendant.go`:
+
+```go
+package types
+
+type Defendant struct {
+    // Add fields here
+    ID   string
+    Name string
+}
+```
+Then, import it in your keeper:
+```go
+import "github.com/CreoDAMO/REPAR/x/defendant/types"
+```
+
+---
+
+### 6. After Fixes
+
+- Regenerate all protobuf and Go files.
+- Run `go build ./...` locally to catch errors before pushing.
+
+---
+
+**Summary:**  
+Define all missing types and messages, regenerate protobuf files, check all import paths, and ensure interface compliance for all message types. This will resolve the "undefined" and "does not implement" errors shown in your build logs.
