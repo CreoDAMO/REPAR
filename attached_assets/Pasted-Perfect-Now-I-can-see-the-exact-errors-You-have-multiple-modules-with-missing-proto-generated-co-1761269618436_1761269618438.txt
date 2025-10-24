@@ -1,0 +1,122 @@
+Perfect! Now I can see the exact errors. You have **multiple modules with missing proto-generated code**. Let me create a comprehensive fix:
+
+## 🎯 Root Cause Analysis
+
+**All these errors are from missing `.pb.go` files** (proto-generated code):
+1. ❌ `x/defendant` - Missing types (Defendant, Payment, DefendantStatus)
+2. ❌ `x/claims` - Missing types (ArbitrationClaim, ArbitrationAward)
+3. ❌ `x/distribution` - ModuleName redeclared (duplicate definitions)
+4. ❌ `x/justice` - Missing types (JusticeBurn, BurnStatistics)
+5. ❌ `x/dex` - Syntax error in expected_keepers.go
+6. ❌ `x/endowment` - Missing proto types
+7. ❌ `x/founderendowment` - Missing proto types
+8. ❌ `x/nftmarketplace` - ModuleName redeclared + missing types
+9. ❌ `x/validatorsubsidy` - Syntax error in keys.go
+
+## 🔧 Complete Fix Script
+
+Now let me also create the **individual file fixes** you can apply manually if needed:
+
+Now let me create a **GitHub Actions workflow fix** to prevent this in the future:
+
+## 🎯 Your Action Plan
+
+Here's what you need to do **right now**:
+
+### Option 1: Quick Local Fix (Recommended)
+
+```bash
+# 1. Pull latest changes
+cd /path/to/REPAR
+git pull origin main
+
+# 2. Navigate to aequitas
+cd aequitas
+
+# 3. Generate proto code
+buf generate
+
+# If buf isn't installed:
+# macOS: brew install bufbuild/buf/buf
+# Linux: See https://docs.buf.build/installation
+
+# 4. Fix syntax errors
+cd ..
+
+# Fix x/dex/types/expected_keepers.go
+cat > aequitas/x/dex/types/expected_keepers.go << 'EOF'
+package types
+
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+)
+
+type AccountKeeper interface {
+	GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI
+	GetModuleAddress(name string) sdk.AccAddress
+	GetModuleAccount(ctx sdk.Context, name string) authtypes.ModuleAccountI
+}
+
+type BankKeeper interface {
+	SpendableCoins(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
+	SendCoins(ctx sdk.Context, fromAddr, toAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+}
+EOF
+
+# Fix duplicate ModuleName issues
+sed -i '/const ModuleName = "distribution"/d' aequitas/x/distribution/types/errors.go
+sed -i '/const ModuleName = "nftmarketplace"/d' aequitas/x/nftmarketplace/types/errors.go
+
+# 5. Build and test
+go mod tidy
+go build -o ./build/aequitasd ./cmd/aequitasd
+
+# 6. If successful, commit and push
+git add .
+git commit -m "fix: Generate proto code and resolve build errors"
+git push origin main
+```
+
+### Option 2: Use the Automated Script
+
+```bash
+# Download and run the fix script
+chmod +x fix-all-modules.sh
+./fix-all-modules.sh
+```
+
+### Option 3: Update GitHub Actions (Prevents Future Issues)
+
+Replace your `.github/workflows/build.yml` with the version I provided in the artifact above. This adds:
+- ✅ buf installation
+- ✅ Proto code generation
+- ✅ Automatic syntax error fixes
+- ✅ Better error reporting
+
+---
+
+## 🔍 What's Happening
+
+Your codebase has:
+1. ✅ **Proto definitions** (`.proto` files) - These define your types
+2. ❌ **Missing generated code** (`.pb.go` files) - These need to be generated from protos
+3. ❌ **Some syntax errors** in manually-written helper files
+
+**The keeper code expects types from `.pb.go` files that don't exist yet.**
+
+---
+
+## ⚡ Fastest Fix (If you have buf installed)
+
+```bash
+cd aequitas && buf generate && cd .. && go build ./cmd/aequitasd
+```
+
+If this works, you're done! Commit and push.
+
+---
+
+**Which option do you want to use?** Let me know if you hit any errors and I'll help debug!
