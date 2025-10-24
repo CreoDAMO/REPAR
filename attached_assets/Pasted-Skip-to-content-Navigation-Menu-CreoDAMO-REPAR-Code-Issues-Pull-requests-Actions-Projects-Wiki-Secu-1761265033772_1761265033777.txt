@@ -1,0 +1,137 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+6
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Update import paths for all project modules to use the new repository… #40
+Jobs
+Run details
+Build & Test Blockchain
+Started 27m 52s ago
+Search logs
+1s
+2s
+1s
+17s
+4s
+6s
+1m 39s
+Run echo "🔨 Building aequitasd binary (this may take 10-15 minutes)..."
+  echo "🔨 Building aequitasd binary (this may take 10-15 minutes)..."
+  mkdir -p ./build
+  go build -v -ldflags "-X github.com/cosmos/cosmos-sdk/version.Name=aequitas \
+    -X github.com/cosmos/cosmos-sdk/version.AppName=aequitasd \
+    -X github.com/cosmos/cosmos-sdk/version.Version=$(git describe --tags --always) \
+    -X github.com/cosmos/cosmos-sdk/version.Commit=$(git rev-parse HEAD)" \
+    -o ./build/aequitasd ./cmd/aequitasd
+  echo "✅ Binary built successfully"
+  shell: /usr/bin/bash -e {0}
+🔨 Building aequitasd binary (this may take 10-15 minutes)...
+internal/goarch
+internal/byteorder
+internal/unsafeheader
+internal/cpu
+internal/coverage/rtcov
+internal/abi
+internal/godebugs
+internal/chacha8rand
+internal/goexperiment
+internal/goos
+internal/profilerecord
+internal/bytealg
+internal/runtime/atomic
+internal/asan
+internal/msan
+internal/runtime/math
+internal/runtime/sys
+internal/runtime/exithook
+internal/runtime/syscall
+cmp
+internal/stringslite
+internal/itoa
+math/bits
+unicode/utf8
+sync/atomic
+math
+unicode
+internal/race
+google.golang.org/protobuf/internal/flags
+internal/runtime/maps
+internal/sync
+encoding
+unicode/utf16
+log/internal
+internal/nettrace
+container/list
+crypto/internal/fips140/alias
+crypto/internal/fips140deps/byteorder
+crypto/internal/fips140deps/cpu
+crypto/internal/fips140/subtle
+crypto/internal/boring/sig
+vendor/golang.org/x/crypto/cryptobyte/asn1
+vendor/golang.org/x/crypto/internal/alias
+google.golang.org/grpc/serviceconfig
+google.golang.org/protobuf/internal/set
+github.com/google/go-cmp/cmp/internal/flags
+github.com/bytedance/sonic/option
+github.com/cloudwego/base64x/internal/rt
+github.com/twitchyliquid64/golang-asm/unsafeheader
+runtime
+github.com/cockroachdb/errors/stdstrings
+github.com/getsentry/sentry-go/internal/otel/baggage/internal/baggage
+internal/goversion
+internal/platform
+internal/syslist
+github.com/cockroachdb/pebble/internal/invariants
+github.com/cockroachdb/pebble/internal/constants
+github.com/cockroachdb/pebble/internal/fastrand
+github.com/cockroachdb/pebble/internal/rawalloc
+golang.org/x/exp/constraints
+github.com/cockroachdb/pebble/internal/bytealloc
+cosmossdk.io/core/address
+log/slog/internal
+github.com/cometbft/cometbft/v2/version
+github.com/oasisprotocol/curve25519-voi/internal/disalloweq
+github.com/oasisprotocol/curve25519-voi/internal/toolchain
+golang.org/x/crypto/internal/alias
+github.com/cometbft/cometbft/v2/libs/metrics
+github.com/cometbft/cometbft/v2/libs/metrics/lv
+golang.org/x/crypto/salsa20/salsa
+github.com/cometbft/cometbft/v2/libs/metrics/discard
+github.com/cosmos/cosmos-sdk/internal/conv
+cosmossdk.io/store/internal/conv
+github.com/cosmos/cosmos-sdk/types/grpc
+golang.org/x/text/encoding/internal/identifier
+golang.org/x/text/internal/utf8internal
+github.com/pelletier/go-toml/v2/internal/characters
+github.com/spf13/viper/internal/features
+github.com/klauspost/compress/internal/le
+github.com/lib/pq/oid
+github.com/cosmos/cosmos-sdk/x/auth/migrations/v1
+github.com/googleapis/gax-go/v2/internal
+github.com/golang/groupcache/lru
+go.opencensus.io
+go.opencensus.io/trace/internal
+go.opentelemetry.io/otel/trace/embedded
+go.opentelemetry.io/otel/metric/embedded
+cloud.google.com/go/storage/internal
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+1s
+0s
