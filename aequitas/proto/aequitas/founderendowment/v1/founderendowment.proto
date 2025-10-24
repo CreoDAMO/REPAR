@@ -5,7 +5,7 @@ package aequitas.founderendowment.v1;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "aequitas/x/founderendowment/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types";
 
 // FounderEndowment represents the founder's perpetual endowment
 // 6% of total supply (7.86T REPAR) from the 8% Development Fund

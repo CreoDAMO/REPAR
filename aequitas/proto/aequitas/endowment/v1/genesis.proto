@@ -4,7 +4,7 @@ package aequitas.endowment.v1;
 import "gogoproto/gogo.proto";
 import "aequitas/endowment/v1/endowment.proto";
 
-option go_package = "aequitas/x/endowment/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types";
 
 message GenesisState {
   Params params = 1 [(gogoproto.nullable) = false];

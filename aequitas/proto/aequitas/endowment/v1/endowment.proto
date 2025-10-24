@@ -4,7 +4,7 @@ package aequitas.endowment.v1;
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 
-option go_package = "aequitas/x/endowment/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types";
 
 message Endowment {
   string id = 1;

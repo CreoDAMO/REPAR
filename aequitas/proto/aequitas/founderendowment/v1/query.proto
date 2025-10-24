@@ -5,7 +5,7 @@ package aequitas.founderendowment.v1;
 import "google/api/annotations.proto";
 import "aequitas/founderendowment/v1/founderendowment.proto";
 
-option go_package = "aequitas/x/founderendowment/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types";
 
 service Query {
   rpc GetEndowment(QueryGetEndowmentRequest) returns (QueryGetEndowmentResponse) {

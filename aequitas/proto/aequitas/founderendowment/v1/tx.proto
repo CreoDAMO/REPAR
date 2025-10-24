@@ -8,7 +8,7 @@ import "cosmos/msg/v1/msg.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "aequitas/founderendowment/v1/founderendowment.proto";
 
-option go_package = "aequitas/x/founderendowment/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types";
 
 service Msg {
   option (cosmos.msg.v1.service) = true;
