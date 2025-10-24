@@ -5,7 +5,7 @@ integrations = ["python_openai:1.0.0", "python_anthropic:1.0.0", "python_databas
 
 [nix]
 channel = "stable-25_05"
-packages = ["buf", "openssh_gssapi"]
+packages = ["buf", "openssh_gssapi", "ignite-cli"]
 
 [workflows]
 runButton = "Project"
