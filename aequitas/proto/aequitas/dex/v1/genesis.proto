@@ -5,6 +5,7 @@ option go_package = "aequitas/x/dex/types";
 
 import "gogoproto/gogo.proto";
 import "aequitas/dex/v1/dex.proto";
+import "cosmos_proto/cosmos.proto";
 
 // GenesisState defines the dex module's genesis state.
 message GenesisState {
