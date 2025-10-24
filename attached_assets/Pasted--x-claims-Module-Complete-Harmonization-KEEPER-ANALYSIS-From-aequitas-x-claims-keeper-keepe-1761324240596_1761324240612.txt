@@ -1,0 +1,304 @@
+# x/claims Module - Complete Harmonization
+
+## KEEPER ANALYSIS
+
+From `aequitas/x/claims/keeper/keeper.go`:
+
+```go
+// Line 22: Keeper expects ArbitrationClaim
+ArbitrationClaimPrefix = collections.NewPrefix(22)
+
+// Line 23: Keeper expects ArbitrationAward  
+ArbitrationAwardPrefix = collections.NewPrefix(23)
+
+// Functions using these types:
+func (k Keeper) SetArbitrationClaim(ctx sdk.Context, claim types.ArbitrationClaim)
+func (k Keeper) GetArbitrationClaim(ctx sdk.Context, id uint64) (types.ArbitrationClaim, error)
+func (k Keeper) SetArbitrationAward(ctx sdk.Context, award types.ArbitrationAward)
+func (k Keeper) GetArbitrationAward(ctx sdk.Context, id uint64) (types.ArbitrationAward, error)
+```
+
+**KEEPER EXPECTATION:**
+- Type: `ArbitrationClaim` (NOT `Claim`)
+- Type: `ArbitrationAward` (NOT `Award`)
+
+---
+
+## PROTO HARMONIZATION
+
+### File: `proto/aequitas/claims/v1/claims.proto`
+
+**CURRENT (INCORRECT):**
+```protobuf
+message Claim { ... }
+message Award { ... }
+```
+
+**CORRECTED (HARMONIZED):**
+```protobuf
+syntax = "proto3";
+package aequitas.claims.v1;
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/claims/types";
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "amino/amino.proto";
+
+// ArbitrationClaim represents a claim filed in the arbitration system
+message ArbitrationClaim {
+  option (gogoproto.equal) = true;
+  
+  uint64 id = 1;
+  string claimant = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string defendant = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string description = 4;
+  cosmos.base.v1beta1.Coin amount = 5 [(gogoproto.nullable) = false];
+  ClaimStatus status = 6;
+  int64 filed_at = 7;
+  int64 updated_at = 8;
+  string evidence_hash = 9;
+}
+
+// ArbitrationAward represents the outcome of an arbitration
+message ArbitrationAward {
+  option (gogoproto.equal) = true;
+  
+  uint64 id = 1;
+  uint64 claim_id = 2;
+  string arbitrator = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  cosmos.base.v1beta1.Coin award_amount = 4 [(gogoproto.nullable) = false];
+  string rationale = 5;
+  int64 awarded_at = 6;
+  AwardStatus status = 7;
+}
+
+// ClaimStatus represents the current state of a claim
+enum ClaimStatus {
+  CLAIM_STATUS_UNSPECIFIED = 0;
+  CLAIM_STATUS_PENDING = 1;
+  CLAIM_STATUS_UNDER_REVIEW = 2;
+  CLAIM_STATUS_AWARDED = 3;
+  CLAIM_STATUS_REJECTED = 4;
+  CLAIM_STATUS_SETTLED = 5;
+}
+
+// AwardStatus represents the current state of an award
+enum AwardStatus {
+  AWARD_STATUS_UNSPECIFIED = 0;
+  AWARD_STATUS_PENDING_PAYMENT = 1;
+  AWARD_STATUS_PARTIALLY_PAID = 2;
+  AWARD_STATUS_FULLY_PAID = 3;
+  AWARD_STATUS_DEFAULTED = 4;
+}
+```
+
+---
+
+### File: `proto/aequitas/claims/v1/tx.proto`
+
+**UPDATE ALL MESSAGE REFERENCES:**
+
+```protobuf
+syntax = "proto3";
+package aequitas.claims.v1;
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/claims/types";
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/msg/v1/msg.proto";
+import "amino/amino.proto";
+import "aequitas/claims/v1/claims.proto";
+
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+  
+  rpc FileClaim(MsgFileClaim) returns (MsgFileClaimResponse);
+  rpc IssueAward(MsgIssueAward) returns (MsgIssueAwardResponse);
+  rpc UpdateClaimStatus(MsgUpdateClaimStatus) returns (MsgUpdateClaimStatusResponse);
+}
+
+message MsgFileClaim {
+  option (cosmos.msg.v1.signer) = "claimant";
+  option (amino.name) = "aequitas/claims/MsgFileClaim";
+  
+  string claimant = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string defendant = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string description = 3;
+  cosmos.base.v1beta1.Coin amount = 4 [(gogoproto.nullable) = false];
+  string evidence_hash = 5;
+}
+
+message MsgFileClaimResponse {
+  uint64 claim_id = 1;
+}
+
+message MsgIssueAward {
+  option (cosmos.msg.v1.signer) = "arbitrator";
+  option (amino.name) = "aequitas/claims/MsgIssueAward";
+  
+  string arbitrator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 claim_id = 2;
+  cosmos.base.v1beta1.Coin award_amount = 3 [(gogoproto.nullable) = false];
+  string rationale = 4;
+}
+
+message MsgIssueAwardResponse {
+  uint64 award_id = 1;
+}
+
+message MsgUpdateClaimStatus {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "aequitas/claims/MsgUpdateClaimStatus";
+  
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 claim_id = 2;
+  ClaimStatus new_status = 3;
+}
+
+message MsgUpdateClaimStatusResponse {}
+```
+
+---
+
+### File: `proto/aequitas/claims/v1/query.proto`
+
+```protobuf
+syntax = "proto3";
+package aequitas.claims.v1;
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/claims/types";
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "aequitas/claims/v1/claims.proto";
+
+service Query {
+  rpc ArbitrationClaim(QueryArbitrationClaimRequest) returns (QueryArbitrationClaimResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/claims/{id}";
+  }
+  
+  rpc ArbitrationClaims(QueryArbitrationClaimsRequest) returns (QueryArbitrationClaimsResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/claims";
+  }
+  
+  rpc ArbitrationAward(QueryArbitrationAwardRequest) returns (QueryArbitrationAwardResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/awards/{id}";
+  }
+  
+  rpc ArbitrationAwards(QueryArbitrationAwardsRequest) returns (QueryArbitrationAwardsResponse) {
+    option (google.api.http).get = "/aequitas/claims/v1/awards";
+  }
+}
+
+message QueryArbitrationClaimRequest {
+  uint64 id = 1;
+}
+
+message QueryArbitrationClaimResponse {
+  ArbitrationClaim claim = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryArbitrationClaimsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryArbitrationClaimsResponse {
+  repeated ArbitrationClaim claims = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryArbitrationAwardRequest {
+  uint64 id = 1;
+}
+
+message QueryArbitrationAwardResponse {
+  ArbitrationAward award = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryArbitrationAwardsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryArbitrationAwardsResponse {
+  repeated ArbitrationAward awards = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+```
+
+---
+
+### File: `proto/aequitas/claims/v1/genesis.proto`
+
+```protobuf
+syntax = "proto3";
+package aequitas.claims.v1;
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/claims/types";
+
+import "gogoproto/gogo.proto";
+import "aequitas/claims/v1/claims.proto";
+
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+  repeated ArbitrationClaim claims = 2 [(gogoproto.nullable) = false];
+  repeated ArbitrationAward awards = 3 [(gogoproto.nullable) = false];
+  uint64 next_claim_id = 4;
+  uint64 next_award_id = 5;
+}
+
+message Params {
+  option (gogoproto.equal) = true;
+  
+  string min_claim_amount = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  
+  string arbitration_fee = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+```
+
+---
+
+## VERIFICATION COMMANDS
+
+```bash
+# 1. Navigate to aequitas directory
+cd aequitas
+
+# 2. Generate proto code for claims module
+buf generate proto/aequitas/claims/v1/*.proto
+
+# 3. Verify generated files exist
+ls -la x/claims/types/*.pb.go
+
+# Expected output:
+# claims.pb.go
+# tx.pb.go
+# query.pb.go
+# genesis.pb.go
+
+# 4. Test claims module build
+cd ..
+go build ./aequitas/x/claims/...
+
+# 5. If successful, advance to next module
+```
+
+---
+
+## STATUS: READY FOR EXECUTION
+
+**Module:** x/claims  
+**Status:** Proto files harmonized  
+**Next Action:** Apply these proto file changes and regenerate  
+
+Once claims module compiles successfully, we advance to **MODULE 2: x/defendant**.

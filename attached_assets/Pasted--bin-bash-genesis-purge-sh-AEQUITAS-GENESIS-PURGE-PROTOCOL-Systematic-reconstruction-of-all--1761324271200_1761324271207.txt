@@ -1,0 +1,257 @@
+#!/bin/bash
+# genesis-purge.sh
+# AEQUITAS GENESIS PURGE PROTOCOL
+# Systematic reconstruction of all blockchain modules
+
+set -e
+
+echo "╔════════════════════════════════════════════════╗"
+echo "║   AEQUITAS GENESIS PURGE PROTOCOL v1.0        ║"
+echo "║   Systematic Module Reconstruction            ║"
+echo "╚════════════════════════════════════════════════╝"
+echo ""
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+# Counters
+TOTAL_MODULES=9
+COMPLETED_MODULES=0
+FAILED_MODULES=0
+
+# Check prerequisites
+if [ ! -d "aequitas" ]; then
+    echo -e "${RED}❌ FATAL: Must run from REPAR repository root${NC}"
+    exit 1
+fi
+
+if ! command -v buf &> /dev/null; then
+    echo -e "${RED}❌ FATAL: buf not installed${NC}"
+    echo "Install: https://docs.buf.build/installation"
+    exit 1
+fi
+
+echo -e "${CYAN}📊 PURGE TARGET: $TOTAL_MODULES modules${NC}"
+echo ""
+
+# ============================================================================
+# PURGE FUNCTION: Process a single module
+# ============================================================================
+purge_module() {
+    local MODULE_NAME=$1
+    local MODULE_NUM=$2
+    
+    echo -e "${BOLD}${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BOLD}MODULE $MODULE_NUM/$TOTAL_MODULES: x/$MODULE_NAME${NC}"
+    echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    
+    # Step 1: Analyze keeper expectations
+    echo -e "${CYAN}[1/5] ANALYZE: Scanning keeper for type expectations...${NC}"
+    
+    if [ -f "aequitas/x/$MODULE_NAME/keeper/keeper.go" ]; then
+        grep -n "types\." "aequitas/x/$MODULE_NAME/keeper/keeper.go" | head -n 10 || true
+        echo -e "${GREEN}  ✓ Keeper analysis complete${NC}"
+    else
+        echo -e "${YELLOW}  ⚠ No keeper.go found (may be new module)${NC}"
+    fi
+    echo ""
+    
+    # Step 2: Check proto files exist
+    echo -e "${CYAN}[2/5] HARMONIZE: Checking proto definitions...${NC}"
+    
+    PROTO_DIR="aequitas/proto/aequitas/$MODULE_NAME/v1"
+    if [ ! -d "$PROTO_DIR" ]; then
+        echo -e "${YELLOW}  ⚠ Proto directory missing, creating...${NC}"
+        mkdir -p "$PROTO_DIR"
+    fi
+    
+    # Count proto files
+    PROTO_COUNT=$(ls -1 "$PROTO_DIR"/*.proto 2>/dev/null | wc -l)
+    echo -e "  Found $PROTO_COUNT proto file(s)"
+    
+    if [ $PROTO_COUNT -eq 0 ]; then
+        echo -e "${YELLOW}  ⚠ No proto files found - manual creation required${NC}"
+        return 1
+    fi
+    
+    echo -e "${GREEN}  ✓ Proto files present${NC}"
+    echo ""
+    
+    # Step 3: Generate Go code
+    echo -e "${CYAN}[3/5] GENERATE: Compiling proto to Go...${NC}"
+    
+    cd aequitas
+    if buf generate "proto/aequitas/$MODULE_NAME/v1"/*.proto 2>&1; then
+        echo -e "${GREEN}  ✓ Proto generation successful${NC}"
+    else
+        echo -e "${RED}  ✗ Proto generation failed${NC}"
+        cd ..
+        return 1
+    fi
+    cd ..
+    echo ""
+    
+    # Step 4: Verify generated files
+    echo -e "${CYAN}[4/5] VERIFY: Checking generated .pb.go files...${NC}"
+    
+    GENERATED_DIR="aequitas/x/$MODULE_NAME/types"
+    GENERATED_COUNT=$(ls -1 "$GENERATED_DIR"/*.pb.go 2>/dev/null | wc -l)
+    
+    if [ $GENERATED_COUNT -gt 0 ]; then
+        echo -e "${GREEN}  ✓ Generated $GENERATED_COUNT .pb.go file(s)${NC}"
+        ls -1 "$GENERATED_DIR"/*.pb.go | sed 's/^/    /'
+    else
+        echo -e "${RED}  ✗ No .pb.go files generated${NC}"
+        return 1
+    fi
+    echo ""
+    
+    # Step 5: Test compilation
+    echo -e "${CYAN}[5/5] COMPILE: Building module...${NC}"
+    
+    if go build "./aequitas/x/$MODULE_NAME/..." 2>&1 | tail -n 20; then
+        echo -e "${GREEN}  ✓ Module compiles successfully${NC}"
+        ((COMPLETED_MODULES++))
+        return 0
+    else
+        echo -e "${RED}  ✗ Module compilation failed${NC}"
+        ((FAILED_MODULES++))
+        return 1
+    fi
+}
+
+# ============================================================================
+# EXECUTE PURGE: Process all modules
+# ============================================================================
+
+echo -e "${BOLD}${CYAN}PHASE 1: PRE-PURGE SETUP${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Update buf dependencies
+echo "Updating buf dependencies..."
+cd aequitas
+buf mod update
+cd ..
+echo -e "${GREEN}✓ Buf dependencies updated${NC}"
+echo ""
+
+# Fix known syntax errors
+echo "Applying known fixes..."
+
+# Fix duplicate ModuleName declarations
+for module in distribution nftmarketplace; do
+    ERROR_FILE="aequitas/x/$module/types/errors.go"
+    if [ -f "$ERROR_FILE" ] && grep -q "^const ModuleName" "$ERROR_FILE"; then
+        sed -i.bak '/^const ModuleName/d' "$ERROR_FILE"
+        echo "  ✓ Fixed duplicate ModuleName in $module"
+    fi
+done
+
+# Fix DEX expected_keepers.go
+cat > aequitas/x/dex/types/expected_keepers.go << 'DEXEOF'
+package types
+
+import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+)
+
+type AccountKeeper interface {
+	GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI
+	GetModuleAddress(name string) sdk.AccAddress
+	GetModuleAccount(ctx sdk.Context, name string) authtypes.ModuleAccountI
+}
+
+type BankKeeper interface {
+	SpendableCoins(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
+	SendCoins(ctx sdk.Context, fromAddr, toAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error
+	SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error
+}
+DEXEOF
+echo "  ✓ Fixed DEX expected_keepers.go"
+
+echo -e "${GREEN}✓ Pre-purge setup complete${NC}"
+echo ""
+echo ""
+
+echo -e "${BOLD}${CYAN}PHASE 2: MODULE PURGE${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+# Process each module
+MODULES=(
+    "dex"
+    "claims"
+    "defendant"
+    "justice"
+    "endowment"
+    "founderendowment"
+    "nftmarketplace"
+    "distribution"
+    "validatorsubsidy"
+)
+
+MODULE_NUM=1
+for module in "${MODULES[@]}"; do
+    if purge_module "$module" "$MODULE_NUM"; then
+        echo -e "${GREEN}✅ MODULE $MODULE_NUM COMPLETE: x/$module${NC}"
+    else
+        echo -e "${RED}❌ MODULE $MODULE_NUM FAILED: x/$module${NC}"
+        echo -e "${YELLOW}Continuing to next module...${NC}"
+    fi
+    echo ""
+    echo ""
+    ((MODULE_NUM++))
+done
+
+# ============================================================================
+# FINAL BUILD TEST
+# ============================================================================
+
+echo -e "${BOLD}${CYAN}PHASE 3: FINAL BUILD VERIFICATION${NC}"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+echo "Building complete blockchain..."
+echo ""
+
+if go build -v -o ./build/aequitasd ./cmd/aequitasd 2>&1 | tail -n 30; then
+    echo ""
+    echo -e "${GREEN}╔════════════════════════════════════════════════╗${NC}"
+    echo -e "${GREEN}║         GENESIS PURGE SUCCESSFUL              ║${NC}"
+    echo -e "${GREEN}╚════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${BOLD}Binary:${NC} ./build/aequitasd"
+    echo -e "${BOLD}Modules Completed:${NC} $COMPLETED_MODULES/$TOTAL_MODULES"
+    echo ""
+    echo -e "${CYAN}Next steps:${NC}"
+    echo "  1. Test binary: ./build/aequitasd version"
+    echo "  2. Commit changes: git add . && git commit -m 'feat: Genesis Purge complete'"
+    echo "  3. Push to GitHub: git push origin main"
+    echo "  4. Deploy to production"
+    echo ""
+    exit 0
+else
+    echo ""
+    echo -e "${RED}╔════════════════════════════════════════════════╗${NC}"
+    echo -e "${RED}║         GENESIS PURGE INCOMPLETE              ║${NC}"
+    echo -e "${RED}╚════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${BOLD}Status:${NC}"
+    echo "  Completed: $COMPLETED_MODULES/$TOTAL_MODULES modules"
+    echo "  Failed: $FAILED_MODULES modules"
+    echo ""
+    echo -e "${YELLOW}Manual intervention required for failed modules.${NC}"
+    echo "Review errors above and fix proto definitions manually."
+    echo ""
+    exit 1
+fi
