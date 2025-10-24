@@ -1,0 +1,92 @@
+These are all the errors 
+
+Error: x/claims/keeper/keeper.go:22:39: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:23:39: undefined: types.ArbitrationAward
+Error: x/claims/keeper/keeper.go:38:121: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:39:121: undefined: types.ArbitrationAward
+Error: x/claims/keeper/keeper.go:57:60: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:62:65: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:71:58: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:81:61: undefined: types.ArbitrationAward
+Error: x/claims/keeper/keeper.go:98:88: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:110:92: undefined: types.ArbitrationClaim
+Error: x/claims/keeper/keeper.go:39:121: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+Error: x/defendant/keeper/keeper.go:22:43: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:23:43: undefined: types.Payment
+Error: x/defendant/keeper/keeper.go:57:69: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:66:67: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:71:62: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:81:66: undefined: types.Payment
+Error: x/defendant/keeper/keeper.go:156:93: undefined: types.DefendantStatus
+Error: x/defendant/keeper/msg_server.go:18:44: undefined: types.MsgServer
+Error: x/defendant/keeper/msg_server.go:22:13: undefined: types.MsgServer
+Error: x/defendant/keeper/msg_server.go:25:69: undefined: types.MsgRecordPayment
+Error: x/defendant/keeper/msg_server.go:25:69: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+# github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+Error: x/distribution/types/expected_keepers.go:14:7: ModuleName redeclared in this block
+Error: 	x/distribution/types/errors.go:13:7: other declaration of ModuleName
+github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper
+github.com/cosmos/cosmos-sdk/x/auth/vesting/exported
+# github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper
+Error: x/justice/keeper/keeper.go:24:43: undefined: types.JusticeBurn
+Error: x/justice/keeper/keeper.go:25:36: undefined: types.BurnStatistics
+Error: x/justice/keeper/keeper.go:137:63: undefined: types.BurnStatistics
+Error: x/justice/keeper/keeper.go:154:57: undefined: types.JusticeBurn
+Error: x/justice/keeper/keeper.go:164:87: undefined: types.JusticeBurn
+Error: x/justice/keeper/msg_server.go:17:44: undefined: types.MsgServer
+Error: x/justice/keeper/msg_server.go:21:13: undefined: types.MsgServer
+Error: x/justice/keeper/msg_server.go:24:67: undefined: types.MsgExecuteBurn
+Error: x/justice/keeper/msg_server.go:24:91: undefined: types.MsgExecuteBurnResponse
+Error: x/justice/keeper/query_server.go:11:13: undefined: types.QueryServer
+Error: x/justice/keeper/query_server.go:11:13: too many errors
+
+# github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+Error: x/dex/types/expected_keepers.go:24:1: syntax error: non-declaration statement outside function body
+Error: x/dex/types/expected_keepers.go:26:1: syntax error: imports must appear before other declarations
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+Error: x/endowment/types/genesis.go:7:24: undefined: GenesisState
+Error: x/endowment/types/genesis.go:24:10: undefined: GenesisState
+Error: x/endowment/types/genesis.go:36:22: undefined: Params
+Error: x/endowment/types/codec.go:11:24: undefined: MsgDepositToEndowment
+Error: x/endowment/types/codec.go:12:24: undefined: MsgDistributeYield
+Error: x/endowment/types/codec.go:13:24: undefined: MsgRebalanceStrategies
+Error: x/endowment/types/codec.go:14:24: undefined: MsgUpdateStrategyAllocation
+Error: x/endowment/types/codec.go:15:24: undefined: MsgDistributeToSocialPrograms
+Error: x/endowment/types/codec.go:16:24: undefined: MsgUpdateParams
+Error: x/endowment/types/codec.go:21:4: undefined: MsgDepositToEndowment
+Error: x/endowment/types/codec.go:21:4: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+Error: x/founderendowment/types/genesis.go:8:24: undefined: GenesisState
+Error: x/founderendowment/types/genesis.go:46:10: undefined: GenesisState
+Error: x/founderendowment/types/codec.go:12:32: undefined: MsgInitializeEndowment
+Error: x/founderendowment/types/codec.go:13:32: undefined: MsgDistributeYield
+Error: x/founderendowment/types/codec.go:14:32: undefined: MsgUpdateDistributionConfig
+Error: x/founderendowment/types/codec.go:15:32: undefined: MsgRenewEndowment
+Error: x/founderendowment/types/codec.go:20:4: undefined: MsgInitializeEndowment
+Error: x/founderendowment/types/codec.go:21:4: undefined: MsgDistributeYield
+Error: x/founderendowment/types/codec.go:22:4: undefined: MsgUpdateDistributionConfig
+Error: x/founderendowment/types/codec.go:23:4: undefined: MsgRenewEndowment
+Error: x/founderendowment/types/codec.go:23:4: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+Error: x/nftmarketplace/types/keys.go:5:2: ModuleName redeclared in this block
+Error: 	x/nftmarketplace/types/errors.go:22:7: other declaration of ModuleName
+Error: x/nftmarketplace/types/genesis.go:8:24: undefined: GenesisState
+Error: x/nftmarketplace/types/genesis.go:30:10: undefined: GenesisState
+Error: x/nftmarketplace/types/codec.go:12:24: undefined: MsgMintNFT
+Error: x/nftmarketplace/types/codec.go:13:24: undefined: MsgTransferNFT
+Error: x/nftmarketplace/types/codec.go:14:24: undefined: MsgBurnNFT
+Error: x/nftmarketplace/types/codec.go:15:24: undefined: MsgListNFT
+Error: x/nftmarketplace/types/codec.go:16:24: undefined: MsgDelistNFT
+Error: x/nftmarketplace/types/codec.go:17:24: undefined: MsgBuyNFT
+Error: x/nftmarketplace/types/codec.go:18:24: undefined: MsgUpdateMetadata
+Error: x/nftmarketplace/types/codec.go:18:24: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+# github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+Error: x/validatorsubsidy/types/keys.go:29:1: syntax error: non-declaration statement outside function body
