@@ -1,5 +1,7 @@
 # Aequitas Zone Blockchain
 
+**Last updated**: 2025-01-24
+
 ## Overview
 Aequitas Zone is a sovereign Layer-1 blockchain built on Cosmos SDK for enforcing global reparations for the transatlantic slave trade.
 
