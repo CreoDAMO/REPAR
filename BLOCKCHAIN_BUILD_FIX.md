@@ -39,14 +39,21 @@ grep "cometbft/v2" go.mod  # No matches found ✅
   - The module version map is now set by the framework during initialization
 
 ### 6. Added Replace Directives
-Pinned cosmossdk.io packages in `go.mod` to prevent automatic upgrades:
+Pinned cosmossdk.io and cosmos packages in `go.mod` to prevent automatic upgrades:
 ```go
 replace (
     cosmossdk.io/api => cosmossdk.io/api v0.7.5
     cosmossdk.io/core => cosmossdk.io/core v0.11.1
+    cosmossdk.io/x/tx => cosmossdk.io/x/tx v0.13.5
+    github.com/cosmos/iavl => github.com/cosmos/iavl v1.2.0
     github.com/CreoDAMO/REPAR/aequitas => ./
 )
 ```
+
+**Additional Fixes (Second Pass):**
+After the initial downgrade, compilation errors revealed version mismatches in indirect dependencies:
+- Fixed `cosmossdk.io/x/tx@v1.2.0-alpha.1` → pinned to v0.13.5 (fields Unordered/TimeoutTimestamp errors)
+- Fixed `github.com/cosmos/iavl@v1.3.5` → pinned to v1.2.0 (corestore.Batch undefined errors)
 
 ## Compatibility Matrix (Verified)
 

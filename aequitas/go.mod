@@ -232,9 +232,11 @@ require (
 	sigs.k8s.io/yaml v1.6.0 // indirect
 )
 
-// Pin cosmossdk.io packages to versions compatible with cosmos-sdk v0.50.10
+// Pin cosmossdk.io and cosmos packages to versions compatible with cosmos-sdk v0.50.10
 replace (
 	cosmossdk.io/api => cosmossdk.io/api v0.7.5
 	cosmossdk.io/core => cosmossdk.io/core v0.11.1
+	cosmossdk.io/x/tx => cosmossdk.io/x/tx v0.13.5
 	github.com/CreoDAMO/REPAR/aequitas => ./
+	github.com/cosmos/iavl => github.com/cosmos/iavl v1.2.0
 )
