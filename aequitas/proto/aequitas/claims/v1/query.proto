@@ -6,7 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "aequitas/claims/v1/claims.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/claims/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/claims/types";
 
 // Query defines the gRPC querier service
 service Query {
@@ -36,7 +36,7 @@ message QueryGetClaimRequest {
 }
 
 message QueryGetClaimResponse {
-  Claim claim = 1 [(gogoproto.nullable) = false];
+  ArbitrationClaim claim = 1 [(gogoproto.nullable) = false];
 }
 
 message QueryListClaimsRequest {
@@ -44,7 +44,7 @@ message QueryListClaimsRequest {
 }
 
 message QueryListClaimsResponse {
-  repeated Claim claims = 1 [(gogoproto.nullable) = false];
+  repeated ArbitrationClaim claims = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -54,7 +54,7 @@ message QueryListClaimsByDefendantRequest {
 }
 
 message QueryListClaimsByDefendantResponse {
-  repeated Claim claims = 1 [(gogoproto.nullable) = false];
+  repeated ArbitrationClaim claims = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
@@ -64,6 +64,6 @@ message QueryListClaimsByClaimantRequest {
 }
 
 message QueryListClaimsByClaimantResponse {
-  repeated Claim claims = 1 [(gogoproto.nullable) = false];
+  repeated ArbitrationClaim claims = 1 [(gogoproto.nullable) = false];
   cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }

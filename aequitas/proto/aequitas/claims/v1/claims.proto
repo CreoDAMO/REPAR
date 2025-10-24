@@ -4,10 +4,10 @@ package aequitas.claims.v1;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/claims/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/claims/types";
 
-// Claim represents an arbitration demand filed against a defendant
-message Claim {
+// ArbitrationClaim represents an arbitration demand filed against a defendant
+message ArbitrationClaim {
   option (gogoproto.equal) = true;
   option (gogoproto.goproto_getters) = false;
 
