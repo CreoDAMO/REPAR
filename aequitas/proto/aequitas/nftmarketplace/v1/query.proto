@@ -6,7 +6,7 @@ import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "aequitas/nftmarketplace/v1/nftmarketplace.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/nftmarketplace/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types";
 
 // Query defines the nftmarketplace Query service
 service Query {

@@ -5,7 +5,7 @@ import "google/api/annotations.proto";
 import "gogoproto/gogo.proto";
 import "aequitas/validatorsubsidy/v1/validatorsubsidy.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/validatorsubsidy/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types";
 
 // Query defines the gRPC querier service for validator subsidy module
 service Query {

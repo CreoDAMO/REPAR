@@ -6,7 +6,7 @@ import "cosmos/base/query/v1beta1/pagination.proto";
 import "gogoproto/gogo.proto";
 import "aequitas/distribution/v1/distribution.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/distribution/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types";
 
 // Query defines the gRPC querier service
 service Query {

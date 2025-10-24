@@ -4,7 +4,7 @@ package aequitas.validatorsubsidy.v1;
 import "gogoproto/gogo.proto";
 import "aequitas/validatorsubsidy/v1/validatorsubsidy.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/validatorsubsidy/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types";
 
 // GenesisState defines the validator subsidy module's genesis state
 message GenesisState {

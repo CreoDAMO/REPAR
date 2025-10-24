@@ -4,7 +4,7 @@ package aequitas.defendant.v1;
 import "gogoproto/gogo.proto";
 import "aequitas/defendant/v1/defendant.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/defendant/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types";
 
 // GenesisState defines the defendant module's genesis state
 message GenesisState {

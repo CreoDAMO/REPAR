@@ -5,7 +5,7 @@ import "gogoproto/gogo.proto";
 import "aequitas/justice/v1/justice.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/justice/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/justice/types";
 
 // GenesisState defines the justice module's genesis state
 message GenesisState {

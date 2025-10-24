@@ -5,7 +5,7 @@ import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/justice/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/justice/types";
 
 // Msg defines the justice Msg service
 service Msg {

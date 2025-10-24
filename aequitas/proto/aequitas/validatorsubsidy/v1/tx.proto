@@ -7,7 +7,7 @@ import "cosmos_proto/cosmos.proto";
 import "cosmos/msg/v1/msg.proto";
 import "aequitas/validatorsubsidy/v1/validatorsubsidy.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/validatorsubsidy/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types";
 
 // Msg defines the validator subsidy Msg service
 service Msg {

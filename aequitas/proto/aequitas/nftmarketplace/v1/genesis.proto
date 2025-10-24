@@ -4,7 +4,7 @@ package aequitas.nftmarketplace.v1;
 import "gogoproto/gogo.proto";
 import "aequitas/nftmarketplace/v1/nftmarketplace.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/nftmarketplace/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types";
 
 // GenesisState defines the nftmarketplace module's genesis state
 message GenesisState {

@@ -4,7 +4,7 @@ package aequitas.nftmarketplace.v1;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/nftmarketplace/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types";
 
 // NFT represents a non-fungible token in the Aequitas ecosystem
 message NFT {

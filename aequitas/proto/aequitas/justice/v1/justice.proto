@@ -4,7 +4,7 @@ package aequitas.justice.v1;
 import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/justice/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/justice/types";
 
 // JusticeBurn represents the core deflationary mechanism
 // When defendants pay: $1 USD = 1 REPAR burned permanently

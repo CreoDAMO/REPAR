@@ -6,7 +6,7 @@ import "gogoproto/gogo.proto";
 import "cosmos_proto/cosmos.proto";
 import "aequitas/defendant/v1/defendant.proto";
 
-option go_package = "github.com/aequitas/aequitas/x/defendant/types";
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types";
 
 // Msg defines the defendant Msg service
 service Msg {
