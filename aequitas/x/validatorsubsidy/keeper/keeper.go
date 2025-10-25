@@ -4,10 +4,11 @@ package keeper
 import (
         "time"
 
+        "cosmossdk.io/math"
         storetypes "cosmossdk.io/store/types"
         "github.com/cosmos/cosmos-sdk/codec"
         sdk "github.com/cosmos/cosmos-sdk/types"
-        sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+        "github.com/cosmos/cosmos-sdk/types/errors"
 
         "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
@@ -29,7 +30,7 @@ func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, bankKeeper t
 // DistributeSubsidies transfers USDC from DEX Treasury to validator operator
 func (k Keeper) DistributeSubsidies(ctx sdk.Context, operatorAddr sdk.AccAddress) error {
         // Monthly subsidy: $6,456 USDC (in uusdc: 6,456,000,000)
-        subsidyAmount := sdk.NewInt(6456000000)
+        subsidyAmount := math.NewInt(6456000000)
         subsidyCoin := sdk.NewCoin("uusdc", subsidyAmount)
 
         // DEX Treasury module account
@@ -38,13 +39,13 @@ func (k Keeper) DistributeSubsidies(ctx sdk.Context, operatorAddr sdk.AccAddress
         // Check DEX Treasury balance
         balance := k.bankKeeper.GetBalance(ctx, dexTreasury, "uusdc")
         if balance.Amount.LT(subsidyAmount) {
-                return sdkerrors.Wrapf(sdkerrors.ErrInsufficientFunds, 
+                return errors.Wrapf(errors.ErrInsufficientFunds, 
                         "DEX Treasury has %s, need %s", balance.Amount, subsidyAmount)
         }
 
         // Execute transfer
-        if err := k.bankKeeper.SendCoins(ctx, dexTreasury, operatorAddr, sdk.NewCoins(subsidyCoin)); err != nil {
-                return sdkerrors.Wrap(err, "failed to transfer subsidy")
+        if err := k.bankKeeper.SendCoinsFromAccountToAccount(ctx, dexTreasury, operatorAddr, sdk.NewCoins(subsidyCoin)); err != nil {
+                return errors.Wrap(err, "failed to transfer subsidy")
         }
 
         // Update last distribution timestamp
@@ -82,15 +83,21 @@ func (k Keeper) GetLastDistribution(ctx sdk.Context) time.Time {
                 return time.Time{}
         }
 
-        var t time.Time
-        k.cdc.MustUnmarshal(bz, &t)
-        return t
+        var timestamp int64
+        if err := k.cdc.Unmarshal(bz, &timestamp); err != nil {
+                return time.Time{}
+        }
+        return time.Unix(timestamp, 0)
 }
 
 // SetLastDistribution stores the last distribution timestamp
 func (k Keeper) SetLastDistribution(ctx sdk.Context, t time.Time) {
         store := ctx.KVStore(k.storeKey)
-        bz := k.cdc.MustMarshal(&t)
+        timestamp := t.Unix()
+        bz, err := k.cdc.Marshal(&timestamp)
+        if err != nil {
+                panic(err)
+        }
         store.Set(types.LastDistributionKey, bz)
 }
 
