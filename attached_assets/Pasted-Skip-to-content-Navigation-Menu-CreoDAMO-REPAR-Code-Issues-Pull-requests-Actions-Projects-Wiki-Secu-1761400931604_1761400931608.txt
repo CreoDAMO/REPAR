@@ -1,0 +1,144 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Update protobuf generation workflow to correctly move generated files #59
+Jobs
+Run details
+Annotations
+10 errors
+Build & Test Blockchain
+failed 35 minutes ago in 3m 27s
+Search logs
+2s
+3s
+2s
+34s
+5s
+0s
+23s
+2s
+0s
+11s
+2m 1s
+github.com/cosmos/cosmos-sdk/x/auth/tx
+github.com/cosmos/cosmos-sdk/x/auth/client/cli
+github.com/cosmos/cosmos-sdk/types/module/testutil
+github.com/cosmos/cosmos-sdk/x/simulation/client/cli
+cosmossdk.io/x/nft
+github.com/CreoDAMO/REPAR/aequitas/x/claims/types
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v1
+github.com/cosmos/cosmos-sdk/x/genutil/types
+cosmossdk.io/x/evidence/types
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v4
+github.com/cosmos/cosmos-sdk/x/gov/types
+github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1
+github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper
+github.com/cosmos/cosmos-sdk/server
+cosmossdk.io/x/evidence/client/cli
+cosmossdk.io/x/evidence/keeper
+cosmossdk.io/x/evidence/simulation
+github.com/CreoDAMO/REPAR/aequitas/x/claims
+# github.com/CreoDAMO/REPAR/aequitas/x/claims
+Error: x/claims/module.go:36:8: undefined: types.RegisterInterfaces
+Error: x/claims/module.go:60:54: undefined: keeper.NewQueryServerImpl
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/types
+cosmossdk.io/x/evidence
+github.com/cosmos/cosmos-sdk/runtime
+cosmossdk.io/x/upgrade/types
+github.com/cosmos/cosmos-sdk/x/gov/types/v1
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+Error: x/defendant/keeper/keeper.go:60:29: undefined: fmt
+Error: x/defendant/keeper/keeper.go:89:34: defendant.TotalPaid undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method TotalPaid)
+Error: x/defendant/keeper/keeper.go:90:12: defendant.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:90:43: defendant.LiabilityAmount undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method LiabilityAmount)
+Error: x/defendant/keeper/keeper.go:90:73: defendant.TotalPaid undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method TotalPaid)
+Error: x/defendant/keeper/keeper.go:93:15: defendant.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:95:13: defendant.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:114:27: value.LiabilityAmount undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method LiabilityAmount)
+Error: x/defendant/keeper/keeper.go:115:25: value.TotalPaid undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method TotalPaid)
+Error: x/defendant/keeper/keeper.go:116:35: value.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:116:35: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+# github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+Error: x/dex/types/query.pb.go:609:6: QueryClient redeclared in this block
+Error: 	x/dex/types/interfaces.go:45:6: other declaration of QueryClient
+Error: x/dex/types/query.pb.go:626:6: NewQueryClient redeclared in this block
+Error: 	x/dex/types/interfaces.go:54:6: other declaration of NewQueryClient
+Error: x/dex/types/query.pb.go:676:6: QueryServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:20:6: other declaration of QueryServer
+Error: x/dex/types/query.pb.go:709:6: RegisterQueryServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:29:6: other declaration of RegisterQueryServer
+Error: x/dex/types/query.pb.gw.go:462:61: cannot use conn (variable of type *"google.golang.org/grpc".ClientConn) as "github.com/cosmos/cosmos-sdk/client".Context value in argument to NewQueryClient
+Error: x/dex/types/query.pb.gw.go:470:6: RegisterQueryHandlerClient redeclared in this block
+Error: 	x/dex/types/interfaces.go:39:6: other declaration of RegisterQueryHandlerClient
+Error: x/dex/types/tx.pb.go:641:6: MsgServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:12:6: other declaration of MsgServer
+Error: x/dex/types/tx.pb.go:669:6: RegisterMsgServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:34:6: other declaration of RegisterMsgServer
+Error: x/dex/types/tx.pb.go:746:5: _Msg_serviceDesc redeclared in this block
+Error: 	x/dex/types/interfaces.go:59:5: other declaration of _Msg_serviceDesc
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+cosmossdk.io/x/circuit
+cosmossdk.io/x/feegrant/migrations/v2
+cosmossdk.io/x/feegrant/keeper
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v2
+cosmossdk.io/x/nft/keeper
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v3
+cosmossdk.io/x/upgrade/keeper
+github.com/cosmos/cosmos-sdk/x/bank/keeper
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper
+Error: x/distribution/keeper/keeper.go:24:46: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:42:127: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:61:74: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:66:70: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:69:16: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:75:63: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:76:26: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:77:67: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:89:59: distribution.Amount undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution has no field or method Amount)
+Error: x/distribution/keeper/keeper.go:90:62: distribution.RecipientAddress undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution has no field or method RecipientAddress)
+Error: x/distribution/keeper/keeper.go:90:62: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+github.com/cosmos/cosmos-sdk/x/gov/client/utils
+github.com/cosmos/cosmos-sdk/x/gov/client/cli
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper
+Error: x/founderendowment/keeper/msg_server.go:134:21: undefined: sdk.NewInt
+github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper
+cosmossdk.io/x/upgrade/client/cli
+cosmossdk.io/x/upgrade
+github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper
+Error: x/justice/keeper/msg_server.go:21:25: cannot use msgServer{} (value of struct type msgServer) as "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgServer value in variable declaration: msgServer does not implement "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgServer (wrong type for method ExecuteJusticeBurn)
+		have ExecuteJusticeBurn(context.Context, string, "cosmossdk.io/math".Int, "cosmossdk.io/math".Int, string, string) error
+		want ExecuteJusticeBurn(context.Context, *"github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgExecuteJusticeBurn) (*"github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgExecuteJusticeBurnResponse, error)
+Error: x/justice/keeper/msg_server.go:24:67: undefined: types.MsgExecuteBurn
+Error: x/justice/keeper/msg_server.go:24:91: undefined: types.MsgExecuteBurnResponse
+Error: x/justice/keeper/keeper.go:69:3: unknown field UsdAmount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".JusticeBurn
+Error: x/justice/keeper/keeper.go:70:3: unknown field ReparAmount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".JusticeBurn
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
