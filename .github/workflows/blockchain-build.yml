@@ -48,6 +48,44 @@ jobs:
           go mod download
           echo "✅ Dependencies downloaded"
 
+      - name: Install buf CLI
+        run: |
+          echo "📦 Installing buf CLI..."
+          BUF_VERSION="1.28.1"
+          curl -sSL \
+            "https://github.com/bufbuild/buf/releases/download/v${BUF_VERSION}/buf-Linux-x86_64" \
+            -o /tmp/buf
+          chmod +x /tmp/buf
+          sudo mv /tmp/buf /usr/local/bin/buf
+          buf --version
+          echo "✅ buf installed"
+
+      - name: Generate protobuf files
+        working-directory: ./aequitas
+        run: |
+          echo "🔧 Generating protobuf files..."
+          buf mod update
+          buf generate
+          
+          # Verify generation succeeded
+          if [ ! -f "x/defendant/types/defendant.pb.go" ]; then
+            echo "❌ Proto generation failed for defendant module"
+            exit 1
+          fi
+          
+          PROTO_COUNT=$(find x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
+          echo "✅ Generated $PROTO_COUNT protobuf files"
+
+      - name: Remove duplicate type files
+        working-directory: ./aequitas
+        run: |
+          echo "🧹 Removing conflicting manual type files..."
+          find x/*/types -name "msgs.go" -delete 2>/dev/null || true
+          find x/*/types -name "query.go" -delete 2>/dev/null || true
+          find x/*/types -name "genesis.go" -delete 2>/dev/null || true
+          find x/*/types -name "models.go" -delete 2>/dev/null || true
+          echo "✅ Cleanup complete"
+
       - name: Tidy dependencies
         working-directory: ./aequitas
         timeout-minutes: 10
@@ -56,19 +94,6 @@ jobs:
           go mod tidy
           go mod verify
           echo "✅ Modules verified"
-
-      - name: Verify protobuf files exist
-        working-directory: ./aequitas
-        run: |
-          echo "🔍 Checking for protobuf files..."
-          if [ -f "x/defendant/types/defendant.pb.go" ]; then
-            echo "✅ Protobuf files found (committed to repository)"
-            echo "📊 Protobuf file count: $(find x/*/types -name '*.pb.go' | wc -l)"
-          else
-            echo "⚠️  Protobuf files not found - they need to be committed to the repository"
-            echo "💡 Run 'buf generate' locally and commit the .pb.go files"
-            exit 1
-          fi
 
       - name: Build blockchain daemon
         working-directory: ./aequitas
