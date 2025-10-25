@@ -1,0 +1,104 @@
+The job failed due to multiple Go build errors in various modules. The main issues are:
+
+### 1. Undefined Identifiers (Most Critical)
+- Many errors like undefined: types.RegisterInterfaces, types.DefaultParams, types.ValidateGenesis, types.BurnStatistics, and fields like TotalDistributed, MonthlyAllocation, etc.
+- Example:
+  - `x/justice/module.go:36:8: undefined: types.RegisterInterfaces`
+  - `x/validatorsubsidy/keeper/query_server.go:30:4: unknown field TotalDistributed in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyPool`
+
+**Root Cause:**  
+These errors usually mean that the code is referencing functions, types, or struct fields that do not exist or are not imported correctly in the related `types` packages. This can happen if:
+- The code was copied from another Cosmos SDK module but the corresponding types weren't implemented.
+- The `types` files were edited and these functions/fields removed or renamed.
+- You recently upgraded dependencies and API changes were not reflected in your code.
+
+### 2. No Protobuf Files Found
+- `❌ No protobuf files found in x/*/types/`
+- Make sure your `.proto` files are present and generated into `.pb.go` files under `x/*/types/`.
+
+---
+
+## Solutions
+
+### A. Fix Undefined Identifiers
+
+For each failing file (example: `x/justice/module.go`), ensure that all referenced functions and fields are defined in their respective `types` packages.
+
+#### Example Fixes
+
+- For `types.RegisterInterfaces`, `types.RegisterLegacyAminoCodec`, etc., ensure these are defined in `x/<module>/types/codec.go` or similar:
+
+```go
+// In x/justice/types/codec.go
+
+import (
+    "github.com/cosmos/cosmos-sdk/codec"
+    "github.com/cosmos/cosmos-sdk/codec/types"
+)
+
+// RegisterInterfaces registers the module's interface types
+func RegisterInterfaces(registry types.InterfaceRegistry) {
+    // Register your interfaces here
+}
+```
+
+- For missing struct fields like `BurnStatistics` or `TotalDistributed`, add them to the corresponding struct in the `types` package:
+
+```go
+// In x/justice/types/genesis.go
+
+type BurnStatistics struct {
+    TotalTokensBurned sdk.Int `json:"total_tokens_burned" yaml:"total_tokens_burned"`
+    TotalJusticeBurned sdk.Int `json:"total_justice_burned" yaml:"total_justice_burned"`
+}
+
+type GenesisState struct {
+    BurnStatistics BurnStatistics `json:"burn_statistics" yaml:"burn_statistics"`
+}
+```
+
+If you do not intend to use a field or method, remove or comment out the code referencing them.
+
+---
+
+### B. Generate Protobuf Files
+
+- Ensure your `.proto` files exist under `x/<module>/proto/` or similar.
+- Run:
+  ```sh
+  make proto-gen
+  ```
+  or
+  ```sh
+  buf generate
+  ```
+- Confirm `.pb.go` files are generated in `x/<module>/types/`.
+
+---
+
+### C. Remove Unused Imports
+
+For example:
+- `x/nftmarketplace/module.go:6:2: "fmt" imported and not used`
+  - Remove the unused `fmt` import.
+
+---
+
+### D. Validate All Module Types
+
+- Check for all references to `types.*` in your module files.
+- For every usage, confirm the definition exists in the `types` package for that module.
+- If you recently upgraded the Cosmos SDK or copied module code, ensure your `types` packages are in sync with the main module code.
+
+---
+
+## Summary of Immediate Actions
+
+1. For each error, open the referenced file and line (see above) and either define the missing function/field or remove the reference.
+2. Regenerate your protobuf files and ensure they're included in the repo.
+3. Remove unused imports.
+4. If you recently upgraded dependencies, check the upgrade guide for API changes and update your module code accordingly.
+
+---
+
+If you provide any of the failing source files (such as `x/justice/module.go` or `x/validatorsubsidy/types/`), I can give more targeted code corrections. Let me know which file you'd like to address first!
