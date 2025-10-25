@@ -57,6 +57,13 @@ jobs:
           go mod verify
           echo "✅ Modules verified"
 
+      - name: Install buf CLI
+        timeout-minutes: 3
+        run: |
+          echo "📦 Installing buf CLI..."
+          go install github.com/bufbuild/buf/cmd/buf@v1.50.0
+          echo "✅ Buf CLI installed"
+
       - name: Install protobuf generators
         timeout-minutes: 5
         run: |
