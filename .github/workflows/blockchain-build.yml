@@ -61,19 +61,19 @@ jobs:
           echo "✅ buf installed"
 
       - name: Generate protobuf files
-        working-directory: ./aequitas
+        working-directory: ./aequitas/proto
         run: |
           echo "🔧 Generating protobuf files..."
           buf mod update
           buf generate
           
           # Verify generation succeeded
-          if [ ! -f "x/defendant/types/defendant.pb.go" ]; then
+          if [ ! -f "../x/defendant/types/defendant.pb.go" ]; then
             echo "❌ Proto generation failed for defendant module"
             exit 1
           fi
           
-          PROTO_COUNT=$(find x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
+          PROTO_COUNT=$(find ../x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
           echo "✅ Generated $PROTO_COUNT protobuf files"
 
       - name: Remove duplicate type files
