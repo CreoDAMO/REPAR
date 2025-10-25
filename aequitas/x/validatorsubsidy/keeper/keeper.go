@@ -2,13 +2,14 @@
 package keeper
 
 import (
+        "encoding/binary"
+        "fmt"
         "time"
 
         "cosmossdk.io/math"
         storetypes "cosmossdk.io/store/types"
         "github.com/cosmos/cosmos-sdk/codec"
         sdk "github.com/cosmos/cosmos-sdk/types"
-        "github.com/cosmos/cosmos-sdk/types/errors"
 
         "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
@@ -39,13 +40,13 @@ func (k Keeper) DistributeSubsidies(ctx sdk.Context, operatorAddr sdk.AccAddress
         // Check DEX Treasury balance
         balance := k.bankKeeper.GetBalance(ctx, dexTreasury, "uusdc")
         if balance.Amount.LT(subsidyAmount) {
-                return errors.Wrapf(errors.ErrInsufficientFunds, 
-                        "DEX Treasury has %s, need %s", balance.Amount, subsidyAmount)
+                return fmt.Errorf("DEX Treasury has insufficient funds: %s, need %s", balance.Amount, subsidyAmount)
         }
 
-        // Execute transfer
-        if err := k.bankKeeper.SendCoinsFromAccountToAccount(ctx, dexTreasury, operatorAddr, sdk.NewCoins(subsidyCoin)); err != nil {
-                return errors.Wrap(err, "failed to transfer subsidy")
+        // Execute transfer using bank keeper SendCoins
+        err := k.bankKeeper.SendCoins(ctx, dexTreasury, operatorAddr, sdk.NewCoins(subsidyCoin))
+        if err != nil {
+                return fmt.Errorf("failed to transfer subsidy: %w", err)
         }
 
         // Update last distribution timestamp
@@ -79,14 +80,11 @@ func (k Keeper) CheckDistribution(ctx sdk.Context, operatorAddr sdk.AccAddress) 
 func (k Keeper) GetLastDistribution(ctx sdk.Context) time.Time {
         store := ctx.KVStore(k.storeKey)
         bz := store.Get(types.LastDistributionKey)
-        if bz == nil {
+        if bz == nil || len(bz) == 0 {
                 return time.Time{}
         }
 
-        var timestamp int64
-        if err := k.cdc.Unmarshal(bz, &timestamp); err != nil {
-                return time.Time{}
-        }
+        timestamp := int64(binary.BigEndian.Uint64(bz))
         return time.Unix(timestamp, 0)
 }
 
@@ -94,10 +92,8 @@ func (k Keeper) GetLastDistribution(ctx sdk.Context) time.Time {
 func (k Keeper) SetLastDistribution(ctx sdk.Context, t time.Time) {
         store := ctx.KVStore(k.storeKey)
         timestamp := t.Unix()
-        bz, err := k.cdc.Marshal(&timestamp)
-        if err != nil {
-                panic(err)
-        }
+        bz := make([]byte, 8)
+        binary.BigEndian.PutUint64(bz, uint64(timestamp))
         store.Set(types.LastDistributionKey, bz)
 }
 
