@@ -73,41 +73,32 @@ jobs:
         working-directory: ./aequitas/proto
         run: |
           echo "🔧 Generating protobuf files..."
-          echo "Current directory: $(pwd)"
-          echo "Listing proto files:"
-          find . -name "*.proto" | head -5
-          
-          echo ""
-          echo "Running buf mod update..."
           buf mod update
+          buf generate
           
-          echo ""
-          echo "Running buf generate..."
-          buf generate 2>&1 | tee /tmp/buf-output.log || {
-            echo "❌ buf generate failed with exit code $?"
-            cat /tmp/buf-output.log
-            exit 1
-          }
-          
-          echo ""
-          echo "🔍 Searching for generated .pb.go files..."
+          echo "📋 Moving generated protobuf files to correct location..."
           cd ..
-          find . -name "*.pb.go" -type f 2>/dev/null | head -20 || echo "No .pb.go files found anywhere!"
           
-          echo ""
-          echo "📋 Directory structure after generation:"
-          ls -la aequitas/ 2>/dev/null || echo "aequitas/ doesn't exist"
-          
-          echo ""
-          echo "Checking if files were generated in expected locations..."
-          if [ -d "aequitas/defendant/v1" ]; then
-            echo "✓ aequitas/defendant/v1 exists"
-            ls -la aequitas/defendant/v1/
+          # Files are generated in github.com/CreoDAMO/REPAR/aequitas/x/*/types/
+          # We need to move them to x/*/types/
+          if [ -d "github.com/CreoDAMO/REPAR/aequitas/x" ]; then
+            cp -r github.com/CreoDAMO/REPAR/aequitas/x/* x/
+            echo "✅ Copied protobuf files to x/ directory"
+            rm -rf github.com
           else
-            echo "✗ aequitas/defendant/v1 does NOT exist"
+            echo "❌ Generated files not found in expected location"
+            find . -name "*.pb.go" -type f | head -10
+            exit 1
           fi
           
-          exit 1  # Force fail to see all debug output
+          # Verify generation succeeded
+          PROTO_COUNT=$(find x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
+          if [ "$PROTO_COUNT" -eq 0 ]; then
+            echo "❌ No protobuf files found in x/*/types/"
+            exit 1
+          fi
+          
+          echo "✅ Successfully generated and moved $PROTO_COUNT protobuf files"
 
       - name: Remove duplicate type files
         working-directory: ./aequitas

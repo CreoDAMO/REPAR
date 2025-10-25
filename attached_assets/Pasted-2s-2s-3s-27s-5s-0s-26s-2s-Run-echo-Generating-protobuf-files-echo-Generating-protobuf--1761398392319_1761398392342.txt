@@ -1,0 +1,87 @@
+2s
+2s
+3s
+27s
+5s
+0s
+26s
+2s
+Run echo "🔧 Generating protobuf files..."
+  echo "🔧 Generating protobuf files..."
+  echo "Current directory: $(pwd)"
+  echo "Listing proto files:"
+  find . -name "*.proto" | head -5
+  
+  echo ""
+  echo "Running buf mod update..."
+  buf mod update
+  
+  echo ""
+  echo "Running buf generate..."
+  buf generate 2>&1 | tee /tmp/buf-output.log || {
+    echo "❌ buf generate failed with exit code $?"
+    cat /tmp/buf-output.log
+    exit 1
+  }
+  
+  echo ""
+  echo "🔍 Searching for generated .pb.go files..."
+  cd ..
+  find . -name "*.pb.go" -type f 2>/dev/null | head -20 || echo "No .pb.go files found anywhere!"
+  
+  echo ""
+  echo "📋 Directory structure after generation:"
+  ls -la aequitas/ 2>/dev/null || echo "aequitas/ doesn't exist"
+  
+  echo ""
+  echo "Checking if files were generated in expected locations..."
+  if [ -d "aequitas/defendant/v1" ]; then
+    echo "✓ aequitas/defendant/v1 exists"
+    ls -la aequitas/defendant/v1/
+  else
+    echo "✗ aequitas/defendant/v1 does NOT exist"
+  fi
+  
+  exit 1  # Force fail to see all debug output
+  shell: /usr/bin/bash -e {0}
+🔧 Generating protobuf files...
+Current directory: /home/runner/work/REPAR/REPAR/aequitas/proto
+Listing proto files:
+./aequitas/claims/v1/genesis.proto
+./aequitas/claims/v1/tx.proto
+./aequitas/claims/v1/claims.proto
+./aequitas/claims/v1/query.proto
+./aequitas/nftmarketplace/v1/genesis.proto
+
+Running buf mod update...
+
+Running buf generate...
+
+🔍 Searching for generated .pb.go files...
+./github.com/CreoDAMO/REPAR/aequitas/x/claims/types/genesis.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/claims/types/claims.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/claims/types/tx.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/claims/types/query.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types/nftmarketplace.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types/genesis.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types/tx.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types/query.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types/genesis.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types/tx.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types/query.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types/validatorsubsidy.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/distribution/types/genesis.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/distribution/types/distribution.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/distribution/types/tx.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/distribution/types/query.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/justice/types/genesis.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/justice/types/justice.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/justice/types/tx.pb.go
+./github.com/CreoDAMO/REPAR/aequitas/x/justice/types/query.pb.go
+
+📋 Directory structure after generation:
+aequitas/ doesn't exist
+
+Checking if files were generated in expected locations...
+✗ aequitas/defendant/v1 does NOT exist
+Error: Process completed with exit code 1
