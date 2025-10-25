@@ -63,48 +63,15 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 }
 
 func (am AppModule) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	// 6% of 131T = 7.86T REPAR as principal
-	principalAmount := math.NewInt(131_000_000_000_000).MulRaw(6).QuoRaw(100)
-
-	return cdc.MustMarshalJSON(&types.GenesisState{
-		Endowment: types.FounderEndowment{
-			Id:               "founder_endowment",
-			Principal:        principalAmount,
-			YieldAccumulated: math.ZeroInt(),
-			TargetApyBps:     450, // 4.5%
-			LastYieldCalc:    0,
-			UnlockTime:       0, // Will be set during InitGenesis
-			IsLocked:         true,
-			FounderAddress:   "", // Will be set from genesis
-			RenewalCount:     0,
-		},
-		DistributionConfig: types.DistributionConfig{
-			ProtocolPercentage: 90,
-			FounderPercentage:  10,
-		},
-		ProtocolAllocation: types.ProtocolAllocation{
-			DexLiquidityPercentage:     25,
-			DaoTreasuryPercentage:      25,
-			SocialEndowmentPercentage:  25,
-			ValidatorSubsidyPercentage: 15,
-		},
-		Statistics: types.EndowmentStats{
-			TotalPrincipal:        principalAmount,
-			TotalYieldDistributed: math.ZeroInt(),
-			TotalFounderDividends: math.ZeroInt(),
-			TotalProtocolFunding:  math.ZeroInt(),
-			DistributionCount:     0,
-		},
-		Distributions: []types.YieldDistribution{},
-	})
+	return cdc.MustMarshalJSON(types.DefaultGenesis())
 }
 
 func (am AppModule) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var data types.GenesisState
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
-		return fmt.Errorf("failed to unmarshal %s genesis state: %w", ModuleName, err)
+		return err
 	}
-	return nil
+	return data.Validate()
 }
 
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) {

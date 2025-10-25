@@ -70,3 +70,53 @@ func (gs GenesisState) Validate() error {
 
 	return nil
 }
+package types
+
+import (
+	"cosmossdk.io/math"
+)
+
+// GenesisState defines the founderendowment module's genesis state
+type GenesisState struct {
+	Params        Params          `json:"params"`
+	Endowments    []Endowment     `json:"endowments"`
+	Distributions []Distribution  `json:"distributions"`
+}
+
+// Endowment represents a founder endowment
+type Endowment struct {
+	Id          string   `json:"id"`
+	Founder     string   `json:"founder"`
+	Amount      math.Int `json:"amount"`
+	VestingEnd  int64    `json:"vesting_end"`
+	Timestamp   int64    `json:"timestamp"`
+}
+
+// Distribution represents an endowment distribution
+type Distribution struct {
+	Id        string   `json:"id"`
+	Amount    math.Int `json:"amount"`
+	Recipient string   `json:"recipient"`
+	Timestamp int64    `json:"timestamp"`
+}
+
+// Params defines the parameters for the founderendowment module
+type Params struct {
+	VestingPeriod uint64 `json:"vesting_period"`
+}
+
+// DefaultGenesis returns the default genesis state
+func DefaultGenesis() *GenesisState {
+	return &GenesisState{
+		Params: Params{
+			VestingPeriod: 31536000, // 1 year
+		},
+		Endowments:    []Endowment{},
+		Distributions: []Distribution{},
+	}
+}
+
+// Validate performs basic genesis state validation
+func (gs GenesisState) Validate() error {
+	return nil
+}
