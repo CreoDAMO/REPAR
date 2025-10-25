@@ -1,0 +1,71 @@
+# github.com/CreoDAMO/REPAR/aequitas/x/claims
+Error: x/claims/module.go:36:8: undefined: types.RegisterInterfaces
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+Error: x/defendant/keeper/msg_server.go:92:5: undefined: err
+Error: x/defendant/keeper/msg_server.go:93:5: undefined: err
+Error: x/defendant/keeper/msg_server.go:94:15: undefined: err
+Error: x/defendant/keeper/query_server.go:46:3: in call to query.CollectionPaginate, type func(key string, value "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant) error of func(key string, value types.Defendant) error {…} does not match inferred type func(key string, value "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant) (T, error) for func(key K, value V) (T, error)
+github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+cosmossdk.io/x/evidence
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+cosmossdk.io/x/circuit
+cosmossdk.io/x/feegrant/migrations/v2
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v2
+cosmossdk.io/x/feegrant/keeper
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v3
+github.com/cosmos/cosmos-sdk/x/bank/keeper
+cosmossdk.io/x/nft/keeper
+cosmossdk.io/x/upgrade/types
+github.com/cosmos/cosmos-sdk/x/gov/types/v1
+github.com/CreoDAMO/REPAR/aequitas/x/dex/keeper
+cosmossdk.io/x/upgrade/keeper
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper
+github.com/CreoDAMO/REPAR/aequitas/x/dex
+# github.com/CreoDAMO/REPAR/aequitas/x/dex
+Error: x/dex/module.go:34:8: undefined: types.RegisterLegacyAminoCodec
+Error: x/dex/module.go:38:8: undefined: types.RegisterInterfaces
+Error: x/dex/module.go:71:21: undefined: types.DefaultParams
+Error: x/dex/module.go:80:15: undefined: types.ValidateGenesis
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+github.com/cosmos/cosmos-sdk/x/gov/client/utils
+github.com/CreoDAMO/REPAR/aequitas/x/distribution
+# github.com/CreoDAMO/REPAR/aequitas/x/distribution
+Error: x/distribution/module.go:36:15: undefined: types.RegisterInterfaces
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+github.com/cosmos/cosmos-sdk/x/gov/client/cli
+github.com/cosmos/cosmos-sdk/testutil/sims
+cosmossdk.io/x/upgrade/client/cli
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper
+cosmossdk.io/x/upgrade
+github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment
+Error: x/founderendowment/module.go:37:8: undefined: types.RegisterInterfaces
+
+# github.com/CreoDAMO/REPAR/aequitas/x/justice
+Error: x/justice/module.go:9:2: "cosmossdk.io/math" imported and not used
+Error: x/justice/module.go:37:8: undefined: types.RegisterInterfaces
+Error: x/justice/module.go:68:28: undefined: sdk.ZeroDec
+Error: x/justice/module.go:69:4: unknown field TotalJusticeBurned in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".BurnStatistics
+Error: x/justice/module.go:69:28: undefined: sdk.ZeroDec
+Error: x/justice/module.go:97:28: undefined: sdk.ZeroDec
+Error: x/justice/module.go:98:4: unknown field TotalJusticeBurned in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".BurnStatistics
+Error: x/justice/module.go:98:28: undefined: sdk.ZeroDec
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper
+Error: x/validatorsubsidy/keeper/query_server.go:28:9: cannot use &pool (value of type *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPool) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyPool value in struct literal
+
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper
+Error: x/nftmarketplace/keeper/keeper.go:160:30: undefined: types.ErrNotNFTOwner
+Error: x/nftmarketplace/keeper/keeper.go:177:30: undefined: types.ErrNotNFTOwner
+Error: x/nftmarketplace/keeper/keeper.go:200:34: undefined: types.ErrNotNFTOwner
+Error: x/nftmarketplace/keeper/keeper.go:233:30: undefined: types.ErrNotListingSeller
+Error: x/nftmarketplace/keeper/keeper.go:237:30: undefined: types.ErrListingNotActive
+Error: x/nftmarketplace/keeper/keeper.go:252:38: undefined: types.ErrListingNotActive
+Error: x/nftmarketplace/keeper/keeper.go:260:38: undefined: types.ErrListingExpired
+Error: x/nftmarketplace/keeper/keeper.go:392:30: undefined: types.ErrNotEvidenceNFT
+Error: x/nftmarketplace/keeper/keeper.go:410:30: undefined: types.ErrNotNFTOwner
+Error: x/nftmarketplace/keeper/query_server.go:124:21: undefined: types.ErrCollectionNotFound
+Error: x/nftmarketplace/keeper/query_server.go:124:21: too many errors
