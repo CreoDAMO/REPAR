@@ -1,0 +1,109 @@
+Error: x/claims/module.go:36:8: undefined: types.RegisterInterfaces
+Error: x/claims/module.go:60:54: undefined: keeper.NewQueryServerImpl
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/types
+cosmossdk.io/x/evidence
+github.com/cosmos/cosmos-sdk/runtime
+cosmossdk.io/x/upgrade/types
+github.com/cosmos/cosmos-sdk/x/gov/types/v1
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+Error: x/defendant/keeper/keeper.go:60:29: undefined: fmt
+Error: x/defendant/keeper/keeper.go:89:34: defendant.TotalPaid undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method TotalPaid)
+Error: x/defendant/keeper/keeper.go:90:12: defendant.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:90:43: defendant.LiabilityAmount undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method LiabilityAmount)
+Error: x/defendant/keeper/keeper.go:90:73: defendant.TotalPaid undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method TotalPaid)
+Error: x/defendant/keeper/keeper.go:93:15: defendant.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:95:13: defendant.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:114:27: value.LiabilityAmount undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method LiabilityAmount)
+Error: x/defendant/keeper/keeper.go:115:25: value.TotalPaid undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method TotalPaid)
+Error: x/defendant/keeper/keeper.go:116:35: value.RemainingLiability undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".Defendant has no field or method RemainingLiability)
+Error: x/defendant/keeper/keeper.go:116:35: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+# github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+Error: x/dex/types/query.pb.go:609:6: QueryClient redeclared in this block
+Error: 	x/dex/types/interfaces.go:45:6: other declaration of QueryClient
+Error: x/dex/types/query.pb.go:626:6: NewQueryClient redeclared in this block
+Error: 	x/dex/types/interfaces.go:54:6: other declaration of NewQueryClient
+Error: x/dex/types/query.pb.go:676:6: QueryServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:20:6: other declaration of QueryServer
+Error: x/dex/types/query.pb.go:709:6: RegisterQueryServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:29:6: other declaration of RegisterQueryServer
+Error: x/dex/types/query.pb.gw.go:462:61: cannot use conn (variable of type *"google.golang.org/grpc".ClientConn) as "github.com/cosmos/cosmos-sdk/client".Context value in argument to NewQueryClient
+Error: x/dex/types/query.pb.gw.go:470:6: RegisterQueryHandlerClient redeclared in this block
+Error: 	x/dex/types/interfaces.go:39:6: other declaration of RegisterQueryHandlerClient
+Error: x/dex/types/tx.pb.go:641:6: MsgServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:12:6: other declaration of MsgServer
+Error: x/dex/types/tx.pb.go:669:6: RegisterMsgServer redeclared in this block
+Error: 	x/dex/types/interfaces.go:34:6: other declaration of RegisterMsgServer
+Error: x/dex/types/tx.pb.go:746:5: _Msg_serviceDesc redeclared in this block
+Error: 	x/dex/types/interfaces.go:59:5: other declaration of _Msg_serviceDesc
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+
+Error: x/distribution/keeper/keeper.go:24:46: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:42:127: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:61:74: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:66:70: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:69:16: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:75:63: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:76:26: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:77:67: undefined: types.Descendant
+Error: x/distribution/keeper/keeper.go:89:59: distribution.Amount undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution has no field or method Amount)
+Error: x/distribution/keeper/keeper.go:90:62: distribution.RecipientAddress undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution has no field or method RecipientAddress)
+Error: x/distribution/keeper/keeper.go:90:62: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+github.com/cosmos/cosmos-sdk/x/gov/client/utils
+github.com/cosmos/cosmos-sdk/x/gov/client/cli
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper
+Error: x/founderendowment/keeper/msg_server.go:134:21: undefined: sdk.NewInt
+github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper
+cosmossdk.io/x/upgrade/client/cli
+cosmossdk.io/x/upgrade
+github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper
+Error: x/justice/keeper/msg_server.go:21:25: cannot use msgServer{} (value of struct type msgServer) as "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgServer value in variable declaration: msgServer does not implement "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgServer (wrong type for method ExecuteJusticeBurn)
+		have ExecuteJusticeBurn(context.Context, string, "cosmossdk.io/math".Int, "cosmossdk.io/math".Int, string, string) error
+		want ExecuteJusticeBurn(context.Context, *"github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgExecuteJusticeBurn) (*"github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgExecuteJusticeBurnResponse, error)
+Error: x/justice/keeper/msg_server.go:24:67: undefined: types.MsgExecuteBurn
+Error: x/justice/keeper/msg_server.go:24:91: undefined: types.MsgExecuteBurnResponse
+Error: x/justice/keeper/keeper.go:69:3: unknown field UsdAmount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".JusticeBurn
+Error: x/justice/keeper/keeper.go:70:3: unknown field ReparAmount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".JusticeBurn
+Error: x/justice/keeper/keeper.go:72:3: unknown field Description in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".JusticeBurn
+Error: x/justice/keeper/keeper.go:73:16: cannot use sdkCtx.BlockTime() (value of struct type "time".Time) as int64 value in struct literal
+Error: x/justice/keeper/keeper.go:74:3: unknown field BurnedBy in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".JusticeBurn
+Error: x/justice/keeper/keeper.go:96:19: cannot use math.ZeroInt() (value of struct type "cosmossdk.io/math".Int) as "cosmossdk.io/math".LegacyDec value in struct literal
+Error: x/justice/keeper/keeper.go:97:4: unknown field BurnCount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".BurnStatistics
+Error: x/justice/keeper/keeper.go:97:4: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+github.com/cosmos/cosmos-sdk/testutil/sims
+github.com/CreoDAMO/REPAR/aequitas/x/endowment
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment
+Error: x/endowment/module.go:43:35: undefined: types.DefaultGenesis
+Error: x/endowment/module.go:51:18: genState.Validate undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types".GenesisState has no field or method Validate)
+
+Error: x/validatorsubsidy/keeper/keeper.go:32:30: undefined: sdk.NewInt
+Error: x/validatorsubsidy/keeper/keeper.go:41:34: undefined: sdkerrors.Wrapf
+Error: x/validatorsubsidy/keeper/keeper.go:46:32: k.bankKeeper.SendCoins undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".BankKeeper has no field or method SendCoins)
+Error: x/validatorsubsidy/keeper/keeper.go:47:34: undefined: sdkerrors.Wrap
+Error: x/validatorsubsidy/keeper/keeper.go:86:33: cannot use &t (value of type *"time".Time) as "github.com/cosmos/gogoproto/proto".Message value in argument to k.cdc.MustUnmarshal: *"time".Time does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/validatorsubsidy/keeper/keeper.go:93:33: cannot use &t (value of type *"time".Time) as "github.com/cosmos/gogoproto/proto".Message value in argument to k.cdc.MustMarshal: *"time".Time does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/validatorsubsidy/keeper/msg_server.go:47:22: ms.Keeper.RegisterValidator undefined (type Keeper has no field or method RegisterValidator)
+Error: x/validatorsubsidy/keeper/msg_server.go:66:8: ms.authority undefined (type msgServer has no field or method authority)
+Error: x/validatorsubsidy/keeper/msg_server.go:70:33: ms.Keeper.DistributeMonthlySubsidies undefined (type Keeper has no field or method DistributeMonthlySubsidies)
+Error: x/validatorsubsidy/keeper/msg_server.go:82:22: ms.Keeper.ClaimEmergencyFunds undefined (type Keeper has no field or method ClaimEmergencyFunds)
+Error: x/validatorsubsidy/keeper/msg_server.go:47:22: too many errors
+github.com/cosmos/cosmos-sdk/x/auth/migrations/v3
+github.com/cosmos/cosmos-sdk/x/auth/migrations/v4
+github.com/cosmos/cosmos-sdk/x/auth/migrations/v5
+github.com/cosmos/cosmos-sdk/x/auth/posthandler
+github.com/cosmos/cosmos-sdk/x/auth/tx/config
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper
+Error: x/nftmarketplace/keeper/keeper.go:6:2: "time" imported and not used
+Error: x/nftmarketplace/keeper/msg_server.go:6:2: "cosmossdk.io/math" imported and not used
+Error: x/nftmarketplace/keeper/msg_server.go:7:2: "github.com/cosmos/cosmos-sdk/types" imported as sdk and not used
+Error: x/nftmarketplace/keeper/query_server.go:6:2: "cosmossdk.io/collections" imported and not used
+Error: x/nftmarketplace/keeper/query_server.go:7:2: "github.com/cosmos/cosmos-sdk/types/query" imported and not used
