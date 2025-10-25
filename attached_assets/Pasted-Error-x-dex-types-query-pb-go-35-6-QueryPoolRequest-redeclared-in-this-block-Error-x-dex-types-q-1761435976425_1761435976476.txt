@@ -1,0 +1,82 @@
+Error: x/dex/types/query.pb.go:35:6: QueryPoolRequest redeclared in this block
+Error: 	x/dex/types/query.go:10:6: other declaration of QueryPoolRequest
+Error: x/dex/types/query.pb.go:79:6: QueryPoolResponse redeclared in this block
+Error: 	x/dex/types/query.go:15:6: other declaration of QueryPoolResponse
+Error: x/dex/types/query.pb.go:123:6: QueryPoolsRequest redeclared in this block
+Error: 	x/dex/types/query.go:20:6: other declaration of QueryPoolsRequest
+Error: x/dex/types/query.pb.go:167:6: QueryPoolsResponse redeclared in this block
+Error: 	x/dex/types/query.go:25:6: other declaration of QueryPoolsResponse
+Error: x/dex/types/query.pb.go:219:6: QueryLiquidityPositionRequest redeclared in this block
+Error: 	x/dex/types/query.go:31:6: other declaration of QueryLiquidityPositionRequest
+Error: x/dex/types/query.pb.go:271:6: QueryLiquidityPositionResponse redeclared in this block
+Error: 	x/dex/types/query.go:37:6: other declaration of QueryLiquidityPositionResponse
+Error: x/dex/types/query.pb.go:315:6: QueryLiquidityPositionsRequest redeclared in this block
+Error: 	x/dex/types/query.go:42:6: other declaration of QueryLiquidityPositionsRequest
+Error: x/dex/types/query.pb.go:367:6: QueryLiquidityPositionsResponse redeclared in this block
+Error: 	x/dex/types/query.go:48:6: other declaration of QueryLiquidityPositionsResponse
+Error: x/dex/types/query.pb.go:419:6: QueryEstimateSwapRequest redeclared in this block
+Error: 	x/dex/types/query.go:54:6: other declaration of QueryEstimateSwapRequest
+Error: x/dex/types/query.pb.go:480:6: QueryEstimateSwapResponse redeclared in this block
+Error: 	x/dex/types/query.go:62:6: other declaration of QueryEstimateSwapResponse
+Error: x/dex/types/query.pb.go:480:6: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper
+github.com/cosmos/cosmos-sdk/x/genutil/types
+cosmossdk.io/x/evidence/types
+github.com/cosmos/cosmos-sdk/server
+github.com/cosmos/cosmos-sdk/x/gov/types
+github.com/CreoDAMO/REPAR/aequitas/x/claims
+github.com/cosmos/cosmos-sdk/x/gov/types/v1beta1
+cosmossdk.io/x/evidence/client/cli
+cosmossdk.io/x/evidence/keeper
+cosmossdk.io/x/evidence/simulation
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+github.com/cosmos/cosmos-sdk/runtime
+cosmossdk.io/x/evidence
+github.com/CreoDAMO/REPAR/aequitas/x/defendant
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant
+Error: x/defendant/module.go:36:8: undefined: types.RegisterInterfaces
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+Error: x/endowment/types/genesis.go:61:1: syntax error: non-declaration statement outside function body
+Error: x/endowment/types/genesis.go:63:1: syntax error: imports must appear before other declarations
+
+Error: x/founderendowment/module.go:6:2: "fmt" imported and not used
+Error: x/founderendowment/module.go:9:2: "cosmossdk.io/math" imported and not used
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+github.com/cosmos/cosmos-sdk/x/gov/client/utils
+github.com/CreoDAMO/REPAR/aequitas/x/justice
+# github.com/CreoDAMO/REPAR/aequitas/x/justice
+Error: x/justice/module.go:96:19: am.keeper.SetBurnStatistics undefined (type keeper.Keeper has no field or method SetBurnStatistics)
+Error: x/justice/module.go:97:19: am.keeper.SetBurns undefined (type keeper.Keeper has no field or method SetBurns)
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+github.com/cosmos/cosmos-sdk/x/gov/client/cli
+github.com/cosmos/cosmos-sdk/testutil/sims
+cosmossdk.io/x/upgrade/client/cli
+cosmossdk.io/x/upgrade
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper
+Error: x/validatorsubsidy/keeper/query_server.go:28:9: cannot use &pool (value of type *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPool) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyPool value in struct literal
+github.com/cosmos/cosmos-sdk/x/auth/exported
+github.com/cosmos/cosmos-sdk/x/auth/vesting/exported
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper
+github.com/cosmos/cosmos-sdk/testutil/testdata
+github.com/cosmos/cosmos-sdk/x/auth/migrations/v3
+github.com/cosmos/cosmos-sdk/x/auth/migrations/v4
+github.com/cosmos/cosmos-sdk/x/auth/migrations/v5
+github.com/cosmos/cosmos-sdk/x/auth/posthandler
+github.com/cosmos/cosmos-sdk/x/auth/tx/config
+github.com/cosmos/cosmos-sdk/x/simulation
+github.com/cosmos/cosmos-sdk/x/authz/migrations/v2
+github.com/cosmos/cosmos-sdk/x/authz/keeper
+cosmossdk.io/x/feegrant/simulation
+cosmossdk.io/x/nft/simulation
+cosmossdk.io/x/feegrant/module
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace
+cosmossdk.io/x/nft/module
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace
+Error: x/nftmarketplace/module.go:33:8: undefined: types.RegisterCodec
+Error: x/nftmarketplace/module.go:37:8: undefined: types.RegisterInterfaces
+Error: x/nftmarketplace/module.go:67:26: undefined: types.NFTListing
+Error: x/nftmarketplace/module.go:68:3: unknown field SalesHistory in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types".GenesisState
