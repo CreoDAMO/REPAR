@@ -65,10 +65,8 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 func (am AppModule) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 	return cdc.MustMarshalJSON(&types.GenesisState{
 		Statistics: types.BurnStatistics{
-			TotalBurned:   math.ZeroInt(),
-			TotalUsdValue: math.ZeroInt(),
-			CurrentSupply: math.ZeroInt(),
-			BurnCount:     0,
+			TotalBurned:        sdk.ZeroDec(),
+			TotalJusticeBurned: sdk.ZeroDec(),
 		},
 		Burns: []types.JusticeBurn{},
 	})
@@ -96,10 +94,8 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	stats, err := am.keeper.GetBurnStatistics(ctx)
 	if err != nil {
 		stats = types.BurnStatistics{
-			TotalBurned:   math.ZeroInt(),
-			TotalUsdValue: math.ZeroInt(),
-			CurrentSupply: math.ZeroInt(),
-			BurnCount:     0,
+			TotalBurned:        sdk.ZeroDec(),
+			TotalJusticeBurned: sdk.ZeroDec(),
 		}
 	}
 

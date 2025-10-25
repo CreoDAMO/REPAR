@@ -88,8 +88,8 @@ func (ms msgServer) RecordNonMonetaryContribution(goCtx context.Context, msg *ty
 		return nil, err
 	}
 
-	// Get updated defendant
-	defendant, err := ms.Keeper.GetDefendant(ctx, msg.DefendantId)
+	// Get updated defendant for verification
+	_, err = ms.Keeper.GetDefendant(ctx, msg.DefendantId)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (ms msgServer) UpdateDefendantStatus(goCtx context.Context, msg *types.MsgU
 	}
 
 	// Update status
-	if err := ms.Keeper.UpdateDefendantStatus(ctx, msg.DefendantId, msg.NewStatus); err != nil {
+	if err := ms.Keeper.UpdateDefendantStatus(ctx, msg.DefendantId, msg.Status); err != nil {
 		return nil, err
 	}
 
@@ -130,7 +130,7 @@ func (ms msgServer) UpdateDefendantStatus(goCtx context.Context, msg *types.MsgU
 		sdk.NewEvent(
 			"defendant_status_updated",
 			sdk.NewAttribute("defendant_id", msg.DefendantId),
-			sdk.NewAttribute("status", msg.NewStatus.String()),
+			sdk.NewAttribute("status", msg.Status.String()),
 		),
 	)
 
