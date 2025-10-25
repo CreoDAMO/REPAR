@@ -43,9 +43,9 @@ func (qs queryServer) ListDefendants(goCtx context.Context, req *types.QueryList
                 ctx,
                 qs.Keeper.Defendants,
                 req.Pagination,
-                func(key string, value types.Defendant) (types.Defendant, error) {
+                func(key string, value types.Defendant) (bool, error) {
                         defendants = append(defendants, value)
-                        return value, nil
+                        return false, nil
                 },
         )
         if err != nil {
