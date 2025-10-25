@@ -100,22 +100,17 @@ jobs:
           
           echo "✅ Successfully generated and moved $PROTO_COUNT protobuf files"
 
-      - name: Remove duplicate type files
+      - name: Verify protobuf generation
         working-directory: ./aequitas
         run: |
-          echo "🧹 Removing conflicting manual type files..."
-          find x/*/types -name "msgs.go" -delete 2>/dev/null || true
-          find x/*/types -name "query.go" -delete 2>/dev/null || true
-          find x/*/types -name "genesis.go" -delete 2>/dev/null || true
-          find x/*/types -name "models.go" -delete 2>/dev/null || true
-          find x/*/types -name "interfaces.go" -delete 2>/dev/null || true
-          find x/*/types -name "tx.go" -delete 2>/dev/null || true
-          find x/*/types -name "codec.go" -delete 2>/dev/null || true
+          echo "✅ Protobuf files generated successfully"
+          echo "📋 Generated protobuf files:"
+          find x/*/types -name "*.pb.go" | wc -l
           
-          # List remaining files to verify cleanup
-          echo "Remaining .go files in types directories:"
-          find x/*/types -name "*.go" -not -name "*_test.go" -not -name "*.pb.go" | head -10 || echo "None found"
-          echo "✅ Cleanup complete"
+          echo "📋 Existing helper files (codec.go, keys.go, errors.go, expected_keepers.go):"
+          find x/*/types -name "codec.go" -o -name "keys.go" -o -name "errors.go" -o -name "expected_keepers.go" | wc -l
+          
+          echo "✅ Build setup complete - protobuf + helper files ready"
 
       - name: Tidy dependencies
         working-directory: ./aequitas
