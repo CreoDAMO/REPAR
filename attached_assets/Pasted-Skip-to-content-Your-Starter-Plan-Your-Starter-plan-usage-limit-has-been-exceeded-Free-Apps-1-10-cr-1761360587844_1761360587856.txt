@@ -1,0 +1,120 @@
+Skip to content
+Your Starter Plan
+Your Starter plan usage limit has been exceeded.
+Free Apps
+1/10 created
+Agent Usage
+100% used
+Install Replit on
+Console
+Preview
+Preview your app here
+The app is currently not running.
+to see the results of your app.
+Let's check the actual GitHub workflow Blockchain deployment yml because it wasn't triggered in my last push. Then let's see if we can trigger it
+
+48 minutes ago
+46 minutes ago
+Add guide for triggering blockchain build workflow and script
+2 minutes of work
+This is the build log
+
+32 minutes ago
+30 minutes ago
+Fix blockchain build by auto-generating protobuf files in CI
+2 minutes of work
+Run echo "🔧 Generating protobuf Go files..."
+echo "🔧 Generating protobuf Go files..."
+export PATH="$HOME/go/bin:$PATH"
+buf generate --template buf.gen.gogo.yaml
+echo "✅ Protobuf files generated"
+
+Copy generated files to correct locations
+echo "📋 Copying protobuf files to module directories..."
+for module in claims defendant dex distribution endowment founderendowment justice nftmarketplace validatorsubsidy; do
+if [ -d "github.com/CreoDAMO/REPAR/aequitas/x/$module/types" ]; then
+cp github.com/CreoDAMO/REPAR/aequitas/x/$module/types/*.pb.go ../x/$module/types/ 2>/dev/null || true
+echo " ✓ Copied $module protobuf files"
+fi
+done
+echo "✅ All protobuf files copied to their modules"
+shell: /usr/bin/bash -e {0}
+🔧 Generating protobuf Go files...
+/home/runner/work/_temp/da4c72fc-4411-4e09-9642-a42ef3b61e6f.sh: line 3: buf: command not found
+Error: Process completed with exit code 127.
+
+26 minutes ago
+25 minutes ago
+Add buf CLI installation to the build process
+24 seconds of work
+And the errors still are to many to complete the build process
+
+17 minutes ago
+A
+
+14 minutes ago
+I see you sent "A" - just acknowledging my previous message?
+
+Let me quickly check the LSP errors in the dex.pb.go file:
+
+Checked code issues
+Perfect! The LSP confirms the exact duplicate declarations:
+
+Pool redeclared (line 31)
+LiquidityPosition redeclared (line 112)
+SwapRoute redeclared (line 166)
+These are coming from the models.go file I removed earlier. Let me verify it's gone and check if we need to remove any other conflicting files:
+
+Good! models.go is deleted, but we still have msgs.go, query.go, and genesis.go which likely have duplicate declarations too. Let me check them:
+
+I found the issue! All these files have duplicate type declarations:
+
+msgs.go → Defines MsgCreatePool, MsgAddLiquidity, etc. (also in tx.pb.go)
+query.go → Defines QueryPoolRequest, QueryPoolResponse, etc. (also in query.pb.go)
+genesis.go → Likely defines genesis types (also in genesis.pb.go)
+🎯 Here's What We Need To Do:
+You have two options to fix the blockchain build:
+
+Option A: Delete Manual Files & Use Protobuf Only ⭐ (Recommended - Fast)
+# Run this to remove ALL conflicting files
+cd aequitas/x/dex/types
+rm -f msgs.go query.go genesis.go
+# Then commit protobuf files
+git add ../**/types/*.pb.go
+git commit -m "Use protobuf-only types, remove manual duplicates"
+git push
+Pros: Quick, clean, protobuf is source of truth
+Cons: May need to add helper methods back
+
+Option B: Keep Manual Files & Remove Protobuf
+Delete all .pb.go files and don't generate protobuf.
+
+Pros: Keep your manual code
+Cons: Lose protobuf benefits, more maintenance
+
+❓ What Would You Like To Do?
+Go with Option A - I'll delete the conflicting files and prepare for commit
+Go with Option B - I'll remove protobuf files instead
+Something else - Tell me your preference
+Just let me know which approach you prefer!
+
+13 minutes ago
+Address duplicate type declarations and streamline blockchain build process
+
+Run echo "🔧 Generating protobuf files..."
+  echo "🔧 Generating protobuf files..."
+  buf mod update
+  buf generate
+  
+  # Verify generation succeeded
+  if [ ! -f "x/defendant/types/defendant.pb.go" ]; then
+    echo "❌ Proto generation failed for defendant module"
+    exit 1
+  fi
+  
+  PROTO_COUNT=$(find x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
+  echo "✅ Generated $PROTO_COUNT protobuf files"
+  shell: /usr/bin/bash -e {0}
+🔧 Generating protobuf files...
+Failure: please define a configuration file in the current directory; you can create one by running "buf mod init"
+Error: Process completed with exit code 1.
