@@ -73,30 +73,41 @@ jobs:
         working-directory: ./aequitas/proto
         run: |
           echo "🔧 Generating protobuf files..."
+          echo "Current directory: $(pwd)"
+          echo "Listing proto files:"
+          find . -name "*.proto" | head -5
+          
+          echo ""
+          echo "Running buf mod update..."
           buf mod update
-          buf generate
           
-          # Move generated files to correct location
-          echo "📋 Moving protobuf files to module directories..."
-          cd ..
-          
-          # Copy generated proto files to their respective module types directories
-          for module in claims defendant dex distribution endowment founderendowment justice nftmarketplace validatorsubsidy; do
-            if [ -d "aequitas/$module/v1" ]; then
-              mkdir -p "x/$module/types"
-              cp -v aequitas/$module/v1/*.pb.go "x/$module/types/" 2>/dev/null || echo "⚠️ No .pb.go files found for $module"
-            fi
-          done
-          
-          # Verify generation succeeded
-          if [ ! -f "x/defendant/types/defendant.pb.go" ]; then
-            echo "❌ Proto generation failed for defendant module"
-            ls -la aequitas/defendant/v1/ || echo "Directory doesn't exist"
+          echo ""
+          echo "Running buf generate..."
+          buf generate 2>&1 | tee /tmp/buf-output.log || {
+            echo "❌ buf generate failed with exit code $?"
+            cat /tmp/buf-output.log
             exit 1
+          }
+          
+          echo ""
+          echo "🔍 Searching for generated .pb.go files..."
+          cd ..
+          find . -name "*.pb.go" -type f 2>/dev/null | head -20 || echo "No .pb.go files found anywhere!"
+          
+          echo ""
+          echo "📋 Directory structure after generation:"
+          ls -la aequitas/ 2>/dev/null || echo "aequitas/ doesn't exist"
+          
+          echo ""
+          echo "Checking if files were generated in expected locations..."
+          if [ -d "aequitas/defendant/v1" ]; then
+            echo "✓ aequitas/defendant/v1 exists"
+            ls -la aequitas/defendant/v1/
+          else
+            echo "✗ aequitas/defendant/v1 does NOT exist"
           fi
           
-          PROTO_COUNT=$(find x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
-          echo "✅ Generated and moved $PROTO_COUNT protobuf files"
+          exit 1  # Force fail to see all debug output
 
       - name: Remove duplicate type files
         working-directory: ./aequitas
