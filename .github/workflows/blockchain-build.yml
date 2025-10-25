@@ -76,14 +76,27 @@ jobs:
           buf mod update
           buf generate
           
+          # Move generated files to correct location
+          echo "📋 Moving protobuf files to module directories..."
+          cd ..
+          
+          # Copy generated proto files to their respective module types directories
+          for module in claims defendant dex distribution endowment founderendowment justice nftmarketplace validatorsubsidy; do
+            if [ -d "aequitas/$module/v1" ]; then
+              mkdir -p "x/$module/types"
+              cp -v aequitas/$module/v1/*.pb.go "x/$module/types/" 2>/dev/null || echo "⚠️ No .pb.go files found for $module"
+            fi
+          done
+          
           # Verify generation succeeded
-          if [ ! -f "../x/defendant/types/defendant.pb.go" ]; then
+          if [ ! -f "x/defendant/types/defendant.pb.go" ]; then
             echo "❌ Proto generation failed for defendant module"
+            ls -la aequitas/defendant/v1/ || echo "Directory doesn't exist"
             exit 1
           fi
           
-          PROTO_COUNT=$(find ../x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
-          echo "✅ Generated $PROTO_COUNT protobuf files"
+          PROTO_COUNT=$(find x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
+          echo "✅ Generated and moved $PROTO_COUNT protobuf files"
 
       - name: Remove duplicate type files
         working-directory: ./aequitas
