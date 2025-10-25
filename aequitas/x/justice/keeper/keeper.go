@@ -139,7 +139,7 @@ func (k Keeper) ExecuteJusticeBurn(ctx context.Context, defendantId string, usdA
 // GetBurnStatistics retrieves burn statistics
 func (k Keeper) GetBurnStatistics(ctx context.Context) (types.BurnStatistics, error) {
         stats, err := k.Statistics.Get(ctx)
-        if err != nil {
+        if err != nil && err == collections.ErrNotFound {
                 // Handle case where statistics item might not exist yet
                 return types.BurnStatistics{
                         TotalBurned:       math.ZeroInt(),

@@ -182,3 +182,56 @@ func (k Keeper) GetPaymentHistory(ctx sdk.Context, validatorAddr string) ([]type
 func (k Keeper) Schedule(ctx sdk.Context) (types.DistributionSchedule, error) {
         return types.DistributionSchedule{}, nil
 }
+
+// RegisterValidator registers a validator for subsidy payments
+func (k Keeper) RegisterValidator(ctx sdk.Context, record types.ValidatorSubsidyRecord) error {
+        store := ctx.KVStore(k.storeKey)
+        bz := k.cdc.MustMarshal(&record)
+        store.Set(types.ValidatorKey(record.ValidatorAddress), bz)
+        return nil
+}
+
+// DistributeMonthlySubsidies distributes subsidies to all active validators
+func (k Keeper) DistributeMonthlySubsidies(ctx sdk.Context) (uint32, math.Int, error) {
+        // This would iterate through registered validators and distribute
+        // For now, return placeholder values
+        return 0, math.ZeroInt(), nil
+}
+
+// ClaimEmergencyFunds allows operators to claim emergency buffer funds
+func (k Keeper) ClaimEmergencyFunds(ctx sdk.Context, operatorAddr string, amount math.Int, reason string) error {
+        // Implementation for emergency fund claims
+        return nil
+}
+
+// UpdateValidatorStatus updates a validator's subsidy status
+func (k Keeper) UpdateValidatorStatus(ctx sdk.Context, validatorAddr string, status types.ValidatorStatus) error {
+        store := ctx.KVStore(k.storeKey)
+        bz := store.Get(types.ValidatorKey(validatorAddr))
+        if bz == nil {
+                return fmt.Errorf("validator not found: %s", validatorAddr)
+        }
+        
+        var record types.ValidatorSubsidyRecord
+        k.cdc.MustUnmarshal(bz, &record)
+        record.Status = status
+        
+        newBz := k.cdc.MustMarshal(&record)
+        store.Set(types.ValidatorKey(validatorAddr), newBz)
+        return nil
+}
+
+// Pool returns pool information (stub for now)
+func (k Keeper) Pool(ctx sdk.Context) (types.SubsidyPool, error) {
+        return types.SubsidyPool{}, nil
+}
+
+// ListValidators returns all registered validators
+func (k Keeper) ListValidators(ctx sdk.Context) ([]types.ValidatorSubsidyRecord, error) {
+        return []types.ValidatorSubsidyRecord{}, nil
+}
+
+// GetPaymentHistory returns payment history for a validator
+func (k Keeper) GetPaymentHistory(ctx sdk.Context, validatorAddr string) ([]types.SubsidyPayment, error) {
+        return []types.SubsidyPayment{}, nil
+}

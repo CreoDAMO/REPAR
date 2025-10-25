@@ -11,11 +11,13 @@ import (
 
 type msgServer struct {
         Keeper
+        authority string
 }
 
-func NewMsgServerImpl(keeper Keeper) types.MsgServer {
+func NewMsgServerImpl(keeper Keeper, authority string) types.MsgServer {
         return &msgServer{
-                Keeper: keeper,
+                Keeper:    keeper,
+                authority: authority,
         }
 }
 
@@ -65,12 +67,13 @@ func (ms msgServer) RegisterValidator(ctx context.Context, msg *types.MsgRegiste
 }
 
 func (ms msgServer) DistributeSubsidies(ctx context.Context, msg *types.MsgDistributeSubsidies) (*types.MsgDistributeSubsidiesResponse, error) {
+        sdkCtx := sdk.UnwrapSDKContext(ctx)
+        
         // Verify authority
         if ms.authority != msg.Authority {
                 return nil, types.ErrUnauthorized
         }
 
-        sdkCtx := sdk.UnwrapSDKContext(ctx)
         count, total, err := ms.Keeper.DistributeMonthlySubsidies(sdkCtx)
         if err != nil {
                 return nil, err
@@ -92,12 +95,13 @@ func (ms msgServer) ClaimEmergencyFunds(ctx context.Context, msg *types.MsgClaim
 }
 
 func (ms msgServer) UpdateValidatorStatus(ctx context.Context, msg *types.MsgUpdateValidatorStatus) (*types.MsgUpdateValidatorStatusResponse, error) {
+        sdkCtx := sdk.UnwrapSDKContext(ctx)
+        
         // Verify authority
         if ms.authority != msg.Authority {
                 return nil, types.ErrUnauthorized
         }
 
-        sdkCtx := sdk.UnwrapSDKContext(ctx)
         if err := ms.Keeper.UpdateValidatorStatus(sdkCtx, msg.ValidatorAddress, msg.Status); err != nil {
                 return nil, err
         }
