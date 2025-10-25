@@ -1,0 +1,91 @@
+Error: x/defendant/keeper/query_server.go:42:25: assignment mismatch: 2 variables but query.CollectionPaginate returns 3 values
+github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+# github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+Error: x/dex/types/genesis_helpers.go:4:6: ValidateGenesis redeclared in this block
+Error: 	x/dex/types/genesis.go:30:6: other declaration of ValidateGenesis
+Error: x/dex/types/msgs.go:25:2: EventTypeCreatePool redeclared in this block
+Error: 	x/dex/types/keys.go:17:9: other declaration of EventTypeCreatePool
+Error: x/dex/types/msgs.go:26:2: EventTypeAddLiquidity redeclared in this block
+Error: 	x/dex/types/keys.go:18:9: other declaration of EventTypeAddLiquidity
+Error: x/dex/types/msgs.go:27:2: EventTypeRemoveLiquidity redeclared in this block
+Error: 	x/dex/types/keys.go:19:9: other declaration of EventTypeRemoveLiquidity
+Error: x/dex/types/msgs.go:28:2: EventTypeSwap redeclared in this block
+Error: 	x/dex/types/keys.go:20:9: other declaration of EventTypeSwap
+Error: x/dex/types/msgs.go:30:2: AttributeKeyPoolID redeclared in this block
+Error: 	x/dex/types/keys.go:23:9: other declaration of AttributeKeyPoolID
+Error: x/dex/types/msgs.go:31:2: AttributeKeyCreator redeclared in this block
+Error: 	x/dex/types/keys.go:24:9: other declaration of AttributeKeyCreator
+Error: x/dex/types/msgs.go:32:2: AttributeKeySender redeclared in this block
+Error: 	x/dex/types/keys.go:25:9: other declaration of AttributeKeySender
+Error: x/dex/types/params.go:4:6: DefaultParams redeclared in this block
+Error: 	x/dex/types/genesis.go:22:6: other declaration of DefaultParams
+Error: x/dex/types/query.pb.go:35:6: QueryPoolRequest redeclared in this block
+Error: 	x/dex/types/query.go:10:6: other declaration of QueryPoolRequest
+Error: x/dex/types/query.pb.go:35:6: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+github.com/cosmos/cosmos-sdk/runtime
+cosmossdk.io/x/upgrade/types
+github.com/cosmos/cosmos-sdk/x/gov/types/v1
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper
+cosmossdk.io/x/circuit
+cosmossdk.io/x/feegrant/migrations/v2
+cosmossdk.io/x/feegrant/keeper
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v2
+github.com/cosmos/cosmos-sdk/x/bank/migrations/v3
+github.com/cosmos/cosmos-sdk/x/bank/keeper
+cosmossdk.io/x/nft/keeper
+cosmossdk.io/x/upgrade/keeper
+github.com/CreoDAMO/REPAR/aequitas/x/distribution
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+Error: x/endowment/types/codec.go:30:1: syntax error: non-declaration statement outside function body
+Error: x/endowment/types/codec.go:32:1: syntax error: imports must appear before other declarations
+Error: x/endowment/types/genesis.go:61:1: syntax error: non-declaration statement outside function body
+Error: x/endowment/types/genesis.go:63:1: syntax error: imports must appear before other declarations
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+Error: x/founderendowment/types/genesis.go:73:1: syntax error: non-declaration statement outside function body
+Error: x/founderendowment/types/genesis.go:75:1: syntax error: imports must appear before other declarations
+
+# github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+Error: x/justice/types/genesis.pb.go:29:6: GenesisState redeclared in this block
+Error: 	x/justice/types/genesis.go:9:6: other declaration of GenesisState
+Error: x/justice/types/genesis.pb.go:123:21: this.Burns[i].Equal undefined (type Burn has no field or method Equal)
+Error: x/justice/types/genesis.pb.go:130:11: this.InitialSupply undefined (type *GenesisState has no field or method InitialSupply)
+Error: x/justice/types/genesis.pb.go:130:37: that1.InitialSupply undefined (type *GenesisState has no field or method InitialSupply)
+Error: x/justice/types/genesis.pb.go:156:13: m.InitialSupply undefined (type *GenesisState has no field or method InitialSupply)
+Error: x/justice/types/genesis.pb.go:158:18: m.InitialSupply undefined (type *GenesisState has no field or method InitialSupply)
+Error: x/justice/types/genesis.pb.go:178:33: m.Burns[iNdEx].MarshalToSizedBuffer undefined (type Burn has no field or method MarshalToSizedBuffer)
+Error: x/justice/types/genesis.pb.go:211:10: e.Size undefined (type Burn has no field or method Size)
+Error: x/justice/types/genesis.pb.go:217:8: m.InitialSupply undefined (type *GenesisState has no field or method InitialSupply)
+Error: x/justice/types/justice.pb.go:75:6: BurnStatistics redeclared in this block
+Error: 	x/justice/types/genesis.go:17:6: other declaration of BurnStatistics
+Error: x/justice/types/genesis.pb.go:217:8: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+Error: x/nftmarketplace/types/genesis_helpers.go:4:6: DefaultGenesis redeclared in this block
+Error: 	x/nftmarketplace/types/genesis.go:4:6: other declaration of DefaultGenesis
+Error: x/nftmarketplace/types/genesis_helpers.go:13:24: method GenesisState.Validate already declared at x/nftmarketplace/types/genesis.go:23:24
+Error: x/nftmarketplace/types/codec.go:12:24: undefined: MsgCreateNFT
+Error: x/nftmarketplace/types/codec.go:16:24: undefined: MsgCancelListing
+Error: x/nftmarketplace/types/codec.go:17:24: undefined: MsgUpdatePrice
+Error: x/nftmarketplace/types/codec.go:23:4: undefined: MsgCreateNFT
+Error: x/nftmarketplace/types/codec.go:27:4: undefined: MsgCancelListing
+Error: x/nftmarketplace/types/codec.go:28:4: undefined: MsgUpdatePrice
+Error: x/nftmarketplace/types/genesis.go:6:11: undefined: Params
+Error: x/nftmarketplace/types/genesis.go:25:15: gs.Params.TradingFeePercent undefined (type MarketplaceParams has no field or method TradingFeePercent)
+Error: x/nftmarketplace/types/genesis.go:25:15: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+github.com/cosmos/cosmos-sdk/x/gov/client/utils
+# github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+Error: x/validatorsubsidy/types/genesis.go:11:3: unknown field Params in struct literal of type GenesisState
+Error: x/validatorsubsidy/types/genesis.go:12:9: cannot use ValidatorSubsidyPool{…} (value of struct type ValidatorSubsidyPool) as *ValidatorSubsidyPool value in struct literal
+Error: x/validatorsubsidy/types/genesis.go:18:15: cannot use []ValidatorSubsidyRecord{} (value of type []ValidatorSubsidyRecord) as []*ValidatorSubsidyRecord value in struct literal
+Error: x/validatorsubsidy/types/genesis.go:19:15: cannot use []SubsidyPayment{} (value of type []SubsidyPayment) as []*SubsidyPayment value in struct literal
+Error: x/validatorsubsidy/types/genesis.go:20:13: cannot use SubsidyDistributionSchedule{…} (value of struct type SubsidyDistributionSchedule) as *SubsidyDistributionSchedule value in struct literal
+Error: x/validatorsubsidy/types/genesis.go:61:15: gs.Params undefined (type GenesisState has no field or method Params)
+Error: x/validatorsubsidy/types/genesis.go:68:22: undefined: Params
+Error: x/validatorsubsidy/types/genesis.go:69:9: undefined: Params
+Error: x/validatorsubsidy/types/genesis.go:77:9: undefined: Params
+Error: x/validatorsubsidy/types/genesis.go:94:11: undefined: sdk.Time
+Error: x/validatorsubsidy/types/genesis.go:69:9: too many errors

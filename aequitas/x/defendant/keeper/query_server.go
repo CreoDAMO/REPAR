@@ -39,7 +39,7 @@ func (qs queryServer) ListDefendants(goCtx context.Context, req *types.QueryList
         ctx := sdk.UnwrapSDKContext(goCtx)
 
         var defendants []types.Defendant
-        pageRes, err := query.CollectionPaginate(
+        _, pageRes, err := query.CollectionPaginate(
                 ctx,
                 qs.Keeper.Defendants,
                 req.Pagination,
