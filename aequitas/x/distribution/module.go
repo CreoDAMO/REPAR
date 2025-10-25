@@ -1,27 +1,27 @@
 package distribution
 
 import (
-	"context"
-	"encoding/json"
-	"fmt"
+        "context"
+        "encoding/json"
+        "fmt"
 
-	"cosmossdk.io/core/appmodule"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+        "cosmossdk.io/core/appmodule"
+        "github.com/cosmos/cosmos-sdk/client"
+        "github.com/cosmos/cosmos-sdk/codec"
+        codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+        sdk "github.com/cosmos/cosmos-sdk/types"
+        "github.com/cosmos/cosmos-sdk/types/module"
+        "github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	"github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper"
-	"github.com/CreoDAMO/REPAR/aequitas/x/distribution/types"
+        "github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper"
+        "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types"
 )
 
 var (
-	_ module.AppModuleBasic      = AppModule{}
-	_ module.HasGenesis          = AppModule{}
-	_ module.HasServices         = AppModule{}
-	_ appmodule.AppModule        = AppModule{}
+        _ module.AppModuleBasic      = AppModule{}
+        _ module.HasGenesis          = AppModule{}
+        _ module.HasServices         = AppModule{}
+        _ appmodule.AppModule        = AppModule{}
 )
 
 const ModuleName = "distribution"
@@ -33,70 +33,70 @@ func (AppModuleBasic) Name() string { return ModuleName }
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
 
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	types.RegisterInterfaces(registry)
+        types.RegisterInterfaces(registry)
 }
 
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
-		panic(err)
-	}
+        if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
+                panic(err)
+        }
 }
 
 type AppModule struct {
-	AppModuleBasic
-	keeper keeper.Keeper
+        AppModuleBasic
+        keeper keeper.Keeper
 }
 
 func NewAppModule(keeper keeper.Keeper) AppModule {
-	return AppModule{
-		keeper: keeper,
-	}
+        return AppModule{
+                keeper: keeper,
+        }
 }
 
 func (am AppModule) IsOnePerModuleType() {}
 func (am AppModule) IsAppModule()        {}
 
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
+        types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
 }
 
 func (am AppModule) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	return cdc.MustMarshalJSON(&types.GenesisState{
-		Descendants:   []types.Descendant{},
-		Distributions: []types.Distribution{},
-	})
+        return cdc.MustMarshalJSON(&types.GenesisState{
+                Descendants:   []*types.DescendantRegistration{},
+                Distributions: []*types.Distribution{},
+        })
 }
 
 func (am AppModule) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
-	var data types.GenesisState
-	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
-		return fmt.Errorf("failed to unmarshal %s genesis state: %w", ModuleName, err)
-	}
-	return nil
+        var data types.GenesisState
+        if err := cdc.UnmarshalJSON(bz, &data); err != nil {
+                return fmt.Errorf("failed to unmarshal %s genesis state: %w", ModuleName, err)
+        }
+        return nil
 }
 
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) {
-	var genesisState types.GenesisState
-	cdc.MustUnmarshalJSON(data, &genesisState)
+        var genesisState types.GenesisState
+        cdc.MustUnmarshalJSON(data, &genesisState)
 
-	for _, descendant := range genesisState.Descendants {
-		if err := am.keeper.RegisterDescendant(ctx, descendant); err != nil {
-			panic(err)
-		}
-	}
+        for _, descendant := range genesisState.Descendants {
+                if err := am.keeper.RegisterDescendant(ctx, descendant); err != nil {
+                        panic(err)
+                }
+        }
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	descendants, err := am.keeper.ListDescendants(ctx)
-	if err != nil {
-		panic(err)
-	}
+        descendants, err := am.keeper.ListDescendants(ctx)
+        if err != nil {
+                panic(err)
+        }
 
-	gs := &types.GenesisState{
-		Descendants:   descendants,
-		Distributions: []types.Distribution{},
-	}
-	return cdc.MustMarshalJSON(gs)
+        gs := &types.GenesisState{
+                Descendants:   descendants,
+                Distributions: []types.Distribution{},
+        }
+        return cdc.MustMarshalJSON(gs)
 }
 
 func (am AppModule) ConsensusVersion() uint64 { return 1 }

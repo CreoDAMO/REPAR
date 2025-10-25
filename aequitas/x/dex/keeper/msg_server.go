@@ -262,14 +262,14 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
                 reserveOutBig := reserveOut.BigInt()
                 amountInBig := amountIn.BigInt()
 
-                // k = reserveIn * reserveOut
-                k := new(big.Int).Mul(reserveInBig, reserveOutBig)
+                // constantProduct = reserveIn * reserveOut
+                constantProduct := new(big.Int).Mul(reserveInBig, reserveOutBig)
 
                 // newReserveIn = reserveIn + amountIn
                 newReserveIn := new(big.Int).Add(reserveInBig, amountInBig)
 
-                // newReserveOut = k / newReserveIn
-                newReserveOut := new(big.Int).Div(k, newReserveIn)
+                // newReserveOut = constantProduct / newReserveIn
+                newReserveOut := new(big.Int).Div(constantProduct, newReserveIn)
 
                 // amountOut = reserveOut - newReserveOut
                 amountOutBig := new(big.Int).Sub(reserveOutBig, newReserveOut)
@@ -280,12 +280,13 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
                 amountOut = amountOut.Sub(fee)
 
                 // Distribute fees using 55/30/15 model
-                if err := k.CollectAndDistributeFees(ctx, fee, denomOut); err != nil {
-                        k.Logger().Error("failed to distribute fees", "error", err)
+                if err := k.Keeper.CollectAndDistributeFees(ctx, fee, denomOut); err != nil {
+                        k.Keeper.Logger().Error("failed to distribute fees", "error", err)
                 }
 
                 // CRITICAL: Invariant check - ensure pool isn't drained
-                if newReserveOut.IsZero() || amountOut.IsNegative() {
+                newReserveOutInt := math.NewIntFromBigInt(newReserveOut)
+                if newReserveOutInt.IsZero() || amountOut.IsNegative() {
                         return nil, errorsmod.Wrap(types.ErrInsufficientLiquidity, "swap would drain pool")
                 }
 
