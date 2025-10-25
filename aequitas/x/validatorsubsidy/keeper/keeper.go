@@ -10,6 +10,8 @@ import (
         storetypes "cosmossdk.io/store/types"
         "github.com/cosmos/cosmos-sdk/codec"
         sdk "github.com/cosmos/cosmos-sdk/types"
+        authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+        govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
         "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
@@ -17,13 +19,17 @@ import (
 type Keeper struct {
         cdc        codec.BinaryCodec
         storeKey   storetypes.StoreKey
+        authority  string
         bankKeeper types.BankKeeper
 }
 
 func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, bankKeeper types.BankKeeper) *Keeper {
+        // Use governance module as default authority for validator subsidy operations
+        // This ensures compatibility with the current chain's Bech32 prefix
         return &Keeper{
                 cdc:        cdc,
                 storeKey:   storeKey,
+                authority:  authtypes.NewModuleAddress(govtypes.ModuleName).String(),
                 bankKeeper: bankKeeper,
         }
 }

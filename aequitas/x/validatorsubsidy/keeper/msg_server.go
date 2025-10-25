@@ -11,13 +11,11 @@ import (
 
 type msgServer struct {
         Keeper
-        authority string
 }
 
-func NewMsgServerImpl(keeper Keeper, authority string) types.MsgServer {
+func NewMsgServerImpl(keeper Keeper) types.MsgServer {
         return &msgServer{
                 Keeper: keeper,
-                authority: authority,
         }
 }
 
