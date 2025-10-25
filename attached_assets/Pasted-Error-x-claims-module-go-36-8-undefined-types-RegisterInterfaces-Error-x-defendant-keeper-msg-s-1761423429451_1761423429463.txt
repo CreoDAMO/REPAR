@@ -1,0 +1,38 @@
+Error: x/claims/module.go:36:8: undefined: types.RegisterInterfaces
+
+Error: x/defendant/keeper/msg_server.go:92:9: declared and not used: defendant
+Error: x/defendant/keeper/query_server.go:42:25: assignment mismatch: 2 variables but query.CollectionPaginate returns 3 values
+
+Error: x/dex/module.go:34:8: undefined: types.RegisterLegacyAminoCodec
+Error: x/dex/module.go:38:8: undefined: types.RegisterInterfaces
+Error: x/dex/module.go:71:21: undefined: types.DefaultParams
+Error: x/dex/module.go:80:15: undefined: types.ValidateGenesis
+
+Error: x/distribution/module.go:36:15: undefined: types.RegisterInterfaces
+
+Error: x/endowment/module.go:39:8: undefined: types.RegisterInterfaces
+Error: x/endowment/module.go:43:35: undefined: types.DefaultGenesis
+Error: x/endowment/module.go:51:18: genState.Validate undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types".GenesisState has no field or method Validate)
+
+Error: x/founderendowment/module.go:37:8: undefined: types.RegisterInterfaces
+
+Error: x/justice/module.go:37:8: undefined: types.RegisterInterfaces
+Error: x/justice/module.go:69:19: cannot use math.ZeroInt() (value of struct type "cosmossdk.io/math".Int) as "cosmossdk.io/math".LegacyDec value in struct literal
+Error: x/justice/module.go:71:4: unknown field BurnCount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".BurnStatistics
+Error: x/justice/module.go:100:19: cannot use math.ZeroInt() (value of struct type "cosmossdk.io/math".Int) as "cosmossdk.io/math".LegacyDec value in struct literal
+Error: x/justice/module.go:102:4: unknown field BurnCount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".BurnStatistics
+
+Error: x/validatorsubsidy/keeper/keeper.go:172:17: field and method with the same name Pool
+Error: 	x/validatorsubsidy/keeper/keeper.go:27:2: other declaration of Pool
+Error: x/validatorsubsidy/keeper/query_server.go:20:30: qs.Keeper.Pool.Get undefined (type func(ctx "github.com/cosmos/cosmos-sdk/types".Context) ("github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPool, error) has no field or method Get)
+Error: x/validatorsubsidy/keeper/query_server.go:37:14: cannot use validator (variable of struct type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord value in struct literal
+Error: x/validatorsubsidy/keeper/query_server.go:42:46: cannot use ctx (variable of interface type context.Context) as "github.com/cosmos/cosmos-sdk/types".Context value in argument to qs.Keeper.ListValidators: need type assertion
+Error: x/validatorsubsidy/keeper/query_server.go:48:15: cannot use validators (variable of type []"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord) as []*"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord value in struct literal
+Error: x/validatorsubsidy/keeper/query_server.go:53:47: cannot use ctx (variable of interface type context.Context) as "github.com/cosmos/cosmos-sdk/types".Context value in argument to qs.Keeper.GetPaymentHistory: need type assertion
+Error: x/validatorsubsidy/keeper/query_server.go:59:13: cannot use payments (variable of type []"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPayment) as []*"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPayment value in struct literal
+Error: x/validatorsubsidy/keeper/query_server.go:70:13: cannot use schedule (variable of struct type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyDistributionSchedule) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyDistributionSchedule value in struct literal
+
+Error: x/nftmarketplace/module.go:34:8: undefined: types.RegisterCodec
+Error: x/nftmarketplace/module.go:38:8: undefined: types.RegisterInterfaces
+Error: x/nftmarketplace/module.go:67:35: undefined: types.DefaultGenesis
+Error: x/nftmarketplace/module.go:75:14: data.Validate undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types".GenesisState has no field or method Validate)
