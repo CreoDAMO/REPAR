@@ -25,17 +25,13 @@ func (qs queryServer) Pool(ctx context.Context, req *types.QueryPoolRequest) (*t
 	}
 
 	return &types.QueryPoolResponse{
-		Pool: &types.ValidatorSubsidyPool{
-			TotalAllocated:    pool.TotalAllocated,
-			TotalDistributed:  pool.TotalDistributed,
-			MonthlyAllocation: pool.MonthlyAllocation,
-			EmergencyBuffer:   pool.EmergencyBuffer,
-		},
+		Pool: &pool,
 	}, nil
 }
 
 func (qs queryServer) Validator(ctx context.Context, req *types.QueryValidatorRequest) (*types.QueryValidatorResponse, error) {
-	validator, err := qs.Keeper.GetValidator(ctx, req.ValidatorAddress)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	validator, err := qs.Keeper.GetValidator(sdkCtx, req.ValidatorAddress)
 	if err != nil {
 		return nil, types.ErrValidatorNotFound
 	}

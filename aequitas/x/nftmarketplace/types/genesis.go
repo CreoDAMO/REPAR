@@ -1,31 +1,12 @@
 package types
 
-import (
-	"cosmossdk.io/math"
-)
-
-func DefaultGenesis() *GenesisState {
-	return &GenesisState{
-		Listings:      []NFTListing{},
-		SalesHistory:  []Sale{},
-		NextListingId: 1,
-	}
-}
-
-func (gs GenesisState) Validate() error {
-	return nil
-}
-
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
-		Params: MarketplaceParams{
-			MarketplaceFeePercentage: 250,  // 2.5%
-			FeeCollector:             "",   // Will be set to ecosystem treasury
-			MaxRoyaltyPercentage:     1000, // 10%
-			MinListingDuration:       3600, // 1 hour
-			MaxListingDuration:       7776000, // 90 days
-			CertificationRequired:    true,
+		Params: Params{
+			TradingFeePercent: 250,  // 2.5%
+			MinPrice:          "1",
+			MaxRoyalty:        1000, // 10%
 		},
 		Nfts:             []NFT{},
 		Collections:      []Collection{},
@@ -40,5 +21,28 @@ func DefaultGenesis() *GenesisState {
 
 // Validate performs basic genesis state validation
 func (gs GenesisState) Validate() error {
+	// Validate params
+	if gs.Params.TradingFeePercent > 10000 {
+		return ErrInvalidParams
+	}
+	
+	// Validate NFTs
+	nftIDs := make(map[string]bool)
+	for _, nft := range gs.Nfts {
+		if nftIDs[nft.Id] {
+			return ErrDuplicateNFT
+		}
+		nftIDs[nft.Id] = true
+	}
+	
+	// Validate collections
+	collectionIDs := make(map[string]bool)
+	for _, collection := range gs.Collections {
+		if collectionIDs[collection.Id] {
+			return ErrDuplicateCollection
+		}
+		collectionIDs[collection.Id] = true
+	}
+	
 	return nil
 }

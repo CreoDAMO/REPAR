@@ -1,20 +1,17 @@
 package types
 
 import (
-        sdkerrors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 )
 
 var (
-        ErrNFTNotFound         = sdkerrors.Register(ModuleName, 1, "NFT not found")
-        ErrInvalidNFT          = sdkerrors.Register(ModuleName, 2, "invalid NFT")
-        ErrNotNFTOwner         = sdkerrors.Register(ModuleName, 3, "not NFT owner")
-        ErrListingNotFound     = sdkerrors.Register(ModuleName, 4, "listing not found")
-        ErrNotListingSeller    = sdkerrors.Register(ModuleName, 5, "not listing seller")
-        ErrListingNotActive    = sdkerrors.Register(ModuleName, 6, "listing not active")
-        ErrListingExpired      = sdkerrors.Register(ModuleName, 7, "listing expired")
-        ErrInvalidPrice        = sdkerrors.Register(ModuleName, 8, "invalid price")
-        ErrInvalidRoyalty      = sdkerrors.Register(ModuleName, 9, "invalid royalty percentage")
-        ErrCollectionNotFound  = sdkerrors.Register(ModuleName, 10, "collection not found")
-        ErrNotEvidenceNFT      = sdkerrors.Register(ModuleName, 11, "NFT is not an evidence type")
-        ErrInsufficientFunds   = sdkerrors.Register(ModuleName, 12, "insufficient funds")
+	ErrInvalidNFT          = errors.Register(ModuleName, 1, "invalid NFT")
+	ErrNFTNotFound         = errors.Register(ModuleName, 2, "NFT not found")
+	ErrListingNotFound     = errors.Register(ModuleName, 3, "listing not found")
+	ErrUnauthorized        = errors.Register(ModuleName, 4, "unauthorized")
+	ErrInvalidPrice        = errors.Register(ModuleName, 5, "invalid price")
+	ErrInsufficientFunds   = errors.Register(ModuleName, 6, "insufficient funds")
+	ErrInvalidParams       = errors.Register(ModuleName, 7, "invalid parameters")
+	ErrDuplicateNFT        = errors.Register(ModuleName, 8, "duplicate NFT ID")
+	ErrDuplicateCollection = errors.Register(ModuleName, 9, "duplicate collection ID")
 )
