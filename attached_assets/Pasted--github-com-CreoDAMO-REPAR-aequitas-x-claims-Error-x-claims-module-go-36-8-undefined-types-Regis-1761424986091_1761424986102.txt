@@ -1,0 +1,46 @@
+# github.com/CreoDAMO/REPAR/aequitas/x/claims
+Error: x/claims/module.go:36:8: undefined: types.RegisterInterfaces
+cosmossdk.io/x/evidence/keeper
+cosmossdk.io/x/evidence/simulation
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+Error: x/defendant/keeper/msg_server.go:92:2: declared and not used: defendant
+Error: x/defendant/keeper/msg_server.go:124:70: msg.NewStatus undefined (type *"github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".MsgUpdateDefendantStatus has no field or method NewStatus)
+Error: x/defendant/keeper/msg_server.go:133:35: msg.NewStatus undefined (type *"github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".MsgUpdateDefendantStatus has no field or method NewStatus)
+Error: x/defendant/keeper/query_server.go:42:18: assignment mismatch: 2 variables but query.CollectionPaginate returns 3 values
+
+# github.com/CreoDAMO/REPAR/aequitas/x/dex
+Error: x/dex/module.go:34:8: undefined: types.RegisterLegacyAminoCodec
+Error: x/dex/module.go:38:8: undefined: types.RegisterInterfaces
+Error: x/dex/module.go:71:21: undefined: types.DefaultParams
+Error: x/dex/module.go:80:15: undefined: types.ValidateGenesis
+
+# github.com/CreoDAMO/REPAR/aequitas/x/distribution
+Error: x/distribution/module.go:36:15: undefined: types.RegisterInterfaces
+
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment
+Error: x/endowment/module.go:39:8: undefined: types.RegisterInterfaces
+Error: x/endowment/module.go:43:35: undefined: types.DefaultGenesis
+Error: x/endowment/module.go:51:18: genState.Validate undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types".GenesisState has no field or method Validate)
+
+# github.com/CreoDAMO/REPAR/aequitas/x/justice
+Error: x/justice/module.go:37:8: undefined: types.RegisterInterfaces
+Error: x/justice/module.go:69:19: cannot use math.ZeroInt() (value of struct type "cosmossdk.io/math".Int) as "cosmossdk.io/math".LegacyDec value in struct literal
+Error: x/justice/module.go:71:4: unknown field BurnCount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".BurnStatistics
+Error: x/justice/module.go:100:19: cannot use math.ZeroInt() (value of struct type "cosmossdk.io/math".Int) as "cosmossdk.io/math".LegacyDec value in struct literal
+Error: x/justice/module.go:102:4: unknown field BurnCount in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".BurnStatistics
+
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment
+Error: x/founderendowment/module.go:37:8: undefined: types.RegisterInterfaces
+
+# github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper
+Error: x/validatorsubsidy/keeper/query_server.go:20:12: undefined: sdk
+Error: x/validatorsubsidy/keeper/query_server.go:27:9: cannot use &pool (value of type *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPool) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyPool value in struct literal
+Error: x/validatorsubsidy/keeper/query_server.go:43:12: undefined: sdk
+Error: x/validatorsubsidy/keeper/query_server.go:61:12: undefined: sdk
+
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace
+Error: x/nftmarketplace/module.go:34:8: undefined: types.RegisterCodec
+Error: x/nftmarketplace/module.go:38:8: undefined: types.RegisterInterfaces
+Error: x/nftmarketplace/module.go:67:35: undefined: types.DefaultGenesis
+Error: x/nftmarketplace/module.go:75:14: data.Validate undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types".GenesisState has no field or method Validate)
