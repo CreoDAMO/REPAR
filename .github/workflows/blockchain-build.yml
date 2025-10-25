@@ -57,39 +57,18 @@ jobs:
           go mod verify
           echo "✅ Modules verified"
 
-      - name: Install buf CLI
-        timeout-minutes: 3
+      - name: Verify protobuf files exist
+        working-directory: ./aequitas
         run: |
-          echo "📦 Installing buf CLI..."
-          go install github.com/bufbuild/buf/cmd/buf@v1.50.0
-          echo "✅ Buf CLI installed"
-
-      - name: Install protobuf generators
-        timeout-minutes: 5
-        run: |
-          echo "📦 Installing protobuf code generators..."
-          go install github.com/cosmos/gogoproto/protoc-gen-gocosmos@latest
-          go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@latest
-          echo "✅ Protoc plugins installed"
-
-      - name: Generate protobuf files
-        working-directory: ./aequitas/proto
-        timeout-minutes: 5
-        run: |
-          echo "🔧 Generating protobuf Go files..."
-          export PATH="$HOME/go/bin:$PATH"
-          buf generate --template buf.gen.gogo.yaml
-          echo "✅ Protobuf files generated"
-          
-          # Copy generated files to correct locations
-          echo "📋 Copying protobuf files to module directories..."
-          for module in claims defendant dex distribution endowment founderendowment justice nftmarketplace validatorsubsidy; do
-            if [ -d "github.com/CreoDAMO/REPAR/aequitas/x/$module/types" ]; then
-              cp github.com/CreoDAMO/REPAR/aequitas/x/$module/types/*.pb.go ../x/$module/types/ 2>/dev/null || true
-              echo "  ✓ Copied $module protobuf files"
-            fi
-          done
-          echo "✅ All protobuf files copied to their modules"
+          echo "🔍 Checking for protobuf files..."
+          if [ -f "x/defendant/types/defendant.pb.go" ]; then
+            echo "✅ Protobuf files found (committed to repository)"
+            echo "📊 Protobuf file count: $(find x/*/types -name '*.pb.go' | wc -l)"
+          else
+            echo "⚠️  Protobuf files not found - they need to be committed to the repository"
+            echo "💡 Run 'buf generate' locally and commit the .pb.go files"
+            exit 1
+          fi
 
       - name: Build blockchain daemon
         working-directory: ./aequitas
