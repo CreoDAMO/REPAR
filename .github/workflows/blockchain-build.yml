@@ -60,6 +60,15 @@ jobs:
           buf --version
           echo "✅ buf installed"
 
+      - name: Install protoc plugins
+        run: |
+          echo "📦 Installing protoc plugins..."
+          go install github.com/cosmos/gogoproto/protoc-gen-gocosmos@latest
+          go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@latest
+          export PATH="$PATH:$(go env GOPATH)/bin"
+          echo "$(go env GOPATH)/bin" >> $GITHUB_PATH
+          echo "✅ Protoc plugins installed"
+
       - name: Generate protobuf files
         working-directory: ./aequitas/proto
         run: |
