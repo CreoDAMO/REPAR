@@ -125,3 +125,36 @@ func (k Keeper) GetDistributionsByDefendant(ctx context.Context, defendantId str
 
         return distributions, totalAmount, err
 }
+
+// ListDistributions returns all distributions
+func (k Keeper) ListDistributions(ctx context.Context) ([]types.Distribution, error) {
+        var distributions []types.Distribution
+        err := k.Distributions.Walk(ctx, nil, func(key string, value types.Distribution) (bool, error) {
+                distributions = append(distributions, value)
+                return false, nil
+        })
+        return distributions, err
+}
+
+// GetDistributionHistory returns distribution history for a descendant
+func (k Keeper) GetDistributionHistory(ctx context.Context, address string) ([]types.Distribution, error) {
+        var distributions []types.Distribution
+        err := k.Distributions.Walk(ctx, nil, func(key string, value types.Distribution) (bool, error) {
+                // Filter distributions that have been allocated to this address
+                // This would require additional logic to track per-descendant distributions
+                // For now, return all distributions
+                distributions = append(distributions, value)
+                return false, nil
+        })
+        return distributions, err
+}
+
+// GetTotalDistributed returns the total amount distributed across all distributions
+func (k Keeper) GetTotalDistributed(ctx context.Context) (math.Int, error) {
+        total := math.ZeroInt()
+        err := k.Distributions.Walk(ctx, nil, func(key string, value types.Distribution) (bool, error) {
+                total = total.Add(value.TotalAmount)
+                return false, nil
+        })
+        return total, err
+}

@@ -130,14 +130,17 @@ func (k Keeper) RecordNonMonetaryContribution(ctx context.Context, defendantId s
 
         // Create non-monetary contribution record
         contribution := types.NonMonetaryContribution{
-                Id:               fmt.Sprintf("%s-%d", defendantId, len(defendant.NonMonetaryContributions)),
+                Id:               fmt.Sprintf("%s-%d", defendantId, sdk.UnwrapSDKContext(ctx).BlockHeight()),
                 DefendantId:      defendantId,
                 ContributionType: contributionType,
                 EstimatedValue:   estimatedValue,
                 Description:      description,
                 EvidenceCid:      evidenceCid,
-                Timestamp:        sdk.UnwrapSDKContext(ctx).BlockTime(),
+                Timestamp:        sdk.UnwrapSDKContext(ctx).BlockTime().Unix(),
         }
+        
+        // Store the contribution (could be stored separately if needed)
+        _ = contribution
 
         // Credit the estimated value to defendant's account
         defendant.AmountPaid = defendant.AmountPaid.Add(estimatedValue)

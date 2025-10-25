@@ -117,3 +117,15 @@ func (k Keeper) GetClaimsByJurisdiction(ctx context.Context, jurisdiction string
         })
         return claims, err
 }
+
+// GetClaimsByClaimant returns all claims filed by a specific claimant
+func (k Keeper) GetClaimsByClaimant(ctx context.Context, claimant string) ([]types.ArbitrationClaim, error) {
+        var claims []types.ArbitrationClaim
+        err := k.Claims.Walk(ctx, nil, func(key string, value types.ArbitrationClaim) (bool, error) {
+                if value.Claimant == claimant {
+                        claims = append(claims, value)
+                }
+                return false, nil
+        })
+        return claims, err
+}

@@ -17,42 +17,32 @@ func NewQueryServerImpl(keeper Keeper) types.QueryServer {
 
 var _ types.QueryServer = queryServer{}
 
-// Descendant queries a specific descendant by wallet address
-func (q queryServer) Descendant(ctx context.Context, req *types.QueryDescendantRequest) (*types.QueryDescendantResponse, error) {
-        descendant, err := q.Keeper.GetDescendant(ctx, req.WalletAddress)
+// GetDescendant queries a specific descendant by address
+func (q queryServer) GetDescendant(ctx context.Context, req *types.QueryGetDescendantRequest) (*types.QueryGetDescendantResponse, error) {
+        descendant, err := q.Keeper.GetDescendant(ctx, req.Address)
         if err != nil {
                 return nil, err
         }
 
-        return &types.QueryDescendantResponse{Descendant: &descendant}, nil
+        return &types.QueryGetDescendantResponse{Descendant: descendant}, nil
 }
 
-// Descendants queries all descendants with pagination
-func (q queryServer) Descendants(ctx context.Context, req *types.QueryDescendantsRequest) (*types.QueryDescendantsResponse, error) {
+// ListDescendants queries all registered descendants
+func (q queryServer) ListDescendants(ctx context.Context, req *types.QueryListDescendantsRequest) (*types.QueryListDescendantsResponse, error) {
         descendants, err := q.Keeper.ListDescendants(ctx)
         if err != nil {
                 return nil, err
         }
 
-        return &types.QueryDescendantsResponse{Descendants: descendants}, nil
+        return &types.QueryListDescendantsResponse{Descendants: descendants}, nil
 }
 
-// DistributionHistory queries distribution history for a descendant
-func (q queryServer) DistributionHistory(ctx context.Context, req *types.QueryDistributionHistoryRequest) (*types.QueryDistributionHistoryResponse, error) {
-        history, err := q.Keeper.GetDistributionHistory(ctx, req.WalletAddress)
+// ListDistributions queries all distributions
+func (q queryServer) ListDistributions(ctx context.Context, req *types.QueryListDistributionsRequest) (*types.QueryListDistributionsResponse, error) {
+        distributions, err := q.Keeper.ListDistributions(ctx)
         if err != nil {
                 return nil, err
         }
 
-        return &types.QueryDistributionHistoryResponse{Distributions: history}, nil
-}
-
-// TotalDistributed queries the total amount distributed
-func (q queryServer) TotalDistributed(ctx context.Context, req *types.QueryTotalDistributedRequest) (*types.QueryTotalDistributedResponse, error) {
-        total, err := q.Keeper.GetTotalDistributed(ctx)
-        if err != nil {
-                return nil, err
-        }
-
-        return &types.QueryTotalDistributedResponse{TotalAmount: total.String()}, nil
+        return &types.QueryListDistributionsResponse{Distributions: distributions}, nil
 }

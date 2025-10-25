@@ -228,11 +228,6 @@ func (k msgServer) Swap(goCtx context.Context, msg *types.MsgSwap) (*types.MsgSw
                 return nil, types.ErrInvalidSwapRoute
         }
 
-        sender, err := sdk.AccAddressFromBech32(msg.Sender)
-        if err != nil {
-                return nil, err
-        }
-
         amountIn := msg.TokenIn.Amount
         currentDenom := msg.TokenIn.Denom
 
