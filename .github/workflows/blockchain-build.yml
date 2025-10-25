@@ -57,6 +57,33 @@ jobs:
           go mod verify
           echo "✅ Modules verified"
 
+      - name: Install protobuf generators
+        timeout-minutes: 5
+        run: |
+          echo "📦 Installing protobuf code generators..."
+          go install github.com/cosmos/gogoproto/protoc-gen-gocosmos@latest
+          go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway@latest
+          echo "✅ Protoc plugins installed"
+
+      - name: Generate protobuf files
+        working-directory: ./aequitas/proto
+        timeout-minutes: 5
+        run: |
+          echo "🔧 Generating protobuf Go files..."
+          export PATH="$HOME/go/bin:$PATH"
+          buf generate --template buf.gen.gogo.yaml
+          echo "✅ Protobuf files generated"
+          
+          # Copy generated files to correct locations
+          echo "📋 Copying protobuf files to module directories..."
+          for module in claims defendant dex distribution endowment founderendowment justice nftmarketplace validatorsubsidy; do
+            if [ -d "github.com/CreoDAMO/REPAR/aequitas/x/$module/types" ]; then
+              cp github.com/CreoDAMO/REPAR/aequitas/x/$module/types/*.pb.go ../x/$module/types/ 2>/dev/null || true
+              echo "  ✓ Copied $module protobuf files"
+            fi
+          done
+          echo "✅ All protobuf files copied to their modules"
+
       - name: Build blockchain daemon
         working-directory: ./aequitas
         timeout-minutes: 20

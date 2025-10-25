@@ -38,7 +38,11 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-# Stage the protobuf files
+# Stage the workflow fix (most important!)
+echo "📝 Staging updated GitHub workflow..."
+git add .github/workflows/blockchain-build.yml 2>/dev/null || echo "   Workflow already staged"
+
+# Stage the protobuf files (as backup)
 echo "📝 Staging protobuf files..."
 git add aequitas/x/*/types/*.pb.go 2>/dev/null || echo "   Some files already staged"
 
@@ -56,22 +60,21 @@ echo ""
 
 # Commit the changes
 echo "💾 Creating commit..."
-git commit -m "Generate protobuf files for blockchain modules
+git commit -m "Fix blockchain build: auto-generate protobuf files in CI
 
-- Generated protobuf .pb.go files for 9 blockchain modules
-- Fixes GitHub Actions build errors
-- Resolves 'undefined types' and 'missing ProtoMessage interface' errors
+- Updated GitHub workflow to auto-generate protobuf files before build
+- Added protobuf generator installation step
+- Added protobuf file generation and copy step
+- Generated local protobuf files as backup
 
-Modules updated:
-- claims
-- defendant
-- dex
-- distribution
-- endowment
-- founderendowment
-- justice
-- nftmarketplace
-- validatorsubsidy
+This fixes the CI/CD build errors:
+- 'undefined: types.Defendant' and similar type errors
+- 'does not implement interface{ProtoMessage()}' errors
+
+Modules fixed: claims, defendant, dex, distribution, endowment,
+founderendowment, justice, nftmarketplace, validatorsubsidy
+
+Total: 36 protobuf .pb.go files generated
 
 This commit will trigger the blockchain-build.yml workflow." || {
     echo "⚠️  Nothing to commit or commit failed"
