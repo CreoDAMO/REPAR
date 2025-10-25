@@ -28,4 +28,12 @@ var (
 
 	// OperatorAddressKey stores the validator operator address
 	OperatorAddressKey = []byte{0x03}
+	
+	// ValidatorKeyPrefix is the prefix for validator records
+	ValidatorKeyPrefix = []byte{0x04}
 )
+
+// ValidatorKey returns the store key for a validator record
+func ValidatorKey(validatorAddr string) []byte {
+	return append(ValidatorKeyPrefix, []byte(validatorAddr)...)
+}

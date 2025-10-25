@@ -1,10 +1,12 @@
 package keeper
 
 import (
+	"context"
 	"encoding/binary"
 	"fmt"
 	"time"
 
+	"cosmossdk.io/collections"
 	"cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,6 +22,10 @@ type Keeper struct {
 	storeKey   storetypes.StoreKey
 	authority  string
 	bankKeeper types.BankKeeper
+	
+	// Collections for state management
+	Pool     collections.Item[types.SubsidyPool]
+	Schedule collections.Item[types.SubsidyDistributionSchedule]
 }
 
 func NewKeeper(cdc codec.BinaryCodec, storeKey storetypes.StoreKey, bankKeeper types.BankKeeper) *Keeper {
@@ -175,4 +181,23 @@ func (k Keeper) ListValidators(ctx sdk.Context) ([]types.ValidatorSubsidyRecord,
 // GetPaymentHistory returns payment history for a validator
 func (k Keeper) GetPaymentHistory(ctx sdk.Context, validatorAddr string) ([]types.SubsidyPayment, error) {
 	return []types.SubsidyPayment{}, nil
+}
+
+// GetValidator returns a validator subsidy record by address
+func (k Keeper) GetValidator(ctx context.Context, validatorAddr string) (types.ValidatorSubsidyRecord, error) {
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	store := sdkCtx.KVStore(k.storeKey)
+	bz := store.Get(types.ValidatorKey(validatorAddr))
+	if bz == nil {
+		return types.ValidatorSubsidyRecord{}, types.ErrValidatorNotFound
+	}
+
+	var record types.ValidatorSubsidyRecord
+	k.cdc.MustUnmarshal(bz, &record)
+	return record, nil
+}
+
+// GetAuthority returns the module's authority address
+func (k Keeper) GetAuthority() string {
+	return k.authority
 }
