@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"cosmossdk.io/core/appmodule"
-	"cosmossdk.io/math"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -19,10 +18,10 @@ import (
 )
 
 var (
-	_ module.AppModuleBasic      = AppModule{}
-	_ module.HasGenesis          = AppModule{}
-	_ module.HasServices         = AppModule{}
-	_ appmodule.AppModule        = AppModule{}
+	_ module.AppModuleBasic = AppModule{}
+	_ module.HasGenesis     = AppModule{}
+	_ module.HasServices    = AppModule{}
+	_ appmodule.AppModule   = AppModule{}
 )
 
 const ModuleName = "justice"
@@ -63,13 +62,20 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 }
 
 func (am AppModule) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	return cdc.MustMarshalJSON(&types.GenesisState{
-		Statistics: types.BurnStatistics{
-			TotalBurned:        sdk.ZeroDec(),
-			TotalJusticeBurned: sdk.ZeroDec(),
+	// Initialize genesis state
+	defaultGenesis := types.GenesisState{
+		BurnStatistics: types.BurnStatistics{
+			TotalTokensBurned: "0",
+			TotalBurned:       "0",
 		},
-		Burns: []types.JusticeBurn{},
-	})
+		ArbitrationMetrics: types.ArbitrationMetrics{
+			TotalCases:      0,
+			ResolvedCases:   0,
+			PendingCases:    0,
+			AverageResolutionTime: 0,
+		},
+	}
+	return cdc.MustMarshalJSON(&defaultGenesis)
 }
 
 func (am AppModule) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
@@ -77,12 +83,16 @@ func (am AppModule) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingConf
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", ModuleName, err)
 	}
+	// Add more validation logic here if needed in the future
 	return nil
 }
 
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) {
 	var genesisState types.GenesisState
 	cdc.MustUnmarshalJSON(data, &genesisState)
+	// Set genesis state to keeper
+	am.keeper.SetBurnStatistics(ctx, genesisState.BurnStatistics)
+	am.keeper.SetBurns(ctx, genesisState.Burns)
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
@@ -94,8 +104,8 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 	stats, err := am.keeper.GetBurnStatistics(ctx)
 	if err != nil {
 		stats = types.BurnStatistics{
-			TotalBurned:        sdk.ZeroDec(),
-			TotalJusticeBurned: sdk.ZeroDec(),
+			TotalBurned:        "0",
+			TotalJusticeBurned: "0",
 		}
 	}
 

@@ -1,4 +1,3 @@
-
 package types
 
 import (
@@ -9,8 +8,7 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgSubmitArbitration{}, "justice/SubmitArbitration", nil)
-	cdc.RegisterConcrete(&MsgVoteArbitration{}, "justice/VoteArbitration", nil)
+	// Register messages if needed
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {

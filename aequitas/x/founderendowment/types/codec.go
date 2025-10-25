@@ -1,4 +1,3 @@
-
 package types
 
 import (
@@ -9,8 +8,7 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgVest{}, "founderendowment/Vest", nil)
-	cdc.RegisterConcrete(&MsgWithdraw{}, "founderendowment/Withdraw", nil)
+	// Register messages if needed
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {

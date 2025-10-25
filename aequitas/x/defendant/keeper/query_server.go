@@ -39,13 +39,12 @@ func (qs queryServer) ListDefendants(goCtx context.Context, req *types.QueryList
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	var defendants []types.Defendant
-	pageRes, err := query.CollectionPaginate(
+	defendants, pageRes, err := query.CollectionPaginate(
 		ctx,
 		qs.Keeper.Defendants,
 		req.Pagination,
-		func(key string, value types.Defendant) error {
-			defendants = append(defendants, value)
-			return nil
+		func(key string, value types.Defendant) (types.Defendant, error) {
+			return value, nil
 		},
 	)
 	if err != nil {

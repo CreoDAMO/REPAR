@@ -1,4 +1,3 @@
-
 package types
 
 import (
@@ -10,12 +9,19 @@ import (
 
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 	cdc.RegisterConcrete(&MsgCreatePool{}, "dex/CreatePool", nil)
+	cdc.RegisterConcrete(&MsgSwap{}, "dex/Swap", nil)
 	cdc.RegisterConcrete(&MsgAddLiquidity{}, "dex/AddLiquidity", nil)
 	cdc.RegisterConcrete(&MsgRemoveLiquidity{}, "dex/RemoveLiquidity", nil)
-	cdc.RegisterConcrete(&MsgSwap{}, "dex/Swap", nil)
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgCreatePool{},
+		&MsgSwap{},
+		&MsgAddLiquidity{},
+		&MsgRemoveLiquidity{},
+	)
+
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
