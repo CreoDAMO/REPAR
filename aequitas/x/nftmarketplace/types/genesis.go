@@ -4,6 +4,18 @@ import (
 	"cosmossdk.io/math"
 )
 
+func DefaultGenesis() *GenesisState {
+	return &GenesisState{
+		Listings:      []NFTListing{},
+		SalesHistory:  []Sale{},
+		NextListingId: 1,
+	}
+}
+
+func (gs GenesisState) Validate() error {
+	return nil
+}
+
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{

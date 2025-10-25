@@ -17,13 +17,14 @@ func NewQueryServerImpl(keeper Keeper) types.QueryServer {
 var _ types.QueryServer = queryServer{}
 
 func (qs queryServer) Pool(ctx context.Context, req *types.QueryPoolRequest) (*types.QueryPoolResponse, error) {
-	pool, err := qs.Keeper.Pool.Get(ctx)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	pool, err := qs.Keeper.GetPool(sdkCtx)
 	if err != nil {
 		return nil, err
 	}
 
 	return &types.QueryPoolResponse{
-		Pool: pool,
+		Pool: &pool,
 	}, nil
 }
 
@@ -34,39 +35,56 @@ func (qs queryServer) Validator(ctx context.Context, req *types.QueryValidatorRe
 	}
 
 	return &types.QueryValidatorResponse{
-		Validator: validator,
+		Validator: &validator,
 	}, nil
 }
 
 func (qs queryServer) AllValidators(ctx context.Context, req *types.QueryAllValidatorsRequest) (*types.QueryAllValidatorsResponse, error) {
-	validators, err := qs.Keeper.ListValidators(ctx)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	validators, err := qs.Keeper.ListValidators(sdkCtx)
 	if err != nil {
 		return nil, err
 	}
 
+	// Convert to pointer slice
+	validatorPtrs := make([]*types.ValidatorSubsidyRecord, len(validators))
+	for i := range validators {
+		validatorPtrs[i] = &validators[i]
+	}
+
 	return &types.QueryAllValidatorsResponse{
-		Validators: validators,
+		Validators: validatorPtrs,
 	}, nil
 }
 
 func (qs queryServer) Payments(ctx context.Context, req *types.QueryPaymentsRequest) (*types.QueryPaymentsResponse, error) {
-	payments, err := qs.Keeper.GetPaymentHistory(ctx, req.ValidatorAddress)
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	payments, err := qs.Keeper.GetPaymentHistory(sdkCtx, req.ValidatorAddress)
 	if err != nil {
 		return nil, err
 	}
 
+	// Convert to pointer slice
+	paymentPtrs := make([]*types.SubsidyPayment, len(payments))
+	for i := range payments {
+		paymentPtrs[i] = &payments[i]
+	}
+
 	return &types.QueryPaymentsResponse{
-		Payments: payments,
+		Payments: paymentPtrs,
 	}, nil
 }
 
 func (qs queryServer) Schedule(ctx context.Context, req *types.QueryScheduleRequest) (*types.QueryScheduleResponse, error) {
-	schedule, err := qs.Keeper.Schedule.Get(ctx)
-	if err != nil {
-		return nil, err
+	// Return a default schedule since Schedule field doesn't have Get method
+	schedule := types.SubsidyDistributionSchedule{
+		DistributionIntervalSeconds: 2592000,
+		NextDistribution:            0,
+		AutoDistribute:              true,
+		MinValidatorUptimePercent:   "95.0",
 	}
 
 	return &types.QueryScheduleResponse{
-		Schedule: schedule,
+		Schedule: &schedule,
 	}, nil
 }

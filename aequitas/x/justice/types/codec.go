@@ -1,3 +1,4 @@
+
 package types
 
 import (
@@ -7,21 +8,18 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-// RegisterCodec registers concrete types on codec
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	cdc.RegisterConcrete(&MsgListNFT{}, "nftmarketplace/ListNFT", nil)
-	cdc.RegisterConcrete(&MsgBuyNFT{}, "nftmarketplace/BuyNFT", nil)
-	cdc.RegisterConcrete(&MsgCancelListing{}, "nftmarketplace/CancelListing", nil)
+	cdc.RegisterConcrete(&MsgSubmitArbitration{}, "justice/SubmitArbitration", nil)
+	cdc.RegisterConcrete(&MsgVoteArbitration{}, "justice/VoteArbitration", nil)
 }
 
-// RegisterInterfaces registers the interfaces types with the interface registry
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }
 
 var (
 	amino     = codec.NewLegacyAmino()
-	ModuleCdc = codectypes.NewProtoCodec(codectypes.NewInterfaceRegistry())
+	ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 )
 
 func init() {

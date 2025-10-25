@@ -1,30 +1,31 @@
+
 package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/legacy"
-	"github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-// RegisterLegacyAminoCodec registers the necessary x/dex interfaces and concrete types
-// on the provided LegacyAmino codec. These types are used for Amino JSON serialization.
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	legacy.RegisterAminoMsg(cdc, &MsgCreatePool{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgCreatePool")
-	legacy.RegisterAminoMsg(cdc, &MsgAddLiquidity{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgAddLiquidity")
-	legacy.RegisterAminoMsg(cdc, &MsgRemoveLiquidity{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgRemoveLiquidity")
-	legacy.RegisterAminoMsg(cdc, &MsgSwap{}, "github.com/CreoDAMO/REPAR/aequitas/dex/MsgSwap")
+	cdc.RegisterConcrete(&MsgCreatePool{}, "dex/CreatePool", nil)
+	cdc.RegisterConcrete(&MsgAddLiquidity{}, "dex/AddLiquidity", nil)
+	cdc.RegisterConcrete(&MsgRemoveLiquidity{}, "dex/RemoveLiquidity", nil)
+	cdc.RegisterConcrete(&MsgSwap{}, "dex/Swap", nil)
 }
 
-// RegisterInterfaces registers the x/dex interfaces types with the interface registry
-func RegisterInterfaces(registry types.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgCreatePool{},
-		&MsgAddLiquidity{},
-		&MsgRemoveLiquidity{},
-		&MsgSwap{},
-	)
-
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+}
+
+var (
+	amino     = codec.NewLegacyAmino()
+	ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
+)
+
+func init() {
+	RegisterLegacyAminoCodec(amino)
+	sdk.RegisterLegacyAminoCodec(amino)
+	amino.Seal()
 }

@@ -1,10 +1,28 @@
+
 package types
 
 import (
-        codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
-// RegisterInterfaces registers the interfaces for the claims module
+func RegisterCodec(cdc *codec.LegacyAmino) {
+	// Register messages if needed
+}
+
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-        // No interfaces to register currently
+	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+}
+
+var (
+	amino     = codec.NewLegacyAmino()
+	ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
+)
+
+func init() {
+	RegisterCodec(amino)
+	sdk.RegisterLegacyAminoCodec(amino)
+	amino.Seal()
 }

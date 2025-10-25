@@ -1,27 +1,29 @@
+
 package types
 
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/legacy"
-	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-	legacy.RegisterAminoMsg(cdc, &MsgInitializeEndowment{}, "founderendowment/InitializeEndowment")
-	legacy.RegisterAminoMsg(cdc, &MsgDistributeYield{}, "founderendowment/DistributeYield")
-	legacy.RegisterAminoMsg(cdc, &MsgUpdateDistributionConfig{}, "founderendowment/UpdateDistributionConfig")
-	legacy.RegisterAminoMsg(cdc, &MsgRenewEndowment{}, "founderendowment/RenewEndowment")
+	cdc.RegisterConcrete(&MsgVest{}, "founderendowment/Vest", nil)
+	cdc.RegisterConcrete(&MsgWithdraw{}, "founderendowment/Withdraw", nil)
 }
 
-func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
-	registry.RegisterImplementations((*sdk.Msg)(nil),
-		&MsgInitializeEndowment{},
-		&MsgDistributeYield{},
-		&MsgUpdateDistributionConfig{},
-		&MsgRenewEndowment{},
-	)
-
+func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
+}
+
+var (
+	amino     = codec.NewLegacyAmino()
+	ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
+)
+
+func init() {
+	RegisterCodec(amino)
+	sdk.RegisterLegacyAminoCodec(amino)
+	amino.Seal()
 }

@@ -6,6 +6,21 @@ import (
 
 func DefaultGenesis() *GenesisState {
 	return &GenesisState{
+		EndowmentPool: EndowmentPool{
+			TotalAllocated:   math.ZeroInt(),
+			MonthlyAllowance: math.NewInt(1000000000),
+			LastDistribution: 0,
+		},
+		Allocations: []Allocation{},
+	}
+}
+
+func (gs GenesisState) Validate() error {
+	return nil
+}
+
+func DefaultGenesis() *GenesisState {
+	return &GenesisState{
 		Params: Params{
 			LpLockPeriodYears:       5,
 			SocialLockPeriodYears:   10,

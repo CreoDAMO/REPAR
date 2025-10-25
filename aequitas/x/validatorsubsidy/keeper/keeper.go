@@ -168,8 +168,8 @@ func (k Keeper) UpdateValidatorStatus(ctx sdk.Context, validatorAddr string, sta
 	return nil
 }
 
-// Pool returns pool information (stub for now)
-func (k Keeper) Pool(ctx sdk.Context) (types.SubsidyPool, error) {
+// GetPool returns pool information (stub for now)
+func (k Keeper) GetPool(ctx sdk.Context) (types.SubsidyPool, error) {
 	return types.SubsidyPool{}, nil
 }
 
