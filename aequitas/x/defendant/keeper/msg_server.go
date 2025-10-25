@@ -29,12 +29,6 @@ func (ms msgServer) RecordPayment(goCtx context.Context, msg *types.MsgRecordPay
                 return nil, fmt.Errorf("invalid authority; expected %s, got %s", ms.authority, msg.Authority)
         }
 
-        // Get defendant to verify it exists
-        defendant, err := ms.Keeper.GetDefendant(ctx, msg.DefendantId)
-        if err != nil {
-                return nil, err
-        }
-
         // Create payment record
         payment := types.Payment{
                 Id:          fmt.Sprintf("%s-%d", msg.DefendantId, ctx.BlockHeight()),
@@ -110,8 +104,10 @@ func (ms msgServer) RecordNonMonetaryContribution(goCtx context.Context, msg *ty
                 ),
         )
 
+        contributionId := fmt.Sprintf("%s-%d", msg.DefendantId, ctx.BlockHeight())
+        
         return &types.MsgRecordNonMonetaryContributionResponse{
-                RemainingDebt: defendant.RemainingDebt,
+                ContributionId: contributionId,
         }, nil
 }
 

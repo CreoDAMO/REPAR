@@ -141,17 +141,14 @@ func (k Keeper) GetBurnStatistics(ctx context.Context) (types.BurnStatistics, er
         stats, err := k.Statistics.Get(ctx)
         if err != nil {
                 // Handle case where statistics item might not exist yet
-                if collections.ErrNotFound.Is(err) {
-                        return types.BurnStatistics{
-                                TotalBurned:       math.ZeroInt(),
-                                TotalUsdValue:     math.LegacyNewDec(0),
-                                CurrentSupply:     math.ZeroInt(),
-                                InitialSupply:     math.ZeroInt(),
-                                TotalBurns:        0,
-                                LastBurnTimestamp: 0,
-                        }, nil
-                }
-                return types.BurnStatistics{}, err
+                return types.BurnStatistics{
+                        TotalBurned:       math.ZeroInt(),
+                        TotalUsdValue:     math.LegacyNewDec(0),
+                        CurrentSupply:     math.ZeroInt(),
+                        InitialSupply:     math.ZeroInt(),
+                        TotalBurns:        0,
+                        LastBurnTimestamp: 0,
+                }, nil
         }
         return stats, nil
 }

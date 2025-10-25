@@ -1,0 +1,44 @@
+Error: x/claims/module.go:36:8: undefined: types.RegisterInterfaces
+
+Error: x/defendant/keeper/msg_server.go:33:9: declared and not used: defendant
+Error: x/defendant/keeper/msg_server.go:114:17: unknown field RemainingDebt in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types".MsgRecordNonMonetaryContributionResponse
+Error: x/defendant/keeper/query_server.go:42:25: assignment mismatch: 2 variables but query.CollectionPaginate returns 3 values
+
+Error: x/distribution/module.go:36:15: undefined: types.RegisterInterfaces
+Error: x/distribution/module.go:65:32: cannot use []*types.DescendantRegistration{} (value of type []*"github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".DescendantRegistration) as []"github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".DescendantRegistration value in struct literal
+Error: x/distribution/module.go:66:32: cannot use []*types.Distribution{} (value of type []*"github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution) as []"github.com/CreoDAMO/REPAR/aequitas/x/distribution/types".Distribution value in struct literal
+
+Error: x/dex/module.go:34:8: undefined: types.RegisterLegacyAminoCodec
+Error: x/dex/module.go:38:8: undefined: types.RegisterInterfaces
+Error: x/dex/module.go:71:21: undefined: types.DefaultParams
+Error: x/dex/module.go:80:15: undefined: types.ValidateGenesis
+
+Error: x/founderendowment/module.go:37:8: undefined: types.RegisterInterfaces
+
+Error: x/endowment/module.go:39:8: undefined: types.RegisterInterfaces
+Error: x/endowment/module.go:43:35: undefined: types.DefaultGenesis
+Error: x/endowment/module.go:51:18: genState.Validate undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types".GenesisState has no field or method Validate)
+
+Error: x/justice/keeper/msg_server.go:21:25: cannot use msgServer{} (value of struct type msgServer) as "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgServer value in variable declaration: msgServer does not implement "github.com/CreoDAMO/REPAR/aequitas/x/justice/types".MsgServer (wrong type for method ExecuteJusticeBurn)
+
+Error: x/justice/keeper/msg_server.go:24:67: undefined: types.MsgExecuteBurn
+Error: x/justice/keeper/msg_server.go:24:91: undefined: types.MsgExecuteBurnResponse
+Error: x/justice/keeper/msg_server.go:50:16: undefined: types.MsgExecuteBurnResponse
+Error: x/justice/keeper/keeper.go:144:44: collections.ErrNotFound.Is undefined (type error has no field or method Is)
+
+Error: x/validatorsubsidy/keeper/msg_server.go:47:22: ms.Keeper.RegisterValidator undefined (type Keeper has no field or method RegisterValidator)
+Error: x/validatorsubsidy/keeper/msg_server.go:66:8: ms.authority undefined (type msgServer has no field or method authority)
+Error: x/validatorsubsidy/keeper/msg_server.go:70:33: ms.Keeper.DistributeMonthlySubsidies undefined (type Keeper has no field or method DistributeMonthlySubsidies)
+Error: x/validatorsubsidy/keeper/msg_server.go:82:22: ms.Keeper.ClaimEmergencyFunds undefined (type Keeper has no field or method ClaimEmergencyFunds)
+Error: x/validatorsubsidy/keeper/msg_server.go:91:8: ms.authority undefined (type msgServer has no field or method authority)
+Error: x/validatorsubsidy/keeper/msg_server.go:95:22: ms.Keeper.UpdateValidatorStatus undefined (type Keeper has no field or method UpdateValidatorStatus)
+Error: x/validatorsubsidy/keeper/query_server.go:20:25: qs.Keeper.Pool undefined (type Keeper has no field or method Pool)
+Error: x/validatorsubsidy/keeper/query_server.go:42:31: qs.Keeper.ListValidators undefined (type Keeper has no field or method ListValidators)
+Error: x/validatorsubsidy/keeper/query_server.go:53:29: qs.Keeper.GetPaymentHistory undefined (type Keeper has no field or method GetPaymentHistory)
+Error: x/validatorsubsidy/keeper/query_server.go:64:29: qs.Keeper.Schedule undefined (type Keeper has no field or method Schedule)
+Error: x/validatorsubsidy/keeper/query_server.go:64:29: too many errors
+
+Error: x/nftmarketplace/keeper/query_server.go:6:2: "cosmossdk.io/collections" imported and not used
+Error: x/nftmarketplace/keeper/query_server.go:7:2: "github.com/cosmos/cosmos-sdk/types/query" imported and not used
+
+Error: Process completed with exit code 1.

@@ -62,8 +62,8 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 func (am AppModule) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
         return cdc.MustMarshalJSON(&types.GenesisState{
-                Descendants:   []*types.DescendantRegistration{},
-                Distributions: []*types.Distribution{},
+                Descendants:   []types.DescendantRegistration{},
+                Distributions: []types.Distribution{},
         })
 }
 
