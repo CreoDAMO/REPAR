@@ -8,14 +8,14 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-        cdc.RegisterConcrete(&MsgAllocateFunds{}, "endowment/AllocateFunds", nil)
-        cdc.RegisterConcrete(&MsgDistributeFunds{}, "endowment/DistributeFunds", nil)
+        cdc.RegisterConcrete(&MsgCreateDefendant{}, "defendant/CreateDefendant", nil)
+        cdc.RegisterConcrete(&MsgUpdateDefendant{}, "defendant/UpdateDefendant", nil)
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
         registry.RegisterImplementations((*sdk.Msg)(nil),
-                &MsgAllocateFunds{},
-                &MsgDistributeFunds{},
+                &MsgCreateDefendant{},
+                &MsgUpdateDefendant{},
         )
         msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

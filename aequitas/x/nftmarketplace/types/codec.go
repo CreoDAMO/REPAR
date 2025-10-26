@@ -8,14 +8,16 @@ import (
 )
 
 func RegisterCodec(cdc *codec.LegacyAmino) {
-        cdc.RegisterConcrete(&MsgAllocateFunds{}, "endowment/AllocateFunds", nil)
-        cdc.RegisterConcrete(&MsgDistributeFunds{}, "endowment/DistributeFunds", nil)
+        cdc.RegisterConcrete(&MsgListNFT{}, "nftmarketplace/ListNFT", nil)
+        cdc.RegisterConcrete(&MsgBuyNFT{}, "nftmarketplace/BuyNFT", nil)
+        cdc.RegisterConcrete(&MsgCancelListing{}, "nftmarketplace/CancelListing", nil)
 }
 
 func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
         registry.RegisterImplementations((*sdk.Msg)(nil),
-                &MsgAllocateFunds{},
-                &MsgDistributeFunds{},
+                &MsgListNFT{},
+                &MsgBuyNFT{},
+                &MsgCancelListing{},
         )
         msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
 }

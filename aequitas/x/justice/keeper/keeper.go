@@ -178,3 +178,13 @@ func (k Keeper) GetBurnsByDefendant(ctx context.Context, defendantId string) ([]
 
         return burns, totalBurned, err
 }
+
+// SetBurnStatistics sets the burn statistics
+func (k Keeper) SetBurnStatistics(ctx context.Context, stats types.BurnStatistics) error {
+        return k.Statistics.Set(ctx, stats)
+}
+
+// SetBurns sets a burn record
+func (k Keeper) SetBurns(ctx context.Context, burn types.JusticeBurn) error {
+        return k.Burns.Set(ctx, burn.Id, burn)
+}
