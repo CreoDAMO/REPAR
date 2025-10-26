@@ -15,6 +15,7 @@ import (
         _ "github.com/cosmos/cosmos-sdk/x/auth/tx/config" // import for side-effects
         _ "github.com/cosmos/cosmos-sdk/x/bank"           // import for side-effects
         _ "github.com/cosmos/cosmos-sdk/x/consensus"      // import for side-effects
+        _ "github.com/cosmos/cosmos-sdk/x/distribution"   // import for side-effects
         _ "github.com/cosmos/cosmos-sdk/x/mint"           // import for side-effects
         _ "github.com/cosmos/cosmos-sdk/x/staking"        // import for side-effects
         _ "cosmossdk.io/x/circuit"                                          // import for side-effects
@@ -51,6 +52,7 @@ import (
         bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
         consensuskeeper "github.com/cosmos/cosmos-sdk/x/consensus/keeper"
         crisiskeeper "github.com/cosmos/cosmos-sdk/x/crisis/keeper"
+        distrkeeper "github.com/cosmos/cosmos-sdk/x/distribution/keeper"
         "github.com/cosmos/cosmos-sdk/x/genutil"
         genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
         "github.com/cosmos/cosmos-sdk/x/gov"
@@ -128,6 +130,7 @@ type App struct {
         AccountKeeper         authkeeper.AccountKeeper
         BankKeeper            bankkeeper.Keeper
         StakingKeeper         *stakingkeeper.Keeper
+        DistrKeeper           distrkeeper.Keeper
         ConsensusParamsKeeper consensuskeeper.Keeper
 
         SlashingKeeper        slashingkeeper.Keeper
@@ -255,6 +258,7 @@ func New(
                 &app.AccountKeeper,
                 &app.BankKeeper,
                 &app.StakingKeeper,
+                &app.DistrKeeper,
                 &app.ConsensusParamsKeeper,
                 &app.SlashingKeeper,
                 &app.MintKeeper,
