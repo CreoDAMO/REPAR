@@ -1,12 +1,7 @@
 package app
 
 import (
-	"encoding/json"
-
-	"cosmossdk.io/math"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	defendanttypes "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types"
+        "encoding/json"
 )
 
 // GenesisState of the blockchain is represented here as a map of raw json
