@@ -94,7 +94,13 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
         cdc.MustUnmarshalJSON(data, &genesisState)
         // Set genesis state to keeper
         am.keeper.SetBurnStatistics(ctx, genesisState.Statistics)
-        am.keeper.SetBurns(ctx, genesisState.Burns)
+        
+        // Set each burn record individually
+        for _, burn := range genesisState.Burns {
+                if err := am.keeper.SetBurns(ctx, burn); err != nil {
+                        panic(fmt.Sprintf("failed to set burn record: %v", err))
+                }
+        }
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
