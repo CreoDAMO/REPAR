@@ -34,7 +34,6 @@ import (
         _ "github.com/cosmos/ibc-go/v8/modules/apps/27-interchain-accounts" // import for side-effects
         _ "github.com/cosmos/ibc-go/v8/modules/apps/29-fee"                 // import for side-effects
         dbm "github.com/cosmos/cosmos-db"
-        abci "github.com/cometbft/cometbft/abci/types"
         "github.com/cosmos/cosmos-sdk/baseapp"
         "github.com/cosmos/cosmos-sdk/client"
         "github.com/cosmos/cosmos-sdk/codec"
@@ -43,7 +42,6 @@ import (
         "github.com/cosmos/cosmos-sdk/server"
         "github.com/cosmos/cosmos-sdk/server/api"
         "github.com/cosmos/cosmos-sdk/server/config"
-        sdk "github.com/cosmos/cosmos-sdk/types"
         servertypes "github.com/cosmos/cosmos-sdk/server/types"
         "github.com/cosmos/cosmos-sdk/types/module"
         "github.com/cosmos/cosmos-sdk/x/auth"
@@ -81,40 +79,22 @@ import (
         
         // Custom modules
         claimskeeper "github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper"
-        claimsmodule "github.com/CreoDAMO/REPAR/aequitas/x/claims"
-        claimstypes "github.com/CreoDAMO/REPAR/aequitas/x/claims/types"
         
         defendantkeeper "github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper"
-        defendantmodule "github.com/CreoDAMO/REPAR/aequitas/x/defendant"
-        defendanttypes "github.com/CreoDAMO/REPAR/aequitas/x/defendant/types"
         
         dexkeeper "github.com/CreoDAMO/REPAR/aequitas/x/dex/keeper"
-        dexmodule "github.com/CreoDAMO/REPAR/aequitas/x/dex"
-        dextypes "github.com/CreoDAMO/REPAR/aequitas/x/dex/types"
         
         distributionkeeper "github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper"
-        distributionmodule "github.com/CreoDAMO/REPAR/aequitas/x/distribution"
-        distributiontypes "github.com/CreoDAMO/REPAR/aequitas/x/distribution/types"
         
         endowmentkeeper "github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper"
-        endowmentmodule "github.com/CreoDAMO/REPAR/aequitas/x/endowment"
-        endowmenttypes "github.com/CreoDAMO/REPAR/aequitas/x/endowment/types"
         
         founderendowmentkeeper "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper"
-        founderendowmentmodule "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment"
-        founderendowmenttypes "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types"
         
         justicekeeper "github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper"
-        justicemodule "github.com/CreoDAMO/REPAR/aequitas/x/justice"
-        justicetypes "github.com/CreoDAMO/REPAR/aequitas/x/justice/types"
         
         nftmarketplacekeeper "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper"
-        nftmarketplacemodule "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace"
-        nftmarketplacetypes "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types"
         
         validatorsubsidykeeper "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper"
-        validatorsubsidymodule "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy"
-        validatorsubsidytypes "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types"
 )
 
 const (
@@ -129,20 +109,6 @@ const (
 var (
         // DefaultNodeHome default home directories for the application daemon
         DefaultNodeHome string
-        
-        // Module account permissions
-        moduleAccPerms = []struct {
-                Account     string
-                Permissions []string
-        }{
-                {Account: dextypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
-                {Account: justicetypes.ModuleName, Permissions: []string{authtypes.Burner}},
-                {Account: endowmenttypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
-                {Account: founderendowmenttypes.ModuleName, Permissions: []string{authtypes.Minter}},
-                {Account: distributiontypes.ModuleName, Permissions: []string{authtypes.Minter}},
-                {Account: nftmarketplacetypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
-                {Account: validatorsubsidytypes.ModuleName, Permissions: []string{authtypes.Minter}},
-        }
 )
 
 var (
@@ -212,7 +178,6 @@ type App struct {
 
 func init() {
         var err error
-        clienthelpers.EnvPrefix = Name
         DefaultNodeHome, err = clienthelpers.GetNodeHomeDirectory("."+Name)
         if err != nil {
                 panic(err)

@@ -175,6 +175,14 @@ var (
                 {Account: ibctransfertypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
                 {Account: ibcfeetypes.ModuleName},
                 {Account: icatypes.ModuleName},
+                // Custom module permissions
+                {Account: dextypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
+                {Account: justicetypes.ModuleName, Permissions: []string{authtypes.Burner}},
+                {Account: endowmenttypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
+                {Account: founderendowmenttypes.ModuleName, Permissions: []string{authtypes.Minter}},
+                {Account: distributiontypes.ModuleName, Permissions: []string{authtypes.Minter}},
+                {Account: nftmarketplacetypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner}},
+                {Account: validatorsubsidytypes.ModuleName, Permissions: []string{authtypes.Minter}},
                 // this line is used by starport scaffolding # stargate/app/maccPerms
         }
 
