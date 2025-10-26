@@ -75,10 +75,10 @@ jobs:
           echo "🔧 Generating protobuf files..."
           buf mod update
           buf generate
-          
+
           echo "📋 Moving generated protobuf files to correct location..."
           cd ..
-          
+
           # Files are generated in github.com/CreoDAMO/REPAR/aequitas/x/*/types/
           # We need to move them to x/*/types/
           if [ -d "github.com/CreoDAMO/REPAR/aequitas/x" ]; then
@@ -90,26 +90,21 @@ jobs:
             find . -name "*.pb.go" -type f | head -10
             exit 1
           fi
-          
+
           # Verify generation succeeded
           PROTO_COUNT=$(find x/*/types -name '*.pb.go' 2>/dev/null | wc -l)
           if [ "$PROTO_COUNT" -eq 0 ]; then
             echo "❌ No protobuf files found in x/*/types/"
             exit 1
           fi
-          
+
           echo "✅ Successfully generated and moved $PROTO_COUNT protobuf files"
 
       - name: Verify protobuf generation
         working-directory: ./aequitas
         run: |
           echo "✅ Protobuf files generated successfully"
-          echo "📋 Generated protobuf files:"
           find x/*/types -name "*.pb.go" | wc -l
-          
-          echo "📋 Existing helper files (codec.go, keys.go, errors.go, expected_keepers.go):"
-          find x/*/types -name "codec.go" -o -name "keys.go" -o -name "errors.go" -o -name "expected_keepers.go" | wc -l
-          
           echo "✅ Build setup complete - protobuf + helper files ready"
 
       - name: Tidy dependencies
