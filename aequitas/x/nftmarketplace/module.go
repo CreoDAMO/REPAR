@@ -1,26 +1,26 @@
 package nftmarketplace
 
 import (
-	"context"
-	"encoding/json"
+        "context"
+        "encoding/json"
 
-	"cosmossdk.io/core/appmodule"
-	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/codec"
-	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+        "cosmossdk.io/core/appmodule"
+        "github.com/cosmos/cosmos-sdk/client"
+        "github.com/cosmos/cosmos-sdk/codec"
+        codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+        sdk "github.com/cosmos/cosmos-sdk/types"
+        "github.com/cosmos/cosmos-sdk/types/module"
+        "github.com/grpc-ecosystem/grpc-gateway/runtime"
 
-	"github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper"
-	"github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types"
+        "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper"
+        "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types"
 )
 
 var (
-	_ module.AppModuleBasic = AppModule{}
-	_ module.HasGenesis     = AppModule{}
-	_ module.HasServices    = AppModule{}
-	_ appmodule.AppModule   = AppModule{}
+        _ module.AppModuleBasic = AppModule{}
+        _ module.HasGenesis     = AppModule{}
+        _ module.HasServices    = AppModule{}
+        _ appmodule.AppModule   = AppModule{}
 )
 
 const ModuleName = "nftmarketplace"
@@ -30,160 +30,166 @@ type AppModuleBasic struct{}
 func (AppModuleBasic) Name() string { return ModuleName }
 
 func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	types.RegisterCodec(cdc)
+        // Codec registration handled by buf-generated code
 }
 
 func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
-	types.RegisterInterfaces(registry)
+        types.RegisterInterfaces(registry)
 }
 
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
-		panic(err)
-	}
+        if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
+                panic(err)
+        }
 }
 
 type AppModule struct {
-	AppModuleBasic
-	keeper keeper.Keeper
+        AppModuleBasic
+        keeper keeper.Keeper
 }
 
 func NewAppModule(keeper keeper.Keeper) AppModule {
-	return AppModule{
-		keeper: keeper,
-	}
+        return AppModule{
+                keeper: keeper,
+        }
 }
 
 func (am AppModule) IsOnePerModuleType() {}
 func (am AppModule) IsAppModule()        {}
 
 func (am AppModule) RegisterServices(cfg module.Configurator) {
-	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
-	types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
+        types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
+        types.RegisterQueryServer(cfg.QueryServer(), keeper.NewQueryServerImpl(am.keeper))
 }
 
 func (AppModuleBasic) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
-	defaultGen := &types.GenesisState{
-		Listings:      []types.NFTListing{},
-		SalesHistory:  []types.Sale{},
-		NextListingId: 1,
-	}
-	return cdc.MustMarshalJSON(defaultGen)
+        defaultGen := &types.GenesisState{
+                Params:           types.DefaultParams(),
+                Nfts:             []types.NFT{},
+                Collections:      []types.Collection{},
+                Listings:         []types.Listing{},
+                Sales:            []types.Sale{},
+                NextNftId:        1,
+                NextCollectionId: 1,
+                NextListingId:    1,
+                NextSaleId:       1,
+        }
+        return cdc.MustMarshalJSON(defaultGen)
 }
 
 func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEncodingConfig, bz json.RawMessage) error {
-	var data types.GenesisState
-	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
-		return err
-	}
-	// Basic validation
-	return nil
+        var data types.GenesisState
+        if err := cdc.UnmarshalJSON(bz, &data); err != nil {
+                return err
+        }
+        // Basic validation
+        return nil
 }
 
 func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.RawMessage) {
-	var genesisState types.GenesisState
-	cdc.MustUnmarshalJSON(data, &genesisState)
+        var genesisState types.GenesisState
+        cdc.MustUnmarshalJSON(data, &genesisState)
 
-	// Initialize params
-	if err := am.keeper.Params.Set(ctx, genesisState.Params); err != nil {
-		panic(err)
-	}
+        // Initialize params
+        if err := am.keeper.Params.Set(ctx, genesisState.Params); err != nil {
+                panic(err)
+        }
 
-	// Initialize NFTs
-	for _, nft := range genesisState.Nfts {
-		if err := am.keeper.NFTs.Set(ctx, nft.Id, nft); err != nil {
-			panic(err)
-		}
-	}
+        // Initialize NFTs
+        for _, nft := range genesisState.Nfts {
+                if err := am.keeper.NFTs.Set(ctx, nft.Id, nft); err != nil {
+                        panic(err)
+                }
+        }
 
-	// Initialize collections
-	for _, collection := range genesisState.Collections {
-		if err := am.keeper.Collections.Set(ctx, collection.Id, collection); err != nil {
-			panic(err)
-		}
-	}
+        // Initialize collections
+        for _, collection := range genesisState.Collections {
+                if err := am.keeper.Collections.Set(ctx, collection.Id, collection); err != nil {
+                        panic(err)
+                }
+        }
 
-	// Initialize listings
-	for _, listing := range genesisState.Listings {
-		if err := am.keeper.Listings.Set(ctx, listing.Id, listing); err != nil {
-			panic(err)
-		}
-	}
+        // Initialize listings
+        for _, listing := range genesisState.Listings {
+                if err := am.keeper.Listings.Set(ctx, listing.Id, listing); err != nil {
+                        panic(err)
+                }
+        }
 
-	// Initialize sales
-	for _, sale := range genesisState.Sales {
-		if err := am.keeper.Sales.Set(ctx, sale.Id, sale); err != nil {
-			panic(err)
-		}
-	}
+        // Initialize sales
+        for _, sale := range genesisState.Sales {
+                if err := am.keeper.Sales.Set(ctx, sale.Id, sale); err != nil {
+                        panic(err)
+                }
+        }
 
-	// Set counters
-	if err := am.keeper.NextNFTID.Set(ctx, genesisState.NextNftId); err != nil {
-		panic(err)
-	}
-	if err := am.keeper.NextCollectionID.Set(ctx, genesisState.NextCollectionId); err != nil {
-		panic(err)
-	}
-	if err := am.keeper.NextListingID.Set(ctx, genesisState.NextListingId); err != nil {
-		panic(err)
-	}
-	if err := am.keeper.NextSaleID.Set(ctx, genesisState.NextSaleId); err != nil {
-		panic(err)
-	}
+        // Set counters
+        if err := am.keeper.NextNFTID.Set(ctx, genesisState.NextNftId); err != nil {
+                panic(err)
+        }
+        if err := am.keeper.NextCollectionID.Set(ctx, genesisState.NextCollectionId); err != nil {
+                panic(err)
+        }
+        if err := am.keeper.NextListingID.Set(ctx, genesisState.NextListingId); err != nil {
+                panic(err)
+        }
+        if err := am.keeper.NextSaleID.Set(ctx, genesisState.NextSaleId); err != nil {
+                panic(err)
+        }
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
-	var nfts []types.NFT
-	var collections []types.Collection
-	var listings []types.Listing
-	var sales []types.Sale
+        var nfts []types.NFT
+        var collections []types.Collection
+        var listings []types.Listing
+        var sales []types.Sale
 
-	// Export all NFTs
-	_ = am.keeper.NFTs.Walk(ctx, nil, func(key string, value types.NFT) (bool, error) {
-		nfts = append(nfts, value)
-		return false, nil
-	})
+        // Export all NFTs
+        _ = am.keeper.NFTs.Walk(ctx, nil, func(key string, value types.NFT) (bool, error) {
+                nfts = append(nfts, value)
+                return false, nil
+        })
 
-	// Export all collections
-	_ = am.keeper.Collections.Walk(ctx, nil, func(key string, value types.Collection) (bool, error) {
-		collections = append(collections, value)
-		return false, nil
-	})
+        // Export all collections
+        _ = am.keeper.Collections.Walk(ctx, nil, func(key string, value types.Collection) (bool, error) {
+                collections = append(collections, value)
+                return false, nil
+        })
 
-	// Export all listings
-	_ = am.keeper.Listings.Walk(ctx, nil, func(key string, value types.Listing) (bool, error) {
-		listings = append(listings, value)
-		return false, nil
-	})
+        // Export all listings
+        _ = am.keeper.Listings.Walk(ctx, nil, func(key string, value types.Listing) (bool, error) {
+                listings = append(listings, value)
+                return false, nil
+        })
 
-	// Export all sales
-	_ = am.keeper.Sales.Walk(ctx, nil, func(key string, value types.Sale) (bool, error) {
-		sales = append(sales, value)
-		return false, nil
-	})
+        // Export all sales
+        _ = am.keeper.Sales.Walk(ctx, nil, func(key string, value types.Sale) (bool, error) {
+                sales = append(sales, value)
+                return false, nil
+        })
 
-	// Get params
-	params, _ := am.keeper.Params.Get(ctx)
+        // Get params
+        params, _ := am.keeper.Params.Get(ctx)
 
-	// Get counters
-	nextNFTID, _ := am.keeper.NextNFTID.Peek(ctx)
-	nextCollectionID, _ := am.keeper.NextCollectionID.Peek(ctx)
-	nextListingID, _ := am.keeper.NextListingID.Peek(ctx)
-	nextSaleID, _ := am.keeper.NextSaleID.Peek(ctx)
+        // Get counters
+        nextNFTID, _ := am.keeper.NextNFTID.Peek(ctx)
+        nextCollectionID, _ := am.keeper.NextCollectionID.Peek(ctx)
+        nextListingID, _ := am.keeper.NextListingID.Peek(ctx)
+        nextSaleID, _ := am.keeper.NextSaleID.Peek(ctx)
 
-	gs := &types.GenesisState{
-		Params:           params,
-		Nfts:             nfts,
-		Collections:      collections,
-		Listings:         listings,
-		Sales:            sales,
-		NextNftId:        nextNFTID,
-		NextCollectionId: nextCollectionID,
-		NextListingId:    nextListingID,
-		NextSaleId:       nextSaleID,
-	}
+        gs := &types.GenesisState{
+                Params:           params,
+                Nfts:             nfts,
+                Collections:      collections,
+                Listings:         listings,
+                Sales:            sales,
+                NextNftId:        nextNFTID,
+                NextCollectionId: nextCollectionID,
+                NextListingId:    nextListingID,
+                NextSaleId:       nextSaleID,
+        }
 
-	return cdc.MustMarshalJSON(gs)
+        return cdc.MustMarshalJSON(gs)
 }
 
 func (am AppModule) ConsensusVersion() uint64 { return 1 }

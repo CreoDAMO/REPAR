@@ -7,27 +7,39 @@ import (
 // DefaultGenesis returns the default genesis state
 func DefaultGenesis() *GenesisState {
         return &GenesisState{
-                Params: DefaultParams(),
-                Pools:  []Pool{},
+                Params:     DefaultParams(),
+                Pools:      []Pool{},
+                Positions:  []LiquidityPosition{},
+                NextPoolId: 1,
         }
 }
 
 // DefaultParams returns default module parameters
 func DefaultParams() Params {
         return Params{
-                TradingFeePercent: 30, // 0.3%
-                ProtocolFeePercent: 5, // 0.05%
+                PoolCreationFee:        math.NewInt(1000000), // 1 REPAR
+                MinInitialPoolLiquidity: math.NewInt(1000000), // 1 REPAR minimum
+                MaxSwapFeeRate:         300, // 3% maximum swap fee
         }
 }
 
 // ValidateGenesis validates the genesis state
 func ValidateGenesis(data GenesisState) error {
-        if data.Params.TradingFeePercent > 10000 {
-                return ErrInvalidParams
+        // Validate max swap fee rate
+        if data.Params.MaxSwapFeeRate > 10000 {
+                return ErrInvalidSwapFee
         }
-        if data.Params.ProtocolFeePercent > 10000 {
-                return ErrInvalidParams
+        
+        // Validate pool creation fee is positive
+        if data.Params.PoolCreationFee.IsNegative() {
+                return ErrInvalidPoolCreationFee
         }
+        
+        // Validate minimum liquidity is positive
+        if data.Params.MinInitialPoolLiquidity.IsNegative() {
+                return ErrInvalidMinLiquidity
+        }
+        
         return nil
 }
 
