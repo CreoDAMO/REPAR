@@ -25,7 +25,7 @@ func (qs queryServer) Pool(ctx context.Context, req *types.QueryPoolRequest) (*t
 	}
 
 	return &types.QueryPoolResponse{
-		Pool: &pool,
+		Pool: (*types.ValidatorSubsidyPool)(&pool),
 	}, nil
 }
 

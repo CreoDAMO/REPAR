@@ -178,3 +178,18 @@ func (k Keeper) GetBurnsByDefendant(ctx context.Context, defendantId string) ([]
 
         return burns, totalBurned, err
 }
+
+// SetBurnStatistics sets the burn statistics
+func (k Keeper) SetBurnStatistics(ctx context.Context, stats types.BurnStatistics) error {
+        return k.Statistics.Set(ctx, stats)
+}
+
+// SetBurns sets multiple burns at once (for genesis)
+func (k Keeper) SetBurns(ctx context.Context, burns []types.JusticeBurn) error {
+        for _, burn := range burns {
+                if err := k.Burns.Set(ctx, burn.Id, burn); err != nil {
+                        return err
+                }
+        }
+        return nil
+}
