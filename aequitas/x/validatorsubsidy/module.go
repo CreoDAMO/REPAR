@@ -64,15 +64,15 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 func (am AppModule) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
         return cdc.MustMarshalJSON(&types.GenesisState{
-                Pool: types.SubsidyPool{
+                Pool: &types.ValidatorSubsidyPool{
                         TotalAllocated:   math.ZeroInt(),
                         MonthlyBudget:    math.NewInt(1000000000000), // 1M REPAR per month for subsidies
                         EmergencyReserve: math.NewInt(500000000000),  // 500K REPAR emergency reserve
                         LastDistribution: 0,
                 },
-                Validators: []types.ValidatorSubsidyRecord{},
-                Payments:   []types.SubsidyPayment{},
-                Schedule: types.SubsidyDistributionSchedule{
+                Validators: []*types.ValidatorSubsidyRecord{},
+                Payments:   []*types.SubsidyPayment{},
+                Schedule: &types.SubsidyDistributionSchedule{
                         DistributionIntervalSeconds: 2592000, // 30 days
                         NextDistribution:            0,
                         AutoDistribute:              true,
@@ -95,7 +95,7 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 
         // Register validators
         for _, validator := range genesisState.Validators {
-                if err := am.keeper.RegisterValidator(ctx, validator); err != nil {
+                if err := am.keeper.RegisterValidator(ctx, *validator); err != nil {
                         panic(err)
                 }
         }
@@ -110,16 +110,22 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
                 panic(err)
         }
 
+        // Convert validator slice to pointer slice
+        validatorPtrs := make([]*types.ValidatorSubsidyRecord, len(validators))
+        for i := range validators {
+                validatorPtrs[i] = &validators[i]
+        }
+
         gs := &types.GenesisState{
-                Pool: types.SubsidyPool{
+                Pool: &types.ValidatorSubsidyPool{
                         TotalAllocated:   math.ZeroInt(),
                         MonthlyBudget:    math.NewInt(1000000000000),
                         EmergencyReserve: math.NewInt(500000000000),
                         LastDistribution: 0,
                 },
-                Validators: validators,
-                Payments:   []types.SubsidyPayment{},
-                Schedule: types.SubsidyDistributionSchedule{
+                Validators: validatorPtrs,
+                Payments:   []*types.SubsidyPayment{},
+                Schedule: &types.SubsidyDistributionSchedule{
                         DistributionIntervalSeconds: 2592000,
                         NextDistribution:            0,
                         AutoDistribute:              true,

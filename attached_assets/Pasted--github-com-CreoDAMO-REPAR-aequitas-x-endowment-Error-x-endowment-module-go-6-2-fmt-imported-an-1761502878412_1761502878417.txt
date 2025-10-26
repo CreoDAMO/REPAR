@@ -1,0 +1,19 @@
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment
+Error: x/endowment/module.go:6:2: "fmt" imported and not used
+
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+Error: x/nftmarketplace/types/params.go:6:3: unknown field ListingFee in struct literal of type MarketplaceParams
+Error: x/nftmarketplace/types/params.go:7:3: unknown field TradingFeePercent in struct literal of type MarketplaceParams
+Error: x/nftmarketplace/types/params.go:8:3: unknown field MaxRoyaltyPercent in struct literal of type MarketplaceParams
+Error: x/nftmarketplace/types/params.go:11:3: unknown field AllowPrivateCollections in struct literal of type MarketplaceParams
+
+# github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy
+Error: x/validatorsubsidy/module.go:67:23: cannot use types.SubsidyPool{…} (value of struct type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPool) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyPool value in struct literal
+Error: x/validatorsubsidy/module.go:73:29: cannot use []types.ValidatorSubsidyRecord{} (value of type []"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord) as []*"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord value in struct literal
+Error: x/validatorsubsidy/module.go:74:29: cannot use []types.SubsidyPayment{} (value of type []"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPayment) as []*"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPayment value in struct literal
+Error: x/validatorsubsidy/module.go:75:27: cannot use types.SubsidyDistributionSchedule{…} (value of struct type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyDistributionSchedule) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyDistributionSchedule value in struct literal
+Error: x/validatorsubsidy/module.go:98:60: cannot use validator (variable of type *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord) as "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord value in argument to am.keeper.RegisterValidator
+Error: x/validatorsubsidy/module.go:114:23: cannot use types.SubsidyPool{…} (value of struct type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPool) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyPool value in struct literal
+Error: x/validatorsubsidy/module.go:120:29: cannot use validators (variable of type []"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord) as []*"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".ValidatorSubsidyRecord value in struct literal
+Error: x/validatorsubsidy/module.go:121:29: cannot use []types.SubsidyPayment{} (value of type []"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPayment) as []*"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyPayment value in struct literal
+Error: x/validatorsubsidy/module.go:122:27: cannot use types.SubsidyDistributionSchedule{…} (value of struct type "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyDistributionSchedule) as *"github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types".SubsidyDistributionSchedule value in struct literal

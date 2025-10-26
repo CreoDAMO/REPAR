@@ -20,7 +20,18 @@ The blockchain modules had manual code that:
 
 **Key Principle:** Align all manual code with protobuf definitions and create stub functions for generated code.
 
-## Fixes Applied
+## GitHub Build - Round 2 Fixes ✅
+
+After the first push, GitHub identified 3 additional issues that have now been resolved.
+
+### Round 2 Errors Fixed:
+1. **x/endowment/module.go** - Unused "fmt" import ✅
+2. **x/nftmarketplace/types/params.go** - Incorrect field names ✅  
+3. **x/validatorsubsidy/module.go** - Pointer vs value type mismatches ✅
+
+---
+
+## Complete Fix Summary
 
 ### 1. x/dex/types/genesis.go ✅
 **Problem:** Referenced `TradingFeePercent` and `ProtocolFeePercent` which don't exist in proto  
@@ -85,6 +96,36 @@ Reason: All reference protobuf-generated types that will exist after buf generat
 Status: NORMAL - These will resolve during GitHub build
 ```
 
+## Round 2 Fixes (Post-Push)
+
+### 6. x/endowment/module.go ✅
+**Problem:** Unused "fmt" import causing compilation error  
+**Solution:** Removed unused import statement
+- **Files Modified:** endowment/module.go
+
+### 7. x/nftmarketplace/types/params.go ✅
+**Problem:** Field names didn't match proto definition (MarketplaceParams)  
+**Solution:** Corrected all field names to match proto:
+- `ListingFee` → Removed (not in proto)
+- `TradingFeePercent` → `MarketplaceFeePercentage`
+- `MaxRoyaltyPercent` → `MaxRoyaltyPercentage`
+- `AllowPrivateCollections` → `CertificationRequired`
+- Added `FeeCollector` field
+- **Files Modified:** nftmarketplace/types/params.go
+
+### 8. x/validatorsubsidy/module.go ✅
+**Problem:** Type mismatches - proto expects pointers but code provided values  
+**Solution:** Fixed all pointer/value type mismatches:
+- `types.SubsidyPool{}` → `&types.ValidatorSubsidyPool{}`
+- `[]types.ValidatorSubsidyRecord{}` → `[]*types.ValidatorSubsidyRecord{}`
+- `[]types.SubsidyPayment{}` → `[]*types.SubsidyPayment{}`
+- `types.SubsidyDistributionSchedule{}` → `&types.SubsidyDistributionSchedule{}`
+- In InitGenesis: `validator` → `*validator` (dereference pointer)
+- In ExportGenesis: Added conversion loop to create pointer slice
+- **Files Modified:** validatorsubsidy/module.go
+
+---
+
 ## Files Created/Modified
 
 ### Created (6 new files)
@@ -95,11 +136,17 @@ Status: NORMAL - These will resolve during GitHub build
 5. `aequitas/x/nftmarketplace/types/params.go` - DefaultParams
 6. `BLOCKCHAIN_BUILD_FIXES_FINAL.md` - This documentation
 
-### Modified (4 files)
+### Modified (7 files)
+**Round 1:**
 1. `aequitas/x/dex/types/genesis.go` - Fixed params to match proto
 2. `aequitas/x/dex/types/errors.go` - Added 3 new error constants
 3. `aequitas/x/validatorsubsidy/keeper/query_server.go` - Fixed type cast
 4. `aequitas/x/nftmarketplace/module.go` - Fixed genesis and removed undefined calls
+
+**Round 2:**
+5. `aequitas/x/endowment/module.go` - Removed unused "fmt" import
+6. `aequitas/x/nftmarketplace/types/params.go` - Corrected all field names
+7. `aequitas/x/validatorsubsidy/module.go` - Fixed pointer/value type mismatches
 
 ## Next Steps
 
