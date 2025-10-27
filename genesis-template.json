@@ -1,8 +1,37 @@
 
 {
-  "genesis_time": "2025-10-20T16:00:00Z",
+  "genesis_time": "2025-10-27T16:00:00Z",
   "chain_id": "aequitas-1",
   "initial_height": "1",
+  "metadata": {
+    "founding_document": {
+      "title": "Digital Declaration of International Economic Sovereignty",
+      "description": "Founding Instrument and Constitutional Act of the Aequitas Zone Blockchain",
+      "document_hash": "9e649e60801d2f37925a82dbab5e2ce28dc09ae484638d682cdbe4dc76288eaa",
+      "hash_algorithm": "SHA-256",
+      "document_location": "DECLARATION_OF_SOVEREIGNTY.md",
+      "ipfs_cid": "TO_BE_PINNED",
+      "legal_basis": "Natural Law, Technological Law, and Customary International Law"
+    },
+    "founder": {
+      "name": "Jacque Antoine DeGraff",
+      "title": "Founder & Custodian",
+      "role": "For and on behalf of the Descendants and Digital Sovereign Nation of Aequitas",
+      "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun"
+    },
+    "economic_foundation": {
+      "native_currency": "REPAR",
+      "total_supply": "131000000000000",
+      "supply_description": "131 trillion REPAR coins representing $131T in quantified historical liability from the trans-Atlantic slave trade",
+      "economic_model": "Justice-Backed Currency with deflationary Justice Burn mechanism",
+      "governance": "On-chain democracy - 1 REPAR = 1 vote"
+    },
+    "mission": {
+      "purpose": "Sovereign blockchain jurisdiction for enforcing reparations and restitution",
+      "mandate": "Transform history into proof, memory into mathematics, and testimony into transaction",
+      "principle": "Justice is no longer a request. It is a protocol."
+    }
+  },
   "consensus_params": {
     "block": {
       "max_bytes": "22020096",

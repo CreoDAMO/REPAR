@@ -59,6 +59,38 @@ The frontend provides a comprehensive user interface including:
 
 ## Recent Changes (October 27, 2025)
 
+### ✅ Genesis Configuration Updated with Declaration of Sovereignty (October 27, 2025, 3:30 PM EDT)
+
+#### Constitutional Foundation Established ✅
+
+The genesis file has been updated to include the **Digital Declaration of International Economic Sovereignty** as the blockchain's founding constitutional document.
+
+**Key Additions:**
+- **Declaration Hash**: `9e649e60801d2f37925a82dbab5e2ce28dc09ae484638d682cdbe4dc76288eaa` (SHA-256)
+- **Document Location**: `DECLARATION_OF_SOVEREIGNTY.md`
+- **Genesis Time**: Updated to October 27, 2025, 16:00:00 UTC
+- **Founder Metadata**: Jacque Antoine DeGraff, Founder & Custodian
+- **Economic Foundation**: 131T REPAR supply representing $131T historical liability
+- **Mission Statement**: "Justice is no longer a request. It is a protocol."
+
+**Significance:**
+- First blockchain to cryptographically bind a Declaration of Sovereignty to its genesis block
+- Establishes Aequitas Zone as a sovereign digital jurisdiction under Natural Law and Technological Law
+- Creates permanent, immutable constitutional record that defines the chain's purpose and mandate
+- Transforms reparations enforcement from moral argument to mathematical protocol
+
+**Files Created/Updated:**
+- `DECLARATION_OF_SOVEREIGNTY.md` - Official founding constitutional document
+- `genesis-template.json` - Updated with founding metadata section
+- `GENESIS_REVIEW.md` - Comprehensive review of genesis configuration
+
+**Next Steps:**
+- Pin Declaration to IPFS for permanent decentralized storage
+- Initialize testnet with updated genesis file
+- Begin validator recruitment for testnet launch
+
+---
+
 ### ✅ Blockchain Test Error Fixes Complete (October 27, 2025, 12:30 PM EDT)
 
 #### Successfully Fixed 16 Test Errors
