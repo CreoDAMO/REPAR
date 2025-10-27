@@ -6,6 +6,6 @@ import (
 )
 
 var (
-        ErrDescendantNotFound = sdkerrors.Register(ModuleName, 1, "descendant not found")
-        ErrInvalidDescendant  = sdkerrors.Register(ModuleName, 2, "invalid descendant")
+        ErrDescendantNotFound = sdkerrors.Register(ModuleName, 1101, "descendant not found")
+        ErrInvalidDescendant  = sdkerrors.Register(ModuleName, 1102, "invalid descendant")
 )

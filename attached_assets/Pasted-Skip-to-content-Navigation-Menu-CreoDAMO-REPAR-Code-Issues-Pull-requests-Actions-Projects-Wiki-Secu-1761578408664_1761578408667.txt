@@ -1,0 +1,93 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Update documentation to clarify blockchain and system architecture #87
+Jobs
+Run details
+Build & Test Blockchain
+succeeded now in 2m 27s
+Search logs
+1s
+3s
+45s
+28s
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/examples/http/helloworld_server/main.go: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/LICENSE: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/CONTRIBUTING.md: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/exporter/stackdriver/propagation/http_test.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/exporter/stackdriver/propagation/http.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/profile_19.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/context.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/metadata.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/map_test.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/validate_test.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/validate.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/doc.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/profile_not19.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/map.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/key.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/map_codec_test.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/example_test.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/tag/map_codec.go: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/.github/workflows/build.yml: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/.github/CODEOWNERS: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/.github/ISSUE_TEMPLATE/feature_request.md: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/.github/ISSUE_TEMPLATE/bug_report.md: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/tagencoding/tagencoding.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/check/version.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/internal.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/sanitize_test.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/sanitize.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/traceinternals.go: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/testpb/generate.sh: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/testpb/impl.go: Cannot open: File exists
+/usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/testpb/test.proto: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/testpb/test.pb.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/go.opencensus.io@v0.24.0/internal/readme/stats.go: Cannot open: File exists
+0s
+1s
+6s
+1s
+0s
+5s
+10s
+4s
+0s
+11s
+Run actions/upload-artifact@v4
+With the provided path, there will be 1 file uploaded
+Artifact name is valid!
+Root directory input is valid!
+Beginning upload of artifact content to blob storage
+Uploaded bytes 8388608
+Uploaded bytes 16777216
+Uploaded bytes 25165824
+Uploaded bytes 33554432
+Uploaded bytes 41943040
+Uploaded bytes 50331648
+Uploaded bytes 57635525
+Finished uploading artifact content to blob storage!
+SHA256 digest of uploaded artifact zip is 3b3db469e1185d3be9cf63881e79500573a0a3e5983b715f6d66f4d8b027f0ce
+Finalizing artifact upload
+Artifact aequitasd-219423aed66da23d7759b8976bb13a6733b713bc.zip successfully finalized. Artifact ID 4383146372
+Artifact aequitasd-219423aed66da23d7759b8976bb13a6733b713bc has been successfully uploaded! Final size is 57635525 bytes. Artifact ID is 4383146372
+Artifact download URL: https://github.com/CreoDAMO/REPAR/actions/runs/18846055981/artifacts/4383146372
+10s
+0s
+19s
+0s
+0s
+0s
