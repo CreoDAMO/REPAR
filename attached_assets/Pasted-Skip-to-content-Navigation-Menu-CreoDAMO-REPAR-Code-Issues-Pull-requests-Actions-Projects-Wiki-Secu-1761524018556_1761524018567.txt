@@ -1,0 +1,103 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Restored to '0cb1ab9f7a31f96238dd7c0c27ab849796a9437a' #86
+Jobs
+Run details
+Annotations
+20 errors and 1 warning
+Build & Test Blockchain
+succeeded 11 minutes ago in 2m 59s
+Search logs
+1s
+2s
+36s
+33s
+0s
+1s
+4s
+2s
+0s
+5s
+10s
+4s
+0s
+10s
+Run actions/upload-artifact@v4
+With the provided path, there will be 1 file uploaded
+Artifact name is valid!
+Root directory input is valid!
+Beginning upload of artifact content to blob storage
+Uploaded bytes 8388608
+Uploaded bytes 16777216
+Uploaded bytes 25165824
+Uploaded bytes 33554432
+Uploaded bytes 41943040
+Uploaded bytes 50331648
+Uploaded bytes 57635528
+Finished uploading artifact content to blob storage!
+SHA256 digest of uploaded artifact zip is 6783ce65905ad07d695b40893bbdbc34ac377b4fd0d67b24fa3e2188aba1b0c0
+Finalizing artifact upload
+Artifact aequitasd-d61a78673c2172f48865d925287e6883a7e17283.zip successfully finalized. Artifact ID 4376442643
+Artifact aequitasd-d61a78673c2172f48865d925287e6883a7e17283 has been successfully uploaded! Final size is 57635528 bytes. Artifact ID is 4376442643
+Artifact download URL: https://github.com/CreoDAMO/REPAR/actions/runs/18825594618/artifacts/4376442643
+11s
+Run actions/upload-artifact@v4
+With the provided path, there will be 1 file uploaded
+Artifact name is valid!
+Root directory input is valid!
+Beginning upload of artifact content to blob storage
+Uploaded bytes 8388608
+Uploaded bytes 16777216
+Uploaded bytes 25165824
+Uploaded bytes 33554432
+Uploaded bytes 41943040
+Uploaded bytes 50331648
+Uploaded bytes 57635528
+Finished uploading artifact content to blob storage!
+SHA256 digest of uploaded artifact zip is 6783ce65905ad07d695b40893bbdbc34ac377b4fd0d67b24fa3e2188aba1b0c0
+Finalizing artifact upload
+Artifact aequitasd-latest.zip successfully finalized. Artifact ID 4376443016
+Artifact aequitasd-latest has been successfully uploaded! Final size is 57635528 bytes. Artifact ID is 4376443016
+Artifact download URL: https://github.com/CreoDAMO/REPAR/actions/runs/18825594618/artifacts/4376443016
+0s
+Run echo "### 🚀 Aequitas Zone Blockchain Build Status" >> $GITHUB_STEP_SUMMARY
+56s
+Post job cleanup.
+/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/REPAR/REPAR --files-from manifest.txt --use-compress-program zstdmt
+Failed to save: Unable to reserve cache with key Linux-go-b458581c7fe3798562b0b4ff0ec4d43dca22ddb8f4884228289be6db54174c6a, another job may be creating this cache.
+1s
+Post job cleanup.
+/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOMODCACHE
+/opt/hostedtoolcache/go/1.23.12/x64/bin/go env GOCACHE
+/home/runner/go/pkg/mod
+/home/runner/.cache/go-build
+Cache hit occurred on the primary key setup-go-Linux-x64-ubuntu24-go-1.23.12-b458581c7fe3798562b0b4ff0ec4d43dca22ddb8f4884228289be6db54174c6a, not saving cache.
+0s
+Post job cleanup.
+/usr/bin/git version
+git version 2.51.0
+Temporarily overriding HOME='/home/runner/work/_temp/195d3570-bd8e-4b46-ac4a-a86b88f0305c' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/REPAR/REPAR
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+0s
+Cleaning up orphan processes
