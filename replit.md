@@ -1,11 +1,9 @@
 # Aequitas Protocol ($REPAR) - The Justice Machine
 
 ## Overview
-
-The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. Its core purpose is to provide complete economic, technical, and governance sovereignty, making it resistant to shutdown or censorship. The protocol is founded on a 205-page forensic audit, establishing historical facts, economic tracing of liabilities, and a legal framework based on international law. It aims for universal accountability across over 200 entities (nations, corporations, universities) and features a strategic defense system with controlled vulnerabilities and an automated threat oracle.
+The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) designed to enforce $131 trillion in reparations for the transatlantic slave trade. Its core purpose is to provide complete economic, technical, and governance sovereignty, making it resistant to shutdown or censorship. The protocol is founded on a 205-page forensic audit establishing historical facts, economic tracing of liabilities, and a legal framework. It aims for universal accountability across over 200 entities and features a strategic defense system with controlled vulnerabilities and an automated threat oracle.
 
 ## User Preferences
-
 - **Coding Style**: Clean, functional React components with clear separation of concerns
 - **Documentation**: Comprehensive inline documentation for complex logic
 - **Sovereignty Focus**: Always emphasize $REPAR as native coin, NOT a token
@@ -13,8 +11,7 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 - **Legal Compliance**: FRE 901 evidence standards for all records
 
 ## System Architecture
-
-The Aequitas Protocol consists of a React, Vite, and Tailwind CSS frontend, and a backend powered by Aequitas Zone, a Cosmos SDK Layer-1 blockchain.
+The Aequitas Protocol comprises a React, Vite, and Tailwind CSS frontend, and a backend powered by Aequitas Zone, a Cosmos SDK Layer-1 blockchain.
 
 ### UI/UX Decisions
 The frontend provides a comprehensive user interface including:
@@ -25,25 +22,18 @@ The frontend provides a comprehensive user interface including:
 - **Verification**: A deployment verification system and a Block Explorer (Dexplorer).
 
 ### Technical Implementations
-- **Frontend**: Utilizes React, Vite, and Tailwind CSS, with manual code splitting for production optimization.
+- **Frontend**: Utilizes React, Vite, and Tailwind CSS.
 - **Backend**: Aequitas Zone, a Cosmos SDK Layer-1 blockchain leveraging Tendermint BFT consensus.
   - **Native Coin**: $REPAR, with a total supply of 131 trillion.
-  - **Core Modules**:
-    - `x/defendant`: Manages over 200 defendants and payment types.
-    - `x/justice`: Implements a deflationary $REPAR burn mechanism.
-    - `x/claims`: Handles arbitration demand filing across 172 jurisdictions, integrating IPFS for evidence.
-    - `x/distribution`: Manages reparations distribution to verified descendants.
-    - `x/dex`: Founder Wallet DEX for $REPAR native coin swaps (REPAR/USDC pairs) with constant product formula (x*y=k) and 55/30/15 fee distribution.
-    - `x/threatdefense`: A 10% Chaos Defense system featuring a ThreatOracle, controlled vulnerabilities, and NFT evidence minting.
+  - **Core Modules**: `x/defendant`, `x/justice`, `x/claims` (IPFS for evidence), `x/distribution`, `x/dex` (Founder Wallet DEX for $REPAR/USDC swaps with constant product formula), `x/threatdefense` (10% Chaos Defense with ThreatOracle and NFT evidence minting).
 
 ### System Design Choices
-- **Legal & Enforcement Framework**: A multi-layered strategy incorporating international law (Genocide, jus cogens), Black's Law, UCC Article 9, and international arbitration.
-- **Security**: The Cerberus Auditor System, a multi-agent AI system, continuously audits for vulnerabilities, generates patches, and reviews documentation and codebase.
-- **AI Integration**: Extensive use of NVIDIA NIM models (Stable Diffusion XL, Llama 3.1 8B, CLIP) for AI-powered features such as search, risk scoring, investment recommendations, and NFT generation.
-- **Deployment Verification**: A pre-production system to ensure critical and recommended services are operational before deployment.
+- **Legal & Enforcement Framework**: Multi-layered strategy incorporating international law, Black's Law, UCC Article 9, and international arbitration.
+- **Security**: The Cerberus Auditor System, a multi-agent AI, continuously audits for vulnerabilities, generates patches, and reviews documentation and codebase.
+- **AI Integration**: Extensive use of NVIDIA NIM models (Stable Diffusion XL, Llama 3.1 8B, CLIP) for AI-powered features.
+- **Deployment Verification**: A pre-production system ensuring critical and recommended services are operational.
 
 ## External Dependencies
-
 - **Frontend Framework**: React
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS
@@ -52,154 +42,7 @@ The frontend provides a comprehensive user interface including:
 - **Blockchain SDK**: Cosmos SDK
 - **Payment Processing**: Circle USDCKit SDK
 - **Decentralized Storage**: IPFS
-- **AI/ML**: Anthropic Claude, OpenAI GPT-4, X.AI Grok, DeepSeek, NVIDIA NIM (Stable Diffusion XL, Llama 3.1 8B, CLIP)
+- **AI/ML**: Anthropic Claude, OpenAI GPT-4, X.AI Grok, DeepSeek, NVIDIA NIM
 - **Wallet Integration**: Keplr
 - **Infrastructure**: Cloudflare, DigitalOcean
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub
-## Recent Changes (October 27, 2025)
-
-### 🎉 Blockchain Build SUCCESS - Migration Complete (October 27, 2025, 10:00 AM EDT)
-
-#### Build Achievements ✅
-- **GitHub Actions Build**: ✅ **SUCCESS** - Binary compiled successfully in 2m 59s
-- **Production Artifacts Created**: 
-  - `aequitasd-d61a78673c2172f48865d925287e6883a7e17283.zip` (versioned)
-  - `aequitasd-latest.zip` (always latest)
-  - Binary Size: 55 MB (production-ready)
-  - SHA256: `6783ce65905ad07d695b40893bbdbc34ac377b4fd0d67b24fa3e2188aba1b0c0`
-  - Download: https://github.com/CreoDAMO/REPAR/actions/runs/18825594618/artifacts/
-
-#### Replit Migration Complete ✅
-- **All Dependencies Installed**: frontend (npm), backend (npm), dexplorer (npm)
-- **All Workflows Running**: Frontend (port 5000), Circle API Backend (port 3002), Block Explorer (port 3001)
-- **Build Errors Fixed**: 
-  - Round 1-3: Module-level errors, app configuration, type mismatches
-  - Round 4: `app/genesis.go` (removed 3 unused imports), `cmd/aequitasd/main.go` (removed sdk import)
-
-#### Current Status
-- **Build**: ✅ PASSES (binary artifacts created)
-- **Tests**: ⚠️ FAILING (21 errors, 2 warnings - see Next Tasks below)
-- **Blockchain Daemon**: ✅ Compiled (`aequitasd` binary ready)
-- **Replit Environment**: ✅ Fully operational
-
----
-
-### 📋 Next Tasks to Complete
-
-#### High Priority: Test Failures (21 errors to fix)
-These prevent test suite from passing but DO NOT affect the binary build:
-
-1. **Telemetry Errors** (4 errors):
-   - `undefined: telemetry.MetricKeyProvisionGPU` in x/agentkit
-   - `undefined: telemetry.MetricKeyProvision` in x/agentkit
-   - **Fix**: Update to Cosmos SDK v0.54.0+ stable, add proper telemetry imports
-
-2. **Codec Errors** (4 errors):
-   - `k.cdc undefined (type Keeper has no field or method cdc)` in x/agentkit/keeper
-   - `"github.com/cosmos/cosmos-sdk/codec/types" imported as codectypes and not used` in cmd/aequitasd/cmd
-   - `"github.com/cosmos/cosmos-sdk/codec" imported and not used` in cmd/aequitasd/cmd
-   - **Fix**: Add `cdc codectypes.Codec` field to Keeper struct, remove unused imports
-
-3. **SDK Errors** (2 errors):
-   - `undefined: sdkerrors.Wrap` (2 occurrences) - deprecated in Cosmos SDK v0.50+
-   - **Fix**: Replace with `errors.Wrap` from `cosmossdk.io/errors`
-
-4. **Infrastructure Keeper** (2 errors):
-   - `undefined: sdk.StoreKey` in x/infrastructure/keeper
-   - **Fix**: Update to `storetypes.StoreKey` from `cosmossdk.io/store/types`
-
-5. **Testnet Initialization** (1 failure):
-   - Process completed with exit code 2
-   - **Fix**: Ensure `go.sum` is committed, run `go mod tidy`
-
-6. **File System** (10 warnings):
-   - "Cannot open: File exists" - cache restoration issues
-   - **Fix**: Clear GitHub Actions cache or adjust workflow
-
-#### Medium Priority: API Integration
-- **Circle API**: Needs `CIRCLE_API_KEY` and `CIRCLE_ENTITY_SECRET` for payment features
-- **NVIDIA NIM**: Needs `NVIDIA_NIM_API_KEY` for AI features (optional)
-- **Status**: Backend runs in dev mode without these (mock data)
-
-#### Low Priority: Validation & Testing
-- **Local Testnet**: Initialize and test blockchain locally
-- **Manual Testing**: Verify all modules work as expected
-- **Documentation**: Update deployment guides with test fixes
-
----
-
-### 🔧 Technical Details
-
-**Blockchain Specs:**
-- Go Version: go1.24.9
-- Cosmos SDK: v0.54.0-alpha
-- Chain ID: aequitas-1
-- Native Coin: $REPAR
-- Total Supply: 131 Trillion $REPAR
-
-**GitHub Actions Status:**
-- Build Job: ✅ SUCCESS
-- Test Job: ⚠️ FAILING (expected - known issues documented above)
-- Initialize Testnet: ⚠️ FAILING (missing go.sum)
-
----
-
-## Recent Changes (October 25, 2025)
-
-### Final Blockchain Build Fixes (October 25, 2025, 11:35 PM EDT) ✅
-- **Critical GitHub Workflow Fix**: Removed file deletion step that was removing essential codec.go helper files
-  - Workflow now preserves all helper files (codec.go, keys.go, errors.go, expected_keepers.go)
-  - Fixed the root cause of 90% of blockchain build failures
-- **Duplicate Code Cleanup**: Removed all conflicting manual files that duplicated proto-generated code
-  - Deleted: dex/types/{genesis_helpers.go, params.go}, endowment/types/genesis_helpers.go, nftmarketplace/types/{codec.go, genesis.go, genesis_helpers.go}, validatorsubsidy/types/genesis.go, justice/types/genesis.go
-  - Removed duplicate event constants from dex/types/msgs.go
-  - Fixed duplicate content in endowment/types/codec.go and founderendowment/types/genesis.go
-- **Pagination Fix**: Updated defendant ListDefendants query to correctly handle CollectionPaginate's 3-value return
-- **Build Status**: ✅ READY FOR GITHUB ACTIONS - Proto generation will complete final compilation
-- **LSP Errors**: 29 expected errors (all reference proto types that will be generated during CI/CD)
-- **Documentation**: Created comprehensive FINAL_BUILD_STATUS.md with complete fix summary
-
-## Recent Changes (October 23, 2025)
-
-### CometBFT Version Fix (Latest - October 23, 2025, 11:30 PM EDT)
-- **Critical Dependency Fix**: Downgraded CometBFT from v1.0.1 to v0.38.16 for ibc-go v8 compatibility
-  - **Root Cause**: ibc-go v8.7.0 requires CometBFT v0.38.x, NOT v1.0.x (breaking proto import changes)
-  - **Fixed**: All proto import paths now use `github.com/cometbft/cometbft/proto/tendermint/*` (v0.38 format)
-  - **Removed**: Buf tool from tools.go (caused experimental/gojs and protovalidate path conflicts)
-  - **Impact**: GitHub Actions `go mod tidy` now completes successfully
-  - **Status**: ✅ Ready for blockchain build in CI/CD pipeline
-
-### DEX Module Implementation (x/dex)
-- **Complete DEX Module**: Fully implemented Founder Wallet DEX module for $REPAR native coin swaps
-  - $REPAR is the **native coin** of Aequitas Zone L1, used for gas fees and all on-chain operations
-  - DEX enables native coin-to-coin swaps (REPAR/USDC) using constant product formula (x*y=k)
-  - Created `module.go` with proper Cosmos SDK AppModule structure
-  - Implemented all type definitions: `msgs.go`, `query.go`, `models.go`, `interfaces.go`, `codec.go`, `genesis.go`
-  - Keeper logic with pool management, liquidity provision, and constant product formula swaps
-  - MsgServer with CreatePool, AddLiquidity, RemoveLiquidity, and Swap handlers
-  - QueryServer for pool queries, liquidity positions, and swap estimation
-  - Fee distribution system (55% to LPs, 30% to Endowment, 15% to Treasury)
-  - Initial REPAR/USDC pool with $18.33 pricing built into genesis (using "urepar" denomination)
-- **Go Dependency Updates**: Migrated to Go 1.24 toolchain, downgraded incompatible dependencies
-
-### GitHub Actions Workflow Fixes
-- **DigitalOcean Deployment:** Updated appleboy/ssh-action to v1.0.3 (fixed invalid SHA)
-- **Cerberus Audit:** Fixed reports directory creation with parents=True
-- **Blockchain Build:** Updated Go version to 1.23.x, fixed Cosmos SDK import paths (cosmossdk.io/store)
-
-### Security Fixes (Dependabot Alerts)
-- **parse-duration:** Updated to 2.1.3+ via overrides (CVE-2025-25283 - ReDoS vulnerability)
-- **nanoid:** Updated to 5.0.9+ via overrides (CVE-2024-55565 - infinite loop vulnerability)
-- **Impact:** Eliminated all high-severity vulnerabilities, clean security posture for investor pitch
-
-### Replit Configuration
-- **Frontend:** Running on port 5000 with Vite dev server, properly configured for Replit proxy
-- **Backend:** Running on port 3002 with Circle API integration (dev mode)
-- **Block Explorer:** Running on port 3001 with TypeScript support, configured for Replit proxy
-
-### System Status
-- ✅ All Replit workflows running successfully
-- ✅ All GitHub Actions workflows fixed and ready for CI/CD
-- ✅ All Dependabot security alerts resolved (0 high-severity vulnerabilities)
-- ✅ Comprehensive documentation created (SYSTEM_ANALYSIS.md, WORKFLOW_FIXES_SUMMARY.md, SECURITY_FIXES.md)
-- ✅ Ready for feature development and production deployment
