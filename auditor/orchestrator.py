@@ -104,6 +104,16 @@ class CerberusOrchestrator:
         
         # Find all Go files in target directory
         target_path = self.repo_path / target_directory
+        if not target_path.exists():
+            # Try parent directory (for when running from subdirectory like auditor/)
+            target_path = self.repo_path / ".." / target_directory
+            if not target_path.exists():
+                print(f"❌ ERROR: Target directory not found: {target_directory}")
+                print(f"   Searched: {self.repo_path / target_directory}")
+                print(f"   Also tried: {target_path}")
+                return self._generate_comprehensive_report([], [], target_directory, 0)
+        
+        target_path = target_path.resolve()  # Resolve to absolute path
         go_files = list(target_path.rglob("*.go"))
         
         print(f"\n📊 Found {len(go_files)} Go files to audit")
@@ -769,7 +779,7 @@ async def main():
     orchestrator = CerberusOrchestrator(api_keys, repo_path=".")
     
     # Check if TAST document exists
-    tast_path = "docs/TAST_Full_Audit_&_Arbitration_By-Jacque_Antoine_DeGraff.md"
+    tast_path = "docs/tast_audit/TAST_Full_Audit_&_Arbitration_By-Jacque_Antoine_DeGraff.md"
     
     if Path(tast_path).exists():
         print("\n📄 TAST document found - Running document audit first...")

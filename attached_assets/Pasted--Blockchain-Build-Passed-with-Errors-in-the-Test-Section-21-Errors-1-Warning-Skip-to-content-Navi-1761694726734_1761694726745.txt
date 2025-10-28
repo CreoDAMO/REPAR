@@ -1,0 +1,231 @@
+# Blockchain Build Passed with Errors in the Test Section (21 Errors 1 Warning)
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Automate blockchain build and genesis file generation for testnet and… #90
+Jobs
+Run details
+Build & Test Blockchain
+failed 1 minute ago in 1m 32s
+Search logs
+1s
+3s
+23s
+18s
+1s
+0s
+2s
+1s
+0s
+5s
+10s
+2s
+Run echo "🧪 Running unit tests..."
+🧪 Running unit tests...
+=== RUN   TestAppImportExport
+    sim_test.go:124: skipping application import/export simulation
+--- SKIP: TestAppImportExport (0.00s)
+=== RUN   TestAppSimulationAfterImport
+    sim_test.go:247: skipping application simulation after import
+--- SKIP: TestAppSimulationAfterImport (0.00s)
+=== RUN   TestAppStateDeterminism
+    sim_test.go:332: skipping application simulation
+--- SKIP: TestAppStateDeterminism (0.00s)
+PASS
+ok  	github.com/CreoDAMO/REPAR/aequitas/app	(cached)
+?   	github.com/CreoDAMO/REPAR/aequitas/cmd/aequitasd	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/cmd/aequitasd/cmd	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/docs	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/agentkit/keeper
+Error: x/agentkit/keeper/keeper.go:81:33: cannot use &agent (value of type *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent) as "github.com/cosmos/gogoproto/proto".Message value in argument to k.cdc.MustMarshal: *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/agentkit/keeper/keeper.go:136:33: cannot use &agent (value of type *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent) as "github.com/cosmos/gogoproto/proto".Message value in argument to k.cdc.MustUnmarshal: *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/network	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/nullify	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/sample	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/agentkit/keeper [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant
+Error: x/defendant/module.go:56:42: syntax error: unexpected { at end of statement
+Error: x/defendant/module.go:68:2: syntax error: unexpected newline in argument list; possibly missing comma or )
+Error: x/defendant/module.go:70:21: syntax error: unexpected name ValidateGenesis at end of statement
+Error: x/defendant/module.go:78:37: syntax error: unexpected name sdk in argument list; possibly missing comma or )
+Error: x/defendant/module.go:89:39: syntax error: unexpected name sdk in argument list; possibly missing comma or )
+Error: x/defendant/module.go:98:2: syntax error: unexpected keyword return, expected expression
+Error: x/defendant/module.go:101:40: syntax error: unexpected name uint64 at end of statement
+# github.com/CreoDAMO/REPAR/aequitas/x/claims
+Error: x/claims/module.go:56:42: syntax error: unexpected { at end of statement
+Error: x/claims/module.go:68:2: syntax error: unexpected newline in argument list; possibly missing comma or )
+Error: x/claims/module.go:70:21: syntax error: unexpected name ValidateGenesis at end of statement
+Error: x/claims/module.go:78:37: syntax error: unexpected name sdk in argument list; possibly missing comma or )
+Error: x/claims/module.go:95:39: syntax error: unexpected name sdk in argument list; possibly missing comma or )
+Error: x/claims/module.go:105:2: syntax error: unexpected keyword return, expected expression
+Error: x/claims/module.go:108:40: syntax error: unexpected name uint64 at end of statement
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/claims [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/claims/types	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/defendant [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/defendant/types	[no test files]
+0s
+11s
+12s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+1s
+0s
+
+## Cerberus Security Auditor Passed but didn't locate the TAST Audit file or generate the audit json
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Cerberus Security Audit
+Automate blockchain build and genesis file generation for testnet and… #135
+Jobs
+Run details
+Annotations
+1 warning
+security-audit
+succeeded 5 minutes ago in 44s
+Search logs
+1s
+23s
+2s
+3s
+10s
+1s
+Run cd auditor
+================================================================================
+🛡️  AEQUITAS CERBERUS AUDITOR - INITIALIZING
+================================================================================
+✅ PostgreSQL database connected successfully
+
+🎯 Initializing AI Security Agents...
+✅ All agents initialized successfully
+  - Analyst Guild (4 AI agents)
+  - Adversary Guild (Chaos Engineering)
+  - Engineer Guild (Patch Generation)
+  - Vulnerability Scanner (CVE Database)
+  - Smart Contract Analyzer (Aequitas Modules)
+  - Protocol-Tuner (Governance Proposals)
+================================================================================
+
+⚠️  TAST document not found at: docs/TAST_Full_Audit_&_Arbitration_By-Jacque_Antoine_DeGraff.md
+Proceeding with codebase audit...
+
+🔍 Running full Aequitas blockchain audit...
+
+🔍 Starting Full Security Audit of aequitas
+================================================================================
+
+📊 Found 0 Go files to audit
+🎯 Target: aequitas
+✅ Report saved to database
+
+================================================================================
+✅ AUDIT COMPLETE
+📄 Report saved to: auditor/reports/full_audit_20251028_232920.json
+⏱️  Time elapsed: 0.00 seconds
+
+📊 Threat Statistics:
+   Total threats in database: 0
+   Unpatched threats: 0
+================================================================================
+
+🎉 All audits complete!
+📊 Reports available in: auditor/reports/
+📝 Threat ledger: auditor/threat_ledger.json
+0s
+Run actions/upload-artifact@v4
+  with:
+    name: audit-reports
+    path: auditor/reports/*.json
+    retention-days: 90
+    if-no-files-found: warn
+    compression-level: 6
+    overwrite: false
+    include-hidden-files: false
+  env:
+    pythonLocation: /opt/hostedtoolcache/Python/3.11.13/x64
+    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.13/x64/lib/pkgconfig
+    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.13/x64/lib
+Warning: No files were found with the provided path: auditor/reports/*.json. No artifacts will be uploaded.
+0s
+Run # Parse the latest report and fail if CRITICAL issues found
+ls: cannot access 'auditor/reports/*.json': No such file or directory
+/home/runner/work/_temp/c4da1c31-38a6-4984-9397-81085049128c.sh: line 5: [: : integer expression expected
+✅ No critical vulnerabilities detected
+0s
+Run LATEST_REPORT=$(ls -t auditor/reports/*.json | head -1)
+  LATEST_REPORT=$(ls -t auditor/reports/*.json | head -1)
+  SECURITY_SCORE=$(jq '.summary.security_score' $LATEST_REPORT)
+  
+  if [ "$SECURITY_SCORE" -ge 95 ]; then
+    COLOR="brightgreen"
+  elif [ "$SECURITY_SCORE" -ge 85 ]; then
+    COLOR="green"
+  elif [ "$SECURITY_SCORE" -ge 70 ]; then
+    COLOR="yellow"
+  else
+    COLOR="red"
+  fi
+  
+  # Create badge
+  curl "https://img.shields.io/badge/Security%20Score-${SECURITY_SCORE}%25-${COLOR}" > security-badge.svg
+  shell: /usr/bin/bash -e {0}
+  env:
+    pythonLocation: /opt/hostedtoolcache/Python/3.11.13/x64
+    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.13/x64/lib/pkgconfig
+    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.13/x64
+    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.13/x64/lib
+ls: cannot access 'auditor/reports/*.json': No such file or directory
+/home/runner/work/_temp/20fb1836-39e2-467f-a440-79ee91928c5a.sh: line 4: [: : integer expression expected
+/home/runner/work/_temp/20fb1836-39e2-467f-a440-79ee91928c5a.sh: line 6: [: : integer expression expected
+/home/runner/work/_temp/20fb1836-39e2-467f-a440-79ee91928c5a.sh: line 8: [: : integer expression expected
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  1112    0  1112    0     0  18897      0 --:--:-- --:--:-- --:--:-- 19172
+0s
+1s
+0s
+0s
+0s
