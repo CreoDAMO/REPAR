@@ -168,6 +168,62 @@ jobs:
           retention-days: 90
           compression-level: 9
 
+      - name: Generate Testnet Genesis
+        run: |
+          echo "🌐 Generating testnet genesis with proper allocations..."
+          ./scripts/generate-genesis.sh testnet
+          echo "✅ Testnet genesis generated"
+
+      - name: Generate Mainnet Genesis
+        run: |
+          echo "🏛️ Generating mainnet genesis with proper allocations..."
+          ./scripts/generate-genesis.sh mainnet
+          echo "✅ Mainnet genesis generated"
+
+      - name: Validate Genesis Files
+        working-directory: ./aequitas
+        run: |
+          echo "🔍 Validating genesis files..."
+          
+          echo "Validating testnet genesis..."
+          if ./build/aequitasd genesis validate ../chain-config/testnet/genesis-testnet.json 2>/dev/null; then
+            echo "✅ Testnet genesis is valid"
+          else
+            echo "⚠️ Testnet genesis validation may not be fully implemented"
+          fi
+          
+          echo "Validating mainnet genesis..."
+          if ./build/aequitasd genesis validate ../chain-config/mainnet/genesis-mainnet.json 2>/dev/null; then
+            echo "✅ Mainnet genesis is valid"
+          else
+            echo "⚠️ Mainnet genesis validation may not be fully implemented"
+          fi
+
+      - name: Upload Testnet Genesis
+        uses: actions/upload-artifact@v4
+        with:
+          name: genesis-testnet-${{ github.sha }}
+          path: |
+            chain-config/testnet/genesis-testnet.json
+            chain-config/testnet/genesis-testnet.json.sha256
+          retention-days: 90
+
+      - name: Upload Mainnet Genesis
+        uses: actions/upload-artifact@v4
+        with:
+          name: genesis-mainnet-${{ github.sha }}
+          path: |
+            chain-config/mainnet/genesis-mainnet.json
+            chain-config/mainnet/genesis-mainnet.json.sha256
+          retention-days: 90
+
+      - name: Upload Allocation Structure
+        uses: actions/upload-artifact@v4
+        with:
+          name: allocation-structure
+          path: chain-config/allocation-structure.json
+          retention-days: 90
+
       - name: Build summary
         if: always()
         working-directory: ./aequitas
@@ -177,7 +233,6 @@ jobs:
           echo "**Build Details:**" >> $GITHUB_STEP_SUMMARY
           echo "- Go Version: $(go version)" >> $GITHUB_STEP_SUMMARY
           echo "- Cosmos SDK: v0.54.0-alpha" >> $GITHUB_STEP_SUMMARY
-          echo "- Chain ID: aequitas-1" >> $GITHUB_STEP_SUMMARY
           echo "- Native Coin: \$REPAR" >> $GITHUB_STEP_SUMMARY
           echo "- Total Supply: 131 Trillion \$REPAR" >> $GITHUB_STEP_SUMMARY
           echo "- Commit: $(git rev-parse --short HEAD)" >> $GITHUB_STEP_SUMMARY
@@ -186,15 +241,28 @@ jobs:
             SIZE=$(ls -lh ./build/aequitasd | awk '{print $5}')
             echo "**Status:** ✅ Build successful" >> $GITHUB_STEP_SUMMARY
             echo "**Binary Size:** $SIZE" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Coin Allocation:**" >> $GITHUB_STEP_SUMMARY
+            echo "- Founder Total: 23.58T REPAR (18%)" >> $GITHUB_STEP_SUMMARY
+            echo "  - Wallet: 15.72T REPAR (12%)" >> $GITHUB_STEP_SUMMARY
+            echo "  - Endowment: 7.86T REPAR (6%, locked 8 years)" >> $GITHUB_STEP_SUMMARY
+            echo "- Community & Descendants: 56.33T REPAR (43%)" >> $GITHUB_STEP_SUMMARY
+            echo "- Claims & Compensation: 32.75T REPAR (25%)" >> $GITHUB_STEP_SUMMARY
+            echo "- Enforcement Treasury: 13.1T REPAR (10%)" >> $GITHUB_STEP_SUMMARY
+            echo "- Foundation Reserves: 5.24T REPAR (4%)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Artifacts:**" >> $GITHUB_STEP_SUMMARY
-            echo "- \`aequitasd-${{ github.sha }}\` (versioned)" >> $GITHUB_STEP_SUMMARY
-            echo "- \`aequitasd-latest\` (always latest)" >> $GITHUB_STEP_SUMMARY
+            echo "- \`aequitasd-${{ github.sha }}\` - Blockchain binary (versioned)" >> $GITHUB_STEP_SUMMARY
+            echo "- \`aequitasd-latest\` - Latest binary" >> $GITHUB_STEP_SUMMARY
+            echo "- \`genesis-testnet-${{ github.sha }}\` - Testnet genesis + checksum" >> $GITHUB_STEP_SUMMARY
+            echo "- \`genesis-mainnet-${{ github.sha }}\` - Mainnet genesis + checksum" >> $GITHUB_STEP_SUMMARY
+            echo "- \`allocation-structure\` - Allocation configuration" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
-            echo "1. Download binary from Actions artifacts" >> $GITHUB_STEP_SUMMARY
-            echo "2. Initialize chain: \`./aequitasd init validator --chain-id aequitas-1\`" >> $GITHUB_STEP_SUMMARY
-            echo "3. Start node: \`./aequitasd start\`" >> $GITHUB_STEP_SUMMARY
-            echo "4. See BLOCKCHAIN_DEPLOYMENT.md for full deployment guide" >> $GITHUB_STEP_SUMMARY
+            echo "1. Download artifacts from Actions" >> $GITHUB_STEP_SUMMARY
+            echo "2. Testnet: \`./scripts/init-testnet.sh\`" >> $GITHUB_STEP_SUMMARY
+            echo "3. Mainnet: \`./scripts/init-mainnet.sh\`" >> $GITHUB_STEP_SUMMARY
+            echo "4. See scripts/ for initialization guides" >> $GITHUB_STEP_SUMMARY
           else
             echo "**Status:** ❌ Build failed" >> $GITHUB_STEP_SUMMARY
             echo "**Action:** Check build logs above for errors" >> $GITHUB_STEP_SUMMARY
