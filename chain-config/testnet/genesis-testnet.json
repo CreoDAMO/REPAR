@@ -1,0 +1,224 @@
+
+{
+  "genesis_time": "2025-10-27T16:00:00Z",
+  "chain_id": "aequitas-testnet-1",
+  "initial_height": "1",
+  "metadata": {
+    "founding_document": {
+      "title": "Digital Declaration of International Economic Sovereignty",
+      "description": "Founding Instrument and Constitutional Act of the Aequitas Zone Blockchain",
+      "document_hash": "9e649e60801d2f37925a82dbab5e2ce28dc09ae484638d682cdbe4dc76288eaa",
+      "hash_algorithm": "SHA-256",
+      "document_location": "DECLARATION_OF_SOVEREIGNTY.md",
+      "ipfs_cid": "bafkreie6mspgbaa5f43zewuc3ovv4lhcrxajvzeemogwqlg34tohmkeovi",
+      "legal_basis": "Natural Law, Technological Law, and Customary International Law"
+    },
+    "founder": {
+      "name": "Jacque Antoine DeGraff",
+      "title": "Founder & Custodian",
+      "role": "For and on behalf of the Descendants and Digital Sovereign Nation of Aequitas",
+      "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun"
+    },
+    "economic_foundation": {
+      "native_currency": "REPAR",
+      "total_supply": "131000000000000",
+      "supply_description": "131 trillion REPAR coins representing $131T in quantified historical liability from the trans-Atlantic slave trade",
+      "economic_model": "Justice-Backed Currency with deflationary Justice Burn mechanism",
+      "governance": "On-chain democracy - 1 REPAR = 1 vote"
+    },
+    "mission": {
+      "purpose": "Sovereign blockchain jurisdiction for enforcing reparations and restitution",
+      "mandate": "Transform history into proof, memory into mathematics, and testimony into transaction",
+      "principle": "Justice is no longer a request. It is a protocol."
+    }
+  },
+  "consensus_params": {
+    "block": {
+      "max_bytes": "22020096",
+      "max_gas": "-1"
+    },
+    "evidence": {
+      "max_age_num_blocks": "100000",
+      "max_age_duration": "172800000000000"
+    },
+    "validator": {
+      "pub_key_types": ["ed25519"]
+    }
+  },
+  "app_hash": "",
+  "app_state": {
+    "auth": {
+      "params": {
+        "max_memo_characters": "256",
+        "tx_sig_limit": "7",
+        "tx_size_cost_per_byte": "10",
+        "sig_verify_cost_ed25519": "590",
+        "sig_verify_cost_secp256k1": "1000"
+      },
+      "accounts": [
+        {
+          "@type": "/cosmos.auth.v1beta1.BaseAccount",
+          "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
+          "pub_key": null,
+          "account_number": "0",
+          "sequence": "0"
+        }
+      ]
+    },
+    "bank": {
+      "params": {
+        "send_enabled": [],
+        "default_send_enabled": true
+      },
+      "balances": [
+        {
+          "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
+          "coins": [
+            {
+              "denom": "repar",
+              "amount": "131000000000000"
+            }
+          ]
+        }
+      ],
+      "supply": [
+        {
+          "denom": "repar",
+          "amount": "131000000000000"
+        }
+      ],
+      "denom_metadata": [
+        {
+          "description": "The native token of Aequitas Zone - REPAR Coin",
+          "denom_units": [
+            {
+              "denom": "repar",
+              "exponent": 0,
+              "aliases": []
+            }
+          ],
+          "base": "repar",
+          "display": "repar",
+          "name": "REPAR",
+          "symbol": "REPAR"
+        }
+      ]
+    },
+    "founderendowment": {
+      "endowment": {
+        "id": "founder-endowment-1",
+        "principal": "7860000000000",
+        "yield_accumulated": "0",
+        "target_apy_bps": "450",
+        "last_yield_calc": "0",
+        "unlock_time": "0",
+        "is_locked": true,
+        "founder_address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
+        "renewal_count": "0"
+      },
+      "distribution_config": {
+        "protocol_percentage": "90",
+        "founder_percentage": "10"
+      },
+      "protocol_allocation": {
+        "dex_liquidity_percentage": "25",
+        "dao_treasury_percentage": "25",
+        "social_endowment_percentage": "25",
+        "validator_subsidy_percentage": "15"
+      },
+      "statistics": {
+        "total_yield_generated": "0",
+        "total_protocol_funding": "0",
+        "total_founder_dividends": "0",
+        "last_distribution": "0"
+      },
+      "distributions": []
+    },
+    "endowment": {
+      "params": {
+        "lp_lock_period_years": "5",
+        "social_lock_period_years": "10",
+        "target_apy_bps": "700",
+        "lp_allocation_bps": "3000",
+        "social_allocation_bps": "1500",
+        "community_allocation_bps": "5500"
+      },
+      "endowments": [],
+      "strategies": [],
+      "social_programs": [],
+      "next_endowment_id": "0"
+    },
+    "infrastructure": {
+      "params": {},
+      "droplets": []
+    },
+    "validatorsubsidy": {
+      "params": {
+        "subsidy_amount": "6456000000",
+        "distribution_period": "2592000"
+      },
+      "pool": {
+        "total_allocated": "0",
+        "monthly_budget": "1000000000000",
+        "emergency_reserve": "500000000000",
+        "last_distribution": "0"
+      },
+      "validators": [],
+      "payments": [],
+      "schedule": {
+        "distribution_interval_seconds": "2592000",
+        "next_distribution": "0",
+        "auto_distribute": true,
+        "min_validator_uptime_percent": "95.0"
+      }
+    },
+    "staking": {
+      "params": {
+        "unbonding_time": "1814400s",
+        "max_validators": 100,
+        "max_entries": 7,
+        "historical_entries": 10000,
+        "bond_denom": "repar"
+      },
+      "last_total_power": "0",
+      "last_validator_powers": [],
+      "validators": [],
+      "delegations": [],
+      "unbonding_delegations": [],
+      "redelegations": [],
+      "exported": false
+    },
+    "distribution": {
+      "descendants": [],
+      "distributions": []
+    },
+    "claims": {
+      "claims": [],
+      "awards": []
+    },
+    "defendant": {
+      "defendants": [],
+      "payments": [],
+      "contributions": []
+    },
+    "justice": {
+      "burns": [],
+      "statistics": {
+        "total_burned": "0",
+        "burn_count": "0",
+        "largest_burn": "0"
+      },
+      "initial_supply": "131000000000000"
+    },
+    "dex": {
+      "params": {
+        "pool_creation_fee": "1000000",
+        "min_initial_pool_liquidity": "1000000000",
+        "max_swap_fee_rate": "1000"
+      },
+      "pools": [],
+      "positions": [],
+      "next_pool_id": "1"
+    }
+  }
+}

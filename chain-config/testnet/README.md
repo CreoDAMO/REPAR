@@ -12,22 +12,32 @@
 |-----------|-------|
 | **Chain ID** | aequitas-testnet-1 |
 | **Chain Name** | Aequitas Testnet |
-| **Native Coin** | REPAR (test) |
+| **Native Coin** | REPAR (test tokens - no real value) |
 | **Denomination** | urepar |
 | **Decimals** | 6 |
 | **Bech32 Prefix** | aequitas |
-| **Block Time** | 3 seconds (faster for testing) |
+| **Block Time** | 6 seconds (currently mirrors mainnet) |
 | **RPC Endpoint** | http://localhost:26657 (local) |
 | **REST API** | http://localhost:1317 (local) |
 
+**Note**: Currently uses mainnet parameters. Customization for testing (faster blocks, lower stakes) can be configured in `genesis-testnet.json`.
+
 ## Genesis Configuration
 
-The testnet genesis will be generated with:
+The testnet genesis currently uses mainnet parameters with testnet chain ID.
+
+**Current Configuration:**
+- Same parameters as mainnet (for accurate testing)
+- Testnet chain ID: `aequitas-testnet-1`
+- Declaration of Sovereignty included (testnet version)
+
+**Future Customization Options:**
 - Lower staking minimums (100 REPAR) for easy validator onboarding
 - Faster block times (3s) for rapid testing
 - Faucet allocation for free test REPAR distribution
 - Shorter governance voting periods (2 days)
-- Declaration of Sovereignty (testnet version)
+
+To customize testnet parameters, edit `chain-config/testnet/genesis-testnet.json` before initialization.
 
 ## Target Users
 
@@ -56,11 +66,12 @@ chmod +x bin/aequitasd
 ```
 
 This will:
-1. Initialize the node with testnet chain ID
-2. Create validator keys
-3. Generate testnet genesis with lower requirements
-4. Configure testnet parameters
-5. Start the testnet node
+1. Initialize the node with testnet chain ID (`aequitas-testnet-1`)
+2. Install the testnet genesis file (currently uses mainnet parameters)
+3. Optionally create validator keys
+4. Prepare node for testnet operation
+
+**Note**: The genesis currently mirrors mainnet parameters for accurate testing. To customize testnet-specific parameters (lower staking minimums, faster blocks, etc.), edit `chain-config/testnet/genesis-testnet.json` before running the init script.
 
 ## Faucet Access
 
@@ -71,11 +82,17 @@ Test REPAR tokens can be obtained from the faucet:
 
 ## Validator Requirements
 
-### Testnet Validator Specs (Low Barrier)
-- **Minimum Stake**: 100 REPAR (test tokens)
-- **Hardware**: 2 CPU, 4GB RAM, 50GB SSD
-- **Uptime**: No strict requirements (testing)
+### Testnet Validator Specs
+**Current Configuration** (mirrors mainnet for accurate testing):
+- **Minimum Stake**: Same as mainnet (currently)
+- **Hardware**: 4-8 CPU, 16-32GB RAM, 500GB SSD
+- **Uptime**: Recommended for realistic testing
 - **Commission**: Any rate (for testing governance)
+
+**Future Customization** (can be configured in genesis):
+- Lower minimum stake (e.g., 100 REPAR test tokens)
+- Relaxed hardware requirements (2 CPU, 4GB RAM, 50GB SSD)
+- No strict uptime requirements
 
 ## API Endpoints (After Launch)
 
