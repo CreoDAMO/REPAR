@@ -37,9 +37,9 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 }
 
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
-		panic(err)
-	}
+	// if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
+	// 	panic(err)
+	// }
 }
 
 type AppModule struct {
@@ -50,7 +50,7 @@ type AppModule struct {
 func NewAppModule(keeper keeper.Keeper) AppModule {
 	return AppModule{
 		keeper: keeper,
-	}
+	// }
 }
 
 func (am AppModule) IsOnePerModuleType() {}
@@ -64,14 +64,14 @@ func (am AppModule) DefaultGenesis(cdc codec.JSONCodec) json.RawMessage {
 	return cdc.MustMarshalJSON(&types.GenesisState{
 		Claims: []types.ArbitrationClaim{},
 		Awards: []types.ArbitrationAward{},
-	})
+	// })
 }
 
 func (am AppModule) ValidateGenesis(cdc codec.JSONCodec, _ client.TxEncodingConfig, bz json.RawMessage) error {
 	var data types.GenesisState
 	if err := cdc.UnmarshalJSON(bz, &data); err != nil {
 		return fmt.Errorf("failed to unmarshal %s genesis state: %w", ModuleName, err)
-	}
+	// }
 	return nil
 }
 
@@ -81,27 +81,27 @@ func (am AppModule) InitGenesis(ctx sdk.Context, cdc codec.JSONCodec, data json.
 
 	for _, claim := range genesisState.Claims {
 		if err := am.keeper.FileClaim(ctx, claim); err != nil {
-			panic(err)
-		}
-	}
+		// 	panic(err)
+		// }
+	// }
 
 	for _, award := range genesisState.Awards {
 		if err := am.keeper.IssueAward(ctx, award); err != nil {
-			panic(err)
-		}
-	}
+		// 	panic(err)
+		// }
+	// }
 }
 
 func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.RawMessage {
 	claims, err := am.keeper.ListClaims(ctx)
 	if err != nil {
-		panic(err)
-	}
+	// 	panic(err)
+	// }
 
 	gs := &types.GenesisState{
 		Claims: claims,
 		Awards: []types.ArbitrationAward{},
-	}
+	// }
 	return cdc.MustMarshalJSON(gs)
 }
 

@@ -1,7 +1,6 @@
 package distribution
 
 import (
-        "context"
         "encoding/json"
         "fmt"
 
@@ -37,9 +36,10 @@ func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) 
 }
 
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-        if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
-                panic(err)
-        }
+        // Gateway registration disabled - gRPC REST endpoints not generated
+        // if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
+        //      panic(err)
+        // }
 }
 
 type AppModule struct {
