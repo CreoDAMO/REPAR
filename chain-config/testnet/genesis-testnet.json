@@ -1,6 +1,5 @@
-
 {
-  "genesis_time": "2025-10-27T16:00:00Z",
+  "genesis_time": "2025-10-28T16:00:00Z",
   "chain_id": "aequitas-testnet-1",
   "initial_height": "1",
   "metadata": {
@@ -30,6 +29,22 @@
       "purpose": "Sovereign blockchain jurisdiction for enforcing reparations and restitution",
       "mandate": "Transform history into proof, memory into mathematics, and testimony into transaction",
       "principle": "Justice is no longer a request. It is a protocol."
+    },
+    "genesis_ceremony": {
+      "title": "Genesis Ceremony Script (Testnet Reference)",
+      "description": "Testnet references the mainnet genesis ceremony",
+      "ipfs_cid": "bafkreigey46wfgrilgfxoymjbmgnkmm6rjx3u55psfsmsr3blvumz5bjtm",
+      "document_hash": "c4c73d629a28598b7761890b0cd5319e8a6fba77af9164c947615d68ccf4299b",
+      "hash_algorithm": "SHA-256",
+      "document_location": "docs/ceremony/GENESIS_SCRIPT.md"
+    },
+    "dual_network_charter": {
+      "title": "Aequitas Dual-Network Charter",
+      "description": "Constitutional framework for testnet and mainnet operations",
+      "ipfs_cid": "bafkreibp7nyrmz5d4awpuzp44bgkzqmi2gnzk775inlsm6konrdpuykda4",
+      "document_hash": "2ffb711667a3e02cfa65fce04cacc188d19b957ffd435726794e6c46fa614307",
+      "hash_algorithm": "SHA-256",
+      "document_location": "docs/charters/DUAL_NETWORK_CHARTER.md"
     }
   },
   "consensus_params": {
@@ -42,7 +57,9 @@
       "max_age_duration": "172800000000000"
     },
     "validator": {
-      "pub_key_types": ["ed25519"]
+      "pub_key_types": [
+        "ed25519"
+      ]
     }
   },
   "app_hash": "",

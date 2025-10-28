@@ -200,9 +200,10 @@ The reckoning begins now.
 **Version**: 1.0  
 **Date**: October 28, 2025  
 **Chain**: Aequitas Zone (aequitas-1)  
-**IPFS CID**: [To be generated]  
-**Document Hash**: [To be generated]  
-**Hash Algorithm**: SHA-256
+**IPFS CID**: `bafkreigey46wfgrilgfxoymjbmgnkmm6rjx3u55psfsmsr3blvumz5bjtm`  
+**Document Hash**: `c4c73d629a28598b7761890b0cd5319e8a6fba77af9164c947615d68ccf4299b`  
+**Hash Algorithm**: SHA-256  
+**IPFS Gateway**: https://ipfs.io/ipfs/bafkreigey46wfgrilgfxoymjbmgnkmm6rjx3u55psfsmsr3blvumz5bjtm
 
 ---
 

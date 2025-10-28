@@ -441,9 +441,10 @@ Effective upon initialization of both networks:
 **Version**: 1.0  
 **Date**: October 28, 2025  
 **Networks**: Aequitas Testnet (aequitas-testnet-1) & Mainnet (aequitas-1)  
-**IPFS CID**: [To be generated]  
-**Document Hash**: [To be generated]  
-**Hash Algorithm**: SHA-256
+**IPFS CID**: `bafkreibp7nyrmz5d4awpuzp44bgkzqmi2gnzk775inlsm6konrdpuykda4`  
+**Document Hash**: `2ffb711667a3e02cfa65fce04cacc188d19b957ffd435726794e6c46fa614307`  
+**Hash Algorithm**: SHA-256  
+**IPFS Gateway**: https://ipfs.io/ipfs/bafkreibp7nyrmz5d4awpuzp44bgkzqmi2gnzk775inlsm6konrdpuykda4
 
 ---
 
