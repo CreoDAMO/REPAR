@@ -16,6 +16,13 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 
 The Aequitas Protocol comprises a React, Vite, and Tailwind CSS frontend, and a backend powered by Aequitas Zone, a Cosmos SDK Layer-1 blockchain.
 
+### Genesis & Deployment
+
+- **CI-Driven Genesis Generation**: Automated system for generating deterministic testnet and mainnet genesis files through GitHub Actions
+- **Allocation Structure**: Canonical JSON specification ensuring proper $REPAR coin distribution (131T total)
+- **Blockchain Build Pipeline**: GitHub Actions workflow builds binary, generates genesis files, validates, and uploads artifacts
+- **Scripts**: Python allocation generator and shell validation scripts for reproducible genesis creation
+
 ### UI/UX Decisions
 
 The frontend offers a comprehensive user interface including:
@@ -45,6 +52,18 @@ The frontend offers a comprehensive user interface including:
 - **AI Integration**: Extensive use of NVIDIA NIM models (Stable Diffusion XL, Llama 3.1 8B, CLIP) for AI-powered features such as search, risk scoring, investment recommendations, and NFT generation.
 - **Deployment Verification**: A pre-production system to ensure critical and recommended services are operational before deployment.
 - **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block, establishing a permanent, immutable constitutional record.
+
+## Blockchain Deployment
+
+The blockchain build process uses GitHub Actions instead of local builds to avoid binary size issues:
+
+1. **Automated Build**: `.github/workflows/blockchain-build.yml` builds the blockchain binary
+2. **Genesis Generation**: Automatically generates testnet and mainnet genesis files with proper allocations
+3. **Validation**: Validates genesis files using the built binary before artifact upload
+4. **Artifacts**: Binary, genesis files (testnet/mainnet), checksums, and allocation structure are uploaded
+5. **Initialization**: Download artifacts and use `scripts/init-testnet.sh` or `scripts/init-mainnet.sh`
+
+See `docs/GENESIS_GENERATION.md` for detailed documentation.
 
 ## External Dependencies
 
