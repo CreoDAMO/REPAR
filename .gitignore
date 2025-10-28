@@ -79,3 +79,7 @@ replit.nix
 
 # Local development
 .local/
+
+# Binaries (too large for git)
+bin/aequitasd
+bin/*.zip
