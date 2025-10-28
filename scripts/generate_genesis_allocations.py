@@ -66,24 +66,26 @@ def generate_module_addresses() -> Dict[str, str]:
     }
     return modules
 
-def generate_accounts_and_balances(allocation: Dict, module_addresses: Dict) -> tuple:
-    """Generate all accounts and balances from allocation structure"""
-    accounts = []
-    balances = []
+def merge_accounts_and_balances(genesis: Dict, allocation: Dict, module_addresses: Dict) -> tuple:
+    """Merge allocation accounts/balances into existing genesis, preserving system modules"""
+    existing_accounts = genesis['app_state']['auth']['accounts']
+    existing_balances = genesis['app_state']['bank']['balances']
+    
     founder_address = allocation['founder_address']
     denom = allocation['native_coin']
     
     founder_wallet_total = 0
-    
-    accounts.append(create_base_account(founder_address, "0"))
+    new_accounts = []
+    new_balances = []
     
     for alloc in allocation['allocations']:
         if 'module_account' in alloc:
             module_name = alloc['module_account']
             if module_name in module_addresses:
                 module_addr = module_addresses[module_name]
-                accounts.append(create_module_account(module_name, module_addr))
-                balances.append(create_balance(module_addr, alloc['amount'], denom))
+                if not any(acc.get('name') == module_name or acc.get('address') == module_addr for acc in existing_accounts):
+                    new_accounts.append(create_module_account(module_name, module_addr))
+                new_balances.append(create_balance(module_addr, alloc['amount'], denom))
                 print(f"  📦 Module {module_name}: {int(alloc['amount']):,} {denom}")
         
         if 'address' in alloc and alloc['address'] == founder_address:
@@ -95,18 +97,30 @@ def generate_accounts_and_balances(allocation: Dict, module_addresses: Dict) -> 
                     module_name = item['module_account']
                     if module_name in module_addresses:
                         module_addr = module_addresses[module_name]
-                        if not any(a.get('name') == module_name for a in accounts):
-                            accounts.append(create_module_account(module_name, module_addr))
-                        balances.append(create_balance(module_addr, item['amount'], denom))
+                        if not any(acc.get('name') == module_name or acc.get('address') == module_addr for acc in existing_accounts + new_accounts):
+                            new_accounts.append(create_module_account(module_name, module_addr))
+                        new_balances.append(create_balance(module_addr, item['amount'], denom))
                         print(f"  📦 Module {module_name}: {int(item['amount']):,} {denom}")
                 
                 if 'address' in item and item['address'] == founder_address:
                     founder_wallet_total += int(item['amount'])
     
-    balances.insert(0, create_balance(founder_address, str(founder_wallet_total), denom))
+    new_balances.insert(0, create_balance(founder_address, str(founder_wallet_total), denom))
     print(f"  👤 Founder wallet: {founder_wallet_total:,} {denom} ({founder_wallet_total/int(allocation['total_supply'])*100:.2f}%)")
     
-    return accounts, balances
+    if not any(acc.get('address') == founder_address for acc in existing_accounts):
+        new_accounts.insert(0, create_base_account(founder_address, "0"))
+    
+    allocation_addresses = {founder_address} | set(module_addresses.values())
+    
+    filtered_balances = [bal for bal in existing_balances if bal['address'] not in allocation_addresses]
+    
+    merged_accounts = existing_accounts + new_accounts
+    merged_balances = filtered_balances + new_balances
+    
+    print(f"  Removed {len(existing_balances) - len(filtered_balances)} duplicate balances from allocation addresses")
+    
+    return merged_accounts, merged_balances
 
 def update_genesis_file(genesis_path: str, allocation: Dict, network: str = "mainnet"):
     """Update genesis file with proper allocations"""
@@ -118,10 +132,15 @@ def update_genesis_file(genesis_path: str, allocation: Dict, network: str = "mai
     
     module_addresses = generate_module_addresses()
     
-    accounts, balances = generate_accounts_and_balances(allocation, module_addresses)
+    print(f"  Preserving {len(genesis['app_state']['auth']['accounts'])} existing accounts...")
+    print(f"  Preserving {len(genesis['app_state']['bank']['balances'])} existing balances...")
+    
+    accounts, balances = merge_accounts_and_balances(genesis, allocation, module_addresses)
     
     genesis['app_state']['auth']['accounts'] = accounts
     genesis['app_state']['bank']['balances'] = balances
+    
+    print(f"  Result: {len(accounts)} total accounts, {len(balances)} total balances")
     
     total_supply = allocation['total_supply']
     genesis['app_state']['bank']['supply'] = [

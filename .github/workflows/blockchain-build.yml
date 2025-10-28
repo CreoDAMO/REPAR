@@ -180,24 +180,49 @@ jobs:
           ./scripts/generate-genesis.sh mainnet
           echo "✅ Mainnet genesis generated"
 
-      - name: Validate Genesis Files
-        working-directory: ./aequitas
+      - name: Validate Testnet Genesis
         run: |
-          echo "🔍 Validating genesis files..."
+          echo "🔍 Validating testnet genesis..."
           
-          echo "Validating testnet genesis..."
-          if ./build/aequitasd genesis validate ../chain-config/testnet/genesis-testnet.json 2>/dev/null; then
+          # Initialize temporary home directory for validation
+          TEMP_HOME=$(mktemp -d)
+          ./aequitas/build/aequitasd init validator --chain-id aequitas-testnet-1 --home "$TEMP_HOME" > /dev/null 2>&1
+          
+          # Copy generated genesis to temp home
+          cp chain-config/testnet/genesis-testnet.json "$TEMP_HOME/config/genesis.json"
+          
+          # Validate genesis
+          if ./aequitas/build/aequitasd genesis validate --home "$TEMP_HOME"; then
             echo "✅ Testnet genesis is valid"
           else
-            echo "⚠️ Testnet genesis validation may not be fully implemented"
+            echo "❌ Testnet genesis validation failed"
+            exit 1
           fi
           
-          echo "Validating mainnet genesis..."
-          if ./build/aequitasd genesis validate ../chain-config/mainnet/genesis-mainnet.json 2>/dev/null; then
+          # Clean up
+          rm -rf "$TEMP_HOME"
+
+      - name: Validate Mainnet Genesis
+        run: |
+          echo "🔍 Validating mainnet genesis..."
+          
+          # Initialize temporary home directory for validation
+          TEMP_HOME=$(mktemp -d)
+          ./aequitas/build/aequitasd init validator --chain-id aequitas-1 --home "$TEMP_HOME" > /dev/null 2>&1
+          
+          # Copy generated genesis to temp home
+          cp chain-config/mainnet/genesis-mainnet.json "$TEMP_HOME/config/genesis.json"
+          
+          # Validate genesis
+          if ./aequitas/build/aequitasd genesis validate --home "$TEMP_HOME"; then
             echo "✅ Mainnet genesis is valid"
           else
-            echo "⚠️ Mainnet genesis validation may not be fully implemented"
+            echo "❌ Mainnet genesis validation failed"
+            exit 1
           fi
+          
+          # Clean up
+          rm -rf "$TEMP_HOME"
 
       - name: Upload Testnet Genesis
         uses: actions/upload-artifact@v4
