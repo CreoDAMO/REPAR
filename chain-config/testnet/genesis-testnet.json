@@ -79,6 +79,76 @@
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "address": "repar17xpfvakm2amg962yls6f84z3kell8c5lc66g0s",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "name": "descendant_fund",
+          "permissions": [
+            "minter",
+            "burner"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "address": "repar1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8lyv94w",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "name": "claims_fund",
+          "permissions": [
+            "minter",
+            "burner"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "address": "repar10d07y265gmmuvt4z0w9aw880jnsr700j6z2zm3",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "name": "founderendowment",
+          "permissions": [
+            "minter",
+            "burner"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "address": "repar1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3h6cprl",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "name": "enforcement_treasury",
+          "permissions": [
+            "minter",
+            "burner"
+          ]
+        },
+        {
+          "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+          "base_account": {
+            "address": "repar1tygms3xhhs3yv487phx3dw4a95jn7t7lr6yxtq",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "name": "foundation_treasury",
+          "permissions": [
+            "minter",
+            "burner"
+          ]
         }
       ]
     },
@@ -93,7 +163,52 @@
           "coins": [
             {
               "denom": "repar",
-              "amount": "131000000000000"
+              "amount": "15720000000000"
+            }
+          ]
+        },
+        {
+          "address": "repar17xpfvakm2amg962yls6f84z3kell8c5lc66g0s",
+          "coins": [
+            {
+              "denom": "repar",
+              "amount": "56330000000000"
+            }
+          ]
+        },
+        {
+          "address": "repar1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8lyv94w",
+          "coins": [
+            {
+              "denom": "repar",
+              "amount": "32750000000000"
+            }
+          ]
+        },
+        {
+          "address": "repar10d07y265gmmuvt4z0w9aw880jnsr700j6z2zm3",
+          "coins": [
+            {
+              "denom": "repar",
+              "amount": "7860000000000"
+            }
+          ]
+        },
+        {
+          "address": "repar1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3h6cprl",
+          "coins": [
+            {
+              "denom": "repar",
+              "amount": "13100000000000"
+            }
+          ]
+        },
+        {
+          "address": "repar1tygms3xhhs3yv487phx3dw4a95jn7t7lr6yxtq",
+          "coins": [
+            {
+              "denom": "repar",
+              "amount": "5240000000000"
             }
           ]
         }
