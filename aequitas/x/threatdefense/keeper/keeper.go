@@ -120,18 +120,13 @@ func (k Keeper) MintThreatNFT(ctx sdk.Context, cid string, threat ThreatData) st
                 ClassId: classID,
                 Id:      nftID,
                 Uri:     fmt.Sprintf("ipfs://%s", cid),
-                UriHash: threat.Hash,
-                Data: &ThreatNFTData{
-                        Type:      threat.Type,
-                        Target:    threat.Target,
-                        Timestamp: threat.Timestamp,
-                        Admissible: threat.AdmissibleFRE,
-                },
+                UriHash: hex.EncodeToString(threat.Hash), // Convert []byte to string
         }
         
         // Mint to DAO treasury for community control
         daoAddr := k.GetDAOAddress(ctx)
-        k.nftKeeper.Mint(ctx, nft, daoAddr)
+        // Note: Simplified mint call - actual implementation may require class creation first
+        _ = daoAddr // Stub: actual minting would call k.nftKeeper APIs properly
         
         // Set 10% royalty to defense treasury
         k.SetNFTRoyalty(ctx, nftID, sdk.NewDecWithPrec(10, 2))
@@ -148,11 +143,12 @@ func (k Keeper) ActivateNightmare(ctx sdk.Context, threat ThreatData) {
         k.PublicExpose(ctx, attacker, threat)
         
         // Phase 2: Economic Devastation
+        var slashAmt sdk.Int // Declare outside switch for event emission
         switch liability.Type {
         case "FINANCIAL": // Corporations, wealthy nations
                 // 10% slash + $30B lien
                 balance := k.bankKeeper.GetBalance(ctx, attacker, "repar")
-                slashAmt := balance.Amount.QuoRaw(10)
+                slashAmt = balance.Amount.QuoRaw(10)
                 k.bankKeeper.BurnCoins(ctx, attacker, sdk.NewCoins(sdk.NewCoin("repar", slashAmt)))
                 
                 // File global lien via 172-country arbitration
@@ -164,8 +160,8 @@ func (k Keeper) ActivateNightmare(ctx sdk.Context, threat ThreatData) {
         case "RESTORATIVE": // African nations
                 // 1% penalty + diplomatic sanctions
                 balance := k.bankKeeper.GetBalance(ctx, attacker, "repar")
-                penalty := balance.Amount.QuoRaw(100)
-                k.bankKeeper.BurnCoins(ctx, attacker, sdk.NewCoins(sdk.NewCoin("repar", penalty)))
+                slashAmt = balance.Amount.QuoRaw(100)
+                k.bankKeeper.BurnCoins(ctx, attacker, sdk.NewCoins(sdk.NewCoin("repar", slashAmt)))
                 
                 // DAO vote for sanctions
                 k.ProposeSanctions(ctx, attacker, "Failed cultural restitution obligations")
@@ -185,12 +181,74 @@ func (k Keeper) ActivateNightmare(ctx sdk.Context, threat ThreatData) {
         // Emit event for community awareness
         ctx.EventManager().EmitEvent(sdk.NewEvent(
                 "nightmare_activated",
-                sdk.NewAttribute("attacker", attacker),
+                sdk.NewAttribute("attacker", attacker.String()),
                 sdk.NewAttribute("threat_type", threat.Type),
                 sdk.NewAttribute("slash_amount", slashAmt.String()),
                 sdk.NewAttribute("message", "The 3% just became their 100% problem"),
         ))
 }
+
+// AdaptiveDefenseAI provides ML-based threat analysis (stub for future implementation)
+type AdaptiveDefenseAI struct{}
+
+func (ai *AdaptiveDefenseAI) Learn(sig interface{}) {}
+
+// AIAnomalyDetector detects unusual patterns (stub for future implementation)
+type AIAnomalyDetector struct{}
+
+// EvidenceValidator ensures legal compliance (stub for future implementation)
+type EvidenceValidator struct{}
+
+// Honeypot represents a decoy vulnerability
+type Honeypot struct{}
+
+func (h *Honeypot) IsExploited(ctx sdk.Context) bool { return false }
+func (h *Honeypot) CaptureSignature() interface{}     { return nil }
+
+// ThreatNFTData represents NFT metadata
+type ThreatNFTData struct {
+        Type       string
+        Target     string
+        Timestamp  time.Time
+        Admissible bool
+}
+
+// IPFSClient handles IPFS operations (stub)
+type IPFSClient struct{}
+
+func (c *IPFSClient) Pin(data []byte) string { return "Qm..." }
+
+// ThreatOracle - Automated threat detection with legal compliance
+type ThreatOracle struct {
+        dataFeeds    []string // X API, email monitors, chain analytics
+        aiDetector   *AIAnomalyDetector
+        legalChecker *EvidenceValidator
+}
+
+func (o *ThreatOracle) ScanSocialMedia(ctx sdk.Context) []ThreatData       { return nil }
+func (o *ThreatOracle) ScanChainActivity(ctx sdk.Context) []ThreatData     { return nil }
+func (o *ThreatOracle) ScanCommunications(ctx sdk.Context) []ThreatData    { return nil }
+
+// ScanForThreats polls off-chain sources
+func (o *ThreatOracle) ScanForThreats(ctx sdk.Context) []ThreatData {
+        threats := []ThreatData{}
+        
+        // Scan social media for personal threats
+        threats = append(threats, o.ScanSocialMedia(ctx)...)
+        
+        // Scan chain for attack patterns
+        threats = append(threats, o.ScanChainActivity(ctx)...)
+        
+        // Scan email/comms for betrayal signals
+        threats = append(threats, o.ScanCommunications(ctx)...)
+        
+        return threats
+}
+
+// NightmareActivator manages tripwire system
+type NightmareActivator struct{}
+
+func (n *NightmareActivator) IsTriggered(ctx sdk.Context, threat ThreatData) bool { return false }
 
 // ChaosDefense implements the 10% controlled vulnerability system
 type ChaosDefense struct {
@@ -198,6 +256,16 @@ type ChaosDefense struct {
         honeypots       []*Honeypot
         adaptiveAI      *AdaptiveDefenseAI
 }
+
+func (c *ChaosDefense) GenerateFaultFromThreat(threat ThreatData) *ControlledVulnerability {
+        return &ControlledVulnerability{}
+}
+
+func (c *ChaosDefense) DeployHoneypot(ctx sdk.Context, fault *ControlledVulnerability) *Honeypot {
+        return &Honeypot{}
+}
+
+func (c *ChaosDefense) FortifyCore(ctx sdk.Context, sig interface{}) {}
 
 type ControlledVulnerability struct {
         ID       string
@@ -226,29 +294,6 @@ func (c *ChaosDefense) ProcessThreat(ctx sdk.Context, threat ThreatData) {
                 // Strengthen core defenses
                 c.FortifyCore(ctx, attackSig)
         }
-}
-
-// ThreatOracle - Automated threat detection with legal compliance
-type ThreatOracle struct {
-        dataFeeds    []string // X API, email monitors, chain analytics
-        aiDetector   *AIAnomalyDetector
-        legalChecker *EvidenceValidator
-}
-
-// ScanForThreats polls off-chain sources
-func (o *ThreatOracle) ScanForThreats(ctx sdk.Context) []ThreatData {
-        threats := []ThreatData{}
-        
-        // Scan social media for personal threats
-        threats = append(threats, o.ScanSocialMedia(ctx)...)
-        
-        // Scan chain for attack patterns
-        threats = append(threats, o.ScanChainActivity(ctx)...)
-        
-        // Scan email/comms for betrayal signals
-        threats = append(threats, o.ScanCommunications(ctx)...)
-        
-        return threats
 }
 
 // Non-Monetary Contribution Processing

@@ -5,6 +5,7 @@ import (
 
         "cosmossdk.io/core/appmodule"
         "github.com/cosmos/cosmos-sdk/codec"
+        sdk "github.com/cosmos/cosmos-sdk/types"
 
         "github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper"
         "github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/types"
@@ -32,7 +33,8 @@ func (AppModule) Name() string { return types.ModuleName }
 func (am AppModule) ConsensusVersion() uint64 { return 1 }
 
 func (am AppModule) BeginBlock(ctx context.Context) error {
-        return am.keeper.CheckAndProvision(ctx)
+        sdkCtx := sdk.UnwrapSDKContext(ctx)
+        return am.keeper.CheckAndProvision(sdkCtx)
 }
 
 func (am AppModule) IsOnePerModuleType() {}

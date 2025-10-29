@@ -1,0 +1,134 @@
+##[debug]Evaluating condition for step: 'Run tests'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Run tests
+##[debug]Loading inputs
+##[debug]Loading env
+Run echo "🧪 Running unit tests..."
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/bc0f7049-9bfb-4432-a7f5-750c33de362b.sh
+🧪 Running unit tests...
+=== RUN   TestAppImportExport
+    sim_test.go:124: skipping application import/export simulation
+--- SKIP: TestAppImportExport (0.00s)
+=== RUN   TestAppSimulationAfterImport
+    sim_test.go:247: skipping application simulation after import
+--- SKIP: TestAppSimulationAfterImport (0.00s)
+=== RUN   TestAppStateDeterminism
+    sim_test.go:332: skipping application simulation
+--- SKIP: TestAppStateDeterminism (0.00s)
+PASS
+ok  	github.com/CreoDAMO/REPAR/aequitas/app	(cached)
+?   	github.com/CreoDAMO/REPAR/aequitas/cmd/aequitasd	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/cmd/aequitasd/cmd	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/docs	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:66:6: Agent redeclared in this block
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agent.go'. Path does not exist
+Error: 	x/agentkit/types/agent.go:11:6: other declaration of Agent
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:113:6: MissionEntry redeclared in this block
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agent.go'. Path does not exist
+Error: 	x/agentkit/types/agent.go:25:6: other declaration of MissionEntry
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:225:10: this.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:225:22: that1.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:406:11: m.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:407:14: m.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:408:20: m.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:409:50: m.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:485:12: m.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:618:6: m.Id undefined (type *Agent has no field or method Id, but does have field ID)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/agentkit/types/agentkit.pb.go'. Path does not exist
+Error: x/agentkit/types/agentkit.pb.go:618:6: too many errors
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/network	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/nullify	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/sample	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/agentkit/keeper [build failed]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/claims	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/claims/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/defendant	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/defendant/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/dex	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/dex/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/dex/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/distribution	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper	[no test files]
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/endowment	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/endowment/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/founderendowment	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/infrastructure
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/infrastructure/module.go'. Path does not exist
+Error: x/infrastructure/module.go:35:44: cannot use ctx (variable of interface type context.Context) as "github.com/cosmos/cosmos-sdk/types".Context value in argument to am.keeper.CheckAndProvision: need type assertion
+# github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper_test [github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper.test]
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/infrastructure/keeper/keeper_test.go'. Path does not exist
+Error: x/infrastructure/keeper/keeper_test.go:19:36: not enough arguments in call to sdk.NewContext
+	have (nil, bool, nil)
+	want ("cosmossdk.io/store/types".MultiStore, "github.com/cometbft/cometbft/proto/tendermint/types".Header, bool, "cosmossdk.io/log".Logger)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/infrastructure/keeper/keeper_test.go'. Path does not exist
+Error: x/infrastructure/keeper/keeper_test.go:29:36: not enough arguments in call to sdk.NewContext
+	have (nil, bool, nil)
+	want ("cosmossdk.io/store/types".MultiStore, "github.com/cometbft/cometbft/proto/tendermint/types".Header, bool, "cosmossdk.io/log".Logger)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/infrastructure/keeper/keeper_test.go'. Path does not exist
+Error: x/infrastructure/keeper/keeper_test.go:39:36: not enough arguments in call to sdk.NewContext
+	have (nil, bool, nil)
+	want ("cosmossdk.io/store/types".MultiStore, "github.com/cometbft/cometbft/proto/tendermint/types".Header, bool, "cosmossdk.io/log".Logger)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/infrastructure/keeper/keeper_test.go'. Path does not exist
+Error: x/infrastructure/keeper/keeper_test.go:47:36: not enough arguments in call to sdk.NewContext
+	have (nil, bool, nil)
+	want ("cosmossdk.io/store/types".MultiStore, "github.com/cometbft/cometbft/proto/tendermint/types".Header, bool, "cosmossdk.io/log".Logger)
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/infrastructure [build failed]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/justice	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/justice/types	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/threatdefense
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/threatdefense/module.go'. Path does not exist
+Error: x/threatdefense/module.go:12:28: cannot use AppModule{} (value of struct type AppModule) as module.AppModule value in variable declaration: AppModule does not implement module.AppModule (missing method IsAppModule)
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/threatdefense/keeper/keeper.go'. Path does not exist
+Error: x/threatdefense/keeper/keeper.go:199:26: undefined: AdaptiveDefenseAI
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/threatdefense/keeper/keeper.go'. Path does not exist
+Error: x/threatdefense/keeper/keeper.go:234:23: undefined: AIAnomalyDetector
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/threatdefense/keeper/keeper.go'. Path does not exist
+Error: x/threatdefense/keeper/keeper.go:235:23: undefined: EvidenceValidator
+##[debug]Dropping file value '/home/runner/work/REPAR/REPAR/x/threatdefense/keeper/keeper.go'. Path does not exist
+Error: x/threatdefense/keeper/keeper.go:51:27: too many errors
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/threatdefense/keeper [build failed]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/threatdefense/types [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types	[no test files]
+FAIL
+⚠️ Some tests pending - blockchain under active development
+##[debug]Finishing: Run tests
+
+##[debug]Evaluating condition for step: 'Validate Testnet Genesis'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Validate Testnet Genesis
+##[debug]Loading inputs
+##[debug]Loading env
+Run echo "🔍 Validating testnet genesis..."
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/0a4bdff3-3846-424a-a3f9-ecc52825240f.sh
+🔍 Validating testnet genesis...
+Error: Process completed with exit code 2.
+##[debug]Finishing: Validate Testnet Genesis
