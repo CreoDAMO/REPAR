@@ -1,0 +1,123 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Improve build process by addressing Go module cache issues #92
+Jobs
+Run details
+Build & Test Blockchain
+failed now in 1m 21s
+Search logs
+1s
+3s
+29s
+0s
+1s
+1s
+1s
+0s
+6s
+8s
+3s
+0s
+12s
+12s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+##[debug]Evaluating condition for step: 'Post Set up Go'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> false
+##[debug]Result: false
+0s
+##[debug]Evaluating condition for step: 'Post Checkout code'
+##[debug]Evaluating: always()
+##[debug]Evaluating always:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Post Checkout code
+##[debug]Loading inputs
+##[debug]Evaluating: github.repository
+##[debug]Evaluating Index:
+##[debug]..Evaluating github:
+##[debug]..=> Object
+##[debug]..Evaluating String:
+##[debug]..=> 'repository'
+##[debug]=> 'CreoDAMO/REPAR'
+##[debug]Result: 'CreoDAMO/REPAR'
+##[debug]Evaluating: github.token
+##[debug]Evaluating Index:
+##[debug]..Evaluating github:
+##[debug]..=> Object
+##[debug]..Evaluating String:
+##[debug]..=> 'token'
+##[debug]=> '***'
+##[debug]Result: '***'
+##[debug]Loading env
+Post job cleanup.
+##[debug]Getting git version
+/usr/bin/git version
+git version 2.51.0
+##[debug]0
+##[debug]git version 2.51.0
+##[debug]
+##[debug]Set git useragent to: git/2.51.0 (github-actions-checkout)
+::add-mask::***
+Temporarily overriding HOME='/home/runner/work/_temp/9c9322ed-1c2d-48a4-8139-ea2d2cd4e4aa' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/REPAR/REPAR
+##[debug]0
+##[debug]
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+##[debug]1
+##[debug]
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+##[debug]0
+##[debug]
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+##[debug]0
+##[debug]http.https://github.com/.extraheader
+##[debug]
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+##[debug]0
+##[debug]
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+##[debug]0
+##[debug]
+##[debug]Unsetting HOME override
+##[debug]Node Action run completed with exit code 0
+##[debug]Finishing: Post Checkout code
+0s
+##[debug]Starting: Complete job
+Uploading runner diagnostic logs
+##[debug]Starting diagnostic file upload.
+##[debug]Setting up diagnostic log folders.
+##[debug]Creating diagnostic log files folder.
+##[debug]Copying 1 worker diagnostic logs.
+##[debug]Copying 1 runner diagnostic logs.
+##[debug]Zipping diagnostic files.
+##[debug]Uploading diagnostic metadata file.
+##[debug]Diagnostic file upload complete.
+Completed runner diagnostic log upload
+Cleaning up orphan processes
+##[debug]Finishing: Complete job
