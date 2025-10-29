@@ -57,13 +57,15 @@ The frontend offers a comprehensive user interface including:
 
 The blockchain build process uses GitHub Actions instead of local builds to avoid binary size issues:
 
-1. **Automated Build**: `.github/workflows/blockchain-build.yml` builds the blockchain binary
+1. **Automated Build**: `.github/workflows/blockchain-build.yml` builds the blockchain binary (Go 1.23.x)
 2. **Genesis Generation**: Automatically generates testnet and mainnet genesis files with proper allocations
 3. **Validation**: Validates genesis files using the built binary before artifact upload
 4. **Artifacts**: Binary, genesis files (testnet/mainnet), checksums, and allocation structure are uploaded
 5. **Initialization**: Download artifacts and use `scripts/init-testnet.sh` or `scripts/init-mainnet.sh`
 
-See `docs/GENESIS_GENERATION.md` for detailed documentation.
+**Recent Fix (Oct 29, 2025):** Updated Go version from 1.24.9 (non-existent) to 1.23.x, resolving blockchain build failures.
+
+See `docs/BLOCKCHAIN_BUILD_FIXED_FINAL.md` for complete fix documentation.
 
 ## External Dependencies
 
