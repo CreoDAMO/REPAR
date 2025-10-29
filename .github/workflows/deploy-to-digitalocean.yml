@@ -1,0 +1,96 @@
+# GitHub Actions Workflow: Deploy Aequitas Protocol to DigitalOcean
+#
+# Trigger: Manual trigger (for safety) or on push to main branch.
+#
+# This workflow automates the entire process outlined in the deployment.yml:
+# 1. Sets up a secure SSH connection to the DigitalOcean Droplet.
+# 2. Clones or pulls the latest versions of all application repositories.
+# 3. Runs Docker Compose to build and deploy all services.
+#
+# Prerequisites:
+# - Add the following secrets to your GitHub repository's "Secrets and variables" > "Actions":
+#   - DO_HOST: The IP address of your DigitalOcean Droplet.
+#   - DO_USERNAME: The username for the Droplet (e.g., 'root').
+#   - DO_SSH_PRIVATE_KEY: The private SSH key that corresponds to a public key added to the Droplet's authorized_keys.
+
+name: Deploy to DigitalOcean
+
+on:
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
+  push:
+    branches:
+      - main # Or use a specific branch like 'deploy' for more control
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Checkout Main Repository Code
+        uses: actions/checkout@v4
+        # This step checks out the code containing the docker-compose.yml file.
+
+      - name: 2. Setup SSH and Connect to DigitalOcean Droplet
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          script: |
+            # --- This script runs directly on your DigitalOcean server ---
+            
+            echo "✅ Connected to server. Starting deployment..."
+            
+            # Navigate to the project directory
+            PROJECT_DIR="/opt/aequitas"
+            mkdir -p $PROJECT_DIR
+            cd $PROJECT_DIR
+            
+            echo "🔄 Cloning or updating all required application repositories..."
+            
+            # --- Static Sites ---
+            # For each site, clone if it doesn't exist, otherwise pull the latest changes.
+            [ ! -d "main_site" ] && git clone https://github.com/CreoDAMO/REPAR.git main_site || (cd main_site && git pull)
+            [ ! -d "black-paper_site" ] && git clone https://github.com/CreoDAMO/black-paper.git black-paper_site || (cd black-paper_site && git pull)
+            [ ! -d "audit_site" ] && git clone https://github.com/CreoDAMO/audit.git audit_site || (cd audit_site && git pull)
+            [ ! -d "defendants_site" ] && git clone https://github.com/CreoDAMO/defendants.git defendants_site || (cd defendants_site && git pull)
+            [ ! -d "ledger_site" ] && git clone https://github.com/CreoDAMO/ledger.git ledger_site || (cd ledger_site && git pull)
+            [ ! -d "founder_wallet_site" ] && git clone https://github.com/CreoDAMO/founder-wallet.git founder_wallet_site || (cd founder_wallet_site && git pull)
+            [ ! -d "roadmap_site" ] && git clone https://github.com/CreoDAMO/roadmap.git roadmap_site || (cd roadmap_site && git pull)
+            [ ! -d "ifr_site" ] && git clone https://github.com/CreoDAMO/ifr.git ifr_site || (cd ifr_site && git pull)
+            [ ! -d "grc_site" ] && git clone https://github.com/CreoDAMO/grc.git grc_site || (cd grc_site && git pull)
+            [ ! -d "dao_site" ] && git clone https://github.com/CreoDAMO/dao.git dao_site || (cd dao_site && git pull)
+            [ ! -d "ai_analytics_site" ] && git clone https://github.com/CreoDAMO/ai-analytics.git ai_analytics_site || (cd ai_analytics_site && git pull)
+            [ ! -d "endowment_site" ] && git clone https://github.com/CreoDAMO/endowment.git endowment_site || (cd endowment_site && git pull)
+            [ ! -d "alliances_site" ] && git clone https://github.com/CreoDAMO/alliances.git alliances_site || (cd alliances_site && git pull)
+            [ ! -d "economics_site" ] && git clone https://github.com/CreoDAMO/economics.git economics_site || (cd economics_site && git pull)
+            [ ! -d "crypto_comparison_site" ] && git clone https://github.com/CreoDAMO/crypto-comparison.git crypto_comparison_site || (cd crypto_comparison_site && git pull)
+            [ ! -d "dex_site" ] && git clone https://github.com/CreoDAMO/dex.git dex_site || (cd dex_site && git pull)
+            [ ! -d "nft_marketplace_site" ] && git clone https://github.com/CreoDAMO/nft-marketplace.git nft_marketplace_site || (cd nft_marketplace_site && git pull)
+            [ ! -d "chain_integration_site" ] && git clone https://github.com/CreoDAMO/chain-integration.git chain_integration_site || (cd chain_integration_site && git pull)
+            [ ! -d "onramp_site" ] && git clone https://github.com/CreoDAMO/onramp.git onramp_site || (cd onramp_site && git pull)
+            [ ! -d "superpay_site" ] && git clone https://github.com/CreoDAMO/superpay.git superpay_site || (cd superpay_site && git pull)
+            [ ! -d "validator_subsidy_site" ] && git clone https://github.com/CreoDAMO/validator-subsidy.git validator_subsidy_site || (cd validator_subsidy_site && git pull)
+            [ ! -d "founder_endowment_site" ] && git clone https://github.com/CreoDAMO/founder-endowment.git founder_endowment_site || (cd founder_endowment_site && git pull)
+            
+            # --- Block Explorer Application ---
+            [ ! -d "explorer_app" ] && git clone https://github.com/CreoDAMO/BlockExplorer.git explorer_app || (cd explorer_app && git pull)
+            
+            echo "🚀 Deploying services with Docker Compose..."
+            
+            # Copy the docker-compose.yml from the main repo checkout into the project directory
+            # Assumes the docker-compose.yml is in the root of the repo running this action.
+            cp $GITHUB_WORKSPACE/docker-compose.yml .
+            
+            # Run Docker Compose. The --build flag rebuilds images if the source code changed (e.g., for the explorer).
+            # The -d flag runs containers in detached mode.
+            docker-compose up --build -d
+            
+            echo "🧹 Pruning old Docker images to save space..."
+            docker image prune -f
+            
+            echo "✅ Verifying all containers are running..."
+            docker ps
+            
+            echo "🎉 Deployment complete. All services are updated and running."
+
