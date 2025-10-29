@@ -1,0 +1,57 @@
+syntax = "proto3";
+package aequitas.agentkit.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types";
+
+// Msg defines the Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // CreateAgent creates a new justice agent
+  rpc CreateAgent(MsgCreateAgent) returns (MsgCreateAgentResponse);
+
+  // ExecuteTool executes a justice tool for an agent
+  rpc ExecuteTool(MsgExecuteTool) returns (MsgExecuteToolResponse);
+}
+
+// MsgCreateAgent creates a new justice agent
+message MsgCreateAgent {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string objective = 2;
+  repeated cosmos.base.v1beta1.Coin budget = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+  repeated string rules = 4;
+}
+
+// MsgCreateAgentResponse returns the new agent ID
+message MsgCreateAgentResponse {
+  string agent_id = 1;
+}
+
+// MsgExecuteTool executes a justice tool for an agent
+message MsgExecuteTool {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string agent_id = 2;
+  string tool_name = 3;
+  map<string, string> params = 4;
+}
+
+// MsgExecuteToolResponse returns the tool execution result
+message MsgExecuteToolResponse {
+  string result = 1;
+}

@@ -1,7 +1,6 @@
 package defendant
 
 import (
-        "context"
         "encoding/json"
         "fmt"
 

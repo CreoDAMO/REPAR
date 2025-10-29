@@ -1,0 +1,42 @@
+syntax = "proto3";
+package aequitas.agentkit.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "aequitas/agentkit/v1/agentkit.proto";
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // GetAgent queries an agent by ID
+  rpc GetAgent(QueryGetAgentRequest) returns (QueryGetAgentResponse) {
+    option (google.api.http).get = "/aequitas/agentkit/v1/agents/{agent_id}";
+  }
+
+  // ListAgents queries all agents
+  rpc ListAgents(QueryListAgentsRequest) returns (QueryListAgentsResponse) {
+    option (google.api.http).get = "/aequitas/agentkit/v1/agents";
+  }
+}
+
+// QueryGetAgentRequest is the request type for the Query/GetAgent RPC method.
+message QueryGetAgentRequest {
+  string agent_id = 1;
+}
+
+// QueryGetAgentResponse is the response type for the Query/GetAgent RPC method.
+message QueryGetAgentResponse {
+  Agent agent = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryListAgentsRequest is the request type for the Query/ListAgents RPC method.
+message QueryListAgentsRequest {
+  string creator = 1;
+  string status = 2;
+}
+
+// QueryListAgentsResponse is the response type for the Query/ListAgents RPC method.
+message QueryListAgentsResponse {
+  repeated Agent agents = 1 [(gogoproto.nullable) = false];
+}

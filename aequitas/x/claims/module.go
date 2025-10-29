@@ -1,7 +1,6 @@
 package claims
 
 import (
-        "context"
         "encoding/json"
         "fmt"
 

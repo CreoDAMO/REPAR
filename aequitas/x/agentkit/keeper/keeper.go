@@ -2,6 +2,7 @@
 package keeper
 
 import (
+        "encoding/json"
         "fmt"
         "time"
 
@@ -76,9 +77,12 @@ func (k Keeper) CreateAgent(
                 LastAction:  ctx.BlockTime(),
         }
         
-        // Store agent
+        // Store agent (using standard JSON marshaling)
         store := ctx.KVStore(k.storeKey)
-        bz := k.cdc.MustMarshal(&agent)
+        bz, err := json.Marshal(&agent)
+        if err != nil {
+                return "", fmt.Errorf("failed to marshal agent: %w", err)
+        }
         store.Set(types.AgentKey(agentID), bz)
         
         k.logger.Info("Justice Agent created", "id", agentID, "creator", creator.String())
@@ -133,7 +137,9 @@ func (k Keeper) GetAgent(ctx sdk.Context, agentID string) (types.Agent, error) {
         }
         
         var agent types.Agent
-        k.cdc.MustUnmarshal(bz, &agent)
+        if err := json.Unmarshal(bz, &agent); err != nil {
+                return types.Agent{}, fmt.Errorf("failed to unmarshal agent: %w", err)
+        }
         return agent, nil
 }
 

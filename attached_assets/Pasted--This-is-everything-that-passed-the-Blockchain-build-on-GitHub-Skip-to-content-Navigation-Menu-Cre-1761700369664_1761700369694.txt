@@ -1,0 +1,236 @@
+# This is everything that passed the Blockchain build on GitHub 
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Update file paths and fix module initialization errors #91
+Jobs
+Run details
+Annotations
+21 errors and 1 warning
+Build & Test Blockchain
+failed 5 minutes ago in 1m 35s
+Search logs
+2s
+2s
+26s
+20s
+0s
+0s
+1s
+2s
+0s
+4s
+9s
+2s
+0s
+12s
+11s
+0s
+0s
+Run echo "🏛️ Generating mainnet genesis with proper allocations..."
+🏛️ Generating mainnet genesis with proper allocations...
+╔═══════════════════════════════════════════════════════════╗
+║     Aequitas Genesis Generation - MAINNET                 
+╚═══════════════════════════════════════════════════════════╝
+
+✅ Found allocation structure: chain-config/allocation-structure.json
+✅ Found genesis template: chain-config/mainnet/genesis-mainnet.json
+
+📊 Generating allocations for mainnet...
+╔═══════════════════════════════════════════════════════════╗
+║  Aequitas Genesis Allocation Generator - MAINNET            ║
+╚═══════════════════════════════════════════════════════════╝
+✅ Allocation structure validated: 131000000000000 REPAR
+
+🔧 Generating mainnet genesis allocations...
+  Preserving 6 existing accounts...
+  Preserving 6 existing balances...
+  📦 Module descendant_fund: 56,330,000,000,000 repar
+  📦 Module claims_fund: 32,750,000,000,000 repar
+  📦 Module founderendowment: 7,860,000,000,000 repar
+  📦 Module enforcement_treasury: 13,100,000,000,000 repar
+  📦 Module foundation_treasury: 5,240,000,000,000 repar
+  👤 Founder wallet: 15,720,000,000,000 repar (12.00%)
+  Removed 6 duplicate balances from allocation addresses
+  Result: 6 total accounts, 6 total balances
+✅ Mainnet genesis file updated: chain-config/mainnet/genesis-mainnet.json
+  Total allocated: 131,000,000,000,000 repar
+  Matches supply: True
+
+🎉 Mainnet genesis allocation complete!
+   Total supply: 131,000,000,000,000 REPAR
+   Founder total: 23,580,000,000,000 REPAR (18%)
+   - Wallet: 15,720,000,000,000 REPAR (12%)
+   - Endowment: 7,860,000,000,000 REPAR (6%)
+
+🔍 Validating genesis file structure...
+✅ Genesis JSON is valid
+  Total supply: 131000000000000 REPAR
+  Balance entries: 6
+  Account entries: 6
+
+📝 Generating checksum...
+✅ Checksum: ba7d8553fac7c385295f42d79d942155d951a1aaefe41b3116a8f40145674bed
+  Saved to: chain-config/mainnet/genesis-mainnet.json.sha256
+
+╔═══════════════════════════════════════════════════════════╗
+║  Genesis Generation Complete                           
+╚═══════════════════════════════════════════════════════════╝
+
+📋 Summary:
+  Network: mainnet
+  Chain ID: aequitas-1
+  Genesis: chain-config/mainnet/genesis-mainnet.json
+  Checksum: chain-config/mainnet/genesis-mainnet.json.sha256
+
+🎯 Next Steps:
+  1. Run: ./scripts/init-mainnet.sh
+  2. Validate: ./bin/aequitasd validate-genesis --home ~/.aequitas
+  3. Coordinate with validators for genesis ceremony
+  4. Start: ./bin/aequitasd start --home ~/.aequitas
+
+✅ Mainnet genesis generated
+0s
+0s
+0s
+0s
+0s
+1s
+Run echo "### 🚀 Aequitas Zone Blockchain Build Status" >> $GITHUB_STEP_SUMMARY
+0s
+0s
+0s
+Post job cleanup.
+/usr/bin/git version
+git version 2.51.0
+Temporarily overriding HOME='/home/runner/work/_temp/033598f9-899b-4086-9f17-6999eb5b1ebd' before making global git config changes
+Adding repository directory to the temporary git global config as a safe directory
+/usr/bin/git config --global --add safe.directory /home/runner/work/REPAR/REPAR
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+http.https://github.com/.extraheader
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+0s
+Cleaning up orphan processes
+
+----
+
+## This Is Everything That Failed in the same Build
+
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Build Aequitas Zone Blockchain
+Update file paths and fix module initialization errors #91
+Jobs
+Run details
+Annotations
+21 errors and 1 warning
+Build & Test Blockchain
+failed 13 minutes ago in 1m 35s
+Search logs
+2s
+2s
+26s
+20s
+0s
+0s
+1s
+2s
+0s
+4s
+9s
+2s
+Run echo "🧪 Running unit tests..."
+  echo "🧪 Running unit tests..."
+  go test -v -timeout 10m ./... || echo "⚠️ Some tests pending - blockchain under active development"
+  shell: /usr/bin/bash -e {0}
+🧪 Running unit tests...
+=== RUN   TestAppImportExport
+    sim_test.go:124: skipping application import/export simulation
+--- SKIP: TestAppImportExport (0.00s)
+=== RUN   TestAppSimulationAfterImport
+    sim_test.go:247: skipping application simulation after import
+--- SKIP: TestAppSimulationAfterImport (0.00s)
+=== RUN   TestAppStateDeterminism
+    sim_test.go:332: skipping application simulation
+--- SKIP: TestAppStateDeterminism (0.00s)
+PASS
+ok  	github.com/CreoDAMO/REPAR/aequitas/app	(cached)
+?   	github.com/CreoDAMO/REPAR/aequitas/cmd/aequitasd	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/cmd/aequitasd/cmd	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/docs	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/agentkit/keeper
+Error: x/agentkit/keeper/keeper.go:81:33: cannot use &agent (value of type *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent) as "github.com/cosmos/gogoproto/proto".Message value in argument to k.cdc.MustMarshal: *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+Error: x/agentkit/keeper/keeper.go:136:33: cannot use &agent (value of type *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent) as "github.com/cosmos/gogoproto/proto".Message value in argument to k.cdc.MustUnmarshal: *"github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent does not implement interface{ProtoMessage(); Reset(); String() string} (missing method ProtoMessage)
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/network	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/nullify	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/testutil/sample	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/agentkit/keeper [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/claims
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/claims [build failed]
+Error: x/claims/module.go:4:9: "context" imported and not used
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant
+Error: x/defendant/module.go:4:9: "context" imported and not used
+?   	github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/claims/types	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/defendant [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/defendant/types	[no test files]
+# github.com/CreoDAMO/REPAR/aequitas/x/dex
+Error: x/dex/module.go:58:42: syntax error: unexpected { at end of statement
+Error: x/dex/module.go:73:2: syntax error: unexpected newline in argument list; possibly missing comma or )
+Error: x/dex/module.go:75:21: syntax error: unexpected name ValidateGenesis at end of statement
+Error: x/dex/module.go:83:37: syntax error: unexpected name sdk in argument list; possibly missing comma or )
+Error: x/dex/module.go:92:39: syntax error: unexpected name sdk in argument list; possibly missing comma or )
+Error: x/dex/module.go:100:40: syntax error: unexpected name uint64 at end of statement
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/dex [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/dex/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/dex/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/distribution	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper	[no test files]
+0s
+12s
+11s
+0s
+0s
+0s
+0s
+0s
+0s
+0s
+1s
+0s
+0s
+0s
+0s
+
+### The Entire  Chache Go Modules in this Blockchain build need to be checked and there is to many errors I couldn't share.

@@ -1,0 +1,12 @@
+syntax = "proto3";
+package aequitas.agentkit.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/agentkit/v1/agentkit.proto";
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types";
+
+// GenesisState defines the agentkit module's genesis state.
+message GenesisState {
+  repeated Agent agents = 1 [(gogoproto.nullable) = false];
+}
