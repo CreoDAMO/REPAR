@@ -36,6 +36,9 @@ func NewAppModule(cdc codec.Codec, k keeper.Keeper) AppModule {
         }
 }
 
+// RegisterLegacyAminoCodec registers the module's types on the LegacyAmino codec
+func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {}
+
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
         // Register gRPC gateway routes here

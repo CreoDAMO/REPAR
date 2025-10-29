@@ -33,7 +33,15 @@ import { RootState } from '@/store'
 
 const chainList = [
   {
-    name: 'Aequitas Protocol',
+    name: 'Aequitas Testnet',
+    rpc: 'https://testnet-rpc.aequitaszone.io',
+  },
+  {
+    name: 'Aequitas Mainnet',
+    rpc: 'https://rpc.aequitaszone.io',
+  },
+  {
+    name: 'Aequitas Local',
     rpc: 'http://localhost:26657',
   },
   {
