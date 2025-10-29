@@ -2,10 +2,9 @@
 package threatdefense
 
 import (
-        "context"
-        
-        "cosmossdk.io/core/appmodule"
+        "github.com/cosmos/cosmos-sdk/client"
         "github.com/cosmos/cosmos-sdk/codec"
+        codectypes "github.com/cosmos/cosmos-sdk/codec/types"
         sdk "github.com/cosmos/cosmos-sdk/types"
         "github.com/cosmos/cosmos-sdk/types/module"
         "github.com/grpc-ecosystem/grpc-gateway/runtime"
@@ -38,8 +37,13 @@ func NewAppModule(cdc codec.Codec, k keeper.Keeper) AppModule {
 }
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the module.
-func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx context.Context, mux *runtime.ServeMux) {
+func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
         // Register gRPC gateway routes here
+}
+
+// RegisterInterfaces registers the module's interface types
+func (AppModuleBasic) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
+        // Register interface types here
 }
 
 // RegisterServices registers module services.

@@ -14,7 +14,6 @@ import (
         sdk "github.com/cosmos/cosmos-sdk/types"
         bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
         nftkeeper "cosmossdk.io/x/nft/keeper"
-        nfttypes "cosmossdk.io/x/nft"
 )
 
 // Keeper maintains the threat defense system state
@@ -65,7 +64,7 @@ func (k Keeper) ExecuteThreatDefenseCycle(ctx sdk.Context) {
                         cid := k.UploadThreatToIPFS(ctx, threat)
                         
                         // Phase 4: Mint NFT as court-ready evidence
-                        nftID := k.MintThreatNFT(ctx, cid, threat)
+                        _ = k.MintThreatNFT(ctx, cid, threat)
                         
                         // Phase 5: Feed into chaos defense (10% trap system)
                         k.chaosEngine.ProcessThreat(ctx, threat)
