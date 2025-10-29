@@ -51,7 +51,7 @@ class CerberusOrchestrator:
         print("🛡️  AEQUITAS CERBERUS AUDITOR - INITIALIZING")
         print("=" * 80)
         
-        self.repo_path = Path(repo_path)
+        self.repo_path = Path(repo_path).resolve()  # Always use absolute path
         self.reports_path = self.repo_path / "auditor" / "reports"
         
         # Create reports directory if it doesn't exist

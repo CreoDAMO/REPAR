@@ -11,7 +11,14 @@
 # - Add the following secrets to your GitHub repository's "Secrets and variables" > "Actions":
 #   - DO_HOST: The IP address of your DigitalOcean Droplet.
 #   - DO_USERNAME: The username for the Droplet (e.g., 'root').
-#   - DO_SSH_PRIVATE_KEY: The private SSH key that corresponds to a public key added to the Droplet's authorized_keys.
+#   - DO_SSH_PRIVATE_KEY: The private SSH key (MUST BE UNENCRYPTED - no passphrase protection)
+#
+# IMPORTANT: SSH Key Setup
+# The GitHub Actions SSH action cannot use passphrase-protected keys.
+# To generate an unencrypted SSH key for deployment:
+#   ssh-keygen -t ed25519 -f ~/.ssh/digitalocean_deploy -N ""
+# Then add the PUBLIC key (~/.ssh/digitalocean_deploy.pub) to your Droplet's ~/.ssh/authorized_keys
+# And add the PRIVATE key (~/.ssh/digitalocean_deploy) content to the DO_SSH_PRIVATE_KEY secret.
 
 name: Deploy to DigitalOcean
 permissions:

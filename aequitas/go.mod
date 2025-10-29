@@ -291,7 +291,7 @@ require (
 replace (
         cosmossdk.io/api => cosmossdk.io/api v0.7.5
         cosmossdk.io/core => cosmossdk.io/core v0.11.1
-        cosmossdk.io/x/tx => cosmossdk.io/x/tx v0.13.5
+        cosmossdk.io/x/tx => cosmossdk.io/x/tx v0.13.7  // Security fix: ASA-2024-0012, ASA-2024-0013
         github.com/CreoDAMO/REPAR/aequitas => ./
         github.com/cosmos/iavl => github.com/cosmos/iavl v1.2.0
 )

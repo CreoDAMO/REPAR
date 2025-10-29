@@ -1,0 +1,355 @@
+## Cerberus Security Audit
+Merge pull request #24 from CreoDAMO/alert-autofix-23 #146
+Jobs
+Run details
+Annotations
+1 error and 1 warning
+security-audit
+failed 10 minutes ago in 2m 6s
+Search logs
+1s
+23s
+3s
+4s
+9s
+1m 21s
+Run cd auditor
+Traceback (most recent call last):
+================================================================================
+  File "/home/runner/work/REPAR/REPAR/auditor/orchestrator.py", line 801, in <module>
+    asyncio.run(main())
+  File "/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/asyncio/runners.py", line 190, in run
+🛡️  AEQUITAS CERBERUS AUDITOR - INITIALIZING
+================================================================================
+✅ PostgreSQL database connected successfully
+
+🎯 Initializing AI Security Agents...
+✅ All agents initialized successfully
+  - Analyst Guild (4 AI agents)
+  - Adversary Guild (Chaos Engineering)
+  - Engineer Guild (Patch Generation)
+  - Vulnerability Scanner (CVE Database)
+  - Smart Contract Analyzer (Aequitas Modules)
+  - Protocol-Tuner (Governance Proposals)
+================================================================================
+
+⚠️  TAST document not found at: docs/tast_audit/TAST_Full_Audit_&_Arbitration_By-Jacque_Antoine_DeGraff.md
+Proceeding with codebase audit...
+
+🔍 Running full Aequitas blockchain audit...
+
+🔍 Starting Full Security Audit of aequitas
+================================================================================
+
+📊 Found 106 Go files to audit
+🎯 Target: /home/runner/work/REPAR/REPAR/aequitas
+
+📦 Processing batch 1/22
+📄 Analyst Guild: Scanning /home/runner/work/REPAR/REPAR/aequitas/tools/tools.go
+📄 Analyst Guild: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/genesis_account.go
+📄 Analyst Guild: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/config.go
+📄 Analyst Guild: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/app_config.go
+📄 Analyst Guild: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/sim_bench_test.go
+  🤖 Claude Sonnet 4 analyzing tools.go...
+  ✅ Claude found 0 potential issues
+  🤖 GPT-4 Turbo analyzing tools.go...
+  ⚠️  GPT-4 analysis error: Error code: 404 - {'error': {'message': 'The model `gpt-4-turbo` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_found'}}
+  🤖 Grok analyzing tools.go...
+  ⚠️  Grok API error: 403
+  🔮 Using simulated Grok analysis
+  🤖 Deepseek analyzing tools.go...
+  ⚠️  Deepseek API error: 402
+  🔮 Using simulated Deepseek analysis
+  🤖 Claude Sonnet 4 analyzing genesis_account.go...
+  ✅ Claude found 4 potential issues
+  🤖 GPT-4 Turbo analyzing genesis_account.go...
+  ⚠️  GPT-4 analysis error: Error code: 404 - {'error': {'message': 'The model `gpt-4-turbo` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_found'}}
+  🤖 Grok analyzing genesis_account.go...
+  ⚠️  Grok API error: 403
+  🔮 Using simulated Grok analysis
+  🤖 Deepseek analyzing genesis_account.go...
+  ⚠️  Deepseek API error: 402
+  🔮 Using simulated Deepseek analysis
+  🤖 Claude Sonnet 4 analyzing config.go...
+  ✅ Claude found 3 potential issues
+  🤖 GPT-4 Turbo analyzing config.go...
+  ⚠️  GPT-4 analysis error: Error code: 404 - {'error': {'message': 'The model `gpt-4-turbo` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_found'}}
+  🤖 Grok analyzing config.go...
+  ⚠️  Grok API error: 403
+  🔮 Using simulated Grok analysis
+  🤖 Deepseek analyzing config.go...
+  ⚠️  Deepseek API error: 402
+  🔮 Using simulated Deepseek analysis
+  🤖 Claude Sonnet 4 analyzing app_config.go...
+  ✅ Claude found 6 potential issues
+  🤖 GPT-4 Turbo analyzing app_config.go...
+  ⚠️  GPT-4 analysis error: Error code: 404 - {'error': {'message': 'The model `gpt-4-turbo` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_found'}}
+  🤖 Grok analyzing app_config.go...
+  ⚠️  Grok API error: 403
+  🔮 Using simulated Grok analysis
+  🤖 Deepseek analyzing app_config.go...
+  ⚠️  Deepseek API error: 402
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+  🔮 Using simulated Deepseek analysis
+  🤖 Claude Sonnet 4 analyzing sim_bench_test.go...
+  ✅ Claude found 6 potential issues
+  🤖 GPT-4 Turbo analyzing sim_bench_test.go...
+  ⚠️  GPT-4 analysis error: Error code: 404 - {'error': {'message': 'The model `gpt-4-turbo` does not exist or you do not have access to it.', 'type': 'invalid_request_error', 'param': None, 'code': 'model_not_found'}}
+  🤖 Grok analyzing sim_bench_test.go...
+  ⚠️  Grok API error: 403
+  🔮 Using simulated Grok analysis
+  🤖 Deepseek analyzing sim_bench_test.go...
+  ⚠️  Deepseek API error: 402
+  🔮 Using simulated Deepseek analysis
+  🔍 Vulnerability Scanner: Scanning /home/runner/work/REPAR/REPAR/aequitas/tools/tools.go against CVE database...
+  ✅ No known vulnerabilities detected
+  🎯 Smart Contract Analyzer: Deep analysis of /home/runner/work/REPAR/REPAR/aequitas/tools/tools.go...
+  ✅ No Aequitas-specific issues detected
+  🔍 Vulnerability Scanner: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/genesis_account.go against CVE database...
+  ✅ No known vulnerabilities detected
+  🎯 Smart Contract Analyzer: Deep analysis of /home/runner/work/REPAR/REPAR/aequitas/app/genesis_account.go...
+  ✅ No Aequitas-specific issues detected
+  🔍 Vulnerability Scanner: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/config.go against CVE database...
+  ✅ No known vulnerabilities detected
+  🎯 Smart Contract Analyzer: Deep analysis of /home/runner/work/REPAR/REPAR/aequitas/app/config.go...
+  ✅ No Aequitas-specific issues detected
+  🔍 Vulnerability Scanner: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/app_config.go against CVE database...
+  ✅ No known vulnerabilities detected
+  🎯 Smart Contract Analyzer: Deep analysis of /home/runner/work/REPAR/REPAR/aequitas/app/app_config.go...
+  ✅ No Aequitas-specific issues detected
+  🔍 Vulnerability Scanner: Scanning /home/runner/work/REPAR/REPAR/aequitas/app/sim_bench_test.go against CVE database...
+  ✅ No known vulnerabilities detected
+  🎯 Smart Contract Analyzer: Deep analysis of /home/runner/work/REPAR/REPAR/aequitas/app/sim_bench_test.go...
+  ✅ No Aequitas-specific issues detected
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/runner/work/REPAR/REPAR/auditor/orchestrator.py", line 793, in main
+    await orchestrator.run_full_audit("aequitas")
+  File "/home/runner/work/REPAR/REPAR/auditor/orchestrator.py", line 135, in run_full_audit
+    print(f"  [{i+idx+1}/{len(go_files)}] {go_file.relative_to(self.repo_path)}: {len(findings)} findings, {len(fixes)} fixes")
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.13/x64/lib/python3.11/pathlib.py", line 730, in relative_to
+    raise ValueError("{!r} is not in the subpath of {!r}"
+ValueError: '/home/runner/work/REPAR/REPAR/aequitas/tools/tools.go' is not in the subpath of '' OR one path is relative and the other is absolute.
+Error: Process completed with exit code 1.
+
+---
+
+## Deploy to DigitalOcean
+Merge pull request #24 from CreoDAMO/alert-autofix-23 #66
+Jobs
+Run details
+Annotations
+1 error
+deploy
+failed 14 minutes ago in 7s
+Search logs
+1s
+2s
+1s
+Run appleboy/ssh-action@master
+Run echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+Run entrypoint.sh
+Downloading drone-ssh-1.8.1-linux-amd64 from https://github.com/appleboy/drone-ssh/releases/download/v1.8.1
+======= CLI Version Information =======
+Drone SSH version 1.8.1
+=======================================
+2025/10/29 21:36:40 ssh.ParsePrivateKey: ssh: this private key is passphrase protected
+2025/10/29 21:36:40 ssh: handshake failed: ssh: unable to authenticate, attempted methods [none], no supported methods remain
+Error: Process completed with exit code 1.
+
+---
+
+## Build Aequitas Zone Blockchain
+Build Aequitas Zone Blockchain #98
+Jobs
+Run details
+Annotations
+1 error
+Build & Test Blockchain
+failed 13 minutes ago in 1m 58s
+Search logs
+1s
+3s
+44s
+1s
+0s
+8s
+1s
+0s
+5s
+15s
+11s
+0s
+11s
+15s
+0s
+0s
+0s
+Run echo "🔍 Validating testnet genesis..."
+  echo "🔍 Validating testnet genesis..."
+  
+  # Initialize temporary home directory for validation
+  TEMP_HOME=$(mktemp -d)
+  ./aequitas/build/aequitasd init validator --chain-id aequitas-testnet-1 --home "$TEMP_HOME" > /dev/null 2>&1
+  
+  # Copy generated genesis to temp home
+  cp chain-config/testnet/genesis-testnet.json "$TEMP_HOME/config/genesis.json"
+  
+  # Validate genesis
+  if ./aequitas/build/aequitasd genesis validate --home "$TEMP_HOME"; then
+    echo "✅ Testnet genesis is valid"
+  else
+    echo "❌ Testnet genesis validation failed"
+    exit 1
+  fi
+  
+  # Clean up
+  rm -rf "$TEMP_HOME"
+  shell: /usr/bin/bash -e {0}
+🔍 Validating testnet genesis...
+Error: Process completed with exit code 2.
+
+
+## Dependabot Alert
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+7
+Insights
+Settings
+Dependabot alerts #29
+ASA-2024-0012, ASA-2024-0013: CosmosSDK: Transaction decoding may result in a stack overflow or resource exhaustion #29
+ Open Opened last week on cosmossdk.io/x/tx (Go) · aequitas/go.mod
+Dependabot cannot update to the required version
+One or more other dependencies require a version that is incompatible with this update.
+
+Package
+Affected versions
+Patched version
+cosmossdk.io/x/tx
+(Go)
+< 0.13.7
+0.13.7
+Summary
+ASA-2024-0012
+Name: ASA-2024-0012, Transaction decoding may result in a stack overflow
+Component: Cosmos SDK
+Criticality: High (Considerable Impact, and Possible Likelihood per ACMv1.2)
+Affected versions: cosmos-sdk versions <= v0.50.10, <= v0.47.14
+Affected users: Chain Builders + Maintainers, Validators, node operators
+
+ASA-2024-0013
+Name: ASA-2024-0013: CosmosSDK: Transaction decoding may result in resource exhaustion
+Component: Cosmos SDK
+Criticality: High (Considerable Impact, and Possible Likelihood per ACMv1.2)
+Affected versions: cosmos-sdk versions <= v0.50.10, <= v0.47.14
+Affected users: Chain Builders + Maintainers, Validators, node operators
+
+Impact
+ASA-2024-0012
+When decoding a maliciously formed packet with a deeply-nested structure, it may be possible for a stack overflow to occur and result in a network halt. This was addressed by adding a recursion limit while decoding the packet.
+
+ASA-2024-0013
+Nested messages in a transaction can consume exponential cpu and memory on UnpackAny calls. Themax_tx_bytes sets a limit for external TX but is not applied for internal messages emitted by wasm contracts or a malicious validator block. This may result in a node crashing due to resource exhaustion. This was addressed by adding additional validation to prevent this condition.
+
+Patches
+The issues above are resolved in Cosmos SDK versions v0.47.15 or v0.50.11.
+Please upgrade ASAP.
+
+Timeline for ASA-2024-0012
+October 1, 2024, 12:29pm UTC: Issue reported to the Cosmos Bug Bounty program
+October 1, 2024, 2:47pm UTC: Issue triaged by Amulet on-call, and distributed to Core team
+December 9, 2024, 11:13am UTC: Core team completes patch for issue
+Dec 14, 2024,16:00 UTC: Pre-notification delivered
+Dec 16, 2024, 16:00 UTC: Patch made available
+This issue was reported to the Cosmos Bug Bounty Program on HackerOne on October 1, 2024.
+
+Timeline for ASA-2024-0013
+October 19, 2024, 8:12pm UTC: Issue reported to the Cosmos Bug Bounty program
+October 19, 2024, 8:28pm UTC: Issue triaged by Amulet on-call, and distributed to Core team
+December 11, 2024, 3:31pm UTC: Core team completes patch for issue
+Dec 14, 2024, 16:00 UTC: Pre-notification delivered
+Dec 16, 2024, 16:00 UTC: Patch made available
+This issue was reported by LonelySloth to the Cosmos Bug Bounty Program on HackerOne on October 19, 2024.
+
+If you believe you have found a bug in the Interchain Stack or would like to contribute to the program by reporting a bug, please see https://hackerone.com/cosmos.
+
+If you have questions about Interchain security efforts, please reach out to our official communication channel at security@interchain.io. For more information about the Interchain Foundation’s engagement with Amulet, and to sign up for security notification emails, please see https://github.com/interchainio/security.
+
+@dependabot dependabot bot opened this from 040c27a..1f966b6 last week
+@dependabot dependabot bot closed this as completed in #21 last week
+@dependabot dependabot bot reopened this from be490de..d53a7cd last week
+@dependabot dependabot bot closed this as completed in 92ecfc3 last week
+@dependabot dependabot bot reopened this from 6b2b1fa last week
+Alert metadata
+Severity
+High
+/ 10
+CVSS v4 base metrics
+Exploitability Metrics
+Attack Vector
+Network
+Attack Complexity
+Low
+Attack Requirements
+None
+Privileges Required
+None
+User interaction
+None
+Vulnerable System Impact Metrics
+Confidentiality
+None
+Integrity
+None
+Availability
+High
+Subsequent System Impact Metrics
+Confidentiality
+None
+Integrity
+None
+Availability
+None
+CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N
+Tags
+Runtime dependency Patch available
+Weaknesses
+WeaknessCWE-400
+WeaknessCWE-674
+CVE ID
+No CVE
+GHSA ID
+GHSA-8wcc-m6j2-qxvm
+See advisory in GitHub Advisory Database
+See all of your affected repositories
+See something to contribute?
+Suggest improvements for this advisory on the GitHub Advisory Database.
+Footer
+© 2025 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+ASA-2024-0012, ASA-2024-0013: CosmosSDK: Transaction decoding may result in a stack overflow or resource exhaustion · Dependabot alert #29 · CreoDAMO/REPAR
