@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { TrendingUp, DollarSign, Calculator, PieChart as PieChartIcon, BarChart3, ArrowUpRight, Target } from 'lucide-react';
+import { TrendingUp, DollarSign, Calculator, PieChart as PieChartIcon, BarChart3, ArrowUpRight, Target, CheckCircle, AlertCircle, Clock } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 
@@ -10,6 +10,13 @@ const FINANCIAL_PARAMETERS = {
   operationalWarChest: 22000000,
   seedRaise: 22000000,
   equityAtSeedRaisePercent: 0.314,
+  infrastructureStatus: {
+    circleSdk: 'operational',
+    coinbaseCommerce: 'operational', 
+    blockExplorer: 'operational',
+    testnet: 'in-progress',
+    securityAudits: 'scheduled'
+  },
   useOfFunds: {
     cerberusAiActivation: 10000000,
     eliteTeam: 6000000,
@@ -246,6 +253,48 @@ export default function InvestorDashboard() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+
+        {/* Infrastructure Configuration Status */}
+        <div className="mb-8 bg-gradient-to-r from-blue-900/50 to-purple-900/50 border border-blue-400/30 rounded-xl p-6">
+          <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+            <CheckCircle className="h-6 w-6 text-green-400" />
+            Infrastructure Configuration Status
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="bg-black/20 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="h-5 w-5 text-green-400" />
+                <span className="font-semibold text-green-300">Circle SDK</span>
+              </div>
+              <p className="text-sm text-gray-300">Integrated & configured</p>
+            </div>
+            <div className="bg-black/20 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="h-5 w-5 text-green-400" />
+                <span className="font-semibold text-green-300">Coinbase Commerce</span>
+              </div>
+              <p className="text-sm text-gray-300">Integrated & configured</p>
+            </div>
+            <div className="bg-black/20 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <CheckCircle className="h-5 w-5 text-green-400" />
+                <span className="font-semibold text-green-300">Block Explorer</span>
+              </div>
+              <p className="text-sm text-gray-300">Dexplorer deployed</p>
+            </div>
+            <div className="bg-black/20 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="h-5 w-5 text-yellow-400 animate-pulse" />
+                <span className="font-semibold text-yellow-300">Testnet</span>
+              </div>
+              <p className="text-sm text-gray-300">Validator onboarding</p>
+            </div>
+          </div>
+          <div className="mt-4 flex items-center gap-2 text-sm text-purple-200">
+            <AlertCircle className="h-4 w-4" />
+            <span>Phase 1: 95% Complete | Security audits scheduled Q1 2026 (Quantstamp, Informal Systems)</span>
+          </div>
+        </div>
 
         {/* Navigation Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
@@ -493,12 +542,15 @@ export default function InvestorDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="font-semibold text-indigo-700 mb-2">The Opportunity</p>
-                    <p className="text-gray-700">Operational AI enforcement system analyzing $131T in documented claims. 100% built infrastructure seeking scale-up capital, not development funding.</p>
+                    <p className="text-gray-700">Operational AI enforcement system analyzing $131T in documented claims. Infrastructure at 95% completion with payment integrations configured (Circle USDC, Coinbase Commerce) and Block Explorer deployed (Dexplorer).</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-indigo-700 mb-2">Key Differentiator</p>
-                    <p className="text-gray-700">Native coin architecture (Cosmos SDK) provides legal defensibility + 4 operational AI dashboards demonstrate immediate deployment readiness.</p>
+                    <p className="font-semibold text-indigo-700 mb-2">Infrastructure Status</p>
+                    <p className="text-gray-700">Phase 1 at 95%: Payment systems integrated, Block Explorer deployed, Testnet validator onboarding in progress. Security audits scheduled Q1 2026 (Quantstamp, Informal Systems).</p>
                   </div>
+                </div>
+                <div className="mt-4 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                  <p className="text-xs text-gray-600"><strong>Note:</strong> Financial projections below reflect original seed raise parameters. Treasury and operational metrics to be updated post-testnet launch.</p>
                 </div>
               </div>
 
