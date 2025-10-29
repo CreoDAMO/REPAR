@@ -66,7 +66,7 @@ func (k Keeper) CreateAgent(
         
         // Create agent record
         agent := types.Agent{
-                ID:          agentID,
+                Id:          agentID,
                 Creator:     creator.String(),
                 Wallet:      agentWallet.String(),
                 Objective:   objective,
@@ -155,7 +155,7 @@ func (k Keeper) fileArbitration(ctx sdk.Context, agent types.Agent, params map[s
         // This would call the claims keeper
         result := fmt.Sprintf("Arbitration filed against %s for %s in %s", defendantID, amount, jurisdiction)
         
-        k.logger.Info("Agent filed arbitration", "agent", agent.ID, "defendant", defendantID)
+        k.logger.Info("Agent filed arbitration", "agent", agent.Id, "defendant", defendantID)
         
         return result, nil
 }
@@ -167,7 +167,7 @@ func (k Keeper) freezeAsset(ctx sdk.Context, agent types.Agent, params map[strin
         // Integration with justice module to freeze assets
         result := fmt.Sprintf("Asset freeze initiated for %s (defendant: %s)", assetID, defendantID)
         
-        k.logger.Info("Agent initiated asset freeze", "agent", agent.ID, "asset", assetID)
+        k.logger.Info("Agent initiated asset freeze", "agent", agent.Id, "asset", assetID)
         
         return result, nil
 }
@@ -178,7 +178,7 @@ func (k Keeper) verifyEvidence(ctx sdk.Context, agent types.Agent, params map[st
         // Query IFR system for evidence verification
         result := fmt.Sprintf("Evidence verified: %s", evidenceHash)
         
-        k.logger.Info("Agent verified evidence", "agent", agent.ID, "hash", evidenceHash)
+        k.logger.Info("Agent verified evidence", "agent", agent.Id, "hash", evidenceHash)
         
         return result, nil
 }
@@ -190,7 +190,7 @@ func (k Keeper) analyzeLegalArbitrage(ctx sdk.Context, agent types.Agent, params
         // This would integrate with NVIDIA NIM for AI reasoning
         result := fmt.Sprintf("Legal arbitrage analysis for %s: Recommend jurisdiction X", defendantID)
         
-        k.logger.Info("Agent analyzed legal arbitrage", "agent", agent.ID, "defendant", defendantID)
+        k.logger.Info("Agent analyzed legal arbitrage", "agent", agent.Id, "defendant", defendantID)
         
         return result, nil
 }
@@ -201,7 +201,7 @@ func (k Keeper) monitorThreat(ctx sdk.Context, agent types.Agent, params map[str
         // Monitor for threats and mint NFTs
         result := fmt.Sprintf("Monitoring threat: %s", threatType)
         
-        k.logger.Info("Agent monitoring threat", "agent", agent.ID, "type", threatType)
+        k.logger.Info("Agent monitoring threat", "agent", agent.Id, "type", threatType)
         
         return result, nil
 }
@@ -213,7 +213,7 @@ func (k Keeper) voteGovernance(ctx sdk.Context, agent types.Agent, params map[st
         // Participate in DAO governance
         result := fmt.Sprintf("Voted %s on proposal %s", vote, proposalID)
         
-        k.logger.Info("Agent voted on governance", "agent", agent.ID, "proposal", proposalID, "vote", vote)
+        k.logger.Info("Agent voted on governance", "agent", agent.Id, "proposal", proposalID, "vote", vote)
         
         return result, nil
 }

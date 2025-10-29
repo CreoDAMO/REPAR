@@ -1,0 +1,78 @@
+These are the only remaining errors in the Test build:
+
+Error: x/agentkit/keeper/keeper.go:69:17: unknown field ID in struct literal of type "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent, but does have Id
+Error: x/agentkit/keeper/keeper.go:158:65: agent.ID undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent has no field or method ID, but does have field Id)
+Error: x/agentkit/keeper/keeper.go:170:70: agent.ID undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent has no field or method ID, but does have field Id)
+Error: x/agentkit/keeper/keeper.go:181:65: agent.ID undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent has no field or method ID, but does have field Id)
+Error: x/agentkit/keeper/keeper.go:193:72: agent.ID undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent has no field or method ID, but does have field Id)
+Error: x/agentkit/keeper/keeper.go:204:65: agent.ID undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent has no field or method ID, but does have field Id)
+Error: x/agentkit/keeper/keeper.go:216:67: agent.ID undefined (type "github.com/CreoDAMO/REPAR/aequitas/x/agentkit/types".Agent has no field or method ID, but does have field Id)
+
+github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper_test [github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper.test]
+
+Error: x/infrastructure/keeper/keeper_test.go:7:9: "github.com/stretchr/testify/require" imported and not used
+Error: x/infrastructure/keeper/keeper_test.go:8:9: "github.com/cosmos/cosmos-sdk/types" imported as sdk and not used
+Error: x/infrastructure/keeper/keeper_test.go:10:9: "github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper" imported and not used
+?   	github.com/CreoDAMO/REPAR/aequitas/x/infrastructure	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/keeper [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/infrastructure/types	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/justice	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/justice/types	[no test files]
+
+github.com/CreoDAMO/REPAR/aequitas/x/threatdefense
+
+Error: x/threatdefense/module.go:12:35: cannot use AppModule{} (value of struct type AppModule) as module.AppModule value in variable declaration: AppModule does not implement module.AppModule (missing method RegisterGRPCGatewayRoutes)
+Error: x/threatdefense/module.go:13:35: cannot use AppModuleBasic{} (value of struct type AppModuleBasic) as module.AppModuleBasic value in variable declaration: AppModuleBasic does not implement module.AppModuleBasic (missing method RegisterGRPCGatewayRoutes)
+Error: x/threatdefense/module.go:24:16: undefined: Keeper
+Error: x/threatdefense/module.go:28:43: undefined: Keeper
+Error: x/threatdefense/module.go:42:63: undefined: appmodule.BeginBlock
+?   	github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper	[no test files]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/threatdefense [build failed]
+
+github.com/CreoDAMO/REPAR/aequitas/x/threatdefense/types
+
+Error: x/threatdefense/types/genesis.go:38:23: undefined: sdk.NewInt
+Error: x/threatdefense/types/genesis.go:39:23: undefined: sdk.NewInt
+Error: x/threatdefense/types/genesis.go:40:23: undefined: sdk.NewInt
+Error: x/threatdefense/types/genesis.go:45:23: undefined: sdk.NewInt
+Error: x/threatdefense/types/genesis.go:46:23: undefined: sdk.NewInt
+Error: x/threatdefense/types/genesis.go:47:23: undefined: sdk.NewInt
+Error: x/threatdefense/types/genesis.go:54:23: undefined: sdk.NewInt
+Error: x/threatdefense/types/genesis.go:132:20: undefined: sdk.Int
+Error: x/threatdefense/types/genesis.go:133:20: undefined: sdk.Int
+Error: x/threatdefense/types/genesis.go:134:20: undefined: sdk.Int
+Error: x/threatdefense/types/genesis.go:54:23: too many errors
+
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper_test [github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper.test]
+
+Error: x/validatorsubsidy/keeper/keeper_test.go:19:36: not enough arguments in call to sdk.NewContext
+have (nil, bool, nil)
+want ("cosmossdk.io/store/types".MultiStore, "github.com/cometbft/cometbft/proto/tendermint/types".Header, bool, "cosmossdk.io/log".Logger)
+Error: x/validatorsubsidy/keeper/keeper_test.go:30:36: not enough arguments in call to sdk.NewContext
+have (nil, bool, nil)
+want ("cosmossdk.io/store/types".MultiStore, "github.com/cometbft/cometbft/proto/tendermint/types".Header, bool, "cosmossdk.io/log".Logger)
+
+github.com/CreoDAMO/REPAR/aequitas/x/threatdefense/keeper
+
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/threatdefense/keeper [build failed]
+Error: x/threatdefense/keeper/keeper.go:20:27: undefined: sdk.StoreKey
+Error: x/threatdefense/keeper/keeper.go:49:27: undefined: sdk.Int
+Error: x/threatdefense/keeper/keeper.go:50:27: undefined: sdk.Int
+Error: x/threatdefense/keeper/keeper.go:51:27: undefined: sdk.Int
+Error: x/threatdefense/keeper/helpers.go:19:74: undefined: sdk.Dec
+Error: x/threatdefense/keeper/helpers.go:32:79: undefined: sdk.Int
+Error: x/threatdefense/keeper/helpers.go:44:95: undefined: sdk.Int
+Error: x/threatdefense/keeper/helpers.go:53:74: undefined: sdk.Int
+Error: x/threatdefense/keeper/helpers.go:58:65: undefined: sdk.Int
+Error: x/threatdefense/keeper/helpers.go:62:69: undefined: sdk.Dec
+Error: x/threatdefense/keeper/helpers.go:62:69: too many errors
+
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/threatdefense/types [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy	[no test files]
+FAIL	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper [build failed]
+?   	github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types	[no test files]
+FAIL
+⚠️ Some tests pending - blockchain under active development
