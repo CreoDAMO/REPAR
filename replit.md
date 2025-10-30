@@ -61,9 +61,20 @@ The blockchain build process uses GitHub Actions instead of local builds to avoi
 2. **Genesis Generation**: Automatically generates testnet and mainnet genesis files with proper allocations
 3. **Validation**: Validates genesis files using the built binary before artifact upload
 4. **Artifacts**: Binary, genesis files (testnet/mainnet), checksums, and allocation structure are uploaded
-5. **Initialization**: Download artifacts and use `scripts/init-testnet.sh` or `scripts/init-mainnet.sh`
+5. **Initialization**: Use `scripts/init-both-pregenerated.sh` to initialize both networks
 
-**Recent Fix (Oct 29, 2025):** Updated Go version from 1.24.9 (non-existent) to 1.23.x, resolving blockchain build failures.
+**Recent Updates (Oct 30, 2025):**
+- ✅ Both Testnet and Mainnet initialized successfully
+- ✅ Founder allocation verified: 23.58T REPAR (18% of 131T total supply)
+  - Liquid wallet: 15.72T REPAR (12%)
+  - Endowment: 7.86T REPAR (6%, locked 8 years)
+- ✅ Sovereignty declaration cryptographically bound to genesis blocks
+- ✅ All allocations verified against specification
+- 🚀 Ready for deployment to DigitalOcean
+
+**Network Directories:**
+- Testnet: `~/.aequitas-testnet` (chain-id: aequitas-testnet-1)
+- Mainnet: `~/.aequitas` (chain-id: aequitas-1)
 
 See `docs/BLOCKCHAIN_BUILD_FIXED_FINAL.md` for complete fix documentation.
 

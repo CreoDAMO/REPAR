@@ -1,0 +1,103 @@
+{
+  "total_supply": "131000000000000",
+  "native_coin": "repar",
+  "founder_address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
+  "allocations": [
+    {
+      "name": "Community & Descendant Fund",
+      "percentage": 43,
+      "amount": "56330000000000",
+      "module_account": "descendant_fund",
+      "description": "Allocated for verified descendants and community programs"
+    },
+    {
+      "name": "Claims & Compensation Fund",
+      "percentage": 25,
+      "amount": "32750000000000",
+      "module_account": "claims_fund",
+      "description": "Reserved for approved reparations claims and compensation"
+    },
+    {
+      "name": "Founder's Direct Allocation",
+      "percentage": 10,
+      "amount": "13100000000000",
+      "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
+      "breakdown": [
+        {
+          "name": "Vested (4 years)",
+          "percentage": 90,
+          "amount": "11790000000000",
+          "vesting_duration": "126144000"
+        },
+        {
+          "name": "Discretionary",
+          "percentage": 10,
+          "amount": "1310000000000"
+        }
+      ],
+      "description": "Founder's 10% allocation with 90% vested over 4 years, 10% discretionary"
+    },
+    {
+      "name": "Development Fund (Founder Endowment)",
+      "percentage": 8,
+      "amount": "10480000000000",
+      "breakdown": [
+        {
+          "name": "Founder Endowment (8yr renewable)",
+          "percentage": 75,
+          "amount": "7860000000000",
+          "module_account": "founderendowment",
+          "lock_duration": "252288000",
+          "profit_split": {
+            "protocol": 90,
+            "founder": 10
+          },
+          "description": "Locked for 8 years, 90% profits to protocol, 10% to founder, renewable"
+        },
+        {
+          "name": "Development Discretionary",
+          "percentage": 25,
+          "amount": "2620000000000",
+          "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
+          "description": "Development discretionary funds"
+        }
+      ],
+      "description": "8% development fund with endowment and discretionary components"
+    },
+    {
+      "name": "Ecosystem & Enforcement Treasury",
+      "percentage": 10,
+      "amount": "13100000000000",
+      "module_account": "enforcement_treasury",
+      "description": "Treasury for ecosystem growth and enforcement operations"
+    },
+    {
+      "name": "Foundation Treasury & Reserves",
+      "percentage": 4,
+      "amount": "5240000000000",
+      "module_account": "foundation_treasury",
+      "description": "Protocol reserves and foundation operational funds"
+    }
+  ],
+  "founder_total": {
+    "percentage": 18,
+    "direct_wallet": "15720000000000",
+    "endowment": "7860000000000",
+    "total": "23580000000000",
+    "breakdown": {
+      "direct_allocation_10pct": "13100000000000",
+      "dev_discretionary_from_8pct": "2620000000000",
+      "endowment_from_8pct": "7860000000000"
+    },
+    "description": "Total founder allocation: 12% to wallet (10% + 2.62% dev discretionary), 6% to endowment (7.86T locked 8 years)"
+  },
+  "validation": {
+    "total_allocated": "131000000000000",
+    "equals_total_supply": true,
+    "founder_wallet_total": "15720000000000",
+    "founder_wallet_percentage": 12,
+    "founder_endowment": "7860000000000",
+    "founder_endowment_percentage": 6,
+    "founder_total_percentage": 18
+  }
+}
