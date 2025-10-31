@@ -1,0 +1,96 @@
+{
+  "spec": {
+    "name": "aequitas-protocol-production",
+    "region": "nyc",
+    "services": [
+      {
+        "name": "frontend",
+        "github": {
+          "branch": "main",
+          "deploy_on_push": true,
+          "repo": "CreoDAMO/REPAR"
+        },
+        "source_dir": "frontend",
+        "build_command": "npm install && npm run build",
+        "run_command": "npx vite preview --host 0.0.0.0 --port 8080",
+        "http_port": 8080,
+        "instance_count": 1,
+        "instance_size_slug": "basic-xxs",
+        "routes": [
+          {
+            "path": "/"
+          }
+        ],
+        "envs": [
+          {
+            "key": "VITE_COINBASE_APP_ID",
+            "scope": "RUN_AND_BUILD_TIME",
+            "value": "aequitas-protocol"
+          },
+          {
+            "key": "NODE_ENV",
+            "scope": "RUN_AND_BUILD_TIME",
+            "value": "production"
+          }
+        ]
+      },
+      {
+        "name": "block-explorer",
+        "github": {
+          "branch": "main",
+          "deploy_on_push": true,
+          "repo": "CreoDAMO/REPAR"
+        },
+        "source_dir": "dexplorer",
+        "build_command": "npm install && npm run build",
+        "run_command": "npx vite preview --host 0.0.0.0 --port 8081",
+        "http_port": 8081,
+        "instance_count": 1,
+        "instance_size_slug": "basic-xxs",
+        "routes": [
+          {
+            "path": "/explorer"
+          }
+        ],
+        "envs": [
+          {
+            "key": "NODE_ENV",
+            "scope": "RUN_AND_BUILD_TIME",
+            "value": "production"
+          }
+        ]
+      },
+      {
+        "name": "backend-api",
+        "github": {
+          "branch": "main",
+          "deploy_on_push": true,
+          "repo": "CreoDAMO/REPAR"
+        },
+        "source_dir": "backend",
+        "build_command": "npm install",
+        "run_command": "npm start",
+        "http_port": 3002,
+        "instance_count": 1,
+        "instance_size_slug": "basic-xxs",
+        "routes": [
+          {
+            "path": "/api"
+          }
+        ],
+        "envs": [
+          {
+            "key": "NODE_ENV",
+            "scope": "RUN_AND_BUILD_TIME",
+            "value": "production"
+          },
+          {
+            "key": "PORT",
+            "scope": "RUN_AND_BUILD_TIME",
+            "value": "3002"
+          }
+        ]
+      }
+    ]
+  }
+}
