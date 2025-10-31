@@ -226,6 +226,76 @@ export const estimateDEXSwap = async (poolId, tokenInDenom, tokenInAmount, token
   }
 };
 
+// NFT Query Functions
+export const queryAllNFTs = async () => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return [];
+
+  try {
+    const queryData = {
+      path: "/aequitas.nft.v1.Query/AllNFTs",
+      data: new Uint8Array(),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+
+    if (response.code === 0 && response.value) {
+      const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
+      return parsedResponse.nfts || [];
+    }
+    return [];
+  } catch (error) {
+    console.warn("⚠️ NFT query failed, using mock data:", error.message);
+    return [];
+  }
+};
+
+export const queryNFTsByOwner = async (ownerAddress) => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return [];
+
+  try {
+    const queryData = {
+      path: "/aequitas.nft.v1.Query/NFTsByOwner",
+      data: new TextEncoder().encode(JSON.stringify({ owner: ownerAddress })),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+
+    if (response.code === 0 && response.value) {
+      const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
+      return parsedResponse.nfts || [];
+    }
+    return [];
+  } catch (error) {
+    console.warn("⚠️ NFT ownership query failed:", error.message);
+    return [];
+  }
+};
+
+export const queryNFTListings = async () => {
+  const client = await getStargateClient();
+  if (!client || !tmClient) return [];
+
+  try {
+    const queryData = {
+      path: "/aequitas.nft.v1.Query/Listings",
+      data: new Uint8Array(),
+      prove: false,
+    };
+    const response = await tmClient.abciQuery(queryData);
+
+    if (response.code === 0 && response.value) {
+      const parsedResponse = JSON.parse(new TextDecoder().decode(response.value));
+      return parsedResponse.listings || [];
+    }
+    return [];
+  } catch (error) {
+    console.warn("⚠️ NFT listings query failed:", error.message);
+    return [];
+  }
+};
+
 export const cosmosClient = {
   queryTotalLiability,
   queryActiveDefendants,
@@ -235,6 +305,9 @@ export const cosmosClient = {
   queryDEXPools,
   queryDEXPool,
   estimateDEXSwap,
+  queryAllNFTs,
+  queryNFTsByOwner,
+  queryNFTListings,
   getStargateClient,
   getTotalOwed: queryTotalLiability, // Alias for compatibility
   signer: null,

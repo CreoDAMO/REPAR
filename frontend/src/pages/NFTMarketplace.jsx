@@ -110,6 +110,7 @@ export default function NFTMarketplace() {
 
   const [nfts, setNfts] = useState(mockNFTs);
   const [userNFTs, setUserNFTs] = useState([mockNFTs[2]]); // Mock: User owns NFT #3
+  const [loadingNFTs, setLoadingNFTs] = useState(false);
 
   // Mock listings
   const [listings, setListings] = useState([
@@ -117,6 +118,64 @@ export default function NFTMarketplace() {
     { id: 'listing-2', nft_id: 'nft-2', price: '250000', seller: 'aequitas1abc...', status: 'active' },
     { id: 'listing-4', nft_id: 'nft-4', price: '750000', seller: 'aequitas1mno...', status: 'active' },
   ]);
+
+  // Fetch NFTs from blockchain
+  useEffect(() => {
+    const fetchNFTs = async () => {
+      setLoadingNFTs(true);
+      try {
+        const { cosmosClient } = await import('../utils/cosmosClient');
+        const client = await cosmosClient.getStargateClient();
+        
+        if (client) {
+          // Query NFTs from blockchain x/nft module
+          const allNFTs = await cosmosClient.queryAllNFTs?.() || [];
+          
+          if (allNFTs.length > 0) {
+            // Convert blockchain NFT data to UI format
+            const formattedNFTs = allNFTs.map(nft => ({
+              id: nft.id,
+              name: nft.name || 'Untitled NFT',
+              category: nft.nft_type || 'evidence',
+              price: nft.price || '0',
+              image: nft.image_uri,
+              gradient: nft.gradient || 'from-purple-500 via-pink-500 to-red-500',
+              creator: nft.creator,
+              owner: nft.owner,
+              certified: nft.certified || false,
+              defendant_id: nft.defendant_id,
+              created_at: nft.created_at,
+              attributes: nft.attributes || []
+            }));
+            
+            setNfts([...formattedNFTs, ...mockNFTs]); // Combine live + mock data
+            console.log('Loaded NFTs from blockchain:', formattedNFTs.length);
+          }
+          
+          // Query user's NFTs if wallet connected
+          if (cosmosClient.account) {
+            const userOwnedNFTs = await cosmosClient.queryNFTsByOwner?.(cosmosClient.account.address) || [];
+            if (userOwnedNFTs.length > 0) {
+              setUserNFTs(userOwnedNFTs);
+              console.log('User owns', userOwnedNFTs.length, 'NFTs');
+            }
+          }
+          
+          // Query active listings
+          const activeListings = await cosmosClient.queryNFTListings?.() || [];
+          if (activeListings.length > 0) {
+            setListings(activeListings);
+          }
+        }
+      } catch (error) {
+        console.warn('Using mock NFT data (blockchain unavailable):', error.message);
+      } finally {
+        setLoadingNFTs(false);
+      }
+    };
+
+    fetchNFTs();
+  }, []);
 
   // Mock auctions
   const [auctions, setAuctions] = useState([
