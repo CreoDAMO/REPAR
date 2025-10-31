@@ -1,0 +1,144 @@
+#!/bin/bash
+
+###############################################################################
+# Aequitas Protocol - Complete Deployment Script
+# Deploys Frontend, Backend, and Block Explorer to DigitalOcean Droplet
+###############################################################################
+
+set -e
+
+echo "════════════════════════════════════════════════════════"
+echo "   Aequitas Protocol - Droplet Deployment"
+echo "   Domain: aequitasprotocol.zone"
+echo "════════════════════════════════════════════════════════"
+
+# Update system
+echo "📦 Updating system packages..."
+sudo apt-get update -qq
+
+# Install Node.js 20 if not present
+if ! command -v node &> /dev/null; then
+    echo "📦 Installing Node.js 20..."
+    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+fi
+
+# Install PM2 globally
+if ! command -v pm2 &> /dev/null; then
+    echo "📦 Installing PM2..."
+    sudo npm install -g pm2
+fi
+
+# Install Nginx
+if ! command -v nginx &> /dev/null; then
+    echo "📦 Installing Nginx..."
+    sudo apt-get install -y nginx
+fi
+
+# Create deployment directory
+echo "📁 Creating deployment directory..."
+sudo mkdir -p /var/www/aequitas
+cd /var/www/aequitas
+
+# Clone from GitHub
+echo "📥 Cloning from GitHub..."
+if [ -d ".git" ]; then
+    git pull origin main
+else
+    git clone https://github.com/thenewjapzzz/aequitas-protocol.git .
+fi
+
+# Deploy Frontend
+echo "🎨 Deploying Frontend..."
+cd /var/www/aequitas/frontend
+npm install --production
+npm run build
+pm2 delete frontend 2>/dev/null || true
+pm2 start npm --name "frontend" -- run preview -- --host 0.0.0.0 --port 5000
+
+# Deploy Backend
+echo "⚙️ Deploying Backend..."
+cd /var/www/aequitas/backend
+npm install --production
+pm2 delete backend 2>/dev/null || true
+PORT=3002 pm2 start npm --name "backend" -- start
+
+# Deploy Block Explorer
+echo "🔍 Deploying Block Explorer..."
+cd /var/www/aequitas/dexplorer
+npm install --production
+npm run build
+pm2 delete explorer 2>/dev/null || true
+pm2 start npm --name "explorer" -- run preview -- --host 0.0.0.0 --port 3001
+
+# Configure Nginx
+echo "🌐 Configuring Nginx..."
+sudo tee /etc/nginx/sites-available/aequitas > /dev/null <<'EOF'
+server {
+    listen 80;
+    server_name aequitasprotocol.zone www.aequitasprotocol.zone;
+
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+server {
+    listen 80;
+    server_name api.aequitasprotocol.zone backend.aequitasprotocol.zone;
+
+    location / {
+        proxy_pass http://localhost:3002;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+server {
+    listen 80;
+    server_name explorer.aequitasprotocol.zone;
+
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+EOF
+
+sudo ln -sf /etc/nginx/sites-available/aequitas /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+sudo nginx -t && sudo systemctl restart nginx
+
+# Save PM2 configuration
+pm2 save
+pm2 startup | tail -n 1 | sudo bash
+
+echo ""
+echo "════════════════════════════════════════════════════════"
+echo "   ✅ DEPLOYMENT COMPLETE!"
+echo "════════════════════════════════════════════════════════"
+echo ""
+echo "🌐 Your apps are now live:"
+echo "   Frontend:   http://159.203.92.230:5000"
+echo "   Backend:    http://159.203.92.230:3002"
+echo "   Explorer:   http://159.203.92.230:3001"
+echo ""
+echo "📊 PM2 Status:"
+pm2 status
+echo ""
+echo "🔗 Once DNS propagates (5-10 min):"
+echo "   https://aequitasprotocol.zone"
+echo "   https://api.aequitasprotocol.zone"
+echo "   https://explorer.aequitasprotocol.zone"
