@@ -3,6 +3,7 @@ import { useTheme } from '@/theme/ThemeProvider'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '@/store'
 import { useNavigate } from 'react-router-dom'
+import NetworkSwitcher from '@/components/NetworkSwitcher'
 import {
   setConnectState,
   setTmClient,
@@ -349,6 +350,9 @@ const TopNavigation: React.FC<TopNavigationProps> = ({ onMenuClick }) => {
 
           {/* Right Section - Connection Status & Theme Toggle */}
           <div className="flex items-center gap-3">
+            {/* Network Switcher */}
+            {isConnected && <NetworkSwitcher />}
+            
             {/* Connection Status */}
             <div className="flex items-center gap-2">
               <div

@@ -3,6 +3,9 @@ import { Brain, TrendingUp, Target, Zap, Database, LineChart, Upload, Play, Down
 import OracleQuery from '../components/ai/OracleQuery';
 import WarRoomVisualization from '../components/ai/WarRoomVisualization';
 import CerberusAuditor from '../components/ai/CerberusAuditor';
+import { cosmosClient } from '../utils/cosmosClient';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
 
 export default function AIAnalytics() {
   const [activeModel, setActiveModel] = useState('predictive');
@@ -12,6 +15,8 @@ export default function AIAnalytics() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [predictionResult, setPredictionResult] = useState(null);
   const [holographicView, setHolographicView] = useState(false);
+  const [threatStats, setThreatStats] = useState({ totalThreats: 0, nftsMinted: 0, nightmareActivations: 0 });
+  const [nvidiaStatus, setNvidiaStatus] = useState({ available: false, models: [] });
 
   const aiModels = [
     {
@@ -84,7 +89,48 @@ export default function AIAnalytics() {
     { metric: "Model Accuracy", value: "92.1%", change: "+2.3%" }
   ];
 
-  const handleRunSimulation = () => {
+  // Fetch live threat oracle data from blockchain
+  useEffect(() => {
+    const fetchThreatData = async () => {
+      try {
+        const stats = await cosmosClient.queryThreatStats();
+        if (stats && stats.totalThreats > 0) {
+          setThreatStats(stats);
+          console.log('Threat oracle stats loaded:', stats);
+        }
+      } catch (error) {
+        console.warn('Using mock threat data (blockchain unavailable):', error.message);
+      }
+    };
+
+    fetchThreatData();
+    const interval = setInterval(fetchThreatData, 30000); // Refresh every 30s
+    return () => clearInterval(interval);
+  }, []);
+
+  // Check NVIDIA NIM backend status
+  useEffect(() => {
+    const checkNvidiaStatus = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/nvidia/status`);
+        if (response.ok) {
+          const data = await response.json();
+          setNvidiaStatus({
+            available: true,
+            models: data.models || ['stable-diffusion-xl', 'llama-3.1-8b', 'clip']
+          });
+          console.log('NVIDIA NIM backend available:', data);
+        }
+      } catch (error) {
+        console.warn('NVIDIA NIM backend unavailable, using mock AI:', error.message);
+        setNvidiaStatus({ available: false, models: [] });
+      }
+    };
+
+    checkNvidiaStatus();
+  }, []);
+
+  const handleRunSimulation = async () => {
     if (!selectedDefendant) {
       alert('Please select a defendant first');
       return;
@@ -94,7 +140,32 @@ export default function AIAnalytics() {
     setSimulationProgress(0);
     setPredictionResult(null);
 
-    // Simulate AI processing
+    // Try to use real NVIDIA NIM backend for prediction
+    if (nvidiaStatus.available) {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/nvidia/predict`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            defendant: selectedDefendant,
+            model: activeModel
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSimulationProgress(100);
+          setIsRunningSimulation(false);
+          setPredictionResult(data);
+          console.log('AI prediction from NVIDIA NIM:', data);
+          return;
+        }
+      } catch (error) {
+        console.warn('NVIDIA prediction failed, using mock data:', error.message);
+      }
+    }
+
+    // Fallback: Simulate AI processing with mock data
     const interval = setInterval(() => {
       setSimulationProgress(prev => {
         if (prev >= 100) {

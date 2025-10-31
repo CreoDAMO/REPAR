@@ -3,21 +3,45 @@ import React, { useState, useEffect } from 'react';
 import AgentFactory from '../components/ai/AgentFactory';
 import { FiActivity, FiCheckCircle, FiClock } from 'react-icons/fi';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+
 const AgentKit = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [backendAvailable, setBackendAvailable] = useState(false);
 
   useEffect(() => {
+    checkBackend();
     fetchAgents();
   }, []);
 
+  const checkBackend = async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/agentkit/status`);
+      if (response.ok) {
+        setBackendAvailable(true);
+        console.log('AgentKit backend available');
+      }
+    } catch (error) {
+      console.warn('AgentKit backend unavailable, using mock mode:', error.message);
+      setBackendAvailable(false);
+    }
+  };
+
   const fetchAgents = async () => {
     try {
-      const response = await fetch('/api/agentkit');
-      const data = await response.json();
-      setAgents(data);
+      const response = await fetch(`${BACKEND_URL}/api/agentkit/agents`);
+      if (response.ok) {
+        const data = await response.json();
+        setAgents(data.agents || []);
+        console.log('Loaded agents from backend:', data.agents?.length || 0);
+      } else {
+        // Fallback to mock data
+        setAgents([]);
+      }
     } catch (error) {
-      console.error('Failed to fetch agents:', error);
+      console.warn('Using mock agent data (backend unavailable):', error.message);
+      setAgents([]);
     } finally {
       setLoading(false);
     }

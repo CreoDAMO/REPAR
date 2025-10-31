@@ -59,6 +59,38 @@ const FounderWallet = () => {
   });
 
 
+  // Fetch live founder wallet balance from blockchain
+  useEffect(() => {
+    const fetchFounderBalance = async () => {
+      try {
+        const founderAddress = FOUNDER_WALLETS.layer1.address;
+        const balances = await cosmosClient.getBalance(founderAddress);
+        
+        if (balances && balances.length > 0) {
+          const reparBalance = balances.find(b => b.denom === 'urepar');
+          if (reparBalance) {
+            const reparAmount = parseInt(reparBalance.amount) / 1e6; // Convert microREPAR to REPAR
+            setWalletBalance(reparAmount.toLocaleString());
+            
+            // Update endowment with live data
+            setEndowment(prev => ({
+              ...prev,
+              totalControl: reparAmount
+            }));
+            
+            console.log('Founder balance loaded:', reparAmount, 'REPAR');
+          }
+        }
+      } catch (error) {
+        console.warn('Using static founder allocation (blockchain unavailable):', error.message);
+      }
+    };
+
+    fetchFounderBalance();
+    const interval = setInterval(fetchFounderBalance, 15000); // Refresh every 15s
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     if (connectedWallet?.address) {
       fetchWalletBalance(connectedWallet.address);
@@ -67,10 +99,21 @@ const FounderWallet = () => {
 
   const fetchWalletBalance = async (address) => {
     try {
-      // Mock balance for now - integrate with actual blockchain
-      setWalletBalance('125,000');
+      const balances = await cosmosClient.getBalance(address);
+      if (balances && balances.length > 0) {
+        const reparBalance = balances.find(b => b.denom === 'urepar');
+        if (reparBalance) {
+          const amount = (parseInt(reparBalance.amount) / 1e6).toLocaleString();
+          setWalletBalance(amount);
+        } else {
+          setWalletBalance('0');
+        }
+      } else {
+        setWalletBalance('0');
+      }
     } catch (error) {
       console.error('Failed to fetch balance:', error);
+      setWalletBalance('0');
     }
   };
 
