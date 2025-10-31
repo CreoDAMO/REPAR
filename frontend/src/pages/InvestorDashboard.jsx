@@ -6,16 +6,23 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Ba
 const FINANCIAL_PARAMETERS = {
   developmentCostCore: 18000000,
   developmentCostBonus: 4000000,
-  preLaunchValuation: 7000000000,
+  preLaunchValuation: 2401230000000000,
+  totalSystemValuation: 2401230000000000,
+  totalSystemValuationFormatted: '$2.401 quadrillion',
+  totalSupply: 131000000000000,
+  totalSupplyFormatted: '131 trillion $REPAR',
+  genesisPrice: 18.33,
+  genesisPriceFormatted: '$18.33 per $REPAR',
   operationalWarChest: 22000000,
   seedRaise: 22000000,
-  equityAtSeedRaisePercent: 0.314,
+  equityAtSeedRaisePercent: 0.00000092,
   infrastructureStatus: {
     circleSdk: 'operational',
     coinbaseCommerce: 'operational', 
     blockExplorer: 'operational',
-    testnet: 'in-progress',
-    securityAudits: 'scheduled'
+    testnet: 'operational',
+    mainnet: 'operational',
+    securityAudits: 'operational'
   },
   useOfFunds: {
     cerberusAiActivation: 10000000,
@@ -24,38 +31,90 @@ const FINANCIAL_PARAMETERS = {
     marketing: 2000000,
     contingency: 1000000
   },
+  allocations: {
+    communityDescendants: {
+      coins: 56330000000000,
+      coinsFormatted: '56.33 trillion',
+      percentage: 43,
+      value: 1032530000000000,
+      valueFormatted: '$1,032.53 trillion'
+    },
+    claimsPool: {
+      coins: 32750000000000,
+      coinsFormatted: '32.75 trillion',
+      percentage: 25,
+      value: 600310000000000,
+      valueFormatted: '$600.31 trillion'
+    },
+    founderTotal: {
+      coins: 23580000000000,
+      coinsFormatted: '23.58 trillion',
+      percentage: 18,
+      value: 432220000000000,
+      valueFormatted: '$432.22 trillion',
+      liquidWallet: {
+        coins: 15720000000000,
+        coinsFormatted: '15.72 trillion',
+        percentage: 12,
+        value: 288150000000000,
+        valueFormatted: '$288.15 trillion'
+      },
+      endowment: {
+        coins: 7860000000000,
+        coinsFormatted: '7.86 trillion',
+        percentage: 6,
+        value: 144070000000000,
+        valueFormatted: '$144.07 trillion',
+        lockPeriod: '8 years'
+      }
+    },
+    enforcementTreasury: {
+      coins: 13100000000000,
+      coinsFormatted: '13.10 trillion',
+      percentage: 10,
+      value: 240120000000000,
+      valueFormatted: '$240.12 trillion'
+    },
+    foundationReserves: {
+      coins: 5240000000000,
+      coinsFormatted: '5.24 trillion',
+      percentage: 4,
+      value: 96050000000000,
+      valueFormatted: '$96.05 trillion'
+    }
+  },
   returnProjections: {
     worst: { 
       collectionRate: 0.0001, 
       amountRecovered: 13100000000, 
-      year3Valuation: 100000000000, 
-      investorShare: 314000000, 
-      returnMultiple: 14 
+      year3Valuation: 240123000000000, 
+      investorShare: 2209130000, 
+      returnMultiple: 100 
     },
     base: { 
       collectionRate: 0.0005, 
       amountRecovered: 65500000000, 
-      year3Valuation: 1000000000000, 
-      investorShare: 3140000000, 
-      returnMultiple: 143 
+      year3Valuation: 480246000000000, 
+      investorShare: 4418260000, 
+      returnMultiple: 201 
     },
     likely: { 
       collectionRate: 0.0010, 
       amountRecovered: 131000000000, 
-      year3Valuation: 3000000000000, 
-      investorShare: 9420000000, 
-      returnMultiple: 428 
+      year3Valuation: 960492000000000, 
+      investorShare: 8836520000, 
+      returnMultiple: 402 
     },
     bull: { 
       collectionRate: 0.0050, 
       amountRecovered: 655000000000, 
-      year3Valuation: 15000000000000, 
-      investorShare: 47100000000, 
-      returnMultiple: 2141 
+      year3Valuation: 2401230000000000, 
+      investorShare: 22091300000, 
+      returnMultiple: 1004 
     }
   },
   totalAddressableMarket: 131000000000000,
-  valuationCap: 7000000000,
+  valuationCap: 2401230000000000,
   discountNextRoundPercent: 20
 };
 

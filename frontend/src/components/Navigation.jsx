@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server, ExternalLink, Image, Network, Calculator, Settings } from 'lucide-react';
+import { Scale, Database, FileText, TrendingUp, Wallet, Shield, Vote, Brain, CheckCircle, Menu, X, DollarSign, BarChart3, ArrowLeftRight, CreditCard, Coins, Lock, Server, ExternalLink, Image, Network, Calculator, Settings, Globe } from 'lucide-react';
 import WalletConnect from './WalletConnect';
 import reparLogo from '../assets/REPAR_Coin_Logo.png';
 
@@ -10,6 +10,7 @@ export default function Navigation() {
   const navLinks = [
     { to: '/', icon: TrendingUp, label: 'Dashboard' },
     { to: '/investor', icon: Calculator, label: 'Investor Dashboard' },
+    { to: '/sovereign-documents', icon: Globe, label: 'Sovereign Documents' },
     { to: '/black-paper', icon: FileText, label: 'Black Paper' },
     { to: '/audit', icon: FileText, label: 'Forensic Audit' },
     { to: '/defendants', icon: Database, label: 'Defendants' },

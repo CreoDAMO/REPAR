@@ -29,10 +29,18 @@ export async function uploadToIPFS(content) {
 /**
  * Get IPFS gateway URL for a hash
  * @param {string} hash - The IPFS hash (CID)
+ * @param {string} gateway - Preferred gateway ('pinata' | 'ipfs' | 'cloudflare')
  * @returns {string} The gateway URL
  */
-export function getIPFSUrl(hash) {
-  return `https://ipfs.io/ipfs/${hash}`;
+export function getIPFSUrl(hash, gateway = 'pinata') {
+  const gateways = {
+    pinata: `https://gateway.pinata.cloud/ipfs/${hash}`,
+    ipfs: `https://ipfs.io/ipfs/${hash}`,
+    cloudflare: `https://cloudflare-ipfs.com/ipfs/${hash}`,
+    infura: `https://infura-ipfs.io/ipfs/${hash}`
+  };
+  
+  return gateways[gateway] || gateways.pinata;
 }
 
 /**
