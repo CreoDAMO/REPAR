@@ -41,6 +41,39 @@ export default function EndowmentDashboard() {
   const [showAIPanel, setShowAIPanel] = useState(false);
 
   useEffect(() => {
+    // Fetch live blockchain data for endowments
+    const fetchEndowmentData = async () => {
+      try {
+        const { cosmosClient } = await import('../utils/cosmosClient');
+        const client = await cosmosClient.getStargateClient();
+        
+        if (client) {
+          // Query DEX fee distribution and endowment balances from blockchain
+          const dexPools = await cosmosClient.queryDEXPools?.() || [];
+          
+          let totalFeesCollected = 0;
+          dexPools.forEach(pool => {
+            if (pool.fees_collected) {
+              totalFeesCollected += parseInt(pool.fees_collected);
+            }
+          });
+
+          // Update with live data if available
+          if (totalFeesCollected > 0) {
+            setFeeDistribution({
+              total: totalFeesCollected,
+              community: totalFeesCollected * 0.55,
+              lp: totalFeesCollected * 0.30,
+              social: totalFeesCollected * 0.15
+            });
+          }
+        }
+      } catch (error) {
+        console.warn('Using static endowment data (blockchain unavailable):', error.message);
+      }
+    };
+
+    // Set default values
     const lpPrincipal = 153000000;
     const socialPrincipal = 256500000;
     const totalFees = 60000000;
@@ -63,6 +96,9 @@ export default function EndowmentDashboard() {
       lp: totalFees * 0.30,
       social: totalFees * 0.15
     });
+
+    // Fetch live data
+    fetchEndowmentData();
   }, []);
 
   const formatCurrency = (amount) => {

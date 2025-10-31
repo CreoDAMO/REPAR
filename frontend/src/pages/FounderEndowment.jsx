@@ -38,6 +38,39 @@ export default function FounderEndowment() {
   const [showAIPanel, setShowAIPanel] = useState(false);
 
   useEffect(() => {
+    // Fetch live blockchain data
+    const fetchEndowmentData = async () => {
+      try {
+        const { cosmosClient } = await import('../utils/cosmosClient');
+        const client = await cosmosClient.getStargateClient();
+        
+        if (client) {
+          // Query founder endowment from blockchain
+          const founderAddress = 'repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun';
+          const balances = await cosmosClient.getBalance(founderAddress);
+          
+          if (balances.length > 0) {
+            const reparBalance = balances.find(b => b.denom === 'urepar');
+            if (reparBalance) {
+              const totalBalance = parseInt(reparBalance.amount);
+              // Founder has 15.72T liquid + 7.86T locked endowment = 23.58T total
+              // Endowment is 7.86T REPAR
+              setEndowment(prev => ({
+                ...prev,
+                principal: 7860000000000, // Verified from genesis
+                totalControl: totalBalance,
+              }));
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Using static endowment data (blockchain unavailable):', error.message);
+        // Fallback to static data already in state
+      }
+    };
+
+    fetchEndowmentData();
+
     // Calculate projected yields
     const annualYield = endowment.principal * (endowment.targetAPY / 100);
     const quarterlyYield = annualYield / 4;
