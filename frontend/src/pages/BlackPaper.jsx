@@ -2,13 +2,13 @@
 import { useState } from 'react';
 import { FileText, Download, ExternalLink, ChevronRight, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { sovereignDocuments } from '../data/sovereignDocuments';
+import { SOVEREIGN_DOCUMENTS } from '../data/sovereignDocuments';
 
 export default function BlackPaper() {
   const [activeSection, setActiveSection] = useState('abstract');
   
   // Link to IPFS sovereign documents
-  const financialBreakdown = sovereignDocuments.find(doc => doc.id === 'financial-breakdown');
+  const financialBreakdown = SOVEREIGN_DOCUMENTS.financialBreakdown;
 
   const sections = [
     { id: 'abstract', title: 'Abstract', icon: FileText },

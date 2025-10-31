@@ -1,7 +1,7 @@
 import { FileText, Download, Search, AlertCircle, ExternalLink } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { regionalContributions, historicalData } from '../data/statistics';
-import { sovereignDocuments } from '../data/sovereignDocuments';
+import { SOVEREIGN_DOCUMENTS } from '../data/sovereignDocuments';
 import { useNavigate } from 'react-router-dom';
 
 export default function ForensicAudit() {
