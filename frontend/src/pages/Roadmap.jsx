@@ -1,8 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CheckCircle, Circle, Clock, Brain, TrendingUp, Shield, Zap, Globe, Rocket } from 'lucide-react';
+
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
 
 export default function Roadmap() {
   const [selectedPhase, setSelectedPhase] = useState('phase1');
+  const [githubStats, setGithubStats] = useState(null);
+
+  // Fetch GitHub project stats for live milestone tracking
+  useEffect(() => {
+    const fetchGithubStats = async () => {
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/github/stats`);
+        if (response.ok) {
+          const data = await response.json();
+          setGithubStats(data);
+          console.log('GitHub stats loaded:', data);
+        }
+      } catch (error) {
+        console.warn('Using mock roadmap data (GitHub API unavailable):', error.message);
+      }
+    };
+
+    fetchGithubStats();
+  }, []);
 
   const phases = [
     {

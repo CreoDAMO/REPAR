@@ -1,8 +1,16 @@
-import { FileText, Download, Search, AlertCircle } from 'lucide-react';
+import { FileText, Download, Search, AlertCircle, ExternalLink } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { regionalContributions, historicalData } from '../data/statistics';
+import { sovereignDocuments } from '../data/sovereignDocuments';
+import { useNavigate } from 'react-router-dom';
 
 export default function ForensicAudit() {
+  const navigate = useNavigate();
+  
+  // Link to IPFS sovereign documents for full audit access
+  const viewFullAudit = () => {
+    navigate('/sovereign-documents');
+  };
   const keyFindings = [
     {
       title: "UK Slavery-Derived Wealth",
@@ -41,9 +49,20 @@ export default function ForensicAudit() {
     <div className="min-h-screen bg-gray-50">
       <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-900 text-white py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Forensic Audit Explorer</h1>
-          <p className="text-xl text-purple-200">205-Page Comprehensive Analysis of Transatlantic Slavery</p>
-          <p className="text-sm text-amber-300 mt-2">Mathematical Precision • Legal Classification • Universal Accountability</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-4">Forensic Audit Explorer</h1>
+              <p className="text-xl text-purple-200">205-Page Comprehensive Analysis of Transatlantic Slavery</p>
+              <p className="text-sm text-amber-300 mt-2">Mathematical Precision • Legal Classification • Universal Accountability</p>
+            </div>
+            <button
+              onClick={viewFullAudit}
+              className="bg-white text-purple-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition flex items-center gap-2"
+            >
+              <ExternalLink className="w-5 h-5" />
+              View Full Audit on IPFS
+            </button>
+          </div>
         </div>
       </div>
 

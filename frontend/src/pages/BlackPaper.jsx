@@ -2,9 +2,13 @@
 import { useState } from 'react';
 import { FileText, Download, ExternalLink, ChevronRight, Home } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { sovereignDocuments } from '../data/sovereignDocuments';
 
 export default function BlackPaper() {
   const [activeSection, setActiveSection] = useState('abstract');
+  
+  // Link to IPFS sovereign documents
+  const financialBreakdown = sovereignDocuments.find(doc => doc.id === 'financial-breakdown');
 
   const sections = [
     { id: 'abstract', title: 'Abstract', icon: FileText },
@@ -39,19 +43,29 @@ export default function BlackPaper() {
             "A Sovereign Protocol for the Enforcement of Reparative Justice"
           </p>
           <div className="flex flex-wrap gap-4">
-            <a
-              href="/docs/BLACK_PAPER_v1.1.md"
-              download
+            <Link
+              to="/sovereign-documents"
               className="flex items-center gap-2 bg-white text-indigo-900 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition"
             >
-              <Download className="w-5 h-5" />
-              Download Full PDF
-            </a>
+              <FileText className="w-5 h-5" />
+              View Sovereign Documents (IPFS)
+            </Link>
+            {financialBreakdown && (
+              <a
+                href={financialBreakdown.ipfsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 bg-indigo-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+              >
+                <Download className="w-5 h-5" />
+                Financial Breakdown ($2.401Q)
+              </a>
+            )}
             <a
               href="https://github.com/aequitas-protocol"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 bg-indigo-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+              className="flex items-center gap-2 bg-purple-800 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
             >
               <ExternalLink className="w-5 h-5" />
               View on GitHub

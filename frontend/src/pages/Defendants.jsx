@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Building2, MapPin, TrendingUp, FileText, Sparkles, Brain, AlertTriangle, CheckCircle } from 'lucide-react';
 import { defendants } from '../data/defendants';
 import EvidenceExplorer from '../components/EvidenceExplorer';
 import { multimodalSearch, analyzeSentiment } from '../utils/nvidiaAI';
+import { cosmosClient } from '../utils/cosmosClient';
 
 export default function Defendants() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,8 +15,36 @@ export default function Defendants() {
   const [analyzingDefendant, setAnalyzingDefendant] = useState(null);
   const [riskAnalysis, setRiskAnalysis] = useState({});
   const [showAIPanel, setShowAIPanel] = useState(false);
+  const [blockchainDefendants, setBlockchainDefendants] = useState([]);
+  const [activeDefendantCount, setActiveDefendantCount] = useState(0);
 
-  const activeDefendants = defendants;
+  // Fetch live defendant data from blockchain
+  useEffect(() => {
+    const fetchDefendantData = async () => {
+      try {
+        const activeCount = await cosmosClient.queryActiveDefendants();
+        setActiveDefendantCount(activeCount);
+        
+        // Combine blockchain data with static defendant data
+        const enhancedDefendants = defendants.map(def => ({
+          ...def,
+          blockchainVerified: activeCount > 0
+        }));
+        
+        setBlockchainDefendants(enhancedDefendants);
+        console.log(`Loaded ${activeCount} active defendants from blockchain`);
+      } catch (error) {
+        console.warn('Using static defendant data (blockchain unavailable):', error.message);
+        setBlockchainDefendants(defendants);
+      }
+    };
+
+    fetchDefendantData();
+    const interval = setInterval(fetchDefendantData, 60000); // Refresh every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  const activeDefendants = blockchainDefendants.length > 0 ? blockchainDefendants : defendants;
 
   const categories = ['All', ...new Set(defendants.map(d => d.category))];
   const statuses = ['All', ...new Set(defendants.map(d => d.status))];

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Shield, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
+import { cosmosClient } from '../utils/cosmosClient';
 
 export default function TransparencyLedger() {
   const [actions, setActions] = useState([]);

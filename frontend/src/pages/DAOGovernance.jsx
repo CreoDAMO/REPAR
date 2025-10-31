@@ -1,13 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Vote, Users, TrendingUp, CheckCircle, Clock, AlertCircle, ArrowLeftRight, DollarSign, Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { cosmosClient } from '../utils/cosmosClient';
 
 export default function DAOGovernance() {
   const navigate = useNavigate();
   const [walletConnected, setWalletConnected] = useState(false);
   const [votingPower, setVotingPower] = useState(0);
+  const [blockchainProposals, setBlockchainProposals] = useState([]);
+  const [loadingProposals, setLoadingProposals] = useState(false);
 
-  const proposals = [
+  // Fetch live proposals from blockchain (ready for when gov module is deployed)
+  useEffect(() => {
+    const fetchProposals = async () => {
+      setLoadingProposals(true);
+      try {
+        // Query governance proposals - will return live data when blockchain gov module is deployed
+        const liveProposals = await cosmosClient.queryGovernanceProposals();
+        
+        if (liveProposals && liveProposals.length > 0) {
+          // Convert blockchain proposal format to UI format
+          const formattedProposals = liveProposals.map(prop => ({
+            id: prop.proposal_id || prop.id,
+            title: prop.content?.title || prop.title || 'Untitled Proposal',
+            description: prop.content?.description || prop.description || '',
+            status: prop.status || 'Active',
+            votesFor: parseInt(prop.final_tally_result?.yes || '0'),
+            votesAgainst: parseInt(prop.final_tally_result?.no || '0'),
+            totalVotes: parseInt(prop.final_tally_result?.yes || '0') + parseInt(prop.final_tally_result?.no || '0'),
+            quorumRequired: 100000000,
+            endsIn: prop.voting_end_time ? calculateTimeRemaining(prop.voting_end_time) : 'TBD',
+            proposer: prop.proposer || 'Unknown'
+          }));
+          
+          setBlockchainProposals(formattedProposals);
+          console.log(`✅ Loaded ${formattedProposals.length} proposals from blockchain`);
+        } else {
+          console.log("Using mock proposals (blockchain gov module not yet deployed)");
+        }
+      } catch (error) {
+        console.warn('Using mock governance data:', error.message);
+      } finally {
+        setLoadingProposals(false);
+      }
+    };
+
+    fetchProposals();
+    const interval = setInterval(fetchProposals, 30000); // Will auto-switch to live data when available
+    return () => clearInterval(interval);
+  }, []);
+
+  // Helper to calculate time remaining for proposals
+  const calculateTimeRemaining = (endTime) => {
+    const now = new Date();
+    const end = new Date(endTime);
+    const diffMs = end - now;
+    
+    if (diffMs < 0) return 'Closed';
+    
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays > 0) return `${diffDays} days`;
+    
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    return `${diffHours} hours`;
+  };
+
+  // Use blockchain proposals if available, otherwise fall back to mock data
+  const mockProposals = [
     {
       id: 1,
       title: "Increase Descendant Allocation from 70% to 75%",
@@ -45,6 +104,8 @@ export default function DAOGovernance() {
       proposer: "Community Initiative #12"
     }
   ];
+
+  const proposals = blockchainProposals.length > 0 ? blockchainProposals : mockProposals;
 
   const stats = [
     { label: "Total $REPAR Holders", value: "385,429", icon: Users, colorClass: "text-blue-600" },
