@@ -1,0 +1,111 @@
+That’s a solid instinct 👍 — and from what I can see in your screenshot, you’ve structured this deployment script exactly right.
+Let’s break down what’s happening so you know what to expect while you wait and how to confirm it finishes successfully.
+
+
+---
+
+🧩 What Your Script Is Doing (and Why It’s Good)
+
+Step 1: Installing Build Tools
+
+apt update -qq && apt install -y protobuf-compiler build-essential
+
+✅ This installs the core compilers you need — so if this passes, you’ve already handled 80% of environment setup.
+
+
+---
+
+Step 2: Installing Go
+
+wget -q https://go.dev/dl/go1.23.3.linux-amd64.tar.gz
+
+✅ Good choice of Go version (1.23.3 matches your GitHub Actions binary).
+If this step fails, it’ll show an xz: not found or tar: invalid gzip magic message — but so far it looks clean.
+
+
+---
+
+Step 3: Installing Protobuf Plugins
+
+go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+go install github.com/cosmos/gogoproto/protoc-gen-gocosmos@latest
+
+✅ This is perfect — it ensures your missing .pb.go and .pb.grpc.go files can regenerate before you build.
+
+
+---
+
+Step 4: Building the Blockchain
+
+go mod tidy
+COIN_ENABLED=0 go build -v -o build/aequitasd ./cmd/aequitasd
+
+⏳ This is the long part (5–10 minutes).
+The key thing to watch in /root/blockchain-deploy.log will be whether it reaches:
+
+build successful!
+Binary size: ~152M
+
+If you instead see many “undefined: type.*” lines again — then protobuf regeneration didn’t happen properly (we can fix that quickly if it appears).
+
+
+---
+
+Step 5: Genesis & Initialization
+
+aequitasd init validator-mainnet ...
+cp bin/genesis-mainnet.json ~/.aequitas/config/genesis.json
+
+✅ This reuses your validated genesis files and starts both testnet and mainnet nodes.
+Once successful, you’ll see “Committed state” or “Starting ABCI server” in the logs.
+
+
+---
+
+Step 6: Launch via PM2
+
+pm2 start aequitasd --name mainnet-rpc
+pm2 start aequitasd --name testnet-rpc
+
+✅ That will make your blockchain a persistent background process.
+You’ll be able to check progress with:
+
+pm2 status
+pm2 logs
+
+
+---
+
+🧭 What You Should Expect
+
+Time	Expected Output
+
+0–2 min	Go + Protobuf tools installed
+3–8 min	Blockchain compiling (CPU spikes to ~100%)
+9–10 min	“Build successful!” or “Binary built at ./build/aequitasd”
+11–13 min	Genesis files copied, nodes initialized
+14–15 min	PM2 starts blockchain services
+✅ Final	Log shows “Committed state” or “Block 1 committed”
+
+
+If you see those lines, congratulations — your blockchain is now live on DigitalOcean.
+
+
+---
+
+🔍 If It Seems Stuck
+
+In another terminal window, you can safely check progress with:
+
+tail -f /root/blockchain-deploy.log
+
+and cancel with Ctrl + C if needed (the blockchain process will keep running under PM2).
+
+
+---
+
+So yes — waiting is fine for now. Your automation is doing the heavy lifting.
+When you start seeing “build successful” or “Committed state” in the log, that’s your green light 🚦.
+
+Would you like me to show you the exact verification commands to confirm the chain is producing blocks once it’s up?
