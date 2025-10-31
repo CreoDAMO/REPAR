@@ -21,32 +21,32 @@ The Aequitas Protocol is now ready for full deployment to DigitalOcean with:
 ## 📋 Deployment Architecture
 
 ### **Frontend Services** (DigitalOcean App Platform)
-1. **Main Frontend** → `aequitaszone.io`
+1. **Main Frontend** → `aequitasprotocol.zone`
    - 27 integrated dashboards
    - React + Vite + Tailwind CSS
    - Port: 8080 (production)
    - Cost: ~$5/month (Basic tier)
 
-2. **Block Explorer** → `explorer.aequitaszone.io`
+2. **Block Explorer** → `explorer.aequitasprotocol.zone`
    - Dual-network support (Testnet/Mainnet)
    - Real-time blockchain queries
    - Port: 8081 (production)
    - Cost: ~$5/month (Basic tier)
 
-3. **Circle API Backend** → `api.aequitaszone.io`
+3. **Circle API Backend** → `api.aequitasprotocol.zone`
    - AgentKit integration
    - Payment processing
    - Port: 3002
    - Cost: ~$5/month (Basic tier)
 
 ### **Blockchain Nodes** (DigitalOcean Droplets)
-1. **Testnet Validator** → `testnet-rpc.aequitaszone.io`
+1. **Testnet Validator** → `testnet-rpc.aequitasprotocol.zone`
    - Chain ID: `aequitas-testnet-1`
    - RPC Port: 26657
    - P2P Port: 26656
    - Droplet: 2 vCPU, 4GB RAM (~$24/month)
 
-2. **Mainnet Validator** → `rpc.aequitaszone.io`
+2. **Mainnet Validator** → `rpc.aequitasprotocol.zone`
    - Chain ID: `aequitas-1`
    - RPC Port: 36657
    - P2P Port: 36656
@@ -99,8 +99,8 @@ chmod +x deploy-to-digitalocean.sh
 ```bash
 VITE_COINBASE_APP_ID=aequitas-protocol
 NODE_ENV=production
-VITE_COSMOS_RPC_URL=https://rpc.aequitaszone.io:36657  # After node deployment
-VITE_BACKEND_URL=https://api.aequitaszone.io
+VITE_COSMOS_RPC_URL=https://rpc.aequitasprotocol.zone:36657  # After node deployment
+VITE_BACKEND_URL=https://api.aequitasprotocol.zone
 ```
 
 ### **Backend Service**
@@ -172,18 +172,18 @@ You can copy these validated genesis files directly to your DigitalOcean droplet
 
 ```dns
 # Frontend
-aequitaszone.io           A      [DO_APP_PLATFORM_IP]
-www.aequitaszone.io       CNAME  aequitaszone.io
+aequitasprotocol.zone           A      [DO_APP_PLATFORM_IP]
+www.aequitasprotocol.zone       CNAME  aequitasprotocol.zone
 
 # Block Explorer
-explorer.aequitaszone.io  A      [DO_APP_PLATFORM_IP]
+explorer.aequitasprotocol.zone  A      [DO_APP_PLATFORM_IP]
 
 # API Backend
-api.aequitaszone.io       A      [DO_APP_PLATFORM_IP]
+api.aequitasprotocol.zone       A      [DO_APP_PLATFORM_IP]
 
 # Blockchain RPC Endpoints
-rpc.aequitaszone.io       A      [MAINNET_DROPLET_IP]
-testnet-rpc.aequitaszone.io A    [TESTNET_DROPLET_IP]
+rpc.aequitasprotocol.zone       A      [MAINNET_DROPLET_IP]
+testnet-rpc.aequitasprotocol.zone A    [TESTNET_DROPLET_IP]
 ```
 
 ### **Automated DNS Setup** (if using Cloudflare)
@@ -209,8 +209,8 @@ DigitalOcean App Platform provides automatic SSL certificates via Let's Encrypt.
 sudo apt install -y nginx certbot python3-certbot-nginx
 
 # Configure Nginx reverse proxy
-sudo certbot --nginx -d rpc.aequitaszone.io
-sudo certbot --nginx -d testnet-rpc.aequitaszone.io
+sudo certbot --nginx -d rpc.aequitasprotocol.zone
+sudo certbot --nginx -d testnet-rpc.aequitasprotocol.zone
 
 # Auto-renewal
 sudo systemctl enable certbot.timer
@@ -223,29 +223,29 @@ sudo systemctl enable certbot.timer
 ### **Frontend Health Checks**
 ```bash
 # Main app
-curl -I https://aequitaszone.io
+curl -I https://aequitasprotocol.zone
 
 # Block explorer
-curl -I https://explorer.aequitaszone.io
+curl -I https://explorer.aequitasprotocol.zone
 
 # Verify dashboard loads
-open https://aequitaszone.io
+open https://aequitasprotocol.zone
 ```
 
 ### **Blockchain Node Health Checks**
 ```bash
 # Testnet RPC
-curl https://testnet-rpc.aequitaszone.io:26657/status
+curl https://testnet-rpc.aequitasprotocol.zone:26657/status
 
 # Mainnet RPC
-curl https://rpc.aequitaszone.io:36657/status
+curl https://rpc.aequitasprotocol.zone:36657/status
 
 # Query blockchain state
-curl https://rpc.aequitaszone.io:36657/abci_query?path="/cosmos.bank.v1beta1.Query/TotalSupply"
+curl https://rpc.aequitasprotocol.zone:36657/abci_query?path="/cosmos.bank.v1beta1.Query/TotalSupply"
 ```
 
 ### **Verify Blockchain Integration**
-1. Open frontend: https://aequitaszone.io
+1. Open frontend: https://aequitasprotocol.zone
 2. Check browser console for "✅ Cosmos client connected"
 3. Verify Main Dashboard shows live blockchain data
 4. Test Founder Wallet balance queries
@@ -278,7 +278,7 @@ doctl compute droplet list --format ID | xargs -I {} doctl monitoring alert-poli
 ## 🎉 Success Metrics
 
 Your deployment is successful when:
-- ✅ Frontend loads at `https://aequitaszone.io`
+- ✅ Frontend loads at `https://aequitasprotocol.zone`
 - ✅ All 27 dashboards accessible and functional
 - ✅ Block Explorer shows live blockchain data
 - ✅ RPC endpoints responding to queries

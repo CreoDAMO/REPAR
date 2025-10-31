@@ -210,11 +210,11 @@ aequitasd start --home ~/.aequitas --minimum-gas-prices="0.025repar" --rpc.laddr
 You have Cloudflare credentials ready! Let me set this up for you:
 
 **Domains to configure**:
-- `aequitaszone.io` → App Platform URL
-- `api.aequitaszone.io` → App Platform API
-- `explorer.aequitaszone.io` → App Platform Explorer
-- `rpc.aequitaszone.io` → 159.203.92.230:36657 (Mainnet)
-- `testnet-rpc.aequitaszone.io` → 159.203.92.230:26657 (Testnet)
+- `aequitasprotocol.zone` → App Platform URL
+- `api.aequitasprotocol.zone` → App Platform API
+- `explorer.aequitasprotocol.zone` → App Platform Explorer
+- `rpc.aequitasprotocol.zone` → 159.203.92.230:36657 (Mainnet)
+- `testnet-rpc.aequitasprotocol.zone` → 159.203.92.230:26657 (Testnet)
 
 ---
 

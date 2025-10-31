@@ -692,7 +692,7 @@ class AequitasAgentKit:
 # Example Usage
 if __name__ == "__main__":
     # Initialize SDK
-    agentkit = AequitasAgentKit(rpc_endpoint="https://rpc.aequitas.io")
+    agentkit = AequitasAgentKit(rpc_endpoint="https://rpc.aequitasprotocol.zone")
     
     # Deploy Gladstone Hunter agent
     agent = agentkit.create_agent(
