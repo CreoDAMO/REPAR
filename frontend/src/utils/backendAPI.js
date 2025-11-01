@@ -3,6 +3,8 @@
  * Secure API client for calling the Aequitas backend server
  */
 
+import { getCsrfToken } from './csrf.js';
+
 // Backend API URL
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3002';
 
@@ -25,7 +27,7 @@ async function apiRequest(endpoint, options = {}) {
 
   // Add CSRF token for non-GET requests
   if (options.method !== 'GET') {
-    const csrfToken = await getCsrfToken(); // Assuming getCsrfToken is available
+    const csrfToken = await getCsrfToken(API_BASE_URL);
     if (csrfToken) {
       headers['X-CSRF-Token'] = csrfToken;
     }

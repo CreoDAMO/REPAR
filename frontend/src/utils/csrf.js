@@ -1,11 +1,14 @@
 
 let csrfToken = null;
 
-export async function getCsrfToken() {
+export async function getCsrfToken(apiBaseUrl) {
   if (csrfToken) return csrfToken;
   
+  // Use provided base URL or fall back to environment variable
+  const baseUrl = apiBaseUrl || import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3002';
+  
   try {
-    const response = await fetch('http://localhost:3002/api/csrf-token', {
+    const response = await fetch(`${baseUrl}/api/csrf-token`, {
       credentials: 'include'
     });
     const data = await response.json();
