@@ -12,6 +12,7 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 - **Security-First**: Implement chaos defense patterns and threat detection
 - **Legal Compliance**: FRE 901 evidence standards for all records
 - **Multi-Wallet Support**: Keplr (recommended for full features), MetaMask (EVM), Coinbase Wallet
+- **Terminology**: Use "black paper" (NOT "white paper") for project documentation - intentional choice reflecting project's mission
 
 ## System Architecture
 

@@ -90,9 +90,8 @@ Allocation | Percentage | $REPAR Amount | Purpose
 ---|---|---|---
 Community & Descendant Fund | 43% | 56.33T | Airdrops, grants, community programs, staking rewards
 Claims & Compensation Fund | 25% | 32.75T | Direct restitution payments, hybrid fiat/$REPAR options
+Founder's Allocation | 18% | 23.58T | 12% liquid (15.72T) + 6% endowment (7.86T, locked 8 years)
 Ecosystem & Enforcement Treasury | 10% | 13.1T | Legal actions, operations (recoverable from defendants)
-Founder's Allocation | 10% | 13.1T | 1% immediate security + 9% vested over 5 years (1-year cliff)
-Development Fund | 8% | 10.48T | Core team, audits, infrastructure
 Foundation Treasury & Reserves | 4% | 5.24T | Long-term network health, strategic partnerships
 
 Compensation & Economy Building
