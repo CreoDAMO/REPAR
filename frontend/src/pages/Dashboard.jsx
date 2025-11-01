@@ -10,6 +10,7 @@ import { cosmosClient } from '../utils/cosmosClient';
 
 export default function Dashboard() {
   const [walletAddress, setWalletAddress] = useState(null);
+  const [walletData, setWalletData] = useState(null);
   const [chainData, setChainData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [holoMode, setHoloMode] = useState(false);
@@ -98,8 +99,14 @@ export default function Dashboard() {
     return () => clearInterval(insightsInterval);
   }, []);
 
-  const handleWalletConnected = (address) => {
-    setWalletAddress(address);
+  const handleWalletConnected = (walletInfo) => {
+    setWalletAddress(walletInfo.address);
+    setWalletData(walletInfo);
+  };
+
+  const handleWalletDisconnected = () => {
+    setWalletAddress(null);
+    setWalletData(null);
   };
 
   const topDefendants = [...defendants].sort((a, b) => b.slaveryDerivedWealth - a.slaveryDerivedWealth).slice(0, 5);
@@ -118,7 +125,10 @@ export default function Dashboard() {
                 <p className="text-xl text-indigo-200">Decentralized Justice for the {formatLiability(chainData.totalLiability)} Debt</p>
                 <p className="text-sm text-amber-300 mt-2 italic">"Justice delayed is justice denied, but mathematics is eternal."</p>
               </div>
-              <WalletConnect onWalletConnected={handleWalletConnected} />
+              <WalletConnect 
+                onWalletConnected={handleWalletConnected}
+                onWalletDisconnected={handleWalletDisconnected}
+              />
             </div>
           </div>
         </div>

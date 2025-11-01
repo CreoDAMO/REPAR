@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Wallet, Info, AlertCircle, CheckCircle, Shield } from 'lucide-react';
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk';
 
-const WalletConnect = ({ onWalletConnected }) => {
+const WalletConnect = ({ onWalletConnected, onWalletDisconnected }) => {
   const [showInfo, setShowInfo] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -107,8 +107,8 @@ const WalletConnect = ({ onWalletConnected }) => {
       await window.keplr.experimentalSuggestChain({
         chainId: 'aequitas-1',
         chainName: 'Aequitas Protocol',
-        rpc: import.meta.env.VITE_COSMOS_RPC_URL || 'http://0.0.0.0:26657',
-        rest: import.meta.env.VITE_COSMOS_API_URL || 'http://0.0.0.0:1317',
+        rpc: import.meta.env.VITE_COSMOS_RPC_URL || 'https://rpc.aequitasprotocol.zone:26657',
+        rest: import.meta.env.VITE_COSMOS_API_URL || 'https://api.aequitasprotocol.zone:1317',
         bip44: {
           coinType: 118,
         },
@@ -126,6 +126,7 @@ const WalletConnect = ({ onWalletConnected }) => {
             coinMinimalDenom: 'urepar',
             coinDecimals: 6,
             coinGeckoId: 'aequitas-repar',
+            coinImageUrl: window.location.origin + '/assets/repar-logo.svg',
           },
         ],
         feeCurrencies: [
@@ -134,6 +135,7 @@ const WalletConnect = ({ onWalletConnected }) => {
             coinMinimalDenom: 'urepar',
             coinDecimals: 6,
             coinGeckoId: 'aequitas-repar',
+            coinImageUrl: window.location.origin + '/assets/repar-logo.svg',
             gasPriceStep: {
               low: 0.01,
               average: 0.025,
@@ -146,7 +148,9 @@ const WalletConnect = ({ onWalletConnected }) => {
           coinMinimalDenom: 'urepar',
           coinDecimals: 6,
           coinGeckoId: 'aequitas-repar',
+          coinImageUrl: window.location.origin + '/assets/repar-logo.svg',
         },
+        features: ['ibc-transfer', 'ibc-go'],
       });
 
       await window.keplr.enable('aequitas-1');
@@ -157,16 +161,12 @@ const WalletConnect = ({ onWalletConnected }) => {
       setWalletType('keplr');
       setConnected(true);
       
-      // Store signer in cosmosClient for transaction signing
-      const { cosmosClient } = await import('../utils/cosmosClient');
-      cosmosClient.signer = offlineSigner;
-      cosmosClient.account = accounts[0];
-      
       if (onWalletConnected) {
         onWalletConnected({
           address: accounts[0].address,
           wallet: 'keplr',
           signer: offlineSigner,
+          account: accounts[0],
         });
       }
     } catch (error) {
@@ -181,6 +181,10 @@ const WalletConnect = ({ onWalletConnected }) => {
     setConnected(false);
     setAddress('');
     setWalletType('');
+    
+    if (onWalletDisconnected) {
+      onWalletDisconnected();
+    }
   };
 
   if (connected) {

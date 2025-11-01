@@ -1,0 +1,41 @@
+{
+  "$schema": "../assetlist.schema.json",
+  "chain_name": "aequitas",
+  "assets": [
+    {
+      "description": "$REPAR is the native coin of the Aequitas Protocol blockchain, designed to enforce $131 trillion in reparations for the transatlantic slave trade genocide. Total supply: 131 trillion $REPAR.",
+      "denom_units": [
+        {
+          "denom": "urepar",
+          "exponent": 0,
+          "aliases": ["microrepar"]
+        },
+        {
+          "denom": "mrepar",
+          "exponent": 3,
+          "aliases": ["millirepar"]
+        },
+        {
+          "denom": "repar",
+          "exponent": 6,
+          "aliases": ["REPAR"]
+        }
+      ],
+      "base": "urepar",
+      "name": "Repar",
+      "display": "repar",
+      "symbol": "REPAR",
+      "logo_URIs": {
+        "svg": "https://raw.githubusercontent.com/CreoDAMO/REPAR/main/frontend/public/assets/repar-logo.svg"
+      },
+      "coingecko_id": "aequitas-repar",
+      "keywords": [
+        "native",
+        "staking",
+        "governance",
+        "reparations"
+      ],
+      "type_asset": "sdk.coin"
+    }
+  ]
+}

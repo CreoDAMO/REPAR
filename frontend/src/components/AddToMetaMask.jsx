@@ -21,7 +21,7 @@ export default function AddToMetaMask() {
         params: [
           {
             chainId: '0x653',
-            chainName: 'Aequitas Protocol',
+            chainName: 'Aequitas Protocol (EVM)',
             nativeCurrency: {
               name: 'Repar',
               symbol: 'REPAR',
@@ -29,7 +29,7 @@ export default function AddToMetaMask() {
             },
             rpcUrls: ['https://rpc-evm.aequitasprotocol.zone'],
             blockExplorerUrls: ['https://explorer.aequitasprotocol.zone'],
-            iconUrls: ['https://aequitasprotocol.zone/favicon.ico'],
+            iconUrls: [window.location.origin + '/assets/repar-logo.svg'],
           },
         ],
       });

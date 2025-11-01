@@ -1,0 +1,104 @@
+{
+  "$schema": "../chain.schema.json",
+  "chain_name": "aequitas",
+  "status": "live",
+  "network_type": "mainnet",
+  "website": "https://aequitasprotocol.zone",
+  "pretty_name": "Aequitas Protocol",
+  "chain_id": "aequitas-1",
+  "bech32_prefix": "repar",
+  "daemon_name": "aequitasd",
+  "node_home": "$HOME/.aequitas",
+  "key_algos": ["secp256k1"],
+  "slip44": 118,
+  "fees": {
+    "fee_tokens": [
+      {
+        "denom": "urepar",
+        "fixed_min_gas_price": 0.01,
+        "low_gas_price": 0.01,
+        "average_gas_price": 0.025,
+        "high_gas_price": 0.04
+      }
+    ]
+  },
+  "staking": {
+    "staking_tokens": [
+      {
+        "denom": "urepar"
+      }
+    ],
+    "lock_duration": {
+      "time": "1814400s"
+    }
+  },
+  "codebase": {
+    "git_repo": "https://github.com/CreoDAMO/REPAR",
+    "recommended_version": "v0.1.0",
+    "compatible_versions": ["v0.1.0"],
+    "cosmos_sdk_version": "0.54.0",
+    "tendermint_version": "0.38.0",
+    "cosmwasm_enabled": false,
+    "genesis": {
+      "name": "v0.1.0",
+      "genesis_url": "https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0/genesis-mainnet.tar.gz"
+    },
+    "versions": [
+      {
+        "name": "v0.1.0",
+        "tag": "v0.1.0",
+        "height": 0,
+        "recommended_version": "v0.1.0",
+        "compatible_versions": ["v0.1.0"],
+        "cosmos_sdk_version": "0.54.0",
+        "tendermint_version": "0.38.0",
+        "cosmwasm_enabled": false,
+        "next_version_name": ""
+      }
+    ]
+  },
+  "logo_URIs": {
+    "svg": "https://raw.githubusercontent.com/CreoDAMO/REPAR/main/frontend/public/assets/repar-logo.svg"
+  },
+  "description": "Aequitas Protocol: Sovereign Layer-1 blockchain enforcing $131 trillion in reparations for the transatlantic slave trade genocide. The protocol transforms reparations enforcement from a moral argument into a mathematical protocol, establishing a sovereign digital jurisdiction under Natural Law and Technological Law.",
+  "peers": {
+    "seeds": [],
+    "persistent_peers": []
+  },
+  "apis": {
+    "rpc": [
+      {
+        "address": "https://rpc.aequitasprotocol.zone:26657",
+        "provider": "Aequitas Foundation"
+      }
+    ],
+    "rest": [
+      {
+        "address": "https://api.aequitasprotocol.zone:1317",
+        "provider": "Aequitas Foundation"
+      }
+    ],
+    "grpc": [
+      {
+        "address": "grpc.aequitasprotocol.zone:9090",
+        "provider": "Aequitas Foundation"
+      }
+    ]
+  },
+  "explorers": [
+    {
+      "kind": "dexplorer",
+      "url": "https://explorer.aequitasprotocol.zone",
+      "tx_page": "https://explorer.aequitasprotocol.zone/tx/${txHash}",
+      "account_page": "https://explorer.aequitasprotocol.zone/account/${accountAddress}"
+    }
+  ],
+  "keywords": [
+    "reparations",
+    "justice",
+    "governance",
+    "dex",
+    "sovereign",
+    "layer-1"
+  ]
+}
