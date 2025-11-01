@@ -1,0 +1,50 @@
+Annotations
+20 errors and 4 warnings
+Frontend Quality Checks: frontend/src/pages/AIAnalytics.jsx#L18
+'threatStats' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u
+Frontend Quality Checks: frontend/src/components/ai/AgentFactory.jsx#L8
+'setRules' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u
+Frontend Quality Checks: frontend/src/components/Onramper.jsx#L8
+'setSelectedAsset' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                 
+Frontend Quality Checks: frontend/src/components/Onramper.jsx#L8
+'selectedAsset' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u                    
+Frontend Quality Checks: frontend/src/components/Navigation.jsx#L107
+'Icon' is defined but never used
+Frontend Quality Checks: frontend/src/components/Navigation.jsx#L56
+'Icon' is defined but never used
+Frontend Quality Checks: frontend/src/components/InvestmentStrategies.jsx#L3
+'endowmentId' is defined but never used
+Frontend Quality Checks: frontend/src/components/EvidenceExplorer.jsx#L9
+'calculateCompoundInterest' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u
+Frontend Quality Checks: frontend/src/components/ErrorBoundary.jsx#L9
+'error' is defined but never used
+Frontend Quality Checks: frontend/src/components/ChainStatus.jsx#L21
+'error' is defined but never used
+Blockchain Compile Check
+undefined: types.MsgServer
+Blockchain Compile Check
+undefined: types.DefendantStatus
+Blockchain Compile Check
+undefined: types.Payment
+Blockchain Compile Check
+undefined: types.Defendant
+Blockchain Compile Check
+undefined: types.Defendant
+Blockchain Compile Check
+undefined: types.Defendant
+Blockchain Compile Check
+undefined: types.Payment
+Blockchain Compile Check
+undefined: types.Defendant
+Blockchain Compile Check
+undefined: _Msg_serviceDesc
+Blockchain Compile Check
+undefined: _Msg_serviceDesc
+Frontend Quality Checks: frontend/src/pages/NFTMarketplace.jsx#L178
+React Hook useEffect has a missing dependency: 'mockNFTs'. Either include it or remove the dependency array
+Frontend Quality Checks: frontend/src/pages/EndowmentDashboard.jsx#L102
+React Hook useEffect has missing dependencies: 'lpEndowment' and 'socialEndowment'. Either include them or remove the dependency array. You can also do a functional update 'setLpEndowment(l => ...)' if you only need 'lpEndowment' in the 'setLpEndowment' call
+Frontend Quality Checks: frontend/src/components/Onramper.jsx#L53
+React Hook useEffect has a missing dependency: 'onrampInstance'. Either include it or remove the dependency array
+Blockchain Compile Check
+Restore cache failed: Dependencies file is not found in /home/runner/work/REPAR/REPAR. Supported file pattern: go.sum
