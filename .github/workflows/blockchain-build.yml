@@ -11,6 +11,8 @@ on:
     paths:
       - 'aequitas/**'
   workflow_dispatch:
+  release:
+    types: [created]
 
 jobs:
   build-and-test:
@@ -310,3 +312,254 @@ jobs:
           else
             echo "**Status:** ⚠️ Testnet initialization incomplete" >> $GITHUB_STEP_SUMMARY
           fi
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Download blockchain binary
+        uses: actions/download-artifact@v4
+        with:
+          name: aequitasd-latest
+          path: ./release-artifacts
+      
+      - name: Download testnet genesis
+        uses: actions/download-artifact@v4
+        with:
+          name: genesis-testnet-${{ github.sha }}
+          path: ./release-artifacts/testnet
+      
+      - name: Download mainnet genesis
+        uses: actions/download-artifact@v4
+        with:
+          name: genesis-mainnet-${{ github.sha }}
+          path: ./release-artifacts/mainnet
+      
+      - name: Download allocation structure
+        uses: actions/download-artifact@v4
+        with:
+          name: allocation-structure
+          path: ./release-artifacts
+      
+      - name: Prepare release assets
+        run: |
+          cd release-artifacts
+          chmod +x aequitasd
+          
+          # Create checksums
+          sha256sum aequitasd > aequitasd.sha256
+          sha256sum testnet/genesis-testnet.json > testnet/genesis-testnet.json.sha256 || true
+          sha256sum mainnet/genesis-mainnet.json > mainnet/genesis-mainnet.json.sha256 || true
+          
+          # Package artifacts
+          tar -czf aequitasd-linux-amd64.tar.gz aequitasd aequitasd.sha256
+          tar -czf genesis-testnet.tar.gz testnet/genesis-testnet.json testnet/genesis-testnet.json.sha256 || true
+          tar -czf genesis-mainnet.tar.gz mainnet/genesis-mainnet.json mainnet/genesis-mainnet.json.sha256 || true
+          
+          ls -lh
+      
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          COMMIT_SHORT=$(git rev-parse --short HEAD)
+          COMMIT_DATE=$(git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M:%S')
+          RELEASE_TAG="v0.1.0-build-${{ github.run_number }}"
+          
+          cat > release-notes.md << EOF
+          ## 🚀 Aequitas Zone Blockchain - Build ${{ github.sha }}
+          
+          ### Overview
+          Sovereign Layer-1 blockchain for enforcing \$131 trillion in reparations for the transatlantic slave trade genocide.
+          
+          ### Build Information
+          - **Commit:** \`${{ github.sha }}\`
+          - **Short Hash:** \`${COMMIT_SHORT}\`
+          - **Build Date:** \`${COMMIT_DATE}\`
+          - **Cosmos SDK:** v0.54.0-alpha
+          - **Native Coin:** \$REPAR
+          - **Total Supply:** 131 Trillion \$REPAR
+          
+          ### $REPAR Coin Allocation
+          - **Founder Total:** 23.58T REPAR (18%)
+            - Wallet: 15.72T REPAR (12%)
+            - Endowment: 7.86T REPAR (6%, locked 8 years)
+          - **Community & Descendants:** 56.33T REPAR (43%)
+          - **Claims & Compensation:** 32.75T REPAR (25%)
+          - **Enforcement Treasury:** 13.1T REPAR (10%)
+          - **Foundation Reserves:** 5.24T REPAR (4%)
+          
+          ### Network Configurations
+          
+          #### Testnet (aequitas-testnet-1)
+          - Genesis file: `genesis-testnet.tar.gz`
+          - RPC: `https://testnet-rpc.aequitasprotocol.zone:26657`
+          - REST: `https://testnet-api.aequitasprotocol.zone:1317`
+          - gRPC: `testnet-grpc.aequitasprotocol.zone:9090`
+          
+          #### Mainnet (aequitas-1)
+          - Genesis file: `genesis-mainnet.tar.gz`
+          - RPC: `https://rpc.aequitasprotocol.zone:26657`
+          - REST: `https://api.aequitasprotocol.zone:1317`
+          - gRPC: `grpc.aequitasprotocol.zone:9090`
+          
+          ### What's Included
+          
+          ✅ **Binary Artifact:**
+          - `aequitasd-linux-amd64.tar.gz` - Blockchain daemon binary (152MB)
+          - `aequitasd.sha256` - SHA-256 checksum
+          
+          ✅ **Genesis Files:**
+          - `genesis-testnet.tar.gz` - Testnet genesis + checksum
+          - `genesis-mainnet.tar.gz` - Mainnet genesis + checksum
+          
+          ✅ **Allocation Structure:**
+          - `allocation-structure.json` - Canonical coin allocation specification
+          
+          ### Installation & Validation
+          
+          #### 1. Download & Verify Binary
+          \`\`\`bash
+          # Download
+          wget https://github.com/CreoDAMO/REPAR/releases/download/${RELEASE_TAG}/aequitasd-linux-amd64.tar.gz
+          
+          # Verify checksum
+          wget https://github.com/CreoDAMO/REPAR/releases/download/${RELEASE_TAG}/aequitasd.sha256
+          sha256sum -c aequitasd.sha256
+          
+          # Extract
+          tar -xzf aequitasd-linux-amd64.tar.gz
+          chmod +x aequitasd
+          sudo mv aequitasd /usr/local/bin/
+          
+          # Verify installation
+          aequitasd version
+          \`\`\`
+          
+          #### 2. Initialize Node
+          
+          **Testnet:**
+          \`\`\`bash
+          # Download genesis
+          wget https://github.com/CreoDAMO/REPAR/releases/download/${RELEASE_TAG}/genesis-testnet.tar.gz
+          tar -xzf genesis-testnet.tar.gz
+          
+          # Initialize
+          aequitasd init <moniker> --chain-id aequitas-testnet-1 --home ~/.aequitas-testnet
+          
+          # Copy genesis
+          cp testnet/genesis-testnet.json ~/.aequitas-testnet/config/genesis.json
+          
+          # Verify genesis
+          aequitasd validate-genesis --home ~/.aequitas-testnet
+          \`\`\`
+          
+          **Mainnet:**
+          \`\`\`bash
+          # Download genesis
+          wget https://github.com/CreoDAMO/REPAR/releases/download/${RELEASE_TAG}/genesis-mainnet.tar.gz
+          tar -xzf genesis-mainnet.tar.gz
+          
+          # Initialize
+          aequitasd init <moniker> --chain-id aequitas-1 --home ~/.aequitas
+          
+          # Copy genesis
+          cp mainnet/genesis-mainnet.json ~/.aequitas/config/genesis.json
+          
+          # Verify genesis
+          aequitasd validate-genesis --home ~/.aequitas
+          \`\`\`
+          
+          #### 3. Configure & Start
+          ```bash
+          # Configure peers, seeds, and ports in config.toml
+          nano ~/.aequitas/config/config.toml
+          
+          # Start node
+          aequitasd start --home ~/.aequitas
+          ```
+          
+          ### Custom Modules
+          
+          1. **x/defendant** - Manages 200+ defendants and payment types
+          2. **x/justice** - Deflationary $REPAR burn mechanism
+          3. **x/claims** - Arbitration demands across 172 jurisdictions
+          4. **x/distribution** - Reparations distribution to descendants
+          5. **x/dex** - Founder Wallet DEX (REPAR/USDC pairs, x*y=k)
+          6. **x/threatdefense** - 10% Chaos Defense + ThreatOracle + NFT evidence
+          7. **x/governance** - DAO governance with weighted voting
+          8. **x/staking** - Modified staking for validator participation
+          9. **x/evidence** - IPFS integration for immutable evidence storage
+          
+          ### Security Features
+          
+          - **Cerberus Auditor:** Multi-agent AI continuous security auditing
+          - **Chaos Defense:** 10% controlled vulnerabilities with threat detection
+          - **ThreatOracle:** Automated threat intelligence and response
+          - **FRE 901 Compliance:** Legal evidence authentication standards
+          
+          ### Documentation
+          
+          - [Blockchain Build Documentation](https://github.com/CreoDAMO/REPAR/blob/main/docs/MODULE_DEPINJECT_FIX.md)
+          - [Genesis Generation Guide](https://github.com/CreoDAMO/REPAR/tree/main/scripts)
+          - [Forensic Audit](https://github.com/CreoDAMO/REPAR/tree/main/docs/audit)
+          
+          ### Support
+          
+          - **Issues:** https://github.com/CreoDAMO/REPAR/issues
+          - **Discussions:** https://github.com/CreoDAMO/REPAR/discussions
+          - **Website:** https://aequitasprotocol.zone
+          
+          ### Legal Framework
+          
+          This blockchain implements enforcement of international law violations:
+          - Genocide Convention (1948)
+          - Universal Declaration of Human Rights (1948)
+          - Jus cogens norms (peremptory international law)
+          - UCC Article 9 (secured transactions)
+          - Black's Law (legal definitions and precedents)
+          
+          ---
+          
+          **⚖️ The Justice Machine - \$REPAR Native Coin**
+          EOF
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v0.1.0-build-${{ github.run_number }}
+          name: Aequitas Zone v0.1.0 (Build ${{ github.run_number }})
+          body_path: release-notes.md
+          draft: false
+          prerelease: true
+          files: |
+            release-artifacts/aequitasd-linux-amd64.tar.gz
+            release-artifacts/aequitasd.sha256
+            release-artifacts/genesis-testnet.tar.gz
+            release-artifacts/genesis-mainnet.tar.gz
+            release-artifacts/allocation-structure.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Release summary
+        run: |
+          echo "### 🎉 GitHub Release Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** v0.1.0-build-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** https://github.com/CreoDAMO/REPAR/releases/tag/v0.1.0-build-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Artifacts:**" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Blockchain binary (aequitasd-linux-amd64.tar.gz)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Testnet genesis (genesis-testnet.tar.gz)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Mainnet genesis (genesis-mainnet.tar.gz)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Allocation structure (allocation-structure.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ SHA-256 checksums" >> $GITHUB_STEP_SUMMARY
