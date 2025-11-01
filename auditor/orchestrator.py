@@ -775,8 +775,12 @@ async def main():
         print("❌ ERROR: OPENAI_API_KEY and ANTHROPIC_API_KEY are required")
         sys.exit(1)
     
-    # Initialize orchestrator
-    orchestrator = CerberusOrchestrator(api_keys, repo_path=".")
+    # Detect repository root (go up from auditor/ to repo root)
+    script_dir = Path(__file__).parent.resolve()  # /path/to/REPAR/auditor
+    repo_root = script_dir.parent  # /path/to/REPAR
+    
+    # Initialize orchestrator with proper repo root
+    orchestrator = CerberusOrchestrator(api_keys, repo_path=str(repo_root))
     
     # Check if TAST document exists
     tast_path = "docs/tast_audit/TAST_Full_Audit_&_Arbitration_By-Jacque_Antoine_DeGraff.md"
