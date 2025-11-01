@@ -5,7 +5,6 @@ import { DollarSign, CreditCard, Wallet, Check } from 'lucide-react';
 const Onramper = () => {
   const [onrampInstance, setOnrampInstance] = useState(null);
   const [isReady, setIsReady] = useState(false);
-  const [selectedAsset, setSelectedAsset] = useState('REPAR');
   const [amount, setAmount] = useState('100');
 
   useEffect(() => {
@@ -50,6 +49,7 @@ const Onramper = () => {
     return () => {
       onrampInstance?.destroy();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amount]);
 
   const handleBuyClick = () => {

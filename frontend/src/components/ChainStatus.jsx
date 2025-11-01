@@ -18,7 +18,7 @@ export default function ChainStatus() {
         } else {
           setIsConnected(false);
         }
-      } catch (error) {
+      } catch {
         setIsConnected(false);
       }
     };

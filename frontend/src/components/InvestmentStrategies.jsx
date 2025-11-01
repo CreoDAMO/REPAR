@@ -1,6 +1,6 @@
 import { Bitcoin, Coins, Shield, TrendingUp } from 'lucide-react';
 
-export default function InvestmentStrategies({ endowmentId, principal }) {
+export default function InvestmentStrategies({ principal }) {
   const strategies = [
     {
       name: 'BTC Staking',

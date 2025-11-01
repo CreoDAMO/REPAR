@@ -6,10 +6,6 @@ import { getIPFSUrl } from '../utils/ipfsClient';
 const EvidenceExplorer = ({ defendant }) => {
   const [selectedEvidence, setSelectedEvidence] = useState(null);
 
-  const calculateCompoundInterest = (principal, rate, years) => {
-    return principal * Math.pow(1 + rate, years);
-  };
-
   const viewOnIPFS = (hash) => {
     window.open(getIPFSUrl(hash), '_blank');
   };

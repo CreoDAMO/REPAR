@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Send, Upload, Users, Download, X, Plus, Check, Clock, AlertCircle } from 'lucide-react';
 
 export default function AequitasSuperPay() {
-  const [activeTab, setActiveTab] = useState('batch');
   const [recipients, setRecipients] = useState([
     { address: '', amount: '', note: '' }
   ]);

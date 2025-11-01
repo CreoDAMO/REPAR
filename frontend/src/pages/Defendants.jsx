@@ -16,14 +16,12 @@ export default function Defendants() {
   const [riskAnalysis, setRiskAnalysis] = useState({});
   const [showAIPanel, setShowAIPanel] = useState(false);
   const [blockchainDefendants, setBlockchainDefendants] = useState([]);
-  const [activeDefendantCount, setActiveDefendantCount] = useState(0);
 
   // Fetch live defendant data from blockchain
   useEffect(() => {
     const fetchDefendantData = async () => {
       try {
         const activeCount = await cosmosClient.queryActiveDefendants();
-        setActiveDefendantCount(activeCount);
         
         // Combine blockchain data with static defendant data
         const enhancedDefendants = defendants.map(def => ({

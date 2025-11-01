@@ -5,11 +5,11 @@ import { FiCpu, FiTarget, FiDollarSign } from 'react-icons/fi';
 const AgentFactory = () => {
   const [objective, setObjective] = useState('');
   const [budget, setBudget] = useState('10000');
-  const [rules, setRules] = useState([
+  const rules = [
     'no_settle_below_90%',
     'report_weekly',
     'auto_approve_minor_actions'
-  ]);
+  ];
   const [isDeploying, setIsDeploying] = useState(false);
 
   const handleDeployAgent = async () => {

@@ -8,12 +8,10 @@ export default function DAOGovernance() {
   const [walletConnected, setWalletConnected] = useState(false);
   const [votingPower, setVotingPower] = useState(0);
   const [blockchainProposals, setBlockchainProposals] = useState([]);
-  const [loadingProposals, setLoadingProposals] = useState(false);
 
   // Fetch live proposals from blockchain (ready for when gov module is deployed)
   useEffect(() => {
     const fetchProposals = async () => {
-      setLoadingProposals(true);
       try {
         // Query governance proposals - will return live data when blockchain gov module is deployed
         const liveProposals = await cosmosClient.queryGovernanceProposals();
@@ -40,8 +38,6 @@ export default function DAOGovernance() {
         }
       } catch (error) {
         console.warn('Using mock governance data:', error.message);
-      } finally {
-        setLoadingProposals(false);
       }
     };
 

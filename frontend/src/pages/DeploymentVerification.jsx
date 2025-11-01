@@ -35,7 +35,7 @@ const DeploymentVerification = () => {
     ]
   };
 
-  const mockAPITest = async (apiKey) => {
+  const mockAPITest = async () => {
     return new Promise((resolve) => {
       setTimeout(() => {
         const hasKey = Math.random() > 0.3;

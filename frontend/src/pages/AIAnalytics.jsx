@@ -15,7 +15,7 @@ export default function AIAnalytics() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [predictionResult, setPredictionResult] = useState(null);
   const [holographicView, setHolographicView] = useState(false);
-  const [threatStats, setThreatStats] = useState({ totalThreats: 0, nftsMinted: 0, nightmareActivations: 0 });
+  const [, setThreatStats] = useState({ totalThreats: 0, nftsMinted: 0, nightmareActivations: 0 });
   const [nvidiaStatus, setNvidiaStatus] = useState({ available: false, models: [] });
 
   const aiModels = [

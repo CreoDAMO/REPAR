@@ -26,7 +26,7 @@ export default function BlockExplorer() {
           setError('Explorer service is not responding');
           setIsLoading(false);
         }
-      } catch (err) {
+      } catch {
         setError('Explorer service is not running. Please start the Block Explorer workflow.');
         setIsLoading(false);
       }

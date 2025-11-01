@@ -8,7 +8,6 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
 const AgentKit = () => {
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [backendAvailable, setBackendAvailable] = useState(false);
 
   useEffect(() => {
     checkBackend();
@@ -19,12 +18,10 @@ const AgentKit = () => {
     try {
       const response = await fetch(`${BACKEND_URL}/api/agentkit/status`);
       if (response.ok) {
-        setBackendAvailable(true);
         console.log('AgentKit backend available');
       }
     } catch (error) {
       console.warn('AgentKit backend unavailable, using mock mode:', error.message);
-      setBackendAvailable(false);
     }
   };
 

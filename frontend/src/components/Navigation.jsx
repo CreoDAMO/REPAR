@@ -53,7 +53,8 @@ export default function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden xl:flex space-x-1">
-            {navLinks.map(({ to, icon: Icon, label }) => (
+            {/* eslint-disable-next-line no-unused-vars */}
+            {navLinks.map(({ to, icon: NavIcon, label }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -63,7 +64,7 @@ export default function Navigation() {
                   }`
                 }
               >
-                <Icon className="h-4 w-4" />
+                <NavIcon className="h-4 w-4" />
                 <span>{label}</span>
               </NavLink>
             ))}
@@ -104,7 +105,8 @@ export default function Navigation() {
         {mobileMenuOpen && (
           <div className="xl:hidden py-4 border-t border-indigo-700">
             <div className="flex flex-col space-y-2">
-              {navLinks.map(({ to, icon: Icon, label }) => (
+              {/* eslint-disable-next-line no-unused-vars */}
+              {navLinks.map(({ to, icon: NavIcon, label }) => (
                 <NavLink
                   key={to}
                   to={to}
@@ -115,7 +117,7 @@ export default function Navigation() {
                     }`
                   }
                 >
-                  <Icon className="h-5 w-5" />
+                  <NavIcon className="h-5 w-5" />
                   <span>{label}</span>
                 </NavLink>
               ))}
