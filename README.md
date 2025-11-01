@@ -1,3 +1,5 @@
+[![Build Frontend](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml/badge.svg?branch=main&event=page_build)](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml)
+
 # AEQUITAS PROTOCOL ($REPAR) - The Justice Machine
 
 The Aequitas Protocol is a sovereign Layer-1 blockchain designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. The protocol provides complete economic, technical, and governance sovereignty to ensure it cannot be shut down or censored.
