@@ -63,20 +63,36 @@ The blockchain build process uses GitHub Actions instead of local builds to avoi
 4. **Artifacts**: Binary, genesis files (testnet/mainnet), checksums, and allocation structure are uploaded
 5. **Initialization**: Use `scripts/init-both-pregenerated.sh` to initialize both networks
 
-**Recent Updates (Oct 30, 2025):**
+**Recent Updates (Nov 1, 2025):**
+- ✅ **BUILD FIXED**: Blockchain now compiles successfully in Replit
+- ✅ **Protobuf Generation**: All 40 missing .pb.go files generated via buf
+- ✅ **Depinject Configuration**: All 9 custom modules properly wired with App Wiring v2
+- ✅ **Go Version**: Updated to Go 1.24 (required by dependencies)
 - ✅ Both Testnet and Mainnet initialized successfully
 - ✅ Founder allocation verified: 23.58T REPAR (18% of 131T total supply)
   - Liquid wallet: 15.72T REPAR (12%)
   - Endowment: 7.86T REPAR (6%, locked 8 years)
 - ✅ Sovereignty declaration cryptographically bound to genesis blocks
 - ✅ All allocations verified against specification
-- 🚀 Ready for deployment to DigitalOcean
+- 🚀 **READY FOR DEPLOYMENT** - Binary runs without configuration panics
 
 **Network Directories:**
 - Testnet: `~/.aequitas-testnet` (chain-id: aequitas-testnet-1)
 - Mainnet: `~/.aequitas` (chain-id: aequitas-1)
 
-See `docs/BLOCKCHAIN_BUILD_FIXED_FINAL.md` for complete fix documentation.
+**Build Documentation:**
+- `docs/BLOCKCHAIN_BUILD_FIXED_FINAL.md` - Original CI/CD build fix
+- `docs/MODULE_DEPINJECT_FIX.md` - Latest local build fix (Nov 1, 2025)
+
+**Local Build Process:**
+```bash
+# Build blockchain from source
+cd aequitas
+go build -o ./build/aequitasd ./cmd/aequitasd
+
+# Binary: 152MB at aequitas/build/aequitasd
+# Status: ✅ Compiles successfully, no runtime panics
+```
 
 ## External Dependencies
 

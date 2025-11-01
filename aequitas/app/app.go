@@ -77,24 +77,27 @@ import (
 
         "github.com/CreoDAMO/REPAR/aequitas/docs"
         
-        // Custom modules
+        // Custom module keepers
         claimskeeper "github.com/CreoDAMO/REPAR/aequitas/x/claims/keeper"
-        
         defendantkeeper "github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper"
-        
         dexkeeper "github.com/CreoDAMO/REPAR/aequitas/x/dex/keeper"
-        
         distributionkeeper "github.com/CreoDAMO/REPAR/aequitas/x/distribution/keeper"
-        
         endowmentkeeper "github.com/CreoDAMO/REPAR/aequitas/x/endowment/keeper"
-        
         founderendowmentkeeper "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/keeper"
-        
         justicekeeper "github.com/CreoDAMO/REPAR/aequitas/x/justice/keeper"
-        
         nftmarketplacekeeper "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/keeper"
-        
         validatorsubsidykeeper "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/keeper"
+
+        // Import custom modules for depinject provider registration (side-effects)
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/claims"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/defendant"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/dex"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/distribution"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/endowment"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/founderendowment"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/justice"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace"
+        _ "github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy"
 )
 
 const (

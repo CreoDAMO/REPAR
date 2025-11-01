@@ -318,16 +318,7 @@ var (
                                 Name:   circuittypes.ModuleName,
                                 Config: appconfig.WrapAny(&circuitmodulev1.Module{}),
                         },
-                        // Custom modules
-                        {Name: claimstypes.ModuleName},
-                        {Name: defendanttypes.ModuleName},
-                        {Name: dextypes.ModuleName},
-                        {Name: distributiontypes.ModuleName},
-                        {Name: endowmenttypes.ModuleName},
-                        {Name: founderendowmenttypes.ModuleName},
-                        {Name: justicetypes.ModuleName},
-                        {Name: nftmarketplacetypes.ModuleName},
-                        {Name: validatorsubsidytypes.ModuleName},
+                        // Custom modules are provided via depinject in their respective module_depinject.go files
                         // this line is used by starport scaffolding # stargate/app/moduleConfig
                 },
         })
