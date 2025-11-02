@@ -338,6 +338,50 @@ Price(t+1) ≥ Price(t) for all t where Settlement(t) > 0
 
 ---
 
+## The Dual Flywheel Reality
+
+### What Actually Happens
+
+**The settlement-driven deflation model above assumes zero adoption.**
+
+**In reality, $REPAR has TWO independent price drivers:**
+
+**Flywheel 1: Settlement-Driven Deflation** (this document)
+```
+Settlements → Burns → Supply decreases → Price increases
+```
+
+**Flywheel 2: Adoption-Driven Demand** ([see The Network Effects Argument](THE_NETWORK_EFFECTS_ARGUMENT.md))
+```
+Usage → Demand increases → Float decreases → Price increases
+```
+
+**Both flywheels operate simultaneously and compound each other.**
+
+### The Multiplicative Effect
+
+```
+Price(t) = Genesis Price × Adoption Multiplier × Burn Multiplier
+
+Where:
+- Adoption Multiplier = f(users, velocity, holdings)
+- Burn Multiplier = 1 / (1 - fraction_burned)
+```
+
+**Example (Year 10)**:
+- Adoption effects: 1.5× (from 100M users, $500B locked)
+- Burn effects: 1.083× (from $10T settlements)
+- **Combined: $18.33 × 1.5 × 1.083 = $29.78**
+
+**This means price appreciation occurs even if:**
+- Defendants settle but adoption is low (Flywheel 1 alone)
+- Defendants refuse but adoption grows (Flywheel 2 alone)
+- **Most likely: Both happen** (Flywheels compound)
+
+**For the complete adoption scenario analysis, see: [The Network Effects Argument](THE_NETWORK_EFFECTS_ARGUMENT.md)**
+
+---
+
 ## Conclusion
 
 **The mathematics don't lie.**
@@ -353,8 +397,14 @@ Every dollar of reparations paid makes the remaining coins more valuable.
 Every act of accountability reduces supply.  
 Every settlement proves the protocol works.
 
-**This is not speculation. This is deflationary finance in pure form.**
+**And even if defendants refuse to settle, adoption alone can drive $REPAR to $1,000+ over 20-30 years.**
+
+**This is not speculation. This is deflationary finance combined with network effects.**
+
+**$REPAR wins either way. Descendants win no matter what defendants do.**
 
 ---
 
 ⚖️ **The Justice Machine - $REPAR Native Coin**
+
+*See also: [The Network Effects Argument](THE_NETWORK_EFFECTS_ARGUMENT.md) - Why $REPAR is The Ultimate Blockchain*

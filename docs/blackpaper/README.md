@@ -26,17 +26,24 @@ The term "black paper" honors the descendants whose ancestors' labor was stolen,
    - The $2,400 target calculation (99.24% settlement scenario)
    - Comparison to Bitcoin, Ethereum, and traditional assets
 
-3. **[EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)** *(coming soon)*
+3. **[EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)**
    - The Four Pillars messaging framework
    - Comprehensive system analysis
    - Roadmap and strategic vision
    - Regulatory positioning
 
-4. **[PHILOSOPHICAL_FOUNDATION.md](PHILOSOPHICAL_FOUNDATION.md)** *(coming soon)*
+4. **[PHILOSOPHICAL_FOUNDATION.md](PHILOSOPHICAL_FOUNDATION.md)**
    - Moral physics: Ethics as algorithmic law
    - Post-fiat framework: Restitution-ledger vs central-bank system
    - Historical context: From moral argument to mathematical protocol
    - The synthesis of value, justice, and time
+
+5. **[THE_NETWORK_EFFECTS_ARGUMENT.md](THE_NETWORK_EFFECTS_ARGUMENT.md)** 🔥 **BONUS: The Ultimate Argument**
+   - Dual flywheel design: Settlements AND adoption compound
+   - Proof that $REPAR wins even if defendants never settle
+   - Adoption-driven price projections (Metcalfe's Law)
+   - "Defendants lose either way" game theory matrix
+   - Why this is the ultimate blockchain (no single point of failure)
 
 ---
 

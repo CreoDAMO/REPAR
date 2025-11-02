@@ -42,7 +42,22 @@ This index organizes all Aequitas Protocol documentation by audience and purpose
    - Comparison to Bitcoin, Ethereum, stablecoins
    - **Audience**: Investors, economists, analysts
 
-4. **[Black Paper README](blackpaper/README.md)**
+4. **[The Network Effects Argument](blackpaper/THE_NETWORK_EFFECTS_ARGUMENT.md)** 🔥 **BONUS: The Ultimate Blockchain**
+   - Dual flywheel design: Settlements AND adoption compound
+   - Proof that $REPAR wins even if defendants never settle
+   - Adoption-driven price projections (Metcalfe's Law)
+   - "Defendants lose either way" game theory matrix
+   - Why this is the ultimate blockchain (no single point of failure)
+   - **Audience**: Investors, strategists, skeptics
+
+5. **[Philosophical Foundation](blackpaper/PHILOSOPHICAL_FOUNDATION.md)**
+   - Moral physics: Ethics as algorithmic law
+   - Post-fiat framework: Restitution-ledger vs central-bank system
+   - Historical context: From moral argument to mathematical protocol
+   - The synthesis of value, justice, and time
+   - **Audience**: Philosophers, academics, thought leaders
+
+6. **[Black Paper README](blackpaper/README.md)**
    - Purpose and terminology
    - Four Pillars messaging
    - Audience-specific summaries

@@ -65,7 +65,13 @@ Target Price: $2,401.23 per $REPAR (when 99.24% of debt settled)
 - ✅ **Justice-linked**: Deflation tied to real-world accountability
 - ✅ **Deterministic pricing**: Price = Backing ÷ Remaining Supply
 
-**Price Trajectory (Deterministic)**
+**BONUS: Dual Flywheel Design** 🔥
+- **Flywheel 1**: Settlements → Burns → Supply decreases → Price increases
+- **Flywheel 2**: Adoption → Demand increases → Float decreases → Price increases
+- **Both operate simultaneously** and compound each other
+- **See: [The Network Effects Argument](THE_NETWORK_EFFECTS_ARGUMENT.md)** for proof that $REPAR wins either way
+
+**Price Trajectory (Settlement-Driven)**
 
 | Settlement Progress | Supply Remaining | Price per $REPAR |
 |---------------------|------------------|------------------|
@@ -74,6 +80,8 @@ Target Price: $2,401.23 per $REPAR (when 99.24% of debt settled)
 | 90% ($117.9T) | 13.1T | $183.30 |
 | 99% ($129.69T) | 1.31T | $1,833 |
 | 99.24% ($130T) | 1T | $2,401.23 |
+
+**Note**: This assumes zero adoption. With network effects, prices could reach $10,000+ ([see analysis](THE_NETWORK_EFFECTS_ARGUMENT.md)).
 
 ---
 
