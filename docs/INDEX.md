@@ -30,7 +30,14 @@ This index organizes all Aequitas Protocol documentation by audience and purpose
 
 ### Core Documents
 
-1. **[Executive Summary](blackpaper/EXECUTIVE_SUMMARY.md)**
+1. **[Node Deployment Guide](NODE_DEPLOYMENT_GUIDE.md)** 🚀 **NEW: Run nodes anywhere**
+   - Mobile light nodes (smartphones)
+   - Home validators (existing computers)
+   - Raspberry Pi nodes ($150 kit)
+   - Cloud validators (DigitalOcean, Vultr, etc.)
+   - **Audience**: Anyone wanting to support the network
+
+2. **[Executive Summary](blackpaper/EXECUTIVE_SUMMARY.md)**
    - One-page overview
    - The Four Pillars framework
    - System architecture

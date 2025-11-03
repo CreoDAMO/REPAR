@@ -19,6 +19,37 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 
 The Aequitas Protocol comprises a React, Vite, and Tailwind CSS frontend, and a backend powered by Aequitas Zone, a Cosmos SDK Layer-1 blockchain.
 
+### Infrastructure: The Mobile Sovereign Network
+
+**Revolutionary Approach**: Since Aequitas uses Tendermint BFT (NO mining), nodes can run anywhere:
+
+#### Node Tiers
+1. **Tier 0: Mobile Light Nodes** (10,000+ target)
+   - Runs on smartphones (Android/iOS)
+   - <5% battery per day, <500MB data/month
+   - One-tap activation via mobile app
+   - Governance voting enabled
+
+2. **Tier 1: Home/Raspberry Pi Validators** (1,000+ target)
+   - Home computers (Linux/macOS/Windows)
+   - Raspberry Pi 4/5 ($150 complete kit)
+   - 24/7 operation, $5-10/month electricity
+   - Validator rewards + enhanced governance
+
+3. **Tier 2: Cloud Core Validators** (8-12 nodes)
+   - DigitalOcean, Vultr, Linode, AWS
+   - 99%+ uptime, multi-cloud distribution
+   - $28-40/month per node
+   - Core infrastructure backbone
+
+**Total**: 11,000+ nodes achievable Year 1 (vs typical 20-50 cloud-only nodes)
+
+**Why This Matters**: 
+- Can't shut down 11,000 nodes across 100+ countries
+- True community ownership (descendants run infrastructure)
+- Cost: $29K/year vs $24K centralized (220x more nodes, 10x more resilient)
+- Self-funding by Year 3 via fees + settlements
+
 ### Genesis & Deployment
 
 - **CI-Driven Genesis Generation**: Automated system for generating deterministic testnet and mainnet genesis files through GitHub Actions
@@ -66,7 +97,23 @@ The blockchain build process uses GitHub Actions instead of local builds to avoi
 4. **Artifacts**: Binary, genesis files (testnet/mainnet), checksums, and allocation structure are uploaded
 5. **Initialization**: Use `scripts/init-both-pregenerated.sh` to initialize both networks
 
-**Recent Updates (Nov 1, 2025):**
+**Recent Updates (Nov 3, 2025):**
+- ✅ **DISTRIBUTED NODE DEPLOYMENT**: Revolutionary infrastructure strategy
+  - Home computer validators (Linux/macOS/Windows)
+  - Raspberry Pi nodes ($150 kit, 24/7 low-power)
+  - Mobile light nodes (Android/iOS, NO mining, <5% battery)
+  - Guardian Program (Bronze/Silver/Gold tiers with NFT rewards)
+  - 11,000+ nodes possible Year 1 (10 cloud + 1,000 home + 10,000 mobile)
+  - Budget: $29K Year 1 vs $24K centralized (220x more nodes for 22% more cost)
+  - Self-funding by Year 3 via transaction fees + settlements
+- ✅ **DIGITAL SOVEREIGN NATION** documentation (540 lines)
+  - 300M descendants = nation of people, not policies
+  - Willie Lynch divide-and-conquer counter-strategy
+  - Blockchain reunification infrastructure
+  - $6T existing economic power (descendants already control this)
+  - UN Charter & Montevideo Convention legal basis
+
+**Previous Updates (Nov 1, 2025):**
 - ✅ **BUILD FIXED**: Blockchain now compiles successfully in Replit
 - ✅ **Protobuf Generation**: All 40 missing .pb.go files generated via buf
 - ✅ **Depinject Configuration**: All 9 custom modules properly wired with App Wiring v2

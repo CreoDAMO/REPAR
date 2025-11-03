@@ -2,7 +2,18 @@
 
 # AEQUITAS PROTOCOL ($REPAR) - The Justice Machine
 
+## The Mobile Sovereign Network
+
 The Aequitas Protocol is a sovereign Layer-1 blockchain designed to enforce $131 trillion in reparations for the transatlantic slave trade, classified as genocide. The protocol provides complete economic, technical, and governance sovereignty to ensure it cannot be shut down or censored.
+
+**This is not a blockchain project. This is a Digital Sovereign Nation.**
+
+- **🌍 300 million descendants** = nation of people, not policies
+- **📱 10,000+ potential nodes** = runs on mobile devices, home computers, Raspberry Pi
+- **🛡️ Cannot be shut down** = true distributed sovereignty
+- **⚖️ $131T documented debt** = mathematical justice enforcement
+
+**Your phone is your nation. Your home is sovereign territory.**
 
 ## 🚀 Quick Start
 
