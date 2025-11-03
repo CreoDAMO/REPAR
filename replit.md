@@ -98,6 +98,17 @@ The blockchain build process uses GitHub Actions instead of local builds to avoi
 5. **Initialization**: Use `scripts/init-both-pregenerated.sh` to initialize both networks
 
 **Recent Updates (Nov 3, 2025):**
+- ✅ **MOBILE APP FOUNDATION COMPLETE** (mobile/)
+  - Expo SDK 54 with React Native + TypeScript
+  - 5 core screens: Dashboard, Wallet, Governance, Node Status, Claims Filing
+  - Expo Router file-based navigation with bottom tabs
+  - Dark theme design system matching web app
+  - CosmJS blockchain client integration (ready for implementation)
+  - Bundle ID: zone.aequitas.mobile (iOS/Android)
+  - Camera, biometric, storage permissions configured
+  - Deep linking support (aequitas:// scheme)
+  - Ready for blockchain integration (WalletConnect, light client, governance)
+  - See docs/MOBILE_APP_STATUS.md for full roadmap
 - ✅ **DISTRIBUTED NODE DEPLOYMENT**: Revolutionary infrastructure strategy
   - Home computer validators (Linux/macOS/Windows)
   - Raspberry Pi nodes ($150 kit, 24/7 low-power)
