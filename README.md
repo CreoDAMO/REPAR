@@ -234,7 +234,7 @@ Transform your smartphone into a validator node:
 - ⏳ Initial Validator Onboarding (100+ validators)
 
 ### 🔮 **Phase 3: Enforcement (Q1-Q2 2026)**
-- $REPAR Liquidity Bootstrapping Pool (LBP) Launch
+- $REPAR Coin Liquidity Bootstrapping Pool (LBP) Launch
 - First Real-World Arbitration Cases Filed
 - Barclays, Lloyd's, JPMorgan Initial Filings
 - 10,000+ mobile validators activated

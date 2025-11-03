@@ -331,11 +331,11 @@
 
 ### **Phase 3: Enforcement (Q1-Q2 2026)**
 
-#### $REPAR Token Launch ⏳
+#### $REPAR Coin Launch & Liquidity ⏳
 - [ ] Liquidity Bootstrapping Pool (LBP) setup
 - [ ] Initial DEX liquidity provision
 - [ ] Price discovery mechanism
-- [ ] $REPAR/USDC pair launch
+- [ ] $REPAR/USDC pair launch (native coin swaps)
 - [ ] Trading analytics integration
 
 #### Legal Actions ⏳
