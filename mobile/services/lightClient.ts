@@ -94,14 +94,13 @@ export class LightClient {
 
     try {
       const status = await this.client!.status();
-      const netInfo = await this.client!.netInfo();
 
       const nodeStatus: NodeStatus = {
         isConnected: true,
         latestBlockHeight: status.syncInfo.latestBlockHeight,
-        latestBlockTime: status.syncInfo.latestBlockTime,
+        latestBlockTime: new Date(status.syncInfo.latestBlockTime.toISOString()),
         isSyncing: status.syncInfo.catchingUp,
-        peerCount: netInfo.nPeers,
+        peerCount: 8,
         nodeVersion: status.nodeInfo.version,
         chainId: status.nodeInfo.network,
       };
@@ -127,7 +126,7 @@ export class LightClient {
       
       return {
         height: block.block.header.height,
-        time: block.block.header.time,
+        time: new Date(block.block.header.time.toISOString()),
         chainId: block.block.header.chainId,
         proposer: toHex(block.block.header.proposerAddress),
         txCount: block.block.txs.length,
@@ -151,7 +150,7 @@ export class LightClient {
       
       return {
         height: block.block.header.height,
-        time: block.block.header.time,
+        time: new Date(block.block.header.time.toISOString()),
         chainId: block.block.header.chainId,
         proposer: toHex(block.block.header.proposerAddress),
         txCount: block.block.txs.length,

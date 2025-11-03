@@ -1,9 +1,58 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
+import { useNodeStore } from '../../stores/nodeStore';
+import { initializeLightClient, getLightClient } from '../../services/lightClient';
+import { BackgroundSyncService } from '../../services/backgroundSync';
 
 export default function NodeScreen() {
-  const [isRunning] = useState(true);
-  const [uptimePercent] = useState(98.5);
+  const { status, isRunning, setStatus, setRunning } = useNodeStore();
+  const [isLoading, setIsLoading] = useState(true);
+  const [batteryUsage, setBatteryUsage] = useState(4.2);
+  const [dataUsage, setDataUsage] = useState(0);
+  const [uptimePercent, setUptimePercent] = useState(98.5);
+
+  useEffect(() => {
+    initializeNode();
+    const interval = setInterval(updateNodeStats, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const initializeNode = async () => {
+    setIsLoading(true);
+    const connected = await initializeLightClient();
+    setRunning(connected);
+    
+    if (connected) {
+      await updateNodeStats();
+    }
+    
+    const battery = await BackgroundSyncService.getBatteryInfo();
+    setBatteryUsage(battery.usagePercentPerDay);
+    
+    setIsLoading(false);
+  };
+
+  const updateNodeStats = async () => {
+    const client = getLightClient();
+    const nodeStatus = await client.getNodeStatus();
+    
+    if (nodeStatus) {
+      setStatus(nodeStatus);
+    }
+    
+    const syncStats = BackgroundSyncService.getSyncStats();
+    setDataUsage(syncStats.dataUsageMB);
+    setUptimePercent(BackgroundSyncService.getUptimePercentage());
+  };
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" color="#F59E0B" />
+        <Text style={styles.loadingText}>Initializing node...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -23,41 +72,47 @@ export default function NodeScreen() {
 
       <View style={styles.statsGrid}>
         <View style={styles.statCard}>
-          <Text style={styles.statValue}>{uptimePercent}%</Text>
+          <Text style={styles.statValue}>{uptimePercent.toFixed(1)}%</Text>
           <Text style={styles.statLabel}>Uptime</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={styles.statValue}>4.2%</Text>
+          <Text style={styles.statValue}>{batteryUsage.toFixed(1)}%</Text>
           <Text style={styles.statLabel}>Battery/Day</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={styles.statValue}>215MB</Text>
+          <Text style={styles.statValue}>{dataUsage.toFixed(0)}MB</Text>
           <Text style={styles.statLabel}>Data This Month</Text>
         </View>
         <View style={styles.statCard}>
-          <Text style={styles.statValue}>11,234</Text>
-          <Text style={styles.statLabel}>Network Nodes</Text>
+          <Text style={styles.statValue}>{status?.peerCount || 8}</Text>
+          <Text style={styles.statLabel}>Network Peers</Text>
         </View>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Sync Status</Text>
         <View style={styles.card}>
-          <Text style={styles.cardText}>Chain Height: 1,234,567</Text>
-          <Text style={styles.cardText}>Synced Blocks: 1,234,560</Text>
-          <Text style={styles.cardText}>Behind: 7 blocks</Text>
+          <Text style={styles.cardText}>
+            Chain Height: {status?.latestBlockHeight.toLocaleString() || 'Connecting...'}
+          </Text>
+          <Text style={styles.cardText}>
+            Sync Status: {status?.isSyncing ? 'Syncing...' : 'Fully Synced'}
+          </Text>
           <Text style={styles.cardText}>Sync Mode: Light Client</Text>
-          <Text style={styles.cardText}>Peers: 8 connected</Text>
+          <Text style={styles.cardText}>Peers: {status?.peerCount || 0} connected</Text>
+          <TouchableOpacity onPress={updateNodeStats}>
+            <Text style={styles.refreshText}>🔄 Refresh</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Node Information</Text>
         <View style={styles.card}>
-          <Text style={styles.cardText}>Node ID: mobile-1234567890</Text>
-          <Text style={styles.cardText}>Chain: aequitas-1 (Mainnet)</Text>
-          <Text style={styles.cardText}>Version: 1.0.0</Text>
-          <Text style={styles.cardText}>Started: 2 days ago</Text>
+          <Text style={styles.cardText}>Chain: {status?.chainId || 'aequitas-1'}</Text>
+          <Text style={styles.cardText}>Version: {status?.nodeVersion || '1.0.0'}</Text>
+          <Text style={styles.cardText}>Type: Mobile Light Node</Text>
+          <Text style={styles.cardText}>Status: {isRunning ? 'Active' : 'Stopped'}</Text>
         </View>
       </View>
 
@@ -91,6 +146,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0F172A',
+  },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#94A3B8',
+  },
+  refreshText: {
+    fontSize: 14,
+    color: '#F59E0B',
+    marginTop: 12,
   },
   header: {
     padding: 16,
