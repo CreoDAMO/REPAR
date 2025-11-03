@@ -17,6 +17,17 @@ This index organizes all Aequitas Protocol documentation by audience and purpose
 
 ## Black Paper (Narrative & Foundation)
 
+### Philosophical Foundation
+
+0. **[Digital Sovereign Nation](DIGITAL_SOVEREIGN_NATION.md)** 🌍 **START HERE**
+   - Why this is a nation of 300M people, not a corporate project
+   - How blockchain counters Willie Lynch divide-and-conquer tactics
+   - The economic reality: $6T in existing descendant buying power
+   - Legal basis for digital sovereignty (UN Charter, Montevideo Convention)
+   - **Audience**: Everyone - Read this first to understand the vision
+
+---
+
 ### Core Documents
 
 1. **[Executive Summary](blackpaper/EXECUTIVE_SUMMARY.md)**

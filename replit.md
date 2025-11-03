@@ -13,6 +13,7 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 - **Legal Compliance**: FRE 901 evidence standards for all records
 - **Multi-Wallet Support**: Keplr (recommended for full features), MetaMask (EVM), Coinbase Wallet
 - **Terminology**: Use "black paper" (NOT "white paper") for project documentation - intentional choice reflecting project's mission
+- **Digital Sovereign Nation**: This is a nation of 300M people (12-15M enslaved + descendants), not a corporate project. Nations are defined by people, not policies. Counter Willie Lynch divide-and-conquer tactics through unified blockchain infrastructure.
 
 ## System Architecture
 

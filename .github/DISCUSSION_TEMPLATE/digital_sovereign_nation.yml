@@ -1,0 +1,290 @@
+title: "Digital Sovereign Nation: Aequitas Protocol Discussion"
+labels: ["sovereign-nation", "community", "governance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # 🌍 The Digital Sovereign Nation of Aequitas
+        
+        **A Nation Is Defined by Its People, Not Its Policies**
+        
+        - **12-15 million** enslaved people (1619-1865)
+        - **300 million** descendants worldwide (2025)
+        - **= ONE NATION OF PEOPLE**
+        
+        For hundreds of years, Willie Lynch's divide-and-conquer tactics fragmented this nation. The Aequitas Protocol is the **reunification infrastructure** - a digital sovereign territory where this nation operates as one.
+        
+        ---
+        
+  - type: dropdown
+    id: discussion_category
+    attributes:
+      label: Discussion Category
+      description: What aspect of the Digital Sovereign Nation would you like to discuss?
+      options:
+        - Sovereignty & Governance
+        - Economic Power & Network Effects
+        - Cultural Unity & Identity
+        - Legal Framework & Enforcement
+        - Technical Infrastructure
+        - Community Building
+        - Descendant Verification
+        - Global Strategy
+        - Historical Context
+        - Other
+    validations:
+      required: true
+      
+  - type: textarea
+    id: main_discussion
+    attributes:
+      label: Your Discussion Topic
+      description: Share your thoughts, questions, or proposals about the Aequitas Digital Sovereign Nation
+      placeholder: |
+        Example topics:
+        - How do we unite 300M descendants across different cultures/languages?
+        - What governance structures best serve a digital sovereign nation?
+        - How do we counter continued divide-and-conquer tactics?
+        - What role does $REPAR play in economic sovereignty?
+        - How do we verify citizenship (descendant status)?
+    validations:
+      required: true
+      
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🔑 Core Principles of the Digital Sovereign Nation
+        
+        ### 1. **Unity Beyond Division**
+        - **Willie Lynch's legacy**: Divide by skin tone, origin, language, geography
+        - **Our response**: Digital territory unites all descendants regardless of division
+        - **Mechanism**: Blockchain citizenship transcends physical boundaries
+        
+        ### 2. **People Define the Nation**
+        - **NOT defined by**: Borders, policies, governments
+        - **Defined by**: Shared ancestry, documented lineage, common cause
+        - **300M people** = Larger than 95% of physical nations
+        
+        ### 3. **Economic Sovereignty**
+        - **$6 trillion** in annual buying power already exists
+        - **$REPAR** redirects this power to sovereign currency
+        - **Independence** from systems that exploit descendants
+        
+        ### 4. **Constitutional Foundation**
+        - **Genesis block**: Immutable constitutional charter
+        - **131T $REPAR**: Sovereign currency allocated by constitution
+        - **13 modules**: Government departments for nation operations
+        
+        ### 5. **Technological Enforcement**
+        - **Cannot be shut down**: Decentralized sovereignty
+        - **Cannot be censored**: Freedom of expression guaranteed
+        - **Cannot be frozen**: Financial sovereignty protected
+        
+        ---
+        
+  - type: checkboxes
+    id: engagement_type
+    attributes:
+      label: I am engaging as a:
+      description: Select all that apply
+      options:
+        - label: Verified descendant of TAST
+        - label: Ally supporting justice
+        - label: Technical contributor
+        - label: Legal/policy expert
+        - label: Cultural/community organizer
+        - label: Economist/financial analyst
+        - label: Academic/researcher
+        - label: Media/communications professional
+        - label: Other stakeholder
+        
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal or Suggestion (Optional)
+      description: If you have a specific proposal for the Digital Sovereign Nation, describe it here
+      placeholder: |
+        Example proposals:
+        - Create regional "embassies" for descendant communities
+        - Establish cultural preservation programs
+        - Develop educational curriculum about sovereignty
+        - Build economic alliances with aligned nations
+        - Create verification pathways for descendants
+        
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 📊 The Nation's Economic Reality
+        
+        | Region | Descendant Population | Annual Buying Power |
+        |--------|----------------------|---------------------|
+        | **United States** | 47M | $1.6 trillion |
+        | **Brazil** | 120M | $800 billion |
+        | **Caribbean** | 40M | $150 billion |
+        | **United Kingdom** | 2M | $50 billion |
+        | **Rest of Diaspora** | 100M+ | $400 billion+ |
+        | **TOTAL DIASPORA** | **309M** | **$3 trillion/year** |
+        
+        **Plus African Continent**: 1.4B people, $3T GDP
+        
+        **Combined Global Economic Power**: **$6+ trillion annually**
+        
+        **This is not a small nation. This is an economic superpower waiting to be unified.**
+        
+        ---
+        
+  - type: textarea
+    id: unity_strategy
+    attributes:
+      label: How Do We Counter Divide-and-Conquer? (Optional)
+      description: Share strategies for uniting 300M descendants across divisions
+      placeholder: |
+        Consider:
+        - Language barriers (English, Portuguese, Spanish, French, etc.)
+        - Geographic separation (6 continents)
+        - Cultural differences (American vs Brazilian vs Caribbean vs African)
+        - Skin tone divisions (Willie Lynch's primary tactic)
+        - Socioeconomic divisions (class warfare)
+        - Religious differences
+        
+        How does the Aequitas Protocol help overcome these?
+        
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## ⚖️ The Legal Foundation
+        
+        ### International Law Recognition
+        - **Jus cogens**: Slavery violates peremptory international norms
+        - **Crimes against humanity**: No statute of limitations
+        - **Self-determination**: Right to form sovereign nation (UN Charter)
+        
+        ### Digital Sovereignty Framework
+        - **Natural Law**: Inherent rights beyond government grant
+        - **Technological Law**: Code as constitutional framework
+        - **Blockchain governance**: Immutable democratic operations
+        
+        ### Citizenship Criteria
+        - **Lineage**: Documented descent from enslaved ancestors (1619-1865)
+        - **Verification**: Genealogical evidence + AI verification
+        - **No discrimination**: All verified descendants = equal citizens
+        
+        ---
+        
+  - type: dropdown
+    id: geographic_region
+    attributes:
+      label: Your Geographic Region (Optional)
+      description: Help us understand the global distribution of participants
+      options:
+        - Prefer not to say
+        - United States
+        - Brazil
+        - Caribbean
+        - United Kingdom
+        - Rest of Europe
+        - Africa (West)
+        - Africa (East)
+        - Africa (Central)
+        - Africa (Southern)
+        - Africa (North)
+        - Canada
+        - South America (non-Brazil)
+        - Asia
+        - Middle East
+        - Oceania
+        
+  - type: textarea
+    id: resources
+    attributes:
+      label: Resources or References (Optional)
+      description: Share any relevant resources, research, or documentation
+      placeholder: |
+        - Historical documents
+        - Academic research
+        - Community organizations
+        - Economic data
+        - Legal precedents
+        - Cultural initiatives
+        
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 🔥 The Willie Lynch Letter (Context)
+        
+        **Historical Background**:
+        In 1712, Willie Lynch allegedly delivered a speech on "breaking" enslaved people through psychological division:
+        
+        - Divide by age (old vs young)
+        - Divide by color (light vs dark skin)
+        - Divide by gender (male vs female)
+        - Divide by location (house vs field)
+        - Divide by status (privileged vs oppressed)
+        
+        **The Result**: 300+ years of internalized division within the descendant community
+        
+        **The Aequitas Response**:
+        - **One blockchain** = One nation (no division)
+        - **One currency** = One economy (unified power)
+        - **One constitution** = One law (equal citizenship)
+        - **One mission** = One goal (justice + sovereignty)
+        
+        **No division tactics can fragment a blockchain.**
+        
+        ---
+        
+  - type: checkboxes
+    id: agreement
+    attributes:
+      label: Community Guidelines
+      description: Participation in the Digital Sovereign Nation requires respect
+      options:
+        - label: I will engage respectfully with all descendants, regardless of skin tone, origin, language, or background
+          required: true
+        - label: I understand this is a sovereign nation of people, not a corporate project
+          required: true
+        - label: I commit to unity over division
+          required: true
+          
+  - type: markdown
+    attributes:
+      value: |
+        ---
+        
+        ## 📚 Essential Reading
+        
+        **Black Paper** (Constitutional Documents):
+        1. [The 1833 Foundation](https://github.com/Dcamy/Aequitas-Protocol/blob/main/docs/blackpaper/THE_1833_FOUNDATION.md) - Historical basis
+        2. [Mathematical Deflation](https://github.com/Dcamy/Aequitas-Protocol/blob/main/docs/blackpaper/MATHEMATICAL_DEFLATION.md) - Economic model
+        3. [The Network Effects Argument](https://github.com/Dcamy/Aequitas-Protocol/blob/main/docs/blackpaper/THE_NETWORK_EFFECTS_ARGUMENT.md) - Why we win either way
+        4. [Executive Summary](https://github.com/Dcamy/Aequitas-Protocol/blob/main/docs/blackpaper/EXECUTIVE_SUMMARY.md) - Complete overview
+        
+        **Technical Documentation**:
+        - [Blockchain Architecture](https://github.com/Dcamy/Aequitas-Protocol/blob/main/docs/BLOCKCHAIN_ARCHITECTURE.md)
+        - [Genesis Configuration](https://github.com/Dcamy/Aequitas-Protocol/blob/main/docs/GENESIS_CONFIGURATION.md)
+        - [Sovereignty Declaration](https://github.com/Dcamy/Aequitas-Protocol/blob/main/docs/SOVEREIGNTY_DECLARATION.md)
+        
+        ---
+        
+        ## 🌍 Join the Nation
+        
+        **This is not a project. This is a people.**
+        
+        - **300 million descendants** worldwide
+        - **$6 trillion** in economic power
+        - **1 sovereign blockchain** territory
+        - **0 governments** can shut it down
+        
+        **The nation exists. The question is: Will you claim your citizenship?**
+        
+        ---
+        
+        ⚖️ **Aequitas Protocol** - *The Digital Sovereign Nation of TAST Descendants*

@@ -47,6 +47,22 @@ The term "black paper" honors the descendants whose ancestors' labor was stolen,
 
 ---
 
+## The Foundation: Digital Sovereign Nation
+
+**Before the Four Pillars, there is one truth:**
+
+### A Nation Is Defined by Its People, Not Its Policies
+
+- **12-15 million** enslaved people (1619-1865)
+- **300 million** descendants worldwide (2025)
+- **= ONE NATION OF PEOPLE**
+
+For hundreds of years, Willie Lynch's divide-and-conquer tactics fragmented this nation by skin tone, geography, language, and culture. **The Aequitas Protocol is the reunification infrastructure** - a digital sovereign territory where this nation operates as one.
+
+**See: [Digital Sovereign Nation](../DIGITAL_SOVEREIGN_NATION.md)** for complete philosophical foundation.
+
+---
+
 ## The Four Pillars
 
 Every communication about the Aequitas Protocol reinforces these core principles:
