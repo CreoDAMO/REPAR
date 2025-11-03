@@ -1,32 +1,159 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
-import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { useState, useEffect } from 'react';
+import { useWalletStore } from '../../stores/walletStore';
+import { WalletService } from '../../services/wallet';
+import { CreateWalletModal } from '../../components/CreateWalletModal';
 
 export default function WalletScreen() {
-  const [balance] = useState('0.00');
-  const [isConnected] = useState(false);
+  const { address, balance, isConnected, setAddress, setBalance, setConnected } = useWalletStore();
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    checkExistingWallet();
+  }, []);
+
+  useEffect(() => {
+    if (address && isConnected) {
+      refreshBalance();
+    }
+  }, [address, isConnected]);
+
+  const checkExistingWallet = async () => {
+    setIsLoading(true);
+    try {
+      const walletAddress = await WalletService.getAddress();
+      if (walletAddress) {
+        setAddress(walletAddress);
+        setConnected(true);
+      }
+    } catch (error) {
+      console.error('Error checking wallet:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const refreshBalance = async () => {
+    if (!address) return;
+    
+    setIsRefreshing(true);
+    try {
+      const newBalance = await WalletService.getBalance(address);
+      setBalance(newBalance);
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const handleDisconnect = async () => {
+    Alert.alert(
+      'Disconnect Wallet',
+      'Are you sure you want to disconnect? Your wallet will remain secure on this device.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Disconnect',
+          style: 'destructive',
+          onPress: () => {
+            setAddress(null);
+            setBalance('0.00');
+            setConnected(false);
+          },
+        },
+      ]
+    );
+  };
+
+  const handleWalletCreated = (newAddress: string) => {
+    setAddress(newAddress);
+    setConnected(true);
+  };
+
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.centered]}>
+        <ActivityIndicator size="large" color="#F59E0B" />
+        <Text style={styles.loadingText}>Loading wallet...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          {isConnected ? 'Connected' : 'Not Connected'}
+          {isConnected ? '✓ Connected' : '○ Not Connected'}
         </Text>
+        {isConnected && address && (
+          <Text style={styles.addressText}>
+            {address.slice(0, 12)}...{address.slice(-8)}
+          </Text>
+        )}
       </View>
 
       <View style={styles.balanceCard}>
         <Text style={styles.balanceLabel}>$REPAR Balance</Text>
         <Text style={styles.balanceValue}>{balance}</Text>
         <Text style={styles.balanceUsd}>≈ $0.00 USD</Text>
+        {isConnected && (
+          <TouchableOpacity 
+            style={styles.refreshButton} 
+            onPress={refreshBalance}
+            disabled={isRefreshing}
+          >
+            <Text style={styles.refreshButtonText}>
+              {isRefreshing ? 'Refreshing...' : '🔄 Refresh'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity style={styles.actionButton}>
-          <Text style={styles.actionButtonText}>Connect Wallet</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionButton, styles.actionButtonSecondary]}>
-          <Text style={styles.actionButtonTextSecondary}>Scan QR</Text>
-        </TouchableOpacity>
+        {!isConnected ? (
+          <TouchableOpacity 
+            style={styles.actionButton}
+            onPress={() => setShowCreateModal(true)}
+          >
+            <Text style={styles.actionButtonText}>Connect Wallet</Text>
+          </TouchableOpacity>
+        ) : (
+          <>
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={() => Alert.alert('Send', 'Send feature coming soon')}
+            >
+              <Text style={styles.actionButtonText}>Send</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={[styles.actionButton, styles.actionButtonSecondary]}
+              onPress={() => Alert.alert('Receive', 'Receive feature coming soon')}
+            >
+              <Text style={styles.actionButtonTextSecondary}>Receive</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </View>
+
+      {isConnected && (
+        <View style={styles.section}>
+          <TouchableOpacity 
+            style={styles.disconnectButton}
+            onPress={handleDisconnect}
+          >
+            <Text style={styles.disconnectButtonText}>Disconnect Wallet</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <CreateWalletModal
+        visible={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleWalletCreated}
+      />
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>About $REPAR</Text>
@@ -72,6 +199,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#0F172A',
   },
+  centered: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: '#94A3B8',
+  },
   header: {
     padding: 16,
     backgroundColor: '#1E293B',
@@ -82,6 +218,13 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#94A3B8',
     textAlign: 'center',
+  },
+  addressText: {
+    fontSize: 12,
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 4,
+    fontFamily: 'monospace',
   },
   balanceCard: {
     margin: 16,
@@ -106,6 +249,30 @@ const styles = StyleSheet.create({
   balanceUsd: {
     fontSize: 16,
     color: '#64748B',
+  },
+  refreshButton: {
+    marginTop: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#1E293B',
+    borderRadius: 6,
+  },
+  refreshButtonText: {
+    fontSize: 14,
+    color: '#F59E0B',
+  },
+  disconnectButton: {
+    backgroundColor: '#1E293B',
+    borderWidth: 1,
+    borderColor: '#EF4444',
+    padding: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  disconnectButtonText: {
+    color: '#EF4444',
+    fontSize: 14,
+    fontWeight: '600',
   },
   actions: {
     flexDirection: 'row',
