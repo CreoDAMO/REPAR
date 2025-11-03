@@ -16,7 +16,7 @@ export default function TabLayout() {
         name="wallet"
         options={{
           title: 'Wallet',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="wallet" color={color} />,
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="credit-card" color={color} />,
           headerTitle: '$REPAR Wallet',
         }}
       />

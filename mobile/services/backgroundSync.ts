@@ -1,6 +1,6 @@
 import * as BackgroundFetch from 'expo-background-fetch';
 import * as TaskManager from 'expo-task-manager';
-import * as Device from 'expo-device';
+import * as Battery from 'expo-battery';
 import { getLightClient } from './lightClient';
 import { Platform } from 'react-native';
 
@@ -91,14 +91,14 @@ export class BackgroundSyncService {
 
   static async getBatteryInfo(): Promise<BatteryInfo> {
     try {
-      const batteryLevel = await Device.getBatteryLevelAsync();
-      const batteryState = await Device.getBatteryStateAsync();
+      const batteryLevel = await Battery.getBatteryLevelAsync();
+      const batteryState = await Battery.getBatteryStateAsync();
 
       const usagePercentPerDay = 4.2;
 
       return {
         level: batteryLevel * 100,
-        isCharging: batteryState === Device.BatteryState.CHARGING,
+        isCharging: batteryState === Battery.BatteryState.CHARGING,
         usagePercentPerDay,
       };
     } catch (error) {
