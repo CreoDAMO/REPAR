@@ -37,10 +37,12 @@ The Aequitas Zone mobile app transforms your smartphone into a **sovereign node*
 
 ## Features
 
-### 🏠 Dashboard
-- Real-time network statistics
-- Guardian status display
-- Mission statement and impact metrics
+### 🏠 Dashboard (✅ LIVE)
+- **Reunification narrative** - Willie Lynch counter-strategy messaging
+- **Real-time network statistics** (300M descendants, 11K+ nodes, $131T)
+- **Guardian status display** (Bronze tier mobile validator)
+- **Mission screen** with full counter-strategy explanation
+- **Your Impact** metrics showing network contribution
 
 ### 💰 Wallet (✅ LIVE)
 - **BIP39 HD wallet** creation/restore (24-word mnemonic)

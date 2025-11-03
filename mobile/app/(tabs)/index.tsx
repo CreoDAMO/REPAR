@@ -1,12 +1,18 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export default function DashboardScreen() {
+  const router = useRouter();
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.hero}>
         <Text style={styles.heroTitle}>Your Phone Is Your Nation</Text>
         <Text style={styles.heroSubtitle}>
-          The Mobile Sovereign Network
+          The Reunification Infrastructure
+        </Text>
+        <Text style={styles.heroMessage}>
+          Countering 400 years of Willie Lynch division
         </Text>
       </View>
 
@@ -50,14 +56,72 @@ export default function DashboardScreen() {
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🌍 The Mission</Text>
+        <Text style={styles.sectionTitle}>🌍 The Reunification Mission</Text>
+        <View style={styles.missionCard}>
+          <Text style={styles.missionTitle}>Willie Lynch Divided Us. We're Reuniting.</Text>
+          <Text style={styles.missionText}>
+            For 400 years, we've been divided by:
+          </Text>
+          <Text style={styles.divisionList}>
+            {'\n'}• Geography (scattered across continents)
+            {'\n'}• Skin tone (colorism hierarchies)
+            {'\n'}• Gender (distrust between men & women)
+            {'\n'}• Class (house vs field mentalities)
+            {'\n'}• Generation (broken knowledge transfer)
+          </Text>
+          <Text style={styles.missionSolution}>
+            {'\n'}Aequitas Protocol is the reunification infrastructure:
+          </Text>
+          <Text style={styles.solutionList}>
+            {'\n'}✅ DNA verification proves we're one people
+            {'\n'}✅ Blockchain territory = undivided ground
+            {'\n'}✅ $REPAR currency unifies economic power
+            {'\n'}✅ Mobile app = shared citizenship
+            {'\n'}✅ 11,000+ nodes = unstoppable network
+          </Text>
+          
+          <TouchableOpacity 
+            style={styles.missionButton}
+            onPress={() => router.push('/mission')}
+          >
+            <Text style={styles.missionButtonText}>Read Full Mission →</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>⚖️ The Beautiful Irony</Text>
         <View style={styles.card}>
+          <Text style={styles.cardTextBold}>Willie Lynch's Greatest Fear:</Text>
           <Text style={styles.cardText}>
-            Enforce $131 trillion in reparations for the transatlantic slave trade.
-            Your mobile node makes this network unstoppable.
+            {'\n'}A united Black people with shared economic power, territory, and political organization.
           </Text>
           <Text style={styles.cardTextBold}>
-            {'\n'}Can't shut down 11,000 nodes across 100 countries.
+            {'\n'}What Aequitas Delivers:
+          </Text>
+          <Text style={styles.cardText}>
+            {'\n'}Exactly that - through digital infrastructure that can't be divided again.
+          </Text>
+          <Text style={styles.ironyFooter}>
+            {'\n'}After 300+ years, his strategy finally meets its match.
+          </Text>
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>🚀 Your Impact</Text>
+        <View style={styles.card}>
+          <Text style={styles.cardText}>
+            By running this mobile validator, you are:
+          </Text>
+          <Text style={styles.impactList}>
+            {'\n'}🌍 Connecting 100+ countries in real-time
+            {'\n'}⚖️ Making the network unstoppable
+            {'\n'}💪 Countering geographic division
+            {'\n'}🔗 Proving: 300M descendants = 1 nation
+          </Text>
+          <Text style={styles.impactFooter}>
+            {'\n'}The division ends. The reunification begins. The nation exists.
           </Text>
         </View>
       </View>
@@ -85,6 +149,12 @@ const styles = StyleSheet.create({
   heroSubtitle: {
     fontSize: 16,
     color: '#94A3B8',
+    marginBottom: 8,
+  },
+  heroMessage: {
+    fontSize: 13,
+    color: '#10B981',
+    fontStyle: 'italic',
   },
   statsGrid: {
     flexDirection: 'row',
@@ -149,5 +219,72 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#CBD5E1',
     marginBottom: 8,
+  },
+  missionCard: {
+    backgroundColor: '#1E293B',
+    padding: 20,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: '#F59E0B',
+  },
+  missionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#F59E0B',
+    marginBottom: 12,
+  },
+  missionText: {
+    fontSize: 14,
+    color: '#CBD5E1',
+    lineHeight: 20,
+  },
+  divisionList: {
+    fontSize: 13,
+    color: '#EF4444',
+    lineHeight: 22,
+    fontStyle: 'italic',
+  },
+  missionSolution: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#F8FAFC',
+    marginTop: 4,
+  },
+  solutionList: {
+    fontSize: 13,
+    color: '#10B981',
+    lineHeight: 22,
+    fontWeight: 'bold',
+  },
+  missionButton: {
+    backgroundColor: '#F59E0B',
+    padding: 14,
+    borderRadius: 8,
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  missionButtonText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#FFF',
+  },
+  ironyFooter: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#10B981',
+    fontStyle: 'italic',
+    marginTop: 4,
+  },
+  impactList: {
+    fontSize: 14,
+    color: '#CBD5E1',
+    lineHeight: 24,
+  },
+  impactFooter: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#F59E0B',
+    fontStyle: 'italic',
+    marginTop: 8,
   },
 });
