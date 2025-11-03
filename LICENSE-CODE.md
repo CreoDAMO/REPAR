@@ -3,11 +3,13 @@ MIT License
 Copyright (c) 2025 Aequitas Protocol Foundation
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+of this software and associated documentation files (the "Software"), including
+but not limited to web applications, mobile applications (iOS/Android), blockchain
+nodes, smart contracts, and distributed validator software, to deal in the 
+Software without restriction, including without limitation the rights to use, 
+copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
+the Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
@@ -41,3 +43,16 @@ deployment for reparations recovery.
 ### Copyleft for Justice
 Any modifications to this software used for historical justice enforcement must remain 
 open-source and available to descendant communities.
+
+### Mobile Application Distribution
+This license permits distribution via:
+- Apple App Store (subject to Apple Developer Agreement)
+- Google Play Store (subject to Google Play Developer Distribution Agreement)
+- Direct APK/IPA distribution
+- Open-source forks and derivatives (with attribution)
+
+Mobile applications distributed under this license must:
+- Maintain "Powered by Aequitas Protocol" attribution
+- Comply with this MIT License and Additional Terms
+- Include the End-User License Agreement (LICENSE-MOBILE-EULA.md)
+- Not mislead users about the app's purpose or affiliation
