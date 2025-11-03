@@ -2,17 +2,22 @@
 
 ## App Icon (1024x1024px)
 
-**Design Specifications:**
-- Background: Dark navy (#0F172A)
-- Primary: Gold scales of justice (#F59E0B)
-- Style: Minimalist, sovereign, powerful
-- Format: PNG with transparency
+**✅ LOGO ALREADY EXISTS!**
 
-**Icon Concept:**
+We're using the existing **$REPAR coin logo** from the web app:
+- **Source:** `mobile/assets/icon.svg` (copied from `frontend/public/assets/repar-logo.svg`)
+- **Design:** Professional scales of justice with gradient background
+- **Colors:** Purple→Pink gradient, gold scales, $REPAR text
+
+**See `mobile/docs/GENERATE_APP_ICONS.md` for 5-minute setup instructions**
+
+**Actual Design:**
 ```
-⚖️ Balanced scales of justice
-🔗 Blockchain chain links wrapping around scales
-💫 Gold/amber glow effect
+⚖️ Scales of justice (gold)
+🎨 Purple → Pink gradient background
+💰 $REPAR text (gold)
+💫 Professional finish
+🔗 Consistent with web app branding
 ```
 
 ## App Store Screenshots
