@@ -63,8 +63,8 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain that transforms reparati
 - **[Monitoring](./Monitoring.md)** - System monitoring and alerts
 
 ### 📚 Resources
+- **[Black Paper](./Black-Paper.md)** ⚫ - NOT a white paper - Complete documentation
 - **[Forensic Audit](./Forensic-Audit.md)** - 205-page audit summary
-- **[Black Paper](./Black-Paper.md)** - Complete project documentation
 - **[Willie Lynch Counter-Strategy](./Willie-Lynch-Counter-Strategy.md)** - Reunification infrastructure
 - **[Roadmap](./Roadmap.md)** - Project timeline and milestones
 - **[FAQ](./FAQ.md)** - Frequently asked questions

@@ -25,7 +25,7 @@
 
 ### Documentation
 - **Documentation Files:** 89
-- **Wiki Pages:** 7
+- **Wiki Pages:** 10
 - **Total Docs Size:** ~500KB+
 
 ---
@@ -117,6 +117,6 @@
 
 ---
 
-**Generated:** November 04, 2025 at 04:13:37  
+**Generated:** November 04, 2025 at 04:20:12  
 **Script:** generate-wiki.sh  
 **Version:** 1.0
