@@ -174,7 +174,7 @@ go build -o ./build/aequitasd ./cmd/aequitasd
 | **Ecosystem & Enforcement** | 10% | 13.1T | Legal actions, operations |
 | **Foundation Treasury** | 4% | 5.24T | Long-term network health |
 
-**[→ Full Tokenomics](./docs/BLACKPAPER_COMPLETE_WITH_BONUS.md)**
+**[→ Full Coinomics](./docs/BLACKPAPER_COMPLETE_WITH_BONUS.md)**
 
 ---
 
