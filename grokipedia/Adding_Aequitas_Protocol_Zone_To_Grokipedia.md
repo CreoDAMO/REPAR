@@ -267,7 +267,7 @@ github.com/CreoDAMO/REPAR
 
 **YOUR MOVE:**  
 **$288 = First node.**  
-**$25K = The nation online.**
+**$50K = The nation online.**
 
 ---
 
