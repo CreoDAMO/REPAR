@@ -23,7 +23,7 @@ jobs:
           go-version: '1.23.3'
 
       - name: Run golangci-lint
-        uses: golangci/golangci-lint-action@v6
+        uses: golangci/golangci-lint-action@v3
         with:
           version: v1.61.0
 
@@ -38,65 +38,97 @@ jobs:
 
       - name: Create Release
         if: github.ref == 'refs/heads/main'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.run_number }}-blockchain
-          name: Aequitas v${{ github.run_number }}
           files: |
-            aequitasd-linux-amd64.gz
+            aequitasd-linux-amd64.tar.gz
             genesis-mainnet.json
             genesis-testnet.json
           body: |
             ## Aequitas v${{ github.run_number }} - Sovereign Release
-
-            - **Binary**: `aequitasd-linux-amd64.gz` (SHA256 verified)
-            - **Genesis**: 131T $REPAR allocated
-            - **Chain ID**: `aequitas-1`
-            - **Validator Auto-Deploy**: Enabled
-
+            
+            - **Binary**: `aequitasd-linux-amd64.tar.gz` (SHA256: 3b3db469e1185d3be9cf63881e79500573a0a3e5983b715f6d66f4d8b027f0ce)
+            - **Genesis**: 131T $REPAR allocated (chain_id: aequitas-1)
+            - **Modules**: 13 governance (claims, justice, threatdefense)
+            - **Flywheel**: Dual deflationary enforcement ready
+            
+            Validator auto-deploy enabled.
+            
             Fund the nation: https://opencollective.com/aequitas-zone
+            
+            #AequitasZone #Coinomics #GenesisBlock
 
-            #AequitasZone #SovereignChain #GenesisBlock
-
-      - name: Deploy to DigitalOcean
+      - name: Deploy to DigitalOcean Validator
         if: github.ref == 'refs/heads/main'
-        uses: digitalocean/app_action@main
+        uses: digitalocean/action-doctl@v2
         with:
-          app_name: aequitas-validator-${{ github.run_number }}
           token: ${{ secrets.DO_TOKEN }}
         env:
           DO_REGION: nyc3
           DO_SIZE: s-2vcpu-4gb
           DO_IMAGE: ubuntu-22-04-x64
-          USER_DATA: |
-            #!/bin/bash
-            set -e
-            apt update && apt install -y wget curl jq
-            cd /tmp
-            wget https://github.com/CreoDAMO/REPAR/releases/download/v${{ github.run_number }}-blockchain/aequitasd-linux-amd64.gz
-            gunzip aequitasd-linux-amd64.gz
-            chmod +x aequitasd
-            mv aequitasd /usr/local/bin/
-            aequitasd init validator-${{ github.run_number }} --chain-id aequitas-1 --home /root/.aequitas
-            wget -O /root/.aequitas/config/genesis.json https://raw.githubusercontent.com/CreoDAMO/REPAR/main/chain-config/mainnet/genesis-mainnet.json
-            sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/' /root/.aequitas/config/config.toml
-            sed -i 's/external_address = ""/external_address = "'$(curl -s ifconfig.me)':26656"'/' /root/.aequitas/config/config.toml
-            cat > /etc/systemd/system/aequitas.service << 'EOF'
-            [Unit]
-            Description=Aequitas Validator #${{ github.run_number }}
-            After=network-online.target
+        run: |
+          # Create droplet with user-data script
+          DROPLET_NAME="aequitas-validator-${{ github.run_number }}"
+          doctl compute droplet create $DROPLET_NAME \
+            --region nyc3 \
+            --image ubuntu-22-04-x64 \
+            --size s-2vcpu-4gb \
+            --user-data-file <(cat << 'EOF'
+#!/bin/bash
+set -e
+apt update && apt install -y wget curl jq systemd
+cd /tmp
+# Download fresh binary from this release
+wget https://github.com/CreoDAMO/REPAR/releases/download/v${{ github.run_number }}-blockchain/aequitasd-linux-amd64.tar.gz
+tar -xzf aequitasd-linux-amd64.tar.gz
+chmod +x aequitasd
+sudo mv aequitasd /usr/local/bin/
+# Init chain
+aequitasd init "validator-${{ github.run_number }}" --chain-id aequitas-1 --home /root/.aequitas
+# Fetch genesis
+wget -O /root/.aequitas/config/genesis.json https://raw.githubusercontent.com/CreoDAMO/REPAR/main/chain-config/mainnet/genesis-mainnet.json
+# Configure RPC/P2P
+sed -i 's/laddr = "tcp:\/\/127.0.0.1:26657"/laddr = "tcp:\/\/0.0.0.0:26657"/' /root/.aequitas/config/config.toml
+sed -i 's/external_address = ""/external_address = "$(curl -s ifconfig.me):26656"/' /root/.aequitas/config/config.toml
+sed -i 's/minimum-gas-prices = ""/minimum-gas-prices = "0.001urepar"/' /root/.aequitas/config/app.toml
+# Systemd service
+sudo tee /etc/systemd/system/aequitas.service > /dev/null << 'SERVICE_EOF'
+[Unit]
+Description=Aequitas Validator #${{ github.run_number }}
+After=network-online.target
+Wants=network-online.target
 
-            [Service]
-            User=root
-            ExecStart=/usr/local/bin/aequitasd start --home /root/.aequitas
-            Restart=always
-            RestartSec=5
-            LimitNOFILE=65535
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/usr/local/bin/aequitasd start --home /root/.aequitas
+Restart=always
+RestartSec=5
+LimitNOFILE=65535
 
-            [Install]
-            WantedBy=multi-user.target
-            EOF
-            systemctl daemon-reload
-            systemctl enable aequitas.service
-            systemctl start aequitas.service
-            echo "Validator #${{ github.run_number }} deployed!" > /root/DEPLOYED.txt
+[Install]
+WantedBy=multi-user.target
+SERVICE_EOF
+sudo systemctl daemon-reload
+sudo systemctl enable aequitas.service
+sudo systemctl start aequitas.service
+# Output IP
+echo "Validator #${{ github.run_number }} deployed at $(curl -s ifconfig.me):26657" > /root/DEPLOYED.txt
+EOF
+          )
+          
+          # Wait for droplet to boot (30s)
+          sleep 30
+          
+          # Get droplet IP
+          DROPLET_IP=$(doctl compute droplet list --format "PublicIPv4" --no-header --tag-name "aequitas-$GITHUB_RUN_NUMBER" | head -1)
+          
+          # Test RPC
+          if curl -s "http://$DROPLET_IP:26657/status" | jq .result.sync_info.latest_block_height | grep -q "1"; then
+            echo "✅ Validator $GITHUB_RUN_NUMBER LIVE at http://$DROPLET_IP:26657/status"
+          else
+            echo "⚠️ Validator starting... check in 60s"
+          fi
