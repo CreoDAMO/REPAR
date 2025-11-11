@@ -54,7 +54,7 @@ git push origin main    # or your branch
 ### Option 2: Use the Updated Script
 
 ```bash
-./trigger-blockchain-build.sh
+./scripts/trigger-blockchain-build.sh
 ```
 
 The script will now commit both:

@@ -369,7 +369,7 @@ Before launching, verify:
 
 **Launch Command**:
 ```bash
-./deploy-to-digitalocean.sh production
+./scripts/deploy-to-digitalocean.sh production
 ```
 
 ---

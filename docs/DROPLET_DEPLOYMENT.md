@@ -16,8 +16,8 @@ From your local machine or mobile SSH client:
 # Option A: Download directly on Droplet
 ssh root@159.203.92.230
 wget https://raw.githubusercontent.com/CreoDAMO/REPAR/main/deploy-blockchain-to-droplet.sh
-chmod +x deploy-blockchain-to-droplet.sh
-./deploy-blockchain-to-droplet.sh
+chmod +x scripts/deploy-blockchain-to-droplet.sh
+./scripts/deploy-blockchain-to-droplet.sh
 ```
 
 ### 2. Start Blockchain Nodes

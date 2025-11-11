@@ -46,11 +46,11 @@ Run the deployment script:
 
 ```bash
 # Production deployment
-chmod +x deploy-to-digitalocean.sh
-./deploy-to-digitalocean.sh production
+chmod +x scripts/deploy-to-digitalocean.sh
+./scripts/deploy-to-digitalocean.sh production
 
 # Staging deployment
-./deploy-to-digitalocean.sh staging
+./scripts/deploy-to-digitalocean.sh staging
 ```
 
 ### Manual Deployment via Dashboard

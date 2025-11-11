@@ -9,8 +9,8 @@ In your DigitalOcean console, run:
 ```bash
 cd /root
 wget https://raw.githubusercontent.com/CreoDAMO/REPAR/main/deploy-blockchain-from-release.sh
-chmod +x deploy-blockchain-from-release.sh
-./deploy-blockchain-from-release.sh
+chmod +x scripts/deploy-blockchain-from-release.sh
+./scripts/deploy-blockchain-from-release.sh
 ```
 
 ### Option 2: One-Liner (Even Easier)
@@ -96,5 +96,5 @@ ls -lh ~/.aequitas/config/genesis.json
 
 ### Re-run deployment from scratch
 ```bash
-./deploy-blockchain-from-release.sh
+./scripts/deploy-blockchain-from-release.sh
 ```

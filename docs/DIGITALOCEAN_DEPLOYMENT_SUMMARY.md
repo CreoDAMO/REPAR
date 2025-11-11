@@ -74,8 +74,8 @@ doctl auth init
 # Enter your API token when prompted
 
 # 3. Deploy frontend and block explorer
-chmod +x deploy-to-digitalocean.sh
-./deploy-to-digitalocean.sh production
+chmod +x scripts/deploy-to-digitalocean.sh
+./scripts/deploy-to-digitalocean.sh production
 
 # 4. Deploy blockchain nodes (see separate section below)
 ```

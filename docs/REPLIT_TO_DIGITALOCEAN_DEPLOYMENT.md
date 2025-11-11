@@ -65,7 +65,7 @@ export DO_USERNAME="root"
 export DO_SSH_KEY_PATH="$HOME/.ssh/id_rsa"
 
 # Run deployment
-./deploy-to-digitalocean.sh
+./scripts/deploy-to-digitalocean.sh
 ```
 
 **What it does:**
@@ -393,7 +393,7 @@ To update an already-deployed application:
 
 ```bash
 # Method 1: Re-run deployment script
-./deploy-to-digitalocean.sh
+./scripts/deploy-to-digitalocean.sh
 
 # Method 2: SSH and pull latest changes
 ssh root@$DO_HOST << 'EOF'
