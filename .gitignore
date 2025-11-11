@@ -58,8 +58,8 @@ frontend/.vite/
 # Cosmos SDK / Ignite CLI (if blockchain is run locally)
 ignite-cli/build/
 ignite-cli/release/
-*.pb.go
-*.pb.gw.go
+# NOTE: *.pb.go files are now committed to repo (required for GitHub Actions build)
+# Protobuf files must be generated locally and committed for CI/CD to work
 
 # Replit specific
 .replit
