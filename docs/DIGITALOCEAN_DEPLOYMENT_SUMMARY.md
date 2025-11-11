@@ -334,7 +334,7 @@ Your deployment is successful when:
 
 ## 🎯 Next Steps
 
-1. **Deploy Frontend** → Run `./deploy-to-digitalocean.sh production`
+1. **Deploy Frontend** → Run `./scripts/deploy-to-digitalocean.sh production`
 2. **Deploy Blockchain Nodes** → Follow droplet setup guide
 3. **Configure DNS** → Point domains to DigitalOcean IPs
 4. **Set Secrets** → Configure Circle API keys in dashboard

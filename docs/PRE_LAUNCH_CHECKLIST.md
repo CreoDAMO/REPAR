@@ -94,7 +94,7 @@
 ## 📋 Deployment Options
 
 ### Option 1: DigitalOcean App Platform (Recommended)
-**Command**: `./deploy-to-digitalocean.sh production`
+**Command**: `./scripts/deploy-to-digitalocean.sh production`
 
 **Advantages**:
 - Fully managed platform
@@ -183,7 +183,7 @@
 2. **Run deployment**
    ```bash
    # DigitalOcean
-   ./deploy-to-digitalocean.sh production
+   ./scripts/deploy-to-digitalocean.sh production
 
    # OR Replit
    Click "Deploy" button in Replit UI
@@ -204,7 +204,7 @@
 ### Gradual Launch (Recommended)
 1. **Staging deployment** (Day 1)
    ```bash
-   ./deploy-to-digitalocean.sh staging
+   ./scripts/deploy-to-digitalocean.sh staging
    ```
    - Test with small user group
    - Verify all integrations
@@ -212,7 +212,7 @@
 
 2. **Production deployment** (Day 3-5)
    ```bash
-   ./deploy-to-digitalocean.sh production
+   ./scripts/deploy-to-digitalocean.sh production
    ```
    - Full public launch
    - Marketing announcement
