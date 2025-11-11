@@ -98,6 +98,15 @@ The blockchain build process uses GitHub Actions instead of local builds to avoi
 5. **Initialization**: Use `scripts/init-both-pregenerated.sh` to initialize both networks
 
 **Recent Updates (Nov 11, 2025):**
+- ✅ **CODEBASE ORGANIZATION** - Script cleanup and reorganization
+  - ✅ **MOVED 18 SCRIPTS**: All .sh and .py files from root moved to scripts/ folder
+  - ✅ **CLEAN ROOT DIRECTORY**: Repository root now clean and organized (0 script files)
+  - ✅ **29 TOTAL SCRIPTS**: All automation scripts now in dedicated scripts/ folder
+  - ✅ **UPDATED DOCUMENTATION**: 6 documentation files updated with new script paths
+  - ✅ **CATEGORIZED SCRIPTS**: Organized by purpose (deployment, DNS, genesis, build, validator, utility)
+  - ✅ **VERIFIED WORKFLOWS**: GitHub Actions use remote URLs - no updates needed
+  - ✅ **IMPROVED MAINTAINABILITY**: Clear separation of concerns, easier navigation
+  - See `docs/CODEBASE_CLEANUP_COMPLETE.md` for complete details
 - ✅ **BLOCKCHAIN BUILD ERRORS FIXED** - Comprehensive protobuf generation fix
   - ✅ **ROOT CAUSE**: Missing `.pb.go` files (protobuf-generated code) were in .gitignore, never committed
   - ✅ **SOLUTION**: Generated all 40 missing `.pb.go` files for 10 modules using `buf generate`
