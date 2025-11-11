@@ -15,6 +15,9 @@
 
 name: Deploy to DigitalOcean
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch: # Allows manual triggering from the GitHub Actions tab
   push:
