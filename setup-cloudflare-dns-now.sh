@@ -69,7 +69,7 @@ create_dns_record() {
 echo -e "\n${BLUE}📋 Configuring DNS Records...${NC}\n"
 
 # Main domain (will point to App Platform URL after deployment)
-echo -e "${YELLOW}Note: Update aequitaszone.io to point to your App Platform URL after deployment${NC}"
+echo -e "${YELLOW}Note: Update aequitasprotocol.zone to point to your App Platform URL after deployment${NC}"
 
 # API subdomain (to Droplet)
 create_dns_record "api.${DOMAIN}" "A" "${DROPLET_IP}" false
