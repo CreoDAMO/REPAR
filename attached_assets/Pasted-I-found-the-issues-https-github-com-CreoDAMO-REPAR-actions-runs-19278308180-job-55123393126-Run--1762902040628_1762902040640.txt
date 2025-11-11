@@ -1,0 +1,81 @@
+I found the issues: https://github.com/CreoDAMO/REPAR/actions/runs/19278308180/job/55123393126
+
+Run mkdir -p ./build
+  mkdir -p ./build
+  go build -v -o ./build/aequitasd ./cmd/aequitasd || echo "Build pending - Cosmos SDK dependencies complex"
+  shell: /usr/bin/bash -e {0}
+github.com/CreoDAMO/REPAR/aequitas/x/claims/types
+github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+# github.com/CreoDAMO/REPAR/aequitas/x/distribution/types
+Error: x/distribution/types/codec.go:16:47: undefined: _Msg_serviceDesc
+# github.com/CreoDAMO/REPAR/aequitas/x/dex/types
+Error: x/dex/types/genesis.go:8:24: undefined: GenesisState
+Error: x/dex/types/genesis.go:18:22: undefined: Params
+Error: x/dex/types/genesis.go:27:27: undefined: GenesisState
+Error: x/dex/types/genesis.go:46:10: undefined: GenesisState
+Error: x/dex/types/codec.go:11:24: undefined: MsgCreatePool
+Error: x/dex/types/codec.go:12:24: undefined: MsgSwap
+Error: x/dex/types/codec.go:13:24: undefined: MsgAddLiquidity
+Error: x/dex/types/codec.go:14:24: undefined: MsgRemoveLiquidity
+Error: x/dex/types/codec.go:19:4: undefined: MsgCreatePool
+Error: x/dex/types/codec.go:20:4: undefined: MsgSwap
+Error: x/dex/types/codec.go:20:4: too many errors
+# github.com/CreoDAMO/REPAR/aequitas/x/claims/types
+Error: x/claims/types/codec.go:15:47: undefined: _Msg_serviceDesc
+github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+# github.com/CreoDAMO/REPAR/aequitas/x/defendant/keeper
+Error: x/defendant/keeper/keeper.go:23:50: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:24:50: undefined: types.Payment
+Error: x/defendant/keeper/keeper.go:58:69: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:67:67: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:72:62: undefined: types.Defendant
+Error: x/defendant/keeper/keeper.go:82:66: undefined: types.Payment
+Error: x/defendant/keeper/keeper.go:159:93: undefined: types.DefendantStatus
+Error: x/defendant/keeper/msg_server.go:17:44: undefined: types.MsgServer
+Error: x/defendant/keeper/msg_server.go:21:13: undefined: types.MsgServer
+Error: x/defendant/keeper/msg_server.go:24:69: undefined: types.MsgRecordPayment
+Error: x/defendant/keeper/msg_server.go:24:69: too many errors
+github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+# github.com/CreoDAMO/REPAR/aequitas/x/justice/types
+Error: x/justice/types/codec.go:15:47: undefined: _Msg_serviceDesc
+github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+# github.com/CreoDAMO/REPAR/aequitas/x/endowment/types
+Error: x/endowment/types/genesis.go:4:24: undefined: GenesisState
+Error: x/endowment/types/genesis.go:5:10: undefined: GenesisState
+Error: x/endowment/types/genesis.go:6:11: undefined: Params
+Error: x/endowment/types/genesis.go:14:21: undefined: Endowment
+Error: x/endowment/types/genesis.go:15:21: undefined: InvestmentStrategy
+Error: x/endowment/types/genesis.go:16:21: undefined: SocialProgram
+Error: x/endowment/types/genesis.go:22:10: undefined: GenesisState
+# github.com/CreoDAMO/REPAR/aequitas/x/nftmarketplace/types
+Error: x/nftmarketplace/types/params.go:4:22: undefined: MarketplaceParams
+Error: x/nftmarketplace/types/params.go:5:16: undefined: MarketplaceParams
+# github.com/CreoDAMO/REPAR/aequitas/x/validatorsubsidy/types
+Error: x/validatorsubsidy/types/codec.go:13:24: undefined: MsgRegisterValidator
+Error: x/validatorsubsidy/types/codec.go:14:24: undefined: MsgDistributeSubsidies
+Error: x/validatorsubsidy/types/codec.go:15:24: undefined: MsgClaimEmergencyFunds
+Error: x/validatorsubsidy/types/codec.go:16:24: undefined: MsgUpdateValidatorStatus
+Error: x/validatorsubsidy/types/codec.go:22:4: undefined: MsgRegisterValidator
+Error: x/validatorsubsidy/types/codec.go:23:4: undefined: MsgDistributeSubsidies
+Error: x/validatorsubsidy/types/codec.go:24:4: undefined: MsgClaimEmergencyFunds
+Error: x/validatorsubsidy/types/codec.go:25:4: undefined: MsgUpdateValidatorStatus
+Error: x/validatorsubsidy/types/codec.go:28:47: undefined: _Msg_serviceDesc
+# github.com/CreoDAMO/REPAR/aequitas/x/founderendowment/types
+Error: x/founderendowment/types/genesis.go:8:24: undefined: GenesisState
+Error: x/founderendowment/types/genesis.go:12:17: undefined: GenesisState
+Error: x/founderendowment/types/genesis.go:13:28: undefined: FounderEndowment
+Error: x/founderendowment/types/genesis.go:24:37: undefined: DistributionConfig
+Error: x/founderendowment/types/genesis.go:28:37: undefined: ProtocolAllocation
+Error: x/founderendowment/types/genesis.go:34:29: undefined: EndowmentStats
+Error: x/founderendowment/types/genesis.go:41:34: undefined: YieldDistribution
+Error: x/founderendowment/types/genesis.go:46:10: undefined: GenesisState
+Error: x/founderendowment/types/codec.go:15:47: undefined: _Msg_serviceDesc
+Build pending - Cosmos SDK dependencies complex
+
+
+But the claims folder exist
+https://github.com/CreoDAMO/REPAR/tree/main/aequitas/x
