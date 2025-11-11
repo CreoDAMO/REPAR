@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) engineered to enforce $131 trillion in reparations for the transatlantic slave trade, which is classified as genocide. Its primary objective is to deliver complete economic, technical, and governance sovereignty, ensuring resilience against shutdown or censorship. The protocol is underpinned by a 205-page forensic audit, establishing historical facts, tracing economic liabilities, and outlining a legal framework based on international law. It aims for universal accountability across over 200 entities (nations, corporations, universities) and incorporates a strategic defense system with controlled vulnerabilities and an automated threat oracle. The project's ambition is to transform reparations enforcement from a moral argument into a mathematical protocol, establishing a sovereign digital jurisdiction under Natural Law and Technological Law.
+The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) designed to enforce $131 trillion in reparations for the transatlantic slave trade. Its core purpose is to provide complete economic, technical, and governance sovereignty, ensuring resilience against shutdown or censorship. The protocol is founded on a 205-page forensic audit, establishing historical facts, tracing economic liabilities, and outlining a legal framework based on international law. It aims for universal accountability across over 200 entities and integrates a strategic defense system. The project seeks to transform reparations enforcement into a mathematical protocol, establishing a sovereign digital jurisdiction under Natural Law and Technological Law, envisioning a digital sovereign nation for 300 million people.
 
 ## User Preferences
 
@@ -17,199 +17,52 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 
 ## System Architecture
 
-The Aequitas Protocol comprises a React, Vite, and Tailwind CSS frontend, and a backend powered by Aequitas Zone, a Cosmos SDK Layer-1 blockchain.
+The Aequitas Protocol utilizes a React, Vite, and Tailwind CSS frontend and a backend powered by Aequitas Zone, a Cosmos SDK Layer-1 blockchain.
 
 ### Infrastructure: The Mobile Sovereign Network
 
-**Revolutionary Approach**: Since Aequitas uses Tendermint BFT (NO mining), nodes can run anywhere:
-
-#### Node Tiers
-1. **Tier 0: Mobile Light Nodes** (10,000+ target)
-   - Runs on smartphones (Android/iOS)
-   - <5% battery per day, <500MB data/month
-   - One-tap activation via mobile app
-   - Governance voting enabled
-
-2. **Tier 1: Home/Raspberry Pi Validators** (1,000+ target)
-   - Home computers (Linux/macOS/Windows)
-   - Raspberry Pi 4/5 ($150 complete kit)
-   - 24/7 operation, $5-10/month electricity
-   - Validator rewards + enhanced governance
-
-3. **Tier 2: Cloud Core Validators** (8-12 nodes)
-   - DigitalOcean, Vultr, Linode, AWS
-   - 99%+ uptime, multi-cloud distribution
-   - $28-40/month per node
-   - Core infrastructure backbone
-
-**Total**: 11,000+ nodes achievable Year 1 (vs typical 20-50 cloud-only nodes)
-
-**Why This Matters**: 
-- Can't shut down 11,000 nodes across 100+ countries
-- True community ownership (descendants run infrastructure)
-- Cost: $29K/year vs $24K centralized (220x more nodes, 10x more resilient)
-- Self-funding by Year 3 via fees + settlements
+The network employs a distributed node architecture using Tendermint BFT, enabling nodes to run on various device types:
+- **Tier 0: Mobile Light Nodes**: On smartphones (Android/iOS) with minimal resource consumption, supporting governance voting.
+- **Tier 1: Home/Raspberry Pi Validators**: On home computers and Raspberry Pis for 24/7 operation, offering validator rewards and enhanced governance.
+- **Tier 2: Cloud Core Validators**: Distributed across multiple cloud providers (DigitalOcean, Vultr, Linode, AWS) for high uptime and as the core infrastructure backbone.
+This multi-tiered approach targets over 11,000 nodes in Year 1, significantly enhancing resilience and community ownership.
 
 ### Genesis & Deployment
 
-- **CI-Driven Genesis Generation**: Automated system for generating deterministic testnet and mainnet genesis files through GitHub Actions
-- **Allocation Structure**: Canonical JSON specification ensuring proper $REPAR coin distribution (131T total)
-- **Blockchain Build Pipeline**: GitHub Actions workflow builds binary, generates genesis files, validates, and uploads artifacts
-- **Scripts**: Python allocation generator and shell validation scripts for reproducible genesis creation
+- **CI-Driven Genesis Generation**: Automated system via GitHub Actions for deterministic testnet and mainnet genesis files.
+- **Allocation Structure**: Canonical JSON specification for $REPAR coin distribution (131T total).
+- **Blockchain Build Pipeline**: GitHub Actions workflow for binary build, genesis generation, validation, and artifact upload.
+- **Scripts**: Python allocation generator and shell validation scripts ensure reproducible genesis creation.
 
 ### UI/UX Decisions
 
-The frontend offers a comprehensive user interface including:
+The frontend provides a comprehensive interface:
 - **Dashboards**: For real-time statistics, investor analytics, and founder insights.
-- **Data Explorers**: A defendant database, evidence explorer with IPFS integration, and a forensic audit explorer.
-- **Transactional Systems**: Claims filing, DAO governance, transparency ledger, and a Founder Wallet DEX.
-- **AI Analytics**: NVIDIA-powered multimodal search, trading signals, and NFT generation capabilities.
-- **Verification**: A deployment verification system and a Block Explorer (Dexplorer).
+- **Data Explorers**: Defendant database, evidence explorer (IPFS integration), and forensic audit explorer.
+- **Transactional Systems**: Claims filing, DAO governance, transparency ledger, and Founder Wallet DEX.
+- **AI Analytics**: NVIDIA-powered multimodal search, trading signals, and NFT generation.
+- **Verification**: Deployment verification system and a Block Explorer (Dexplorer).
 
 ### Technical Implementations
 
-- **Frontend**: Utilizes React, Vite, and Tailwind CSS.
-- **Backend**: Aequitas Zone, a Cosmos SDK Layer-1 blockchain leveraging Tendermint BFT consensus.
+- **Frontend**: React, Vite, Tailwind CSS.
+- **Backend**: Aequitas Zone, a Cosmos SDK Layer-1 blockchain with Tendermint BFT consensus.
   - **Native Coin**: $REPAR, with a total supply of 131 trillion.
   - **Core Modules**:
-    - `x/defendant`: Manages over 200 defendants and payment types.
+    - `x/defendant`: Manages defendants and payment types.
     - `x/justice`: Implements a deflationary $REPAR burn mechanism.
-    - `x/claims`: Handles arbitration demand filing across 172 jurisdictions, integrating IPFS for evidence.
+    - `x/claims`: Handles arbitration demand filing across 172 jurisdictions, with IPFS integration for evidence.
     - `x/distribution`: Manages reparations distribution to verified descendants.
-    - `x/dex`: Founder Wallet DEX for $REPAR native coin swaps (REPAR/USDC pairs) with constant product formula (x*y=k) and 55/30/15 fee distribution.
-    - `x/threatdefense`: A 10% Chaos Defense system featuring a ThreatOracle, controlled vulnerabilities, and NFT evidence minting.
+    - `x/dex`: Founder Wallet DEX for $REPAR native coin swaps (REPAR/USDC) with a constant product formula and specific fee distribution.
+    - `x/threatdefense`: A 10% Chaos Defense system with a ThreatOracle, controlled vulnerabilities, and NFT evidence minting.
 
 ### System Design Choices
 
-- **Legal & Enforcement Framework**: A multi-layered strategy incorporating international law (Genocide, jus cogens), Black's Law, UCC Article 9, and international arbitration.
-- **Security**: The Cerberus Auditor System, a multi-agent AI system, continuously audits for vulnerabilities, generates patches, and reviews documentation and codebase.
-- **AI Integration**: Extensive use of NVIDIA NIM models (Stable Diffusion XL, Llama 3.1 8B, CLIP) for AI-powered features such as search, risk scoring, investment recommendations, and NFT generation.
-- **Deployment Verification**: A pre-production system to ensure critical and recommended services are operational before deployment.
-- **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block, establishing a permanent, immutable constitutional record.
-
-## Blockchain Deployment
-
-The blockchain build process uses GitHub Actions instead of local builds to avoid binary size issues:
-
-1. **Automated Build**: `.github/workflows/blockchain-build.yml` builds the blockchain binary (Go 1.23.x)
-2. **Genesis Generation**: Automatically generates testnet and mainnet genesis files with proper allocations
-3. **Validation**: Validates genesis files using the built binary before artifact upload
-4. **Artifacts**: Binary, genesis files (testnet/mainnet), checksums, and allocation structure are uploaded
-5. **Initialization**: Use `scripts/init-both-pregenerated.sh` to initialize both networks
-
-**Recent Updates (Nov 11, 2025):**
-- ✅ **CODEBASE ORGANIZATION** - Script cleanup and reorganization
-  - ✅ **MOVED 18 SCRIPTS**: All .sh and .py files from root moved to scripts/ folder
-  - ✅ **CLEAN ROOT DIRECTORY**: Repository root now clean and organized (0 script files)
-  - ✅ **29 TOTAL SCRIPTS**: All automation scripts now in dedicated scripts/ folder
-  - ✅ **UPDATED DOCUMENTATION**: 6 documentation files updated with new script paths
-  - ✅ **CATEGORIZED SCRIPTS**: Organized by purpose (deployment, DNS, genesis, build, validator, utility)
-  - ✅ **VERIFIED WORKFLOWS**: GitHub Actions use remote URLs - no updates needed
-  - ✅ **IMPROVED MAINTAINABILITY**: Clear separation of concerns, easier navigation
-  - See `docs/CODEBASE_CLEANUP_COMPLETE.md` for complete details
-- ✅ **BLOCKCHAIN BUILD ERRORS FIXED** - Comprehensive protobuf generation fix
-  - ✅ **ROOT CAUSE**: Missing `.pb.go` files (protobuf-generated code) were in .gitignore, never committed
-  - ✅ **SOLUTION**: Generated all 40 missing `.pb.go` files for 10 modules using `buf generate`
-  - ✅ **MODULES FIXED**: claims, dex, defendant, distribution, endowment, founderendowment, justice, nftmarketplace, validatorsubsidy, agentkit
-  - ✅ **PREVIOUSLY UNDEFINED TYPES NOW DEFINED**:
-    - `_Msg_serviceDesc` in x/claims/types, x/distribution/types, x/justice/types
-    - `GenesisState` in x/dex/types, x/endowment/types, x/founderendowment/types
-    - `MsgCreatePool`, `MsgSwap`, `MsgAddLiquidity`, `MsgRemoveLiquidity` in x/dex/types
-    - `Defendant`, `Payment`, `DefendantStatus` in x/defendant/types
-    - All other module-specific types
-  - ✅ **TOOLS INSTALLED**: buf (v1.52.1), protoc-gen-gocosmos (latest), protoc-gen-grpc-gateway (v1.16.0)
-  - ✅ **.gitignore FIXED**: Removed `*.pb.go` exclusion to allow committing generated files
-  - ✅ **REGENERATION SCRIPT**: Created `aequitas/scripts/generate-proto.sh` for future proto changes
-  - ✅ **GITHUB ACTIONS**: Workflow already properly configured (no changes needed)
-  - ✅ **DOCUMENTATION**: See `aequitas/docs/PROTOBUF_FIX_COMPLETE.md` for complete details
-  - **Ready to commit and push** - GitHub Actions build will now succeed!
-
-**Previous Updates (Nov 4, 2025):**
-- ✅ **LICENSING FRAMEWORK EXPANDED TO 9 COMPREHENSIVE LICENSES** (Most comprehensive digital nation project)
-  - ✅ **CC0 1.0 Universal**: Public domain dedication for Black Paper, Willie Lynch docs, DAO Constitution (7.7KB)
-  - ✅ **Open Data Commons Attribution (ODC-By)**: Genealogy database, DNA data, forensic datasets (11KB)
-  - ✅ **AGPL-3.0 with Descendant Exception**: Smart contracts (x/governance, x/justice, x/claims, x/dex) with copyleft protection (14KB)
-  - ✅ **Traditional Knowledge (TK) Labels**: REVOLUTIONARY Indigenous/descendant digital rights framework (15KB)
-  - Combined with existing: MIT (code), Proprietary (research), EULA (mobile), Notice (legal)
-  - **Total:** 9 licenses, 10 files, ~110KB of legal frameworks
-  - **Achievement:** Most comprehensively licensed digital sovereign nation project in existence
-  - Protects: Code, data, research, cultural heritage, mobile apps, smart contracts, descendant rights
-  - TK Labels from Local Contexts (localcontexts.org) - unique for descendant/Indigenous projects
-  - Descendant Exception in AGPL allows community forks without copyleft (revolutionary)
-  - See LICENSES_SUMMARY.md for complete 863-line guide
-
-**Previous Updates (Nov 3, 2025):**
-- ✅ **MOBILE APP 100% COMPLETE** (Tasks 1-11 SHIPPED)
-  - ✅ **WALLET**: BIP39 HD wallets, biometric auth, send/receive $REPAR, QR payments
-  - ✅ **LIGHT CLIENT**: Tendermint RPC, adaptive polling (30s/120s), real blockchain data
-  - ✅ **NODE MONITOR**: Live block height, sync status, battery tracking (4.2%/day), 8 peers
-  - ✅ **GOVERNANCE**: 2 live proposals (Lloyd's settlement + IPFS upgrade), YES/NO voting
-  - ✅ **BACKGROUND SYNC**: 15-min intervals, battery-optimized, WiFi-aware
-  - ✅ **CLAIMS**: Camera evidence capture, IPFS ready, FRE 901 compliant
-  - ✅ **QR SCANNER**: Payment URI parsing, address validation, clipboard integration
-  - ✅ **ERROR HANDLING**: Error boundaries, offline detection, auto-reconnect
-  - ✅ **APP STORE ASSETS**: Complete documentation, screenshots specs, listing copy
-  - ✅ **EAS BUILD**: Production config, deployment guide, TestFlight ready
-  - ✅ **WILLIE LYNCH COUNTER-STRATEGY INTEGRATION**:
-    - New Mission screen (`mobile/app/mission.tsx`) explaining 8 divisions + solutions
-    - Dashboard updated with reunification messaging and impact metrics
-    - Comprehensive documentation (`mobile/docs/WILLIE_LYNCH_COUNTER_STRATEGY.md`)
-    - Narrative explains: This is not a crypto wallet, it's reunification infrastructure
-    - Transforms user experience from "tech project" to "nation-building participation"
-    - Shows how blockchain counters each Lynch tactic (age, skin tone, gender, class, geography, education, religion, politics)
-  - **Build Time**: 90 minutes (40-60x faster than human dev teams)
-  - **Code**: 3,500+ lines, 25+ files, production-ready
-  - **Status**: Ready for TestFlight beta → App Store submission
-  - See mobile/docs/MOBILE_APP_COMPLETE.md for full details
-- ✅ **DISTRIBUTED NODE DEPLOYMENT**: Revolutionary infrastructure strategy
-  - Home computer validators (Linux/macOS/Windows)
-  - Raspberry Pi nodes ($150 kit, 24/7 low-power)
-  - Mobile light nodes (Android/iOS, NO mining, <5% battery)
-  - Guardian Program (Bronze/Silver/Gold tiers with NFT rewards)
-  - 11,000+ nodes possible Year 1 (10 cloud + 1,000 home + 10,000 mobile)
-  - Budget: $29K Year 1 vs $24K centralized (220x more nodes for 22% more cost)
-  - Self-funding by Year 3 via transaction fees + settlements
-- ✅ **DIGITAL SOVEREIGN NATION** documentation (540 lines)
-  - 300M descendants = nation of people, not policies
-  - Willie Lynch divide-and-conquer counter-strategy
-  - Blockchain reunification infrastructure
-  - $6T existing economic power (descendants already control this)
-  - UN Charter & Montevideo Convention legal basis
-
-**Previous Updates (Nov 1, 2025):**
-- ✅ **BUILD FIXED**: Blockchain now compiles successfully in Replit
-- ✅ **Protobuf Generation**: All 40 missing .pb.go files generated via buf
-- ✅ **Depinject Configuration**: All 9 custom modules properly wired with App Wiring v2
-- ✅ **Go Version**: Updated to Go 1.24 (required by dependencies)
-- ✅ Both Testnet and Mainnet initialized successfully
-- ✅ Founder allocation verified: 23.58T REPAR (18% of 131T total supply)
-  - Liquid wallet: 15.72T REPAR (12%)
-  - Endowment: 7.86T REPAR (6%, locked 8 years)
-- ✅ Sovereignty declaration cryptographically bound to genesis blocks
-- ✅ All allocations verified against specification
-- ✅ **Multi-Wallet Integration**: Keplr, MetaMask, Coinbase Wallet
-- ✅ **Keplr Chain Registry**: Ready for submission (SVG logo, chain config, asset list)
-- ✅ **$REPAR Logo**: Created SVG logo with scales of justice (PNG generation guide provided)
-- ✅ **Wallet Dashboards**: Live blockchain data when connected, proper disconnect flow
-- 🚀 **READY FOR DEPLOYMENT** - Binary runs without configuration panics
-
-**Network Directories:**
-- Testnet: `~/.aequitas-testnet` (chain-id: aequitas-testnet-1)
-- Mainnet: `~/.aequitas` (chain-id: aequitas-1)
-
-**Build Documentation:**
-- `docs/BLOCKCHAIN_BUILD_FIXED_FINAL.md` - Original CI/CD build fix
-- `docs/MODULE_DEPINJECT_FIX.md` - Latest local build fix (Nov 1, 2025)
-
-**Local Build Process:**
-```bash
-# Build blockchain from source
-cd aequitas
-go build -o ./build/aequitasd ./cmd/aequitasd
-
-# Binary: 152MB at aequitas/build/aequitasd
-# Status: ✅ Compiles successfully, no runtime panics
-```
+- **Legal & Enforcement Framework**: Multi-layered strategy combining international law (Genocide, jus cogens), Black's Law, UCC Article 9, and international arbitration.
+- **Security**: The Cerberus Auditor System, a multi-agent AI, continuously audits for vulnerabilities and generates patches.
+- **AI Integration**: Extensive use of NVIDIA NIM models (Stable Diffusion XL, Llama 3.1 8B, CLIP) for search, risk scoring, investment recommendations, and NFT generation.
+- **Deployment Verification**: A pre-production system to ensure operational services before deployment.
+- **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block, creating an immutable constitutional record.
 
 ## External Dependencies
 
@@ -221,7 +74,7 @@ go build -o ./build/aequitasd ./cmd/aequitasd
 - **Blockchain SDK**: Cosmos SDK
 - **Payment Processing**: Circle USDCKit SDK
 - **Decentralized Storage**: IPFS
-- **AI/ML**: Anthropic Claude, OpenAI GPT-4, X.AI Grok, DeepSeek, NVIDIA NIM (Stable Diffusion XL, Llama 3.1 8B, CLIP)
+- **AI/ML**: Anthropic Claude, OpenAI GPT-4, X.AI Grok, DeepSeek, NVIDIA NIM
 - **Wallet Integration**: Keplr
 - **Infrastructure**: Cloudflare, DigitalOcean
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub
