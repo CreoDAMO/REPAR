@@ -1,0 +1,41 @@
+{
+  "name": "@aequitas/vm-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for managing Aequitas Protocol Zone VMs",
+  "main": "index.js",
+  "bin": {
+    "aequitas-vm": "./bin/aequitas-vm.js"
+  },
+  "scripts": {
+    "start": "node bin/aequitas-vm.js",
+    "test": "jest",
+    "build": "pkg . --out-path=dist"
+  },
+  "keywords": [
+    "aequitas",
+    "blockchain",
+    "vm",
+    "cli",
+    "cosmos"
+  ],
+  "author": "Aequitas Protocol Team",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.5",
+    "axios": "^1.6.0",
+    "ora": "^5.4.1",
+    "cli-table3": "^0.6.3",
+    "dotenv": "^16.0.3",
+    "yaml": "^2.3.1",
+    "ssh2": "^1.15.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "pkg": "^5.8.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
