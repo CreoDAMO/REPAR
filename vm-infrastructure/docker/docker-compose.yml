@@ -3,8 +3,8 @@ version: '3.8'
 services:
   aequitas-node:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: vm-infrastructure/docker/Dockerfile
     container_name: aequitas-protocol-zone
     hostname: aequitas-node-01
     restart: unless-stopped
@@ -31,7 +31,7 @@ services:
       - aequitas-data:/var/lib/aequitas
       - evidence-storage:/var/lib/evidence
       - aequitas-logs:/var/log/aequitas
-      - ./configs:/etc/aequitas:ro
+      - ./chain-config:/etc/aequitas/chain-config:ro
     
     networks:
       - aequitas-network
@@ -56,27 +56,37 @@ services:
         max-file: "10"
 
   cerberus-auditor:
-    image: python:3.11-slim
+    build:
+      context: ../..
+      dockerfile: auditor/Dockerfile
     container_name: cerberus-ai-auditor
     restart: unless-stopped
     
     environment:
       - AEQUITAS_RPC=http://aequitas-node:26657
-      - AI_MODEL=nvidia/nim
-      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - XAI_API_KEY=${XAI_API_KEY}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - AUDIT_INTERVAL=3600
+      - CONSENSUS_THRESHOLD=2
     
     volumes:
-      - ./security/cerberus:/app
+      - ./aequitas:/workspace/aequitas:ro
       - cerberus-data:/var/lib/cerberus
+      - cerberus-logs:/var/log/cerberus
     
     working_dir: /app
-    command: python3 -u cerberus_auditor.py
+    command: python3 -u orchestrator.py
     
     depends_on:
       - aequitas-node
     
     networks:
       - aequitas-network
+    
+    security_opt:
+      - no-new-privileges:true
 
   chaos-defense:
     image: python:3.11-slim
@@ -150,6 +160,8 @@ volumes:
   aequitas-logs:
     driver: local
   cerberus-data:
+    driver: local
+  cerberus-logs:
     driver: local
   chaos-data:
     driver: local

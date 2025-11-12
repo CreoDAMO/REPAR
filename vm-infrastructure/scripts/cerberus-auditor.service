@@ -1,0 +1,53 @@
+[Unit]
+Description=Cerberus AI Security Auditor - Aequitas Protocol
+Documentation=https://aequitasprotocol.zone/docs/security
+After=network.target aequitas-node.service
+Wants=aequitas-node.service
+
+[Service]
+Type=simple
+User=cerberus
+Group=cerberus
+WorkingDirectory=/opt/cerberus
+Environment="PATH=/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONUNBUFFERED=1"
+Environment="AEQUITAS_RPC=http://localhost:26657"
+EnvironmentFile=-/etc/aequitas/cerberus.env
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/cerberus /var/log/cerberus
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+
+# Resource limits
+CPUQuota=50%
+MemoryMax=2G
+TasksMax=100
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitInterval=300
+StartLimitBurst=5
+
+# Main process
+ExecStart=/usr/bin/python3 -u /opt/cerberus/orchestrator.py
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cerberus-auditor
+
+[Install]
+WantedBy=multi-user.target

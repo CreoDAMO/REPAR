@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Aequitas Protocol Zone - Full Stack Installation Script
+# Aequitas Protocol Zone - VM Installation Script
+# This script delegates to the existing deployment infrastructure
+# and adds VM-specific enhancements
 #
 
 set -e
@@ -114,194 +116,92 @@ else
     echo -e "${YELLOW}⚠ Cosmovisor already installed${NC}"
 fi
 
-# Build Aequitas blockchain binary
-echo -e "${BLUE}Building Aequitas blockchain binary...${NC}"
-cat > /tmp/build-aequitas.sh << 'BUILDSCRIPT'
-#!/bin/bash
-set -e
+# =========================================================================
+# DELEGATE TO EXISTING DEPLOYMENT SCRIPT
+# =========================================================================
+# The main blockchain deployment is handled by the existing production script
+# This ensures consistency across all deployment methods
 
-# Clone Aequitas Zone repository (placeholder - replace with actual repo)
-mkdir -p /opt/aequitas-blockchain
-cd /opt/aequitas-blockchain
+echo -e "${BLUE}================================================${NC}"
+echo -e "${BLUE}  Running Core Blockchain Deployment${NC}"
+echo -e "${BLUE}================================================${NC}"
 
-# Initialize Go module
-cat > go.mod << 'EOF'
-module github.com/aequitas-protocol/aequitas-zone
+# Check if we're in the correct directory structure
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
-go 1.21
-
-require (
-    github.com/cosmos/cosmos-sdk v0.50.11
-    github.com/cometbft/cometbft v0.38.0
-    github.com/spf13/cobra v1.8.0
-    github.com/spf13/viper v1.18.0
-)
-EOF
-
-# Build binary
-go mod download
-go build -o /usr/local/bin/aequitasd ./cmd/aequitasd
-BUILDSCRIPT
-
-chmod +x /tmp/build-aequitas.sh
-# bash /tmp/build-aequitas.sh
-echo -e "${YELLOW}⚠ Blockchain binary build skipped (requires source code)${NC}"
-
-# Initialize blockchain
-echo -e "${BLUE}Initializing Aequitas Zone blockchain...${NC}"
-sudo -u aequitas bash << 'INITSCRIPT'
-export PATH=$PATH:/usr/local/go/bin:/usr/local/bin
-if command -v aequitasd &> /dev/null; then
-    aequitasd init aequitas-node --chain-id aequitas-1 --home /var/lib/aequitas
-    aequitasd config chain-id aequitas-1 --home /var/lib/aequitas
-    aequitasd config keyring-backend test --home /var/lib/aequitas
-else
-    echo "aequitasd binary not found, skipping initialization"
+if [ ! -f "$PROJECT_ROOT/scripts/deploy-blockchain-complete.sh" ]; then
+    echo -e "${RED}✗ Cannot find deployment script${NC}"
+    echo -e "${YELLOW}Expected: $PROJECT_ROOT/scripts/deploy-blockchain-complete.sh${NC}"
+    exit 1
 fi
-INITSCRIPT
-echo -e "${GREEN}✓ Blockchain initialized${NC}"
 
-# Install Cerberus AI Auditor
+# Run the existing deployment script
+echo -e "${GREEN}✓ Using existing deployment infrastructure${NC}"
+cd "$PROJECT_ROOT"
+bash ./scripts/deploy-blockchain-complete.sh
+
+# =========================================================================
+# VM-SPECIFIC ENHANCEMENTS
+# =========================================================================
+echo -e "${BLUE}================================================${NC}"
+echo -e "${BLUE}  Adding VM-Specific Features${NC}"
+echo -e "${BLUE}================================================${NC}"
+
+# Verify Aequitas blockchain binary was built  
+echo -e "${BLUE}Verifying Aequitas blockchain binary...${NC}"
+if command -v aequitasd &> /dev/null; then
+    aequitasd version
+    echo -e "${GREEN}✓ Aequitas blockchain binary verified${NC}"
+else
+    echo -e "${RED}✗ Binary not found - deployment script may have failed${NC}"
+    exit 1
+fi
+
+# =========================================================================
+# INSTALL CERBERUS AI AUDITOR (from existing production code)
+# =========================================================================
 echo -e "${BLUE}Installing Cerberus AI Auditor...${NC}"
-cat > /opt/cerberus/cerberus_auditor.py << 'CERBERUS'
-#!/usr/bin/env python3
-"""
-Cerberus AI Auditor - Multi-Agent Security Monitoring System
-for Aequitas Protocol Zone
-"""
 
-import asyncio
-import os
-import aiohttp
-from datetime import datetime
+# Create cerberus user
+if ! id "cerberus" &>/dev/null; then
+    useradd -m -s /bin/bash cerberus
+    echo -e "${GREEN}✓ Cerberus user created${NC}"
+fi
 
-class ThreatDetectionAgent:
-    """Monitors for security threats in real-time"""
-    
-    def __init__(self, rpc_url):
-        self.rpc_url = rpc_url
-        self.threats_detected = 0
-    
-    async def monitor(self):
-        print(f"[Cerberus] Threat Detection Agent active")
-        while True:
-            await self.scan_threats()
-            await asyncio.sleep(5)
-    
-    async def scan_threats(self):
-        # Placeholder - implement actual threat detection
-        pass
+# Copy production Cerberus code
+cp -r "$PROJECT_ROOT/auditor" /opt/cerberus
+chown -R cerberus:cerberus /opt/cerberus
+mkdir -p /var/lib/cerberus /var/log/cerberus
+chown cerberus:cerberus /var/lib/cerberus /var/log/cerberus
 
-class AnomalyDetectionAgent:
-    """Detects anomalies in blockchain behavior"""
-    
-    def __init__(self, rpc_url):
-        self.rpc_url = rpc_url
-    
-    async def monitor(self):
-        print(f"[Cerberus] Anomaly Detection Agent active")
-        while True:
-            await self.detect_anomalies()
-            await asyncio.sleep(10)
-    
-    async def detect_anomalies(self):
-        # Placeholder - implement anomaly detection
-        pass
+# Install Python dependencies
+cd /opt/cerberus
+pip3 install -r requirements.txt
 
-class CerberusAuditor:
-    """Main Cerberus orchestrator"""
-    
-    def __init__(self):
-        rpc_url = os.getenv('AEQUITAS_RPC', 'http://localhost:26657')
-        
-        self.agents = [
-            ThreatDetectionAgent(rpc_url),
-            AnomalyDetectionAgent(rpc_url)
-        ]
-    
-    async def start(self):
-        print(f"""
-╔═══════════════════════════════════════════════════╗
-║   Cerberus AI Auditor - Security Monitor          ║
-╚═══════════════════════════════════════════════════╝
-
-[{datetime.now()}] Starting multi-agent security monitoring...
-        """)
-        
-        tasks = [agent.monitor() for agent in self.agents]
-        await asyncio.gather(*tasks)
-
-if __name__ == "__main__":
-    auditor = CerberusAuditor()
-    asyncio.run(auditor.start())
-CERBERUS
-
-chmod +x /opt/cerberus/cerberus_auditor.py
+# Install systemd service
+cp "$SCRIPT_DIR/cerberus-auditor.service" /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable cerberus-auditor
 echo -e "${GREEN}✓ Cerberus AI Auditor installed${NC}"
 
-# Install Chaos Defense System
-echo -e "${BLUE}Installing Chaos Defense System...${NC}"
-cat > /opt/chaos-defense/chaos_defense.py << 'CHAOS'
-#!/usr/bin/env python3
-"""
-Chaos Defense System - Adaptive Security Through Controlled Vulnerability
-for Aequitas Protocol Zone
-"""
+# =========================================================================
+# SECURITY HARDENING
+# =========================================================================
+echo -e "${BLUE}Applying security hardening...${NC}"
+if [ -f "$SCRIPT_DIR/security-hardening.sh" ]; then
+    bash "$SCRIPT_DIR/security-hardening.sh"
+    echo -e "${GREEN}✓ Security hardening applied${NC}"
+else
+    echo -e "${YELLOW}⚠ Security hardening script not found${NC}"
+fi
 
-import asyncio
-import random
-import os
-from datetime import datetime
-
-class ThreatOracle:
-    """Oracle for threat prediction and response"""
-    
-    def __init__(self):
-        self.vulnerability_rate = float(os.getenv('VULNERABILITY_INJECTION', '0.10'))
-        self.threat_oracle_enabled = os.getenv('THREAT_ORACLE_ENABLED', 'true') == 'true'
-    
-    async def monitor_threats(self):
-        print(f"[Chaos Defense] ThreatOracle monitoring active")
-        while True:
-            await self.predict_threats()
-            await asyncio.sleep(15)
-    
-    async def predict_threats(self):
-        # Placeholder - implement threat prediction
-        pass
-
-class ChaosDefense:
-    """Main Chaos Defense orchestrator"""
-    
-    def __init__(self):
-        self.oracle = ThreatOracle()
-        self.controlled_vulnerabilities = 0.10
-    
-    async def start(self):
-        print(f"""
-╔═══════════════════════════════════════════════════╗
-║   Chaos Defense System - Adaptive Security        ║
-╚═══════════════════════════════════════════════════╝
-
-[{datetime.now()}] Starting adaptive security system...
-Controlled vulnerability injection: {self.controlled_vulnerabilities * 100}%
-        """)
-        
-        await self.oracle.monitor_threats()
-
-if __name__ == "__main__":
-    defense = ChaosDefense()
-    asyncio.run(defense.start())
-CHAOS
-
-chmod +x /opt/chaos-defense/chaos_defense.py
-echo -e "${GREEN}✓ Chaos Defense System installed${NC}"
-
-# Configure Supervisor
-echo -e "${BLUE}Configuring Supervisor...${NC}"
-cat > /etc/supervisor/conf.d/aequitas.conf << 'SUPERVISOR'
-[supervisord]
-nodaemon=true
+# =========================================================================
+# COMPLETE
+# =========================================================================
+echo -e "${GREEN}================================================${NC}"
+echo -e "${GREEN}  VM Installation Complete!${NC}"
+echo -e "${GREEN}================================================${NC}"
 user=root
 
 [program:aequitasd]

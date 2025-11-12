@@ -1,48 +1,66 @@
-# Aequitas Protocol Zone VM - Docker Container
-FROM ubuntu:22.04
+# Aequitas Protocol Zone VM - Multi-Stage Docker Build
+# Stage 1: Builder - Compile aequitasd binary from source
+FROM golang:1.24.9-bullseye AS builder
+
+LABEL maintainer="Aequitas Protocol Team"
+LABEL description="Sovereign blockchain builder stage"
+
+# Prevent interactive prompts
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /workspace
+
+# Copy the entire aequitas blockchain source from repo root
+COPY ./aequitas ./aequitas
+
+# Change to aequitas directory and build
+WORKDIR /workspace/aequitas
+
+# Download dependencies with integrity verification
+RUN go mod download && go mod verify
+
+# Build the aequitasd binary using Makefile for consistency
+RUN make install
+
+# Verify the binary was created
+RUN aequitasd version
+
+# Export binary to predictable location for multi-stage copy
+RUN cp $(which aequitasd) /usr/local/bin/aequitasd
+
+# Stage 2: Runtime - Slim production image
+FROM ubuntu:22.04 AS runtime
 
 LABEL maintainer="Aequitas Protocol Team"
 LABEL description="Sovereign blockchain VM with AI security and legal enforcement"
-LABEL version="1.0.0"
+LABEL version="2.0.0"
 
-# Prevent interactive prompts during package installation
+# Prevent interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
 
 # Set environment variables
 ENV AEQUITAS_HOME=/var/lib/aequitas
-ENV COSMOS_SDK_VERSION=v0.50.11
-ENV GO_VERSION=1.21.0
-ENV NODE_VERSION=20.x
+ENV PATH=$PATH:/usr/local/bin
 
-# Install system dependencies
+# Install only runtime dependencies (minimal attack surface)
 RUN apt-get update && apt-get install -y \
     curl \
-    wget \
-    git \
-    build-essential \
     jq \
-    nginx \
-    supervisor \
-    ufw \
-    fail2ban \
-    python3 \
-    python3-pip \
-    nodejs \
-    npm \
     ca-certificates \
-    gnupg \
-    lsb-release \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Go
-RUN wget https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz \
-    && tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz \
-    && rm go${GO_VERSION}.linux-amd64.tar.gz
-
-ENV PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
-
-# Create aequitas user
+# Create aequitas user (non-root for security)
 RUN useradd -m -s /bin/bash aequitas \
     && mkdir -p $AEQUITAS_HOME \
     && chown -R aequitas:aequitas $AEQUITAS_HOME
@@ -52,54 +70,16 @@ RUN mkdir -p \
     /var/lib/evidence \
     /var/log/aequitas \
     /etc/aequitas \
-    /opt/cerberus \
-    /opt/arbitration
+    && chown -R aequitas:aequitas /var/lib/evidence /var/log/aequitas
 
-# Install Cosmos SDK and build tools
-WORKDIR /tmp
-RUN git clone https://github.com/cosmos/cosmos-sdk.git \
-    && cd cosmos-sdk \
-    && make install
+# Copy compiled binary from builder stage
+COPY --from=builder /usr/local/bin/aequitasd /usr/local/bin/aequitasd
 
-# Copy Aequitas blockchain code
-COPY ./blockchain /opt/aequitas-blockchain
-WORKDIR /opt/aequitas-blockchain
-RUN make install
-
-# Install AI Security Layer (Cerberus Auditor)
-COPY ./security/cerberus /opt/cerberus
-WORKDIR /opt/cerberus
-RUN pip3 install -r requirements.txt
-
-# Install Legal Enforcement Engine
-COPY ./enforcement /opt/arbitration
-WORKDIR /opt/arbitration
-RUN npm install
-
-# Install Frontend Dashboard
-COPY ./dashboard /opt/dashboard
-WORKDIR /opt/dashboard
-RUN npm install && npm run build
-
-# Configure Nginx
-COPY ./configs/nginx.conf /etc/nginx/sites-available/aequitas
-RUN ln -s /etc/nginx/sites-available/aequitas /etc/nginx/sites-enabled/ \
-    && rm /etc/nginx/sites-enabled/default
+# Verify binary works in runtime stage
+RUN aequitasd version
 
 # Configure Supervisor for process management
-COPY ./configs/supervisord.conf /etc/supervisor/conf.d/aequitas.conf
-
-# Initialize blockchain
-USER aequitas
-WORKDIR /home/aequitas
-RUN aequitasd init aequitas-node --chain-id aequitas-1 \
-    && aequitasd config chain-id aequitas-1 \
-    && aequitasd config keyring-backend test
-
-# Copy genesis and configuration
-COPY --chown=aequitas:aequitas ./configs/genesis.json $AEQUITAS_HOME/config/genesis.json
-COPY --chown=aequitas:aequitas ./configs/app.toml $AEQUITAS_HOME/config/app.toml
-COPY --chown=aequitas:aequitas ./configs/config.toml $AEQUITAS_HOME/config/config.toml
+COPY ./vm-infrastructure/docker/configs/supervisord.conf /etc/supervisor/conf.d/aequitas.conf
 
 # Expose ports
 # Tendermint RPC
@@ -112,19 +92,18 @@ EXPOSE 1317
 EXPOSE 9090
 # Prometheus
 EXPOSE 26660
-# Dashboard
-EXPOSE 3000
-# Nginx (HTTPS)
-EXPOSE 443
-# Nginx (HTTP)
-EXPOSE 80
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:26657/health || exit 1
 
-# Switch back to root for supervisor
-USER root
+# Switch to aequitas user (non-root security)
+USER aequitas
+WORKDIR /home/aequitas
 
-# Start all services via supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
+# Entrypoint script will handle initialization with env-based chain selection
+COPY --chown=aequitas:aequitas ./vm-infrastructure/docker/scripts/docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["start"]
