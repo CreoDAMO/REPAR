@@ -78,3 +78,62 @@ The frontend provides a comprehensive interface:
 - **Wallet Integration**: Keplr
 - **Infrastructure**: Cloudflare, DigitalOcean
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub
+
+## Priority: VM Infrastructure Integration
+
+**Status**: Framework Complete - Needs Integration  
+**Location**: `vm-infrastructure/` directory  
+**Analysis**: See `CODEBASE_ANALYSIS.md` and `VM_INTEGRATION_PLAN.md`
+
+### Background
+After comprehensive codebase analysis, we discovered the project is 95% complete with:
+- ✅ Complete Cosmos SDK blockchain in `aequitas/`
+- ✅ Production deployment scripts in `scripts/`
+- ✅ Cerberus AI Security Auditor in `auditor/` (production-ready)
+- ✅ Chain configurations in `chain-config/`
+- ✅ 3 working frontend applications
+- ⚙️ VM infrastructure framework created (needs integration)
+
+### 17-Task Integration Checklist
+
+#### Docker Integration (Tasks 1-3)
+1. Fix Docker Dockerfile to point to existing `aequitas/` blockchain directory instead of missing `./blockchain`
+2. Update `docker-compose.yml` to mount existing `chain-config/` directory and use real genesis files
+3. Build `aequitasd` blockchain binary from source (`go build` in `aequitas/`)
+
+#### Security Integration (Tasks 4-5)
+4. Add Cerberus AI Auditor as service in `docker-compose.yml`
+5. Integrate Cerberus into VM installation script as systemd service
+
+#### CLI Integration (Tasks 6-8)
+6. Add Docker SDK to CLI `package.json` and implement real Docker integration in `list.js`
+7. Update CLI `deploy.js` to use real Docker API instead of mock deployment
+8. Update CLI `status.js` and `logs.js` to fetch real container data instead of mock responses
+
+#### Script Unification (Tasks 9-10)
+9. Replace `vm-infrastructure/scripts/install-aequitas-stack.sh` to use existing `scripts/deploy-blockchain-complete.sh`
+10. Create symlinks from `vm-infrastructure/configs/` to existing `chain-config/` directory
+
+#### Terraform Completion (Tasks 11-13)
+11. Add AWS EC2 resource blocks to `terraform/main.tf`
+12. Add GCP Compute Engine resource blocks to `terraform/main.tf`
+13. Add DigitalOcean Droplet resource blocks to `terraform/main.tf`
+
+#### Testing & Validation (Tasks 14-16)
+14. Test Docker deployment end-to-end (build, up, verify RPC endpoint)
+15. Test all CLI commands with real Docker integration
+16. Test Terraform plan/apply for each cloud provider
+
+#### Documentation (Task 17)
+17. Update VM infrastructure documentation to reflect integration with existing components
+
+### Expected Outcome
+After integration, the system will support:
+- One-command Docker deployment: `cd vm-infrastructure/docker && ./build.sh && docker-compose up -d`
+- Professional CLI management: `aequitas-vm deploy --provider docker --name node-01`
+- Multi-cloud deployment: Terraform support for AWS, GCP, DigitalOcean
+- Integrated AI security: Cerberus running continuous audits
+- Unified infrastructure: All components working together seamlessly
+
+### Key Insight
+This is an **integration project**, not a build-from-scratch project. 95% of the infrastructure already exists - we just need to connect the new VM framework to existing components.
