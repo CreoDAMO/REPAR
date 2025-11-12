@@ -84,18 +84,81 @@ async function confirmDeployment(options) {
 }
 
 async function deployDocker(options) {
+  const Docker = require('dockerode');
+  const docker = new Docker();
+  const path = require('path');
+  
   const spinner = ora('Deploying Docker container...').start();
   
   try {
-    // Build docker-compose command
-    const cmd = `cd ../docker && docker-compose up -d`;
-    await execAsync(cmd);
+    // Get the docker directory path
+    const dockerDir = path.join(__dirname, '../../docker');
     
-    spinner.succeed('Docker container deployed');
+    spinner.text = 'Building Aequitas Zone image...';
+    
+    // Build image using docker-compose
+    const buildCmd = `cd ${dockerDir} && docker-compose build`;
+    await execAsync(buildCmd);
+    
+    spinner.text = 'Starting container...';
+    
+    // Start container using docker-compose
+    const upCmd = `cd ${dockerDir} && docker-compose up -d`;
+    await execAsync(upCmd);
+    
+    // Wait for container to be ready
+    spinner.text = 'Waiting for node to be ready...';
+    await waitForNode('aequitas-protocol-zone', 30000);
+    
+    spinner.succeed('Docker container deployed and running');
+    
+    return {
+      name: options.name || 'aequitas-protocol-zone',
+      ip: 'localhost',
+      endpoints: {
+        rpc: 'http://localhost:26657',
+        rest: 'http://localhost:1317',
+        grpc: 'http://localhost:9090'
+      }
+    };
   } catch (error) {
     spinner.fail('Docker deployment failed');
     throw error;
   }
+}
+
+/**
+ * Wait for Docker container to be ready
+ */
+async function waitForNode(containerName, timeout = 30000) {
+  const Docker = require('dockerode');
+  const axios = require('axios');
+  const docker = new Docker();
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < timeout) {
+    try {
+      const container = docker.getContainer(containerName);
+      const info = await container.inspect();
+      
+      // Check if container is running
+      if (info.State.Running) {
+        // Try to query RPC endpoint to verify node is ready
+        try {
+          await axios.get('http://localhost:26657/status', { timeout: 3000 });
+          return true;
+        } catch (rpcError) {
+          // RPC not ready yet, continue waiting
+        }
+      }
+    } catch (error) {
+      // Container not found or not ready yet
+    }
+    
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  
+  throw new Error(`Container failed to become ready within ${timeout/1000}s. Check logs for errors.`);
 }
 
 async function deployProxmox(options) {

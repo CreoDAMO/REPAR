@@ -1,69 +1,92 @@
 /**
- * Logs Command - View logs from a node
+ * Logs Command - Stream logs from a node
+ * With REAL Docker API integration
  */
 
 const chalk = require('chalk');
+const Docker = require('dockerode');
 
 module.exports = async function logsCommand(node, options) {
   console.log(chalk.cyan(`\n📜 Logs for ${chalk.yellow(node)}\n`));
   
-  const service = options.service || 'all';
-  const lines = parseInt(options.lines) || 100;
-  
-  console.log(chalk.gray(`Showing last ${lines} lines for service: ${service}`));
-  console.log(chalk.gray('━'.repeat(60)));
-  console.log();
-  
-  // Mock log data
-  const logs = generateMockLogs(service, lines);
-  
-  logs.forEach(log => {
-    const timestamp = chalk.gray(log.timestamp);
-    let level = log.level;
+  try {
+    const docker = new Docker();
     
-    switch(log.level) {
-      case 'INFO':
-        level = chalk.green(log.level);
-        break;
-      case 'WARN':
-        level = chalk.yellow(log.level);
-        break;
-      case 'ERROR':
-        level = chalk.red(log.level);
-        break;
-      default:
-        level = chalk.white(log.level);
+    // Try to find the container
+    const containers = await docker.listContainers({ all: true });
+    const container = containers.find(c => 
+      c.Names.some(name => name.includes(node))
+    );
+    
+    if (!container) {
+      console.log(chalk.red(`✗ Container not found: ${node}`));
+      console.log(chalk.yellow('\nAvailable containers:'));
+      containers.forEach(c => {
+        console.log(chalk.gray(`  • ${c.Names[0].replace('/', '')}`));
+      });
+      return;
     }
     
-    console.log(`${timestamp} [${level}] ${log.message}`);
-  });
-  
-  console.log();
-  
-  if (options.follow) {
-    console.log(chalk.yellow('Following logs... (Press Ctrl+C to exit)'));
-    console.log();
+    const containerObj = docker.getContainer(container.Id);
+    const lines = parseInt(options.lines) || 100;
     
-    // Simulate live logs
-    setInterval(() => {
-      const newLog = generateMockLogs(service, 1)[0];
-      const timestamp = chalk.gray(newLog.timestamp);
-      let level = newLog.level;
+    // Get logs
+    const logOptions = {
+      follow: options.follow || false,
+      stdout: true,
+      stderr: true,
+      tail: lines,
+      timestamps: options.timestamps || false
+    };
+    
+    const stream = await containerObj.logs(logOptions);
+    
+    // If following, stream logs in real-time
+    if (options.follow) {
+      console.log(chalk.gray(`Following logs (Ctrl+C to stop)...\n`));
+      stream.on('data', (chunk) => {
+        process.stdout.write(chunk.toString());
+      });
       
-      switch(newLog.level) {
+      stream.on('end', () => {
+        console.log(chalk.gray('\n\nLog stream ended'));
+      });
+    } else {
+      // Just print the logs
+      const logs = stream.toString();
+      console.log(logs);
+      console.log(chalk.gray(`\nShowing last ${lines} lines`));
+    }
+    
+  } catch (error) {
+    console.log(chalk.red(`✗ Error fetching logs: ${error.message}`));
+    
+    // Fallback to mock data
+    console.log(chalk.yellow('\n⚠ Using mock log data...\n'));
+    const service = options.service || 'all';
+    const lines = parseInt(options.lines) || 100;
+    const logs = generateMockLogs(service, lines);
+    
+    logs.forEach(log => {
+      const timestamp = chalk.gray(log.timestamp);
+      let level = log.level;
+      
+      switch(log.level) {
         case 'INFO':
-          level = chalk.green(newLog.level);
+          level = chalk.green(log.level);
           break;
         case 'WARN':
-          level = chalk.yellow(newLog.level);
+          level = chalk.yellow(log.level);
           break;
         case 'ERROR':
-          level = chalk.red(newLog.level);
+          level = chalk.red(log.level);
           break;
+        default:
+          level = chalk.white(log.level);
       }
       
-      console.log(`${timestamp} [${level}] ${newLog.message}`);
-    }, 2000);
+      console.log(`${timestamp} [${level}] ${log.message}`);
+    });
   }
 };
 

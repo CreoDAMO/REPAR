@@ -1,68 +1,60 @@
 #!/bin/bash
-# Aequitas Protocol Zone - Docker Entrypoint Script
-# Handles initialization with environment-based chain selection
-
 set -e
 
-# Environment variables with defaults
-CHAIN_ID=${CHAIN_ID:-aequitas-1}
+# Aequitas Protocol Zone - Docker Entrypoint Script
+# Initializes blockchain node based on environment configuration
+
 CHAIN_FLAVOR=${CHAIN_FLAVOR:-mainnet}
-MONIKER=${MONIKER:-aequitas-node-01}
-AEQUITAS_HOME=${AEQUITAS_HOME:-/var/lib/aequitas}
+NODE_MONIKER=${NODE_MONIKER:-aequitas-node}
+AEQUITAS_HOME=${AEQUITAS_HOME:-/root/.aequitas}
 
-echo "================================================"
-echo "Aequitas Protocol Zone - Sovereign Node"
-echo "================================================"
-echo "Chain ID: $CHAIN_ID"
-echo "Chain Flavor: $CHAIN_FLAVOR"
-echo "Moniker: $MONIKER"
-echo "Home: $AEQUITAS_HOME"
-echo "================================================"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Aequitas Protocol Zone - Sovereign Blockchain"
+echo "Chain: $CHAIN_FLAVOR | Moniker: $NODE_MONIKER"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
 
-# Function to initialize node if not already initialized
-initialize_node() {
-    if [ ! -d "$AEQUITAS_HOME/config" ]; then
-        echo "Initializing new Aequitas node..."
-        aequitasd init "$MONIKER" --chain-id "$CHAIN_ID" --home "$AEQUITAS_HOME"
-        
-        # Copy genesis file based on chain flavor (mounted from host)
-        if [ -f "/etc/aequitas/chain-config/$CHAIN_FLAVOR/genesis.json" ]; then
-            echo "Using $CHAIN_FLAVOR genesis file..."
-            cp "/etc/aequitas/chain-config/$CHAIN_FLAVOR/genesis.json" "$AEQUITAS_HOME/config/genesis.json"
-        else
-            echo "WARNING: No genesis file found for $CHAIN_FLAVOR"
-        fi
-        
-        # Set keyring backend to test for development
-        aequitasd config chain-id "$CHAIN_ID" --home "$AEQUITAS_HOME"
-        aequitasd config keyring-backend test --home "$AEQUITAS_HOME"
-        
-        echo "Node initialized successfully!"
+# Check if node is already initialized
+if [ ! -d "$AEQUITAS_HOME/config" ]; then
+    echo "📦 Initializing new node..."
+    aequitasd init "$NODE_MONIKER" --chain-id aequitas-${CHAIN_FLAVOR}
+    
+    # Copy genesis file from mounted volume
+    if [ -f "/genesis/${CHAIN_FLAVOR}/genesis.json" ]; then
+        echo "📋 Copying genesis file for $CHAIN_FLAVOR..."
+        cp "/genesis/${CHAIN_FLAVOR}/genesis.json" "$AEQUITAS_HOME/config/genesis.json"
+    elif [ -f "/genesis/genesis-${CHAIN_FLAVOR}.json" ]; then
+        echo "📋 Copying genesis file for $CHAIN_FLAVOR..."
+        cp "/genesis/genesis-${CHAIN_FLAVOR}.json" "$AEQUITAS_HOME/config/genesis.json"
     else
-        echo "Node already initialized, skipping initialization..."
+        echo "⚠️  Warning: No genesis file found for $CHAIN_FLAVOR"
+        echo "    Searched: /genesis/${CHAIN_FLAVOR}/genesis.json"
+        echo "    Searched: /genesis/genesis-${CHAIN_FLAVOR}.json"
     fi
-}
+    
+    echo "✅ Node initialization complete"
+else
+    echo "♻️  Using existing node configuration"
+fi
 
-# Function to start the node
-start_node() {
-    echo "Starting Aequitas node..."
-    exec aequitasd start --home "$AEQUITAS_HOME" --log_level info
-}
+# Display configuration
+echo ""
+echo "Configuration:"
+echo "  Chain ID:     aequitas-${CHAIN_FLAVOR}"
+echo "  Moniker:      $NODE_MONIKER"
+echo "  Home Dir:     $AEQUITAS_HOME"
+echo "  Genesis:      $(ls -lh $AEQUITAS_HOME/config/genesis.json 2>/dev/null | awk '{print $5}' || echo 'not found')"
+echo ""
+echo "Endpoints:"
+echo "  RPC:          http://0.0.0.0:26657"
+echo "  REST:         http://0.0.0.0:1317"
+echo "  gRPC:         http://0.0.0.0:9090"
+echo "  P2P:          tcp://0.0.0.0:26656"
+echo ""
 
-# Main execution
-case "$1" in
-    start)
-        initialize_node
-        start_node
-        ;;
-    init)
-        initialize_node
-        ;;
-    version)
-        aequitasd version
-        ;;
-    *)
-        # Pass through any other commands to aequitasd
-        exec aequitasd "$@"
-        ;;
-esac
+# Start the blockchain node
+echo "🚀 Starting Aequitas Protocol Zone node..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+
+exec aequitasd start

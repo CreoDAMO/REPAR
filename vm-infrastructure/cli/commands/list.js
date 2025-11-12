@@ -1,9 +1,11 @@
 /**
  * List Command - Display all Aequitas Zone VMs
+ * Now with REAL Docker API integration
  */
 
 const chalk = require('chalk');
 const Table = require('cli-table3');
+const Docker = require('dockerode');
 
 module.exports = async function listCommand(options) {
   console.log(chalk.cyan('\n📋 Aequitas Protocol Zone Nodes\n'));
@@ -24,33 +26,15 @@ module.exports = async function listCommand(options) {
     }
   });
   
-  // Mock data - would query actual node registry
-  const nodes = [
-    {
-      name: 'aequitas-node-01',
-      provider: 'Docker',
-      status: 'running',
-      ip: '172.25.0.2',
-      uptime: '2h 34m',
-      resources: '8 cores, 16GB RAM'
-    },
-    {
-      name: 'aequitas-node-02',
-      provider: 'Proxmox',
-      status: 'running',
-      ip: '192.168.1.100',
-      uptime: '5h 12m',
-      resources: '8 cores, 16GB RAM'
-    },
-    {
-      name: 'aequitas-node-03',
-      provider: 'AWS',
-      status: 'stopped',
-      ip: '54.123.45.67',
-      uptime: '-',
-      resources: '8 cores, 16GB RAM'
-    }
-  ];
+  let nodes = [];
+  
+  // Query real Docker containers
+  try {
+    const dockerNodes = await getDockerNodes();
+    nodes = nodes.concat(dockerNodes);
+  } catch (error) {
+    console.log(chalk.yellow('⚠ Could not connect to Docker:', error.message));
+  }
   
   // Filter by provider if specified
   let filteredNodes = nodes;
@@ -85,3 +69,50 @@ module.exports = async function listCommand(options) {
   console.log(`\nTotal: ${chalk.green(filteredNodes.length)} nodes`);
   console.log();
 };
+
+/**
+ * Get real Docker containers running Aequitas nodes
+ */
+async function getDockerNodes() {
+  const docker = new Docker();
+  const containers = await docker.listContainers({ all: true });
+  
+  // Filter for Aequitas containers
+  const aequitasContainers = containers.filter(container => 
+    container.Image.includes('aequitas') || 
+    container.Names.some(name => name.includes('aequitas'))
+  );
+  
+  return aequitasContainers.map(container => {
+    const network = container.NetworkSettings?.Networks || {};
+    const networkName = Object.keys(network)[0];
+    const ip = networkName ? network[networkName].IPAddress : 'N/A';
+    
+    // Calculate uptime
+    const created = new Date(container.Created * 1000);
+    const uptime = formatUptime(Date.now() - created);
+    
+    return {
+      name: container.Names[0].replace('/', ''),
+      provider: 'Docker',
+      status: container.State.toLowerCase(),
+      ip: ip || 'N/A',
+      uptime: container.State === 'running' ? uptime : '-',
+      resources: 'See docker stats'
+    };
+  });
+}
+
+/**
+ * Format uptime duration
+ */
+function formatUptime(ms) {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  
+  if (days > 0) return `${days}d ${hours % 24}h`;
+  if (hours > 0) return `${hours}h ${minutes % 60}m`;
+  return `${minutes}m`;
+}

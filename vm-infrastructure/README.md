@@ -1,89 +1,143 @@
-# Aequitas Protocol Zone VM Infrastructure
+# Aequitas Protocol Zone - VM Infrastructure
 
-## Overview
-Complete VM management system for deploying and managing Aequitas Protocol Zone blockchain nodes with integrated AI security and legal enforcement capabilities.
+**Sovereign Layer-1 blockchain infrastructure** for deploying Aequitas Protocol Zone nodes across multiple cloud providers and local environments.
 
-## Architecture
+## 🎯 Overview
 
-### Core Components
-- **Blockchain Layer**: Cosmos SDK-based Aequitas Zone with 9 custom modules
-- **Security Layer**: Cerberus AI Auditor + Chaos Defense System
-- **Enforcement Layer**: Multi-jurisdictional arbitration engine
-- **Management Layer**: Automated deployment and monitoring
+This VM infrastructure enables deployment of **Aequitas Protocol Zone** validator nodes with integrated **Cerberus AI Security Auditor**, supporting:
 
-### VM Specifications
+- **Docker**: Local development and containerized deployments
+- **Proxmox**: Private cloud / on-premises infrastructure
+- **AWS EC2**: Amazon Web Services cloud deployment
+- **GCP Compute Engine**: Google Cloud Platform deployment
+- **DigitalOcean**: Simple cloud droplet deployment
+
+All deployments use **existing blockchain source code** from `aequitas/` directory and **production genesis files** from `chain-config/` directory.
+
+## 🏗️ Architecture
+
 ```
-Name: Aequitas Protocol Zone VM
-Base OS: Ubuntu 22.04 LTS (Hardened)
-CPU: 8+ cores (AI security processing)
-RAM: 16GB+ (blockchain node + AI monitoring)
-Storage: 500GB+ SSD (blockchain data + evidence storage)
-Network: Dual NIC (public/private networks)
+vm-infrastructure/
+├── docker/                  # Docker containerization
+│   ├── Dockerfile          # Multi-stage build (golang:1.24.9 → ubuntu:22.04)
+│   ├── docker-compose.yml  # Orchestration (node + Cerberus)
+│   └── docker-entrypoint.sh # Startup script
+├── terraform/              # Multi-cloud IaC
+│   ├── main.tf            # Root configuration
+│   ├── variables.tf       # Input variables
+│   └── modules/           # Provider-specific modules
+│       ├── aws/           # EC2 instances
+│       ├── gcp/           # Compute Engine VMs
+│       └── digitalocean/  # Droplets
+├── proxmox/               # Proxmox VE templates
+├── cli/                   # CLI management tool
+│   ├── bin/
+│   │   └── aequitas-vm.js # Main CLI entry
+│   └── commands/          # CLI commands
+│       ├── list.js        # List nodes (real Docker API)
+│       ├── deploy.js      # Deploy nodes
+│       ├── status.js      # Node status (real RPC queries)
+│       └── logs.js        # Stream logs (real Docker logs)
+├── configs/               # Symlinks to ../../chain-config/
+│   ├── mainnet/          → ../../chain-config/mainnet/
+│   ├── testnet/          → ../../chain-config/testnet/
+│   └── allocation-structure.json → ../../chain-config/allocation-structure.json
+└── scripts/
+    ├── install-aequitas-stack.sh  # Delegates to existing deploy script
+    └── cerberus-auditor.service   # Systemd unit for Cerberus
+
+Integration with existing project:
+├── aequitas/              # Blockchain source (Cosmos SDK + custom modules)
+├── chain-config/          # Genesis files, validator configs
+├── auditor/               # Cerberus AI security system
+└── scripts/deploy-blockchain-complete.sh  # Full deployment automation
 ```
 
-## Deployment Methods
+## 🚀 Quick Start
 
-### 1. Docker Containerization
+### 1. Docker Deployment (Recommended for Development)
+
 ```bash
-cd docker
-./build.sh
+cd vm-infrastructure/docker
 docker-compose up -d
+
+# Verify node is running
+docker-compose ps
+
+# Check logs
+docker-compose logs -f aequitas-protocol-zone
+
+# Check RPC endpoint
+curl http://localhost:26657/status
 ```
 
-### 2. Proxmox VE Template
+### 2. CLI Tool
+
 ```bash
-cd proxmox
-./create-template.sh
-./deploy-vm.sh --name aequitas-node-01
+cd vm-infrastructure/cli
+npm install
+
+# List running nodes
+npm start list
+
+# Deploy a node
+npm start deploy --provider docker --name aequitas-node-01
+
+# Check node status
+npm start status aequitas-node-01
+
+# Stream logs
+npm start logs aequitas-node-01 --follow
 ```
 
-### 3. Terraform Multi-Cloud
+### 3. Terraform Deployment
+
 ```bash
-cd terraform
+cd vm-infrastructure/terraform
+
+# Initialize Terraform
 terraform init
-terraform plan
-terraform apply
+
+# Plan deployment (AWS example)
+terraform plan -var="provider_type=aws" \
+               -var="aws_ami_id=ami-xxxx" \
+               -var="aws_subnet_id=subnet-xxxx" \
+               -var="aws_key_name=your-key"
+
+# Apply deployment
+terraform apply -var="provider_type=aws"
+
+# View outputs
+terraform output
 ```
 
-### 4. CLI Management Tool
+## 📋 Prerequisites
+
+### All Deployments
+- Git (for cloning the repository)
+- Docker & Docker Compose (for containerization)
+
+### Cloud Deployments
+- **AWS**: AWS CLI configured with credentials, AMI ID for Ubuntu 22.04
+- **GCP**: gcloud CLI authenticated, project ID
+- **DigitalOcean**: API token, SSH key uploaded
+
+### API Keys for Cerberus AI (Optional but Recommended)
 ```bash
-npm install -g aequitas-vm-cli
-aequitas-vm deploy --provider proxmox --name node-01
-aequitas-vm monitor --node node-01
+export OPENAI_API_KEY=sk-...
+export ANTHROPIC_API_KEY=sk-ant-...
+export XAI_API_KEY=xai-...
+export DEEPSEEK_API_KEY=sk-...
 ```
 
-## Features
+## 🔗 Additional Resources
 
-- 🔗 **Blockchain Node**: Full Aequitas Zone validator/node
-- 🤖 **AI Security**: Cerberus auditor with threat detection
-- ⚖️ **Legal Engine**: 172-jurisdiction arbitration system
-- 🔥 **Burn Mechanism**: Deflationary economics engine
-- 📊 **Monitoring**: Real-time dashboard and alerts
-- 🔒 **Security**: Hardened OS, firewall, SSL/TLS
-- 🚀 **Auto-Deploy**: One-command deployment
-- 📦 **Templates**: Pre-configured VM images
+- **Main Project**: https://github.com/AequitasProtocol/aequitas-protocol
+- **Cosmos SDK**: https://docs.cosmos.network
+- **Terraform**: https://www.terraform.io/docs
+- **Docker**: https://docs.docker.com
 
-## Network Endpoints
+---
 
-```
-RPC: https://rpc.aequitasprotocol.zone:26657
-REST: https://api.aequitasprotocol.zone:1317
-gRPC: grpc.aequitasprotocol.zone:9090
-Explorer: https://explorer.aequitasprotocol.zone
-Dashboard: https://dashboard.aequitasprotocol.zone
-```
-
-## Quick Start
-
-1. Choose your deployment method
-2. Configure your environment variables
-3. Run the deployment script
-4. Monitor via dashboard
-
-## Documentation
-
-- [Docker Deployment](./docker/README.md)
-- [Proxmox Setup](./proxmox/README.md)
-- [Terraform Guide](./terraform/README.md)
-- [CLI Reference](./cli/README.md)
-- [Security Hardening](./docs/security.md)
+**Built with sovereignty. Powered by justice. Secured by Cerberus AI.**
+**Mission: $131T reparations for transatlantic slave trade.**
