@@ -4,6 +4,7 @@
 [![Production Ready](https://img.shields.io/badge/status-production%20ready-success)](https://github.com/CreoDAMO/REPAR)
 [![Mobile App](https://img.shields.io/badge/mobile%20app-complete-blue)](./mobile)
 [![License](https://img.shields.io/badge/license-MIT-green)](./docs/LICENSE.md)
+[![Build Aequitas Zone Blockchain](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build.yml/badge.svg?branch=main)](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build.yml)
 
 ---
 
