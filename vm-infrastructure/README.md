@@ -132,7 +132,7 @@ export DEEPSEEK_API_KEY=sk-...
 
 ## 🔗 Additional Resources
 
-- **Main Project**: https://github.com/AequitasProtocol/aequitas-protocol
+- **Main Project**: https://github.com/CreoDAMO/REPAR
 - **Cosmos SDK**: https://docs.cosmos.network
 - **Terraform**: https://www.terraform.io/docs
 - **Docker**: https://docs.docker.com
