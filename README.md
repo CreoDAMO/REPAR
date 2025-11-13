@@ -32,7 +32,7 @@ For centuries, we've been deliberately divided across:
 
 ---
 
-## 🚀 PRODUCTION STATUS (January 2025)
+## 🚀 PRODUCTION STATUS (November 2025)
 
 ### ✅ **MOBILE APP 100% COMPLETE** - Ready for TestFlight
 - **📱 Full-featured wallet:** BIP39 HD wallets, biometric auth, send/receive $REPAR, QR payments
@@ -495,7 +495,7 @@ All comprehensive documentation has been organized in the **`docs/`** folder:
 
 ---
 
-## 📊 Live Statistics (January 2025)
+## 📊 Live Statistics (November 2025)
 
 | Metric | Value |
 |--------|-------|
