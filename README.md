@@ -40,6 +40,11 @@ For centuries, we've been deliberately divided across:
 - **🛡️ Light validator:** Tendermint RPC, adaptive polling, 4.2% battery/day, 8 peers connected
 - **📸 Claims filing:** Camera evidence capture, IPFS-ready, FRE 901 compliant
 - **🌍 Willie Lynch counter-strategy:** Mission screen explaining reunification infrastructure
+- **🛰️ Satellite/Mobile Sovereignty:** Network abstraction layer with automatic failover
+  - Internet → LoRa Mesh → Satellite (GNSS/Starlink/Iridium)
+  - Stealth mode for censorship resistance
+  - Works in 100% offline scenarios
+  - GNSS timestamp validation for trustless consensus
 - **⚡ Production-ready:** 3,500+ lines, 25+ files, architect-approved, TestFlight-ready
 
 **[→ See Mobile App Documentation](./mobile/README.md)**
@@ -402,7 +407,8 @@ All comprehensive documentation has been organized in the **`docs/`** folder:
 ### **Legal & Research**
 - [Black Paper](./docs/BLACKPAPER_COMPLETE_WITH_BONUS.md) - Complete forensic audit
 - [Declaration of Sovereignty](./docs/DECLARATION_OF_SOVEREIGNTY.md) - Constitutional foundation
-- [Licenses](./docs/LICENSE.md) - Code (MIT) + Research licenses
+- [Licenses Summary](./LICENSES_SUMMARY.md) - 14 comprehensive licenses
+- [Satellite/Mobile Research](./docs/satellite-mobile-research.md) - Sovereignty infrastructure
 
 ### **Historical Build Logs**
 - [Blockchain Build Success](./docs/BLOCKCHAIN_BUILD_SUCCESS.md)
@@ -510,9 +516,31 @@ All comprehensive documentation has been organized in the **`docs/`** folder:
 
 ## 📜 License
 
-**Code:** MIT License - see [LICENSE](./docs/LICENSE.md) for details
+**14 Comprehensive Licenses** - Complete sovereignty protection framework:
 
-**Research:** The underlying forensic research, audit data, and legal strategies are intellectual property of the Aequitas Protocol. Commercial use of the research requires proper licensing. See [LICENSE-RESEARCH](./docs/LICENSE-RESEARCH.md).
+### Core Licenses (3)
+- **Code:** [MIT License](./LICENSE-CODE.md) - Open source software
+- **Research:** [Proprietary Research License](./LICENSE-RESEARCH.md) - Forensic audit IP
+- **Data:** [ODC-BY](./LICENSE-ODC-BY.md) - Open data with attribution
+
+### Sovereignty Protection (4)
+- **[SNCL](./LICENSE-SNCL.md)** - Sovereign Nation Copyleft License
+- **[ACP](./LICENSE-ACP.md)** - Anti-Censorship Protocol
+- **[TK Labels](./LICENSE-TK.md)** - Traditional Knowledge & Cultural Heritage
+- **[DC-SSI](./LICENSE-DCSSI.md)** - Digital Citizenship Self-Sovereign Identity
+
+### Security & Defense (4)
+- **[Creator Vulnerability Rights](./LICENSE-CREATOR-VULN.md)** - Founder protection against shutdown/censorship
+- **[Escalation Protocol](./LICENSE-ESCALATION.md)** - 7-tier automated breach response
+- **[Annihilation Doctrine](./LICENSE-ANNIHILATION.md)** - Tier 7 existential defense
+- **[Humble License](./LICENSE-HUMBLE.md)** - Reciprocal respect framework
+
+### Community Licenses (3)
+- **[AGPL](./LICENSE-AGPL.md)** - Network copyleft for blockchain
+- **[CC0](./LICENSE-CC0.md)** - Public domain educational content
+- **[Mobile EULA](./LICENSE-MOBILE-EULA.md)** - End-user agreement
+
+**See [LICENSES_SUMMARY.md](./LICENSES_SUMMARY.md) for complete framework documentation.**
 
 ---
 

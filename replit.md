@@ -14,6 +14,8 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 - **Multi-Wallet Support**: Keplr (recommended for full features), MetaMask (EVM), Coinbase Wallet
 - **Terminology**: Use "black paper" (NOT "white paper") for project documentation - intentional choice reflecting project's mission
 - **Digital Sovereign Nation**: This is a nation of 300M people (12-15M enslaved + descendants), not a corporate project. Nations are defined by people, not policies. Counter Willie Lynch divide-and-conquer tactics through unified blockchain infrastructure.
+- **Censorship Resistance**: Mobile validators with satellite/mesh fallback. Cannot be shut down by any single government or corporation.
+- **Licensing**: 14-license framework protects sovereignty at legal, technical, and cultural levels. All implementations are OPERATIONAL (ThreatOracle, Cerberus AI, etc.)
 
 ## System Architecture
 
@@ -78,6 +80,31 @@ The frontend provides a comprehensive interface:
 - **Wallet Integration**: Keplr
 - **Infrastructure**: Cloudflare, DigitalOcean
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub
+
+## Recent Completions (January 2025)
+
+### ✅ Licensing Framework (14 Licenses) - COMPLETE
+**Status**: Production-ready  
+**Location**: Root directory (`LICENSE-*.md` files) + `LICENSES_SUMMARY.md`
+
+Complete sovereignty protection framework:
+- **Core Licenses**: MIT (code), Proprietary (research), ODC-BY (data)
+- **Sovereignty Protection**: SNCL, ACP, TK Labels, DC-SSI
+- **Security & Defense**: Creator Vulnerability Rights, Escalation Protocol (7-tier), Annihilation Doctrine, Humble License
+- **Community**: AGPL, CC0, Mobile EULA
+
+### ✅ Satellite/Mobile Sovereignty - COMPLETE
+**Status**: Production-ready  
+**Location**: `mobile/services/sovereignty/`
+
+Network Abstraction Layer with automatic failover:
+- **Adapters**: Internet → LoRa Mesh → Satellite (GNSS/Starlink/Iridium)
+- **Monitoring**: Real-time health dashboard, signal strength tracking
+- **Stealth Mode**: Anti-censorship capabilities, traffic obfuscation
+- **Offline Capable**: Works in 100% disconnected scenarios
+- **GNSS Validation**: Trustless timestamp consensus for validators
+
+**Research**: See `docs/satellite-mobile-research.md` for technical architecture
 
 ## Priority: VM Infrastructure Integration
 
