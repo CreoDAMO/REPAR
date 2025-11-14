@@ -23,7 +23,7 @@ import urllib.parse
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
 
-from agents.analyst_guild import AnalystGuild
+from agents.aequitas_ai import AequitasAI
 from agents.adversary_guild import AdversaryGuild
 from agents.engineer_guild import EngineerGuild
 from agents.vulnerability_scanner import VulnerabilityScanner
@@ -53,6 +53,7 @@ class CerberusOrchestrator:
         
         self.repo_path = Path(repo_path).resolve()  # Always use absolute path
         self.reports_path = self.repo_path / "auditor" / "reports"
+        self.threat_ledger_path = self.reports_path / "threat_ledger.json"
         
         # Create reports directory if it doesn't exist
         self.reports_path.mkdir(parents=True, exist_ok=True)
@@ -69,15 +70,28 @@ class CerberusOrchestrator:
         
         # Initialize all security agents
         print("\n🎯 Initializing AI Security Agents...")
-        self.analysts = AnalystGuild(api_keys)
+        
+        # Use unified Aequitas AI (NVIDIA-powered) instead of 4 separate APIs
+        nvidia_key = api_keys.get("nvidia") or os.getenv("NVIDIA_API_KEY")
+        if nvidia_key:
+            print("🔥 Using Aequitas AI (NVIDIA NIM - Sovereign Mode)")
+            self.analysts = AequitasAI(nvidia_key)
+        else:
+            print("⚠️  NVIDIA_API_KEY not found - falling back to multi-model approach")
+            from agents.analyst_guild import AnalystGuild
+            self.analysts = AnalystGuild(api_keys)
+        
         self.adversaries = AdversaryGuild()
-        self.engineers = EngineerGuild(api_keys["openai"])
+        self.engineers = EngineerGuild(api_keys.get("openai", ""))
         self.vuln_scanner = VulnerabilityScanner()
         self.contract_analyzer = SmartContractAnalyzer()
         self.protocol_tuner = ProtocolTuner()
         
         print("✅ All agents initialized successfully")
-        print("  - Analyst Guild (4 AI agents)")
+        if nvidia_key:
+            print("  - Aequitas AI (Unified NVIDIA NIM Model)")
+        else:
+            print("  - Analyst Guild (4 AI agents)")
         print("  - Adversary Guild (Chaos Engineering)")
         print("  - Engineer Guild (Patch Generation)")
         print("  - Vulnerability Scanner (CVE Database)")

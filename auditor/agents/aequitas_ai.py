@@ -20,7 +20,7 @@ class AequitasAI:
     """
     
     def __init__(self, nvidia_api_key: str = None):
-        self.api_key = nvidia_api_key or os.getenv("NVIDIA_API_KEY")
+        self.api_key = nvidia_api_key or os.getenv("NVIDIA_API_KEY") or ""
         
         # NVIDIA NIM endpoint - can be self-hosted or cloud
         self.nim_endpoint = os.getenv("NVIDIA_NIM_ENDPOINT", "https://integrate.api.nvidia.com/v1")
@@ -129,12 +129,17 @@ Return:
 
 Keep patches small. Large rewrites introduce new bugs."""
     
-    async def audit_file(self, file_path: str, code: str) -> List[Dict]:
+    async def audit_file(self, file_path: str) -> Dict[str, List[Dict]]:
         """
         Analyze Go source code for security vulnerabilities
         Uses self-consistency sampling for consensus (like the 4-model approach)
+        Returns same format as AnalystGuild for compatibility
         """
         print(f"🤖 Aequitas AI analyzing {os.path.basename(file_path)}...")
+        
+        # Read the file
+        with open(file_path, 'r', encoding='utf-8') as f:
+            code = f.read()
         
         # Run 3 independent analyses with temperature variation
         # This simulates the multi-model consensus approach
@@ -144,11 +149,102 @@ Keep patches small. Large rewrites introduce new bugs."""
             self._analyze_with_temperature(code, 0.7)   # Creative
         )
         
+        # Convert tuple to list for type compatibility
+        analyses_list = list(analyses)
+        
         # Merge findings and apply consensus logic
-        consensus_findings = self._apply_consensus(analyses)
+        consensus_findings = self._apply_consensus(analyses_list)
         
         print(f"  ✅ Found {len(consensus_findings)} consensus issues")
-        return consensus_findings
+        
+        # Return in same format as AnalystGuild (4 sources)
+        return {
+            "aequitas_conservative": analyses[0] if len(analyses) > 0 else [],
+            "aequitas_balanced": analyses[1] if len(analyses) > 1 else [],
+            "aequitas_creative": analyses[2] if len(analyses) > 2 else [],
+            "aequitas_consensus": consensus_findings
+        }
+    
+    async def audit_document(self, file_path: str) -> Dict[str, List[Dict]]:
+        """
+        Audit a markdown/text document (like TAST)
+        Returns same format as AnalystGuild for compatibility
+        """
+        print(f"📄 Aequitas AI analyzing document {file_path}...")
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        # Use document-specific prompts
+        analyses = await asyncio.gather(
+            self._analyze_document(content, 0.3),
+            self._analyze_document(content, 0.5),
+            self._analyze_document(content, 0.7)
+        )
+        
+        # Convert tuple to list for type compatibility
+        analyses_list = list(analyses)
+        
+        consensus_findings = self._apply_consensus(analyses_list)
+        
+        print(f"  ✅ Found {len(consensus_findings)} document issues")
+        
+        return {
+            "aequitas_conservative": analyses[0] if len(analyses) > 0 else [],
+            "aequitas_balanced": analyses[1] if len(analyses) > 1 else [],
+            "aequitas_creative": analyses[2] if len(analyses) > 2 else [],
+            "aequitas_consensus": consensus_findings
+        }
+    
+    async def _analyze_document(self, content: str, temperature: float) -> List[Dict]:
+        """Analyze document for logical/legal issues"""
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            prompt = f"""Analyze this legal/forensic document for:
+1. Logical inconsistencies
+2. Mathematical errors in calculations
+3. Legal vulnerabilities in arguments
+4. Missing evidence or citations
+5. Ambiguous language that could be exploited
+
+Document:
+---
+{content[:8000]}
+---
+
+Return findings as JSON array."""
+            
+            payload = {
+                "model": self.model,
+                "messages": [
+                    {"role": "system", "content": self.analyst_persona},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": temperature,
+                "max_tokens": 4096
+            }
+            
+            response = requests.post(
+                f"{self.nim_endpoint}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=60
+            )
+            
+            if response.status_code == 200:
+                content_text = response.json()["choices"][0]["message"]["content"]
+                return self._extract_json(content_text)
+            else:
+                print(f"  ⚠️  NIM API error: {response.status_code}")
+                return []
+                
+        except Exception as e:
+            print(f"  ⚠️  Document analysis error: {str(e)}")
+            return []
     
     async def _analyze_with_temperature(self, code: str, temperature: float) -> List[Dict]:
         """Run analysis with specific temperature for diversity"""
