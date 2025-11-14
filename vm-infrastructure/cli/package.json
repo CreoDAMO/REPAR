@@ -31,7 +31,9 @@
     "yaml": "^2.3.1",
     "ssh2": "^1.15.0",
     "dockerode": "^4.0.2",
-    "proxmox-api": "^1.1.0"
+    "proxmox-api": "^1.1.0",
+    "libvirt": "^0.3.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",

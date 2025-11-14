@@ -1,16 +1,23 @@
-# Aequitas Protocol Zone - VM Infrastructure
+# Aequitas Protocol Zone - Sovereign VM Infrastructure
 
-**Sovereign Layer-1 blockchain infrastructure** for deploying Aequitas Protocol Zone nodes across multiple cloud providers and local environments.
+**True sovereignty means no dependencies.** Run Aequitas blockchain nodes on your own hardware - no cloud providers required.
 
 ## 🎯 Overview
 
-This VM infrastructure enables deployment of **Aequitas Protocol Zone** validator nodes with integrated **Cerberus AI Security Auditor**, supporting:
+This VM infrastructure enables deployment of **Aequitas Protocol Zone** validator nodes with complete sovereignty:
 
-- **Docker**: Local development and containerized deployments
+### 🏛️ **Sovereign Deployment (No Cloud Required)**
+- **Local KVM**: Run nodes on your own Linux server (NEW!)
+- **Packer Images**: Pre-built, distributable VM images (NEW!)
+- **Docker**: Local development and testing
 - **Proxmox**: Private cloud / on-premises infrastructure
-- **AWS EC2**: Amazon Web Services cloud deployment
-- **GCP Compute Engine**: Google Cloud Platform deployment
-- **DigitalOcean**: Simple cloud droplet deployment
+
+### ☁️ **Optional Cloud Deployment**
+- **AWS EC2**: Amazon Web Services (optional)
+- **GCP Compute Engine**: Google Cloud Platform (optional)
+- **DigitalOcean**: Simple droplets (optional)
+
+**Key Principle**: Cloud providers are now **optional fallbacks**, not requirements. True sovereignty means running on your own metal.
 
 All deployments use **existing blockchain source code** from `aequitas/` directory and **production genesis files** from `chain-config/` directory.
 

@@ -1,0 +1,24 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  identity:
+    hostname: aequitas-node
+    username: aequitas
+    password: $6$rounds=4096$saltsalt$hash
+  ssh:
+    install-server: yes
+    allow-pw: yes
+  storage:
+    layout:
+      name: direct
+  packages:
+    - curl
+    - wget
+    - git
+    - build-essential
+    - vim
+  late-commands:
+    - echo 'aequitas ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/aequitas
