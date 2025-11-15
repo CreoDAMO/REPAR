@@ -1,29 +1,56 @@
 
 # Cloudflare Subdomain Configuration for Aequitas Protocol
 
-**Domain:** `aequitasprotocol.zone`
+**Domain:** `aequitasprotocol.zone`  
+**Infrastructure:** Sovereign VMs / ACE / DigitalOcean (Optional)
 
 This document lists all required subdomains for the complete Aequitas Protocol ecosystem, organized by function and dashboard panel.
+
+## Infrastructure Deployment Options
+
+**Primary (Recommended):** Sovereign VM Infrastructure (`vm-infrastructure/`)
+- **Cost:** $5/month per node (electricity only)
+- **Sovereignty:** 100% - Your hardware, your control
+- **See:** `vm-infrastructure/DEPLOYMENT_INSTRUCTIONS.md`
+
+**Cloud (Optional Fallback):** ACE Cloud Engine (`ace/`) or DigitalOcean
+- **Cost:** $120/month per node (DigitalOcean)
+- **Sovereignty:** Depends on cloud provider
+- **See:** `ace/DEPLOYMENT.md`
+
+**Hybrid:** Mix of sovereign VMs + cloud for redundancy
 
 ## Root & Core Infrastructure
 
 | Subdomain | Type | Points To | Purpose |
 |-----------|------|-----------|---------|
-| `@` | A | DigitalOcean Droplet IP | Main website root |
+| `@` | A | **Infrastructure IP** | Main website root |
 | `www` | CNAME | `aequitasprotocol.zone` | WWW redirect |
-| `app` | A | DigitalOcean Droplet IP | Main application frontend (port 5000) |
+| `app` | A | **Infrastructure IP** | Main application frontend (port 5000) |
+
+**Infrastructure IP:** Your sovereign VM IP, ACE node IP, or DigitalOcean IP
 
 ## Blockchain Infrastructure
 
 | Subdomain | Type | Points To | Purpose |
 |-----------|------|-----------|---------|
-| `rpc` | A | DigitalOcean Droplet IP | Blockchain RPC endpoint (port 26657) |
-| `api` | A | DigitalOcean Droplet IP | REST API gateway (port 1317) |
-| `grpc` | A | DigitalOcean Droplet IP | gRPC endpoint (port 9090) |
-| `ws` | A | DigitalOcean Droplet IP | WebSocket endpoint (port 26657) |
-| `explorer` | A | DigitalOcean Droplet IP | Block Explorer (Dexplorer) (port 3001) |
-| `backend` | A | DigitalOcean Droplet IP | Circle API Backend (port 3002) |
-| `auditor-api` | A | DigitalOcean Droplet IP | Cerberus Auditor API (port 8000) |
+| `rpc` | A | **Infrastructure IP** | Blockchain RPC endpoint (port 26657) |
+| `api` | A | **Infrastructure IP** | REST API gateway (port 1317) |
+| `grpc` | A | **Infrastructure IP** | gRPC endpoint (port 9090) |
+| `ws` | A | **Infrastructure IP** | WebSocket endpoint (port 26657) |
+| `explorer` | A | **Infrastructure IP** | Block Explorer (Dexplorer) (port 3001) |
+| `backend` | A | **Infrastructure IP** | Circle API Backend (port 3002) |
+| `auditor-api` | A | **Infrastructure IP** | Cerberus Auditor API (port 8000) |
+
+## ACE Cloud Engine (NEW - November 2025)
+
+| Subdomain | Type | Points To | Purpose |
+|-----------|------|-----------|---------|
+| `ace` | A | **ACE Node IP** | ACE Control Plane API (port 8080) |
+| `ace-metrics` | A | **ACE Node IP** | ACE Prometheus Metrics (port 9090) |
+| `ace-ai` | A | **ACE Node IP** | ACE AI Sidecar (port 8001) |
+| `vm` | A | **Infrastructure IP** | VM Infrastructure Dashboard |
+| `sovereign` | CNAME | `vm.aequitasprotocol.zone` | Sovereign Node Registry |
 
 ## Dashboard Panels & Features
 
