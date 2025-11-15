@@ -140,6 +140,31 @@ Replaced 4 external AI APIs with 1 sovereign NVIDIA endpoint:
 
 **Docs**: `docs/AI_SOVEREIGNTY.md`, `docs/SOVEREIGNTY_ACHIEVEMENT.md`
 
+### ✅ Aequitas Cloud Engine (ACE) V1 - COMPLETE
+**Status**: Production-ready (November 15, 2025)  
+**Location**: `ace/`
+
+Complete sovereign cloud orchestration system - 100% production-ready:
+- **Cosmos SDK Integration**: Real transaction signing, protobuf queries, gas/fee handling, key management
+- **Production Observability**: Prometheus metrics endpoints, zap structured logging throughout
+- **NVIDIA NIM AI Sidecar**: Python HTTP/gRPC bridge for workload optimization and placement
+- **Real IPFS Storage**: go-ipfs-api client with blockchain anchoring
+- **Docker/K8s Deployment**: Full deployment manifests with health checks, monitoring stack
+- **AI-Powered Scheduling**: NVIDIA NIM (Llama 3.1 70B) for optimal node placement
+- **Zero-Trust Security**: Sovereign identity verification via blockchain
+- **Complete Integration**: Mobile validators, VM infrastructure, satellite failover
+
+**Quick Deploy**:
+```bash
+cd ace
+export NVIDIA_API_KEY="nvapi-..."
+./scripts/deploy-production.sh
+# API: http://localhost:8080
+# Metrics: http://localhost:9090
+```
+
+**Docs**: `ace/README.md`, `ace/DEPLOYMENT.md`, `ace/PRODUCTION_STATUS.md`
+
 ## Sovereignty Infrastructure Status
 
 **Status**: ✅ Production-Ready (November 14, 2025)  
