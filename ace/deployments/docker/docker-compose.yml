@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  ace-kernel:
+    build:
+      context: ../..
+      dockerfile: deployments/docker/Dockerfile
+    container_name: ace-kernel
+    ports:
+      - "8080:8080"
+      - "9090:9090"  # Prometheus metrics
+    environment:
+      - ACE_PORT=8080
+      - BLOCKCHAIN_RPC=http://blockchain:26657
+      - CHAIN_ID=aequitas-1
+      - NVIDIA_NIM_ENDPOINT=http://ai-sidecar:8000
+      - STORAGE_ENDPOINT=http://ipfs:5001
+      - NETWORK_MODE=internet
+      - GOVERNANCE_ENABLED=true
+      - LOG_LEVEL=info
+    depends_on:
+      - blockchain
+      - ipfs
+      - ai-sidecar
+    networks:
+      - ace-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  ai-sidecar:
+    build:
+      context: ../..
+      dockerfile: deployments/docker/Dockerfile.sidecar
+    container_name: ace-ai-sidecar
+    ports:
+      - "8000:8000"
+    environment:
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - MODEL_NAME=llama-3.1-70b
+      - LOG_LEVEL=info
+    networks:
+      - ace-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  blockchain:
+    image: aequitas/aequitasd:latest
+    container_name: aequitas-blockchain
+    ports:
+      - "26657:26657"  # RPC
+      - "26656:26656"  # P2P
+      - "1317:1317"    # REST
+      - "9091:9090"    # gRPC
+    volumes:
+      - blockchain-data:/root/.aequitas
+    networks:
+      - ace-network
+    restart: unless-stopped
+    command: ["aequitasd", "start"]
+
+  ipfs:
+    image: ipfs/kubo:latest
+    container_name: ace-ipfs
+    ports:
+      - "5001:5001"  # API
+      - "8081:8080"  # Gateway
+      - "4001:4001"  # Swarm
+    volumes:
+      - ipfs-data:/data/ipfs
+      - ipfs-staging:/export
+    environment:
+      - IPFS_PROFILE=server
+    networks:
+      - ace-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ace-prometheus
+    ports:
+      - "9091:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - ace-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ace-grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    networks:
+      - ace-network
+    restart: unless-stopped
+    depends_on:
+      - prometheus
+
+volumes:
+  blockchain-data:
+  ipfs-data:
+  ipfs-staging:
+  prometheus-data:
+  grafana-data:
+
+networks:
+  ace-network:
+    driver: bridge

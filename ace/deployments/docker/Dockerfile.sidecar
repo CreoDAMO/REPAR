@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ../../auditor/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ../../auditor /app/auditor
+
+ENV PYTHONPATH=/app
+ENV NVIDIA_API_KEY=""
+ENV MODEL_NAME="llama-3.1-70b"
+ENV PORT=8000
+
+EXPOSE 8000
+
+CMD ["python", "-m", "auditor.orchestrator"]
