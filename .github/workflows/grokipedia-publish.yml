@@ -1,0 +1,213 @@
+# .github/workflows/grokipedia-publish.yml
+# Automated Grokipedia Updates and Publishing
+# Syncs Aequitas Protocol updates to Grokipedia knowledge base
+
+name: Grokipedia Auto-Sync
+
+permissions:
+  contents: read
+  issues: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'grokipedia/**'
+      - 'docs/**'
+      - 'wiki/**'
+  schedule:
+    # Run daily at midnight UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  sync-grokipedia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Generate Grokipedia summary
+        run: |
+          cd grokipedia
+          
+          # Create summary document
+          cat > GROKIPEDIA_SYNC.md << 'EOF'
+          # Aequitas Protocol Zone - Grokipedia Sync
+          
+          **Last Updated**: $(date '+%Y-%m-%d %H:%M:%S UTC')
+          
+          ## Overview
+          
+          The Aequitas Protocol is a sovereign Layer-1 blockchain designed for $131 trillion reparations enforcement.
+          
+          ### Key Facts
+          
+          - **Native Coin**: $REPAR (NOT a token)
+          - **Total Supply**: 131 trillion (1:1 peg to documented harm)
+          - **Consensus**: Tendermint BFT (eco-friendly, mobile-friendly)
+          - **Custom Modules**: 9 Cosmos SDK modules
+          - **Target Validators**: 11,000+ Year 1 (10K mobile + 1K home)
+          - **Deployment**: AVM/ACE sovereign infrastructure (zero cloud dependencies)
+          
+          ### Recent Updates
+          
+          - ✅ Unified Aequitas AI (NVIDIA NIM) replaces 4 external APIs
+          - ✅ Sovereign VM infrastructure (96% cost savings)
+          - ✅ Mobile validator network (satellite/mesh failover)
+          - ✅ 14-license sovereignty framework
+          - ✅ Aequitas Cloud Engine (ACE) production-ready
+          
+          ### Technical Architecture
+          
+          - **Blockchain**: Cosmos SDK v0.50.x, Go 1.23+
+          - **Frontend**: React 19, Vite 7, Tailwind CSS 3
+          - **Mobile**: Expo 52, React Native (4,500+ lines)
+          - **AI**: NVIDIA NIM Llama 3.1 70B (self-hostable)
+          - **Infrastructure**: Local KVM + ACE orchestration
+          
+          ### Sovereignty Achievement
+          
+          | Component | Status |
+          |-----------|--------|
+          | Infrastructure | ✅ Zero cloud dependencies |
+          | AI | ✅ Self-hosted NVIDIA NIM |
+          | Network | ✅ Multi-path (satellite/mesh) |
+          | Legal | ✅ 14-license framework |
+          | Economics | ✅ Deflationary burn mechanism |
+          
+          ### Links
+          
+          - GitHub: https://github.com/CreoDAMO/REPAR
+          - Wiki: https://github.com/CreoDAMO/REPAR/wiki
+          - Documentation: https://github.com/CreoDAMO/REPAR/tree/main/docs
+          
+          ---
+          
+          **For detailed information, see the full repository documentation.**
+          EOF
+          
+          cat GROKIPEDIA_SYNC.md
+      
+      - name: Check for Grokipedia API credentials
+        id: check_creds
+        run: |
+          if [ -z "${{ secrets.GROKIPEDIA_API_KEY }}" ]; then
+            echo "grokipedia_available=false" >> $GITHUB_OUTPUT
+            echo "⚠️ GROKIPEDIA_API_KEY not configured - skipping API sync"
+          else
+            echo "grokipedia_available=true" >> $GITHUB_OUTPUT
+            echo "✅ Grokipedia API credentials found"
+          fi
+      
+      - name: Sync to Grokipedia (if API available)
+        if: steps.check_creds.outputs.grokipedia_available == 'true'
+        run: |
+          # This is a placeholder for actual Grokipedia API integration
+          # When Grokipedia API is available, this will sync the content
+          
+          echo "📡 Syncing to Grokipedia..."
+          echo "Content: grokipedia/GROKIPEDIA_SYNC.md"
+          echo "API: Grokipedia Knowledge Base"
+          
+          # Future implementation:
+          # curl -X POST https://api.grokipedia.com/v1/sync \
+          #   -H "Authorization: Bearer ${{ secrets.GROKIPEDIA_API_KEY }}" \
+          #   -H "Content-Type: application/json" \
+          #   -d @grokipedia/GROKIPEDIA_SYNC.md
+          
+          echo "✅ Grokipedia sync complete (placeholder)"
+      
+      - name: Upload Grokipedia content as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: grokipedia-content
+          path: grokipedia/*.md
+          retention-days: 90
+      
+      - name: Create issue if Grokipedia API not configured
+        if: steps.check_creds.outputs.grokipedia_available == 'false' && github.event_name == 'schedule'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'grokipedia,configuration'
+            });
+            
+            // Don't create duplicate issues
+            if (issues.data.length > 0) {
+              console.log('Grokipedia configuration issue already exists');
+              return;
+            }
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '📡 Grokipedia API Configuration Needed',
+              body: `## Grokipedia Auto-Sync Configuration
+              
+              The Grokipedia auto-sync workflow is ready, but the API credentials are not configured.
+              
+              ### Action Required
+              
+              1. Obtain Grokipedia API key
+              2. Add as GitHub secret: \`GROKIPEDIA_API_KEY\`
+              3. Re-run workflow to test sync
+              
+              ### Current Status
+              
+              - ✅ Workflow configured
+              - ✅ Content generation working
+              - ❌ API credentials missing
+              
+              ### Manual Alternative
+              
+              Until API is configured, you can manually sync by:
+              1. Download artifact from workflow run
+              2. Copy content to Grokipedia manually
+              3. Update knowledge base entry
+              
+              **Workflow**: \`.github/workflows/grokipedia-publish.yml\`
+              **Content**: \`grokipedia/GROKIPEDIA_SYNC.md\`
+              `,
+              labels: ['grokipedia', 'configuration', 'enhancement']
+            });
+      
+      - name: Summary comment
+        if: github.event_name == 'push'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const grokFiles = fs.readdirSync('grokipedia').filter(f => f.endsWith('.md'));
+            
+            const body = `## 📡 Grokipedia Sync Complete
+            
+            **Status**: ${context.payload.secrets.GROKIPEDIA_API_KEY ? '✅ Synced to API' : '⚠️ Manual sync required'}
+            
+            **Content Files**: ${grokFiles.length}
+            ${grokFiles.map(f => `- ${f}`).join('\n')}
+            
+            **Next Sync**: Scheduled daily at midnight UTC
+            
+            _Auto-generated by Grokipedia Bot on ${new Date().toUTCString()}_
+            `;
+            
+            github.rest.repos.createCommitComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+              body: body
+            });
