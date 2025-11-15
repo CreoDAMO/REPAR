@@ -1,0 +1,47 @@
+═══════════════════════════════════════════════════════════
+  WHERE TO FIND FILES IN REPLIT
+═══════════════════════════════════════════════════════════
+
+📁 YOUR REPLIT FILE STRUCTURE:
+
+workspace/
+├── 📂 github-workflows-download/     ⭐ START HERE!
+│   ├── cerberus-audit.yml           (6.8 KB) ⭐ PRIORITY
+│   ├── grokipedia-publish.yml       (7.6 KB) ⭐ NEW
+│   ├── wiki-publish.yml             (3.2 KB) ⭐ NEW
+│   ├── blockchain-build.yml         (22 KB)
+│   ├── ci.yml                       (3.3 KB)
+│   ├── deploy-frontend.yml          (2.6 KB)
+│   └── deploy-to-digitalocean.yml   (6.2 KB)
+│
+├── 📂 docs/
+│   ├── CLOUDFLARE_INTELLIGENCE_ANALYSIS.md  ⭐ PRIORITY
+│   └── DEPLOYMENT_PRIORITY.md               ⭐ PRIORITY
+│
+├── 📄 git-sync-helper.sh
+├── 📄 UPDATES_SUMMARY.md            ⭐ READ THIS FIRST!
+├── 📄 DOWNLOAD_CHECKLIST.txt
+└── 📄 FILE_LOCATIONS.txt            (this file)
+
+───────────────────────────────────────────────────────────
+
+🎯 QUICK DOWNLOAD STEPS:
+
+1. In Replit File Explorer (left sidebar):
+   
+2. Find "github-workflows-download" folder → Right-click → Download
+
+3. Find "docs" folder → Open it → Download these 2 files:
+   - CLOUDFLARE_INTELLIGENCE_ANALYSIS.md
+   - DEPLOYMENT_PRIORITY.md
+
+4. In root directory, download:
+   - UPDATES_SUMMARY.md
+   - DOWNLOAD_CHECKLIST.txt
+   - git-sync-helper.sh
+
+───────────────────────────────────────────────────────────
+
+💡 TIP: You can select multiple files and download as ZIP!
+
+═══════════════════════════════════════════════════════════
