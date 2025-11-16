@@ -333,7 +333,7 @@ Respond with JSON:
             'optimized_allocation': current,
             'estimated_cost_repar': budget,
             'savings_percent': 0.0,
-            'error': str(e)
+            'error': 'An internal error has occurred.'
         }
 
 def main():
