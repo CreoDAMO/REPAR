@@ -254,8 +254,8 @@ Respond with JSON:
         return jsonify(result), 200
         
     except Exception as e:
-        logger.error(f"Audit analysis error: {e}")
-        return jsonify({'error': str(e)}), 500
+        logger.error("Audit analysis error:", exc_info=True)
+        return jsonify({'error': 'An internal error has occurred. Please contact support.'}), 500
 
 @app.route('/api/v1/optimize-cost', methods=['POST'])
 def optimize_cost():
