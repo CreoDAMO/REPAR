@@ -5,7 +5,7 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const inquirer = require('inquirer');
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const { promisify } = require('util');
 const execAsync = promisify(exec);
 
@@ -222,7 +222,20 @@ async function deployLocalKVM(options) {
     });
     
     // Start VM in background
-    await execAsync(`${qemuCmd} > ${vmDir}/vm.log 2>&1 &`);
+    // Safely spawn QEMU, redirect output to vm.log
+    const shellQuote = require('shell-quote');
+    const fs3 = require('fs');
+    const logFile = fs3.createWriteStream(path.join(vmDir, 'vm.log'));
+    // Parse command line into program and argument list
+    const parsedCmd = shellQuote.parse(qemuCmd); // returns array, first is binary
+    const qemuBinary = parsedCmd[0];
+    const qemuArgs = parsedCmd.slice(1);
+    const qemuProcess = spawn(qemuBinary, qemuArgs, {
+      detached: true,
+      stdio: ['ignore', logFile, logFile],
+      cwd: vmDir
+    });
+    qemuProcess.unref();
     
     // Save VM info
     const vmInfo = {
