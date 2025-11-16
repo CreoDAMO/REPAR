@@ -5,9 +5,10 @@
 const chalk = require('chalk');
 const ora = require('ora');
 const inquirer = require('inquirer');
-const { exec, spawn } = require('child_process');
+const { exec, execFile, spawn } = require('child_process');
 const { promisify } = require('util');
 const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 module.exports = async function deployCommand(options) {
   console.log(chalk.cyan('\n🚀 Deploying Aequitas Protocol Zone VM\n'));
@@ -207,7 +208,7 @@ async function deployLocalKVM(options) {
     
     // Create cloud-init ISO
     const seedPath = path.join(vmDir, 'seed.iso');
-    await execAsync(`cloud-localds ${seedPath} ${cloudInitPath}`);
+    await execFileAsync('cloud-localds', [seedPath, cloudInitPath]);
     
     spinner.text = 'Starting VM with QEMU/KVM...';
     
