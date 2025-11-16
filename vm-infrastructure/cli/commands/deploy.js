@@ -190,7 +190,7 @@ async function deployLocalKVM(options) {
     // Download base image if it doesn't exist
     const fs2 = require('fs');
     if (!fs2.existsSync(baseImagePath)) {
-      await execAsync(`wget -O ${baseImagePath} ${baseImageUrl}`);
+      await execFileAsync('wget', ['-O', baseImagePath, baseImageUrl]);
     }
     
     spinner.text = 'Creating virtual disk from base image...';
