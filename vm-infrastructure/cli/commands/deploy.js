@@ -197,7 +197,14 @@ async function deployLocalKVM(options) {
     
     // Create disk from base image and resize
     const diskPath = path.join(vmDir, 'disk.qcow2');
-    await execAsync(`qemu-img create -f qcow2 -F qcow2 -b ${baseImagePath} ${diskPath} ${options.storage}G`);
+    await execFileAsync('qemu-img', [
+      'create',
+      '-f', 'qcow2',
+      '-F', 'qcow2',
+      '-b', baseImagePath,
+      diskPath,
+      `${options.storage}G`
+    ]);
     
     spinner.text = 'Generating cloud-init configuration...';
     
