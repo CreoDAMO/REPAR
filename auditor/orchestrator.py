@@ -2,12 +2,12 @@
 # auditor/orchestrator.py
 """
 AEQUITAS CERBERUS AUDITOR
-The Master AI Orchestrator for Multi-Agent Security Auditing
+The Master AI Orchestrator for Sovereign Security Auditing
 
-This orchestrator coordinates:
-- Analyst Guild: 4 AI agents (Claude, GPT-4, Grok, Deepseek)
-- Adversary Guild: Exploit testing and chaos engineering
-- Engineer Guild: Automated patch generation
+This orchestrator achieves AI sovereignty with:
+- Aequitas AI: NVIDIA-powered unified model (replaces 4 external AI APIs)
+- Adversary Guild: Deterministic exploit testing
+- Full AI sovereignty: No OpenAI, Anthropic, xAI, or Deepseek dependencies
 """
 
 import os
@@ -25,7 +25,6 @@ sys.path.append(str(Path(__file__).parent))
 
 from agents.aequitas_ai import AequitasAI
 from agents.adversary_guild import AdversaryGuild
-from agents.engineer_guild import EngineerGuild
 from agents.vulnerability_scanner import VulnerabilityScanner
 from agents.smart_contract_analyzer import SmartContractAnalyzer
 from agents.protocol_tuner import ProtocolTuner
@@ -71,29 +70,32 @@ class CerberusOrchestrator:
         # Initialize all security agents
         print("\n🎯 Initializing AI Security Agents...")
         
-        # Use unified Aequitas AI (NVIDIA-powered) instead of 4 separate APIs
+        # Use unified Aequitas AI (NVIDIA-powered) for ALL AI operations
         nvidia_key = api_keys.get("nvidia") or os.getenv("NVIDIA_API_KEY")
-        if nvidia_key:
-            print("🔥 Using Aequitas AI (NVIDIA NIM - Sovereign Mode)")
-            self.analysts = AequitasAI(nvidia_key)
-        else:
-            print("⚠️  NVIDIA_API_KEY not found - falling back to multi-model approach")
-            from agents.analyst_guild import AnalystGuild
-            self.analysts = AnalystGuild(api_keys)
+        if not nvidia_key:
+            print("❌ CRITICAL: NVIDIA_API_KEY is required for sovereign AI operations")
+            print("   Aequitas Protocol operates with full AI sovereignty - no external AI APIs")
+            raise RuntimeError("NVIDIA_API_KEY required - cannot start without sovereign AI") from None
         
+        print("🔥 Using Aequitas AI (NVIDIA NIM - Sovereign Mode)")
+        self.aequitas_ai = AequitasAI(nvidia_key)
+        
+        # Use Aequitas AI for all AI operations (analysis, exploit testing, patch generation)
+        self.analysts = self.aequitas_ai
+        self.engineers = self.aequitas_ai  # Patch generation
+        
+        # Non-AI components
         self.adversaries = AdversaryGuild()
-        self.engineers = EngineerGuild(api_keys.get("openai", ""))
         self.vuln_scanner = VulnerabilityScanner()
         self.contract_analyzer = SmartContractAnalyzer()
         self.protocol_tuner = ProtocolTuner()
         
         print("✅ All agents initialized successfully")
-        if nvidia_key:
-            print("  - Aequitas AI (Unified NVIDIA NIM Model)")
-        else:
-            print("  - Analyst Guild (4 AI agents)")
-        print("  - Adversary Guild (Chaos Engineering)")
-        print("  - Engineer Guild (Patch Generation)")
+        print("  - Aequitas AI (Unified NVIDIA NIM Model)")
+        print("    ↳ Security Analysis")
+        print("    ↳ Patch Generation")
+        print("    ↳ Exploit Testing")
+        print("  - Adversary Guild (Deterministic Exploit Confirmation)")
         print("  - Vulnerability Scanner (CVE Database)")
         print("  - Smart Contract Analyzer (Aequitas Modules)")
         print("  - Protocol-Tuner (Governance Proposals)")
@@ -259,7 +261,7 @@ class CerberusOrchestrator:
             print("✅ No exploitable issues confirmed.")
         
         # PHASE 4: Remediation
-        print("\n[PHASE 4/5] ENGINEER GUILD: Generating patches...")
+        print("\n[PHASE 4/5] AEQUITAS AI: Generating patches...")
         fixes = []
         
         for exploit in confirmed_exploits:
@@ -268,7 +270,7 @@ class CerberusOrchestrator:
                 content = f.read()
             
             snippet = content[:1000]  # First 1000 chars as context
-            patch = self.engineers.generate_document_patch(exploit, snippet)
+            patch = await self.aequitas_ai.generate_document_patch(exploit, snippet)
             fixes.append({
                 'vulnerability': exploit,
                 'patch': patch
@@ -345,7 +347,7 @@ class CerberusOrchestrator:
                 end = min(len(lines), line_num + 5)
                 snippet = '\n'.join(lines[start:end])
                 
-                fix = self.engineers.generate_patch(threat, snippet)
+                fix = await self.aequitas_ai.generate_patch(threat, snippet)
                 
                 fix_entry = {
                     'vulnerability': threat,

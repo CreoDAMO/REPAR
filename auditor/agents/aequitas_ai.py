@@ -410,6 +410,65 @@ Generate a minimal, surgical patch to fix this vulnerability."""
         
         return {}
     
+    async def generate_document_patch(self, vulnerability: Dict, content_snippet: str) -> Dict:
+        """
+        Generate patch for document vulnerabilities
+        Uses engineer persona for document corrections
+        """
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        prompt = f"""Document vulnerability to fix:
+{json.dumps(vulnerability, indent=2)}
+
+Problematic content:
+---
+{content_snippet}
+---
+
+Generate a corrected version that:
+1. Fixes the logical/legal flaw
+2. Maintains the core argument
+3. Strengthens the position
+4. Uses precise legal language
+
+Return JSON with:
+{{
+  "corrected_content": "the fixed content",
+  "explanation": "what was wrong and how it's fixed",
+  "legal_rationale": "why this correction is stronger"
+}}"""
+        
+        payload = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": self.engineer_persona},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.2,
+            "max_tokens": 2048
+        }
+        
+        try:
+            response = requests.post(
+                f"{self.nim_endpoint}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=60
+            )
+            
+            if response.status_code == 200:
+                content = response.json()["choices"][0]["message"]["content"]
+                result = self._extract_json(content)
+                return result[0] if result else {}
+            
+        except Exception as e:
+            print(f"  ⚠️  Document patch generation error: {str(e)}")
+        
+        return {}
+    
     def _extract_json(self, text: str) -> List[Dict]:
         """Extract JSON from model response"""
         try:

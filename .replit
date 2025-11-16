@@ -1,4 +1,4 @@
-modules = ["go-1.21", "nodejs-20", "python-3.11", "web"]
+modules = ["go-1.21", "nodejs-20", "bash", "python-3.11"]
 [agent]
 expertMode = true
 integrations = ["python_openai:1.0.0", "python_anthropic:1.0.0", "python_database:1.0.0"]

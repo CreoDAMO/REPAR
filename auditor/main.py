@@ -71,9 +71,9 @@ async def health_check():
         "timestamp": datetime.utcnow().isoformat(),
         "orchestrator_available": ORCHESTRATOR_AVAILABLE,
         "api_keys_configured": {
-            "openai": bool(os.getenv("OPENAI_API_KEY")),
-            "anthropic": bool(os.getenv("ANTHROPIC_API_KEY"))
-        }
+            "nvidia": bool(os.getenv("NVIDIA_API_KEY"))
+        },
+        "ai_mode": "sovereign" if os.getenv("NVIDIA_API_KEY") else "not_configured"
     }
 
 @app.get("/audit/status")
@@ -170,8 +170,7 @@ async def run_audit(audit_id: str, target_directory: str):
     
     try:
         api_keys = {
-            "openai": os.getenv("OPENAI_API_KEY"),
-            "anthropic": os.getenv("ANTHROPIC_API_KEY")
+            "nvidia": os.getenv("NVIDIA_API_KEY")
         }
         
         orchestrator = CerberusOrchestrator(api_keys, ".")
@@ -200,8 +199,7 @@ async def run_document_audit(audit_id: str, file_path: str):
     """Run document audit in the background"""
     try:
         api_keys = {
-            "openai": os.getenv("OPENAI_API_KEY"),
-            "anthropic": os.getenv("ANTHROPIC_API_KEY")
+            "nvidia": os.getenv("NVIDIA_API_KEY")
         }
         
         orchestrator = CerberusOrchestrator(api_keys, ".")
