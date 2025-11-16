@@ -296,7 +296,7 @@ def optimize_cost():
         
     except Exception as e:
         logger.error(f"Cost optimization error: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'An internal error has occurred. Please contact support.'}), 500
 
 def optimize_with_ai(current: Dict, budget: int, requirements: Dict) -> Dict[str, Any]:
     """Use AI to optimize resource allocation for cost"""
