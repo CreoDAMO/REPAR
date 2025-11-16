@@ -100,7 +100,7 @@ def predict_placement():
         
     except Exception as e:
         logger.error(f"Prediction error: {e}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'An internal error has occurred.'}), 500
 
 def predict_with_ai(workload_type: str, duration: int, nodes: List[Dict], user_did: str) -> Dict[str, Any]:
     """Use NVIDIA NIM to predict optimal placement"""
