@@ -101,14 +101,12 @@ async function deployDocker(options) {
     spinner.text = 'Building Aequitas Zone image...';
     
     // Build image using docker-compose
-    const buildCmd = `cd ${dockerDir} && docker-compose build`;
-    await execAsync(buildCmd);
+    await execFileAsync('docker-compose', ['build'], { cwd: dockerDir });
     
     spinner.text = 'Starting container...';
     
     // Start container using docker-compose
-    const upCmd = `cd ${dockerDir} && docker-compose up -d`;
-    await execAsync(upCmd);
+    await execFileAsync('docker-compose', ['up', '-d'], { cwd: dockerDir });
     
     // Wait for container to be ready
     spinner.text = 'Waiting for node to be ready...';
