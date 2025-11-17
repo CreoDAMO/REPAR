@@ -1,0 +1,178 @@
+version: '3.8'
+
+services:
+  aequitas-node:
+    build:
+      context: ../..
+      dockerfile: vm-infrastructure/docker/Dockerfile
+    container_name: aequitas-protocol-zone
+    hostname: aequitas-node-01
+    restart: unless-stopped
+    
+    environment:
+      - CHAIN_ID=aequitas-1
+      - MONIKER=aequitas-node-01
+      - CIRCLE_API_KEY=${CIRCLE_API_KEY}
+      - CIRCLE_ENTITY_SECRET=${CIRCLE_ENTITY_SECRET}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - NODE_ENV=production
+    
+    ports:
+      - "26657:26657"  # Tendermint RPC
+      - "26656:26656"  # Tendermint P2P
+      - "1317:1317"    # Cosmos REST API
+      - "9090:9090"    # gRPC
+      - "26660:26660"  # Prometheus
+      - "3000:3000"    # Dashboard
+      - "443:443"      # HTTPS
+      - "80:80"        # HTTP
+    
+    volumes:
+      - aequitas-data:/var/lib/aequitas
+      - evidence-storage:/var/lib/evidence
+      - aequitas-logs:/var/log/aequitas
+      - ./chain-config:/etc/aequitas/chain-config:ro
+    
+    networks:
+      - aequitas-network
+    
+    cap_add:
+      - NET_ADMIN
+    
+    security_opt:
+      - no-new-privileges:true
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+
+  cerberus-auditor:
+    build:
+      context: ../..
+      dockerfile: auditor/Dockerfile
+    container_name: cerberus-ai-auditor
+    restart: unless-stopped
+    
+    environment:
+      - AEQUITAS_RPC=http://aequitas-node:26657
+      # ✅ SOVEREIGN AI - NVIDIA NIM only
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY}
+      - NVIDIA_NIM_ENDPOINT=${NVIDIA_NIM_ENDPOINT:-https://integrate.api.nvidia.com/v1}
+      - NVIDIA_MODEL=${NVIDIA_MODEL:-meta/llama-3.1-70b-instruct}
+      - AUDIT_INTERVAL=3600
+      - CONSENSUS_THRESHOLD=2
+    
+    volumes:
+      - ./aequitas:/workspace/aequitas:ro
+      - cerberus-data:/var/lib/cerberus
+      - cerberus-logs:/var/log/cerberus
+    
+    working_dir: /app
+    command: python3 -u orchestrator.py
+    
+    depends_on:
+      - aequitas-node
+    
+    networks:
+      - aequitas-network
+    
+    security_opt:
+      - no-new-privileges:true
+
+  chaos-defense:
+    image: python:3.11-slim
+    container_name: chaos-defense-system
+    restart: unless-stopped
+    
+    environment:
+      - AEQUITAS_RPC=http://aequitas-node:26657
+      - VULNERABILITY_INJECTION=0.10
+      - THREAT_ORACLE_ENABLED=true
+    
+    volumes:
+      - ./security/chaos:/app
+      - chaos-data:/var/lib/chaos
+    
+    working_dir: /app
+    command: python3 -u chaos_defense.py
+    
+    depends_on:
+      - aequitas-node
+    
+    networks:
+      - aequitas-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    
+    ports:
+      - "9091:9090"
+    
+    networks:
+      - aequitas-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_INSTALL_PLUGINS=grafana-clock-panel
+    
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana-dashboards:/etc/grafana/provisioning/dashboards:ro
+    
+    ports:
+      - "3001:3000"
+    
+    depends_on:
+      - prometheus
+    
+    networks:
+      - aequitas-network
+
+volumes:
+  aequitas-data:
+    driver: local
+  evidence-storage:
+    driver: local
+  aequitas-logs:
+    driver: local
+  cerberus-data:
+    driver: local
+  cerberus-logs:
+    driver: local
+  chaos-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  aequitas-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
