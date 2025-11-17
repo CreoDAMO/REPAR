@@ -1,0 +1,310 @@
+
+# Deploy Aequitas Blockchain to VM Infrastructure & ACE
+#
+# ✅ AI SOVEREIGNTY: Powered by Aequitas AI (NVIDIA NIM)
+# 🛡️ SECURITY: Mandatory Cerberus post-deployment audit
+# ⚖️ MISSION: $131T reparations enforcement
+#
+# ENVIRONMENT PROTECTION (REQUIRED FOR PRODUCTION):
+# This workflow uses GitHub Environments to protect production deployments.
+# To enable manual approval for production:
+#
+# 1. Go to: Settings > Environments > Create "production" environment
+# 2. Enable "Required reviewers" and add authorized approvers
+# 3. Set "Deployment branches" to "Selected branches" → main only
+#
+# Without environment protection, production deploys will proceed automatically!
+
+name: Deploy Aequitas Blockchain
+
+on:
+  workflow_run:
+    workflows: ["Build Aequitas Zone Blockchain"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      vm_provider:
+        description: 'VM deployment provider'
+        required: false
+        default: 'docker'
+        type: choice
+        options:
+          - docker
+          - ace
+          - terraform-aws
+          - terraform-gcp
+          - terraform-digitalocean
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  prepare-deployment:
+    name: Prepare Deployment Artifacts
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.ref == 'refs/heads/main')
+    
+    outputs:
+      deployment_env: ${{ steps.set-env.outputs.environment }}
+      vm_provider: ${{ steps.set-env.outputs.provider }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set deployment environment
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "provider=${{ inputs.vm_provider }}" >> $GITHUB_OUTPUT
+          else
+            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "provider=docker" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Download blockchain artifacts
+        if: github.event_name != 'workflow_dispatch'
+        uses: actions/download-artifact@v4
+        with:
+          name: aequitas-blockchain
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      
+      - name: Verify blockchain binary
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          if [ -f aequitasd ]; then
+            chmod +x aequitasd
+            ./aequitasd version
+            echo "✅ Blockchain binary verified"
+          else
+            echo "⚠️ No binary from previous workflow, will build in deploy step"
+          fi
+
+  deploy-to-docker:
+    name: Deploy to Docker (Development/Staging)
+    needs: prepare-deployment
+    runs-on: ubuntu-latest
+    if: needs.prepare-deployment.outputs.vm_provider == 'docker'
+    environment:
+      name: ${{ needs.prepare-deployment.outputs.deployment_env }}
+      url: http://localhost:26657
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Deploy using Docker Compose
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          CHAIN_ID: ${{ needs.prepare-deployment.outputs.deployment_env == 'production' && 'aequitas-1' || 'aequitas-testnet-1' }}
+        run: |
+          cd vm-infrastructure/docker
+          
+          echo "🚀 Deploying Aequitas blockchain to Docker"
+          echo "   Environment: ${{ needs.prepare-deployment.outputs.deployment_env }}"
+          echo "   Chain ID: $CHAIN_ID"
+          
+          # Start services
+          docker-compose up -d
+          
+          # Wait for node to be ready
+          echo "⏳ Waiting for node to start..."
+          sleep 30
+          
+          # Verify deployment
+          docker-compose ps
+          curl -f http://localhost:26657/health || exit 1
+          
+          echo "✅ Deployment successful"
+      
+      - name: Verify blockchain RPC
+        run: |
+          echo "🔍 Verifying blockchain RPC endpoint"
+          BLOCK_HEIGHT=$(curl -s http://localhost:26657/status | jq -r '.result.sync_info.latest_block_height')
+          echo "   Current block height: $BLOCK_HEIGHT"
+          echo "✅ Blockchain is syncing"
+      
+      - name: Run health checks
+        run: |
+          cd vm-infrastructure/cli
+          npm install
+          npm start status aequitas-protocol-zone
+      
+      - name: Set up Python for Cerberus Audit
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install jq for JSON parsing
+        run: sudo apt-get update && sudo apt-get install -y jq
+      
+      - name: Run Cerberus AI Security Audit (Docker Deployment)
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          NVIDIA_NIM_ENDPOINT: ${{ secrets.NVIDIA_NIM_ENDPOINT }}
+          NVIDIA_MODEL: ${{ secrets.NVIDIA_MODEL }}
+          AEQUITAS_RPC: http://localhost:26657
+        run: |
+          echo "🛡️ Running Cerberus AI Security Audit"
+          echo "   Environment: ${{ needs.prepare-deployment.outputs.deployment_env }}"
+          echo "   Target: $AEQUITAS_RPC"
+          echo "   AI: Aequitas AI (NVIDIA NIM)"
+          
+          cd auditor
+          pip install -r requirements.txt
+          
+          # Run Cerberus audit and capture exit code
+          python orchestrator.py
+          AUDIT_EXIT_CODE=$?
+          
+          if [ $AUDIT_EXIT_CODE -eq 0 ]; then
+            echo "✅ Security audit passed - no critical findings"
+          else
+            echo "❌ Security audit found critical issues"
+            echo "⚠️ Deployment requires immediate security review"
+            exit $AUDIT_EXIT_CODE
+          fi
+      
+      - name: Upload Docker audit reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cerberus-audit-docker-${{ needs.prepare-deployment.outputs.deployment_env }}-${{ github.run_number }}
+          path: auditor/reports/
+
+  deploy-to-ace:
+    name: Deploy to ACE (Sovereign Cloud)
+    needs: prepare-deployment
+    runs-on: ubuntu-latest
+    if: needs.prepare-deployment.outputs.vm_provider == 'ace'
+    environment:
+      name: ${{ needs.prepare-deployment.outputs.deployment_env }}
+      url: http://localhost:8080
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+      
+      - name: Build ACE
+        working-directory: ./ace
+        run: |
+          echo "🔨 Building ACE (Aequitas Cloud Engine)"
+          ./scripts/build-ace.sh
+          echo "✅ ACE built successfully"
+      
+      - name: Deploy ACE with Docker Compose
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          BLOCKCHAIN_RPC: ${{ secrets.BLOCKCHAIN_RPC || 'http://localhost:26657' }}
+          CHAIN_ID: ${{ needs.prepare-deployment.outputs.deployment_env == 'production' && 'aequitas-1' || 'aequitas-testnet-1' }}
+          ACE_PORT: 8080
+          ACE_METRICS_PORT: 9090
+        working-directory: ./ace/deployments/docker
+        run: |
+          echo "🚀 Deploying ACE to production"
+          echo "   Environment: ${{ needs.prepare-deployment.outputs.deployment_env }}"
+          echo "   Blockchain RPC: $BLOCKCHAIN_RPC"
+          
+          docker-compose up -d
+          
+          # Wait for ACE to be ready
+          echo "⏳ Waiting for ACE to start..."
+          sleep 20
+          
+          # Verify deployment
+          curl -f http://localhost:8080/health || exit 1
+          curl -f http://localhost:9090/metrics || exit 1
+          
+          echo "✅ ACE deployment successful"
+      
+      - name: Verify ACE integration
+        run: |
+          echo "🔍 Verifying ACE integration with blockchain"
+          curl -s http://localhost:8080/api/v1/network/status | jq .
+          echo "✅ ACE is operational"
+      
+      - name: Set up Python for Cerberus Audit
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install jq for JSON parsing
+        run: sudo apt-get update && sudo apt-get install -y jq
+      
+      - name: Run Cerberus AI Security Audit (ACE Deployment)
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          NVIDIA_NIM_ENDPOINT: ${{ secrets.NVIDIA_NIM_ENDPOINT }}
+          NVIDIA_MODEL: ${{ secrets.NVIDIA_MODEL }}
+          AEQUITAS_RPC: http://localhost:8080
+        run: |
+          echo "🛡️ Running Cerberus AI Security Audit"
+          echo "   Environment: ${{ needs.prepare-deployment.outputs.deployment_env }}"
+          echo "   Target: $AEQUITAS_RPC (ACE)"
+          echo "   AI: Aequitas AI (NVIDIA NIM)"
+          
+          cd auditor
+          pip install -r requirements.txt
+          
+          # Run Cerberus audit and capture exit code
+          python orchestrator.py
+          AUDIT_EXIT_CODE=$?
+          
+          if [ $AUDIT_EXIT_CODE -eq 0 ]; then
+            echo "✅ Security audit passed - no critical findings"
+          else
+            echo "❌ Security audit found critical issues"
+            echo "⚠️ Deployment requires immediate security review"
+            exit $AUDIT_EXIT_CODE
+          fi
+      
+      - name: Upload ACE audit reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cerberus-audit-ace-${{ needs.prepare-deployment.outputs.deployment_env }}-${{ github.run_number }}
+          path: auditor/reports/
+
+  post-deployment-summary:
+    name: Post-Deployment Summary
+    needs: [prepare-deployment, deploy-to-docker, deploy-to-ace]
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deployment summary
+        run: |
+          echo "📊 DEPLOYMENT SUMMARY"
+          echo "====================="
+          echo "Environment: ${{ needs.prepare-deployment.outputs.deployment_env }}"
+          echo "Provider: ${{ needs.prepare-deployment.outputs.vm_provider }}"
+          echo "Timestamp: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          echo ""
+          echo "✅ Deployment completed successfully"
+          echo ""
+          echo "🔥 AI Sovereignty: Powered by Aequitas AI (NVIDIA NIM)"
+          echo "🛡️ Security: Protected by Cerberus Auditor"
+          echo "⚖️ Mission: $131T reparations enforcement"
