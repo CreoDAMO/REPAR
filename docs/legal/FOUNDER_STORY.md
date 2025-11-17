@@ -23,7 +23,7 @@
 **Subsequent Arrests:** ZERO  
 **Rehabilitation:** COMPLETE  
 **Self-Education:** Technology, law, mathematics, history  
-**Result:** Built what Harvard couldn't in 400 years
+**Result:** Built what Harvard wouldn't in 400 years
 
 ### November 2025: The Digital Nation
 
@@ -85,7 +85,7 @@
 - ✅ Everything to gain
 - ✅ 300 million descendants behind me
 - ✅ Mathematics doesn't negotiate
-- ✅ Already beat them once
+- ✅ Already Pay My Debt
 
 **You can't threaten someone with nothing to lose.**
 
@@ -184,10 +184,11 @@
 
 ## The Bottom Line
 
-**I don't need your permission.**  
-**I don't need your approval.**  
+**I didn't need your permission.**  
+**I didn't need your approval.**  
 **I don't need your credentials.**  
-**I don't need your money.**
+**I didn't use your money.**
+**I built it.**
 
 **I have:**
 - Birth certificate (proves I'm owed)
