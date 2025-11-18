@@ -20,7 +20,21 @@ class AequitasAI:
     """
     
     def __init__(self, nvidia_api_key: str = None):
-        self.api_key = nvidia_api_key or os.getenv("NVIDIA_API_KEY") or ""
+        # Get API key and ensure it's a proper string (not bytes)
+        api_key_raw = nvidia_api_key or os.getenv("NVIDIA_API_KEY") or ""
+        
+        # Ensure API key is a string and strip whitespace
+        if isinstance(api_key_raw, bytes):
+            self.api_key = api_key_raw.decode('utf-8').strip()
+        else:
+            self.api_key = str(api_key_raw).strip()
+        
+        # Validate API key is not empty
+        if not self.api_key or self.api_key == "":
+            raise ValueError(
+                "NVIDIA_API_KEY is required but not set. "
+                "Please set the NVIDIA_API_KEY environment variable or pass it to AequitasAI()."
+            )
         
         # NVIDIA NIM endpoint - can be self-hosted or cloud
         self.nim_endpoint = os.getenv("NVIDIA_NIM_ENDPOINT", "https://integrate.api.nvidia.com/v1")
@@ -37,6 +51,7 @@ class AequitasAI:
         print(f"✅ Aequitas AI initialized with NVIDIA NIM")
         print(f"   Model: {self.model}")
         print(f"   Endpoint: {self.nim_endpoint}")
+        print(f"   API Key: {'*' * (len(self.api_key) - 4) + self.api_key[-4:]}")
     
     def _build_analyst_persona(self) -> str:
         """
@@ -199,8 +214,13 @@ Keep patches small. Large rewrites introduce new bugs."""
     async def _analyze_document(self, content: str, temperature: float) -> List[Dict]:
         """Analyze document for logical/legal issues"""
         try:
+            # Ensure API key is properly formatted as string
+            api_key_str = str(self.api_key).strip()
+            if not api_key_str:
+                raise ValueError("API key is empty")
+            
             headers = {
-                "Authorization": f"Bearer {self.api_key}",
+                "Authorization": f"Bearer {api_key_str}",
                 "Content-Type": "application/json"
             }
             
@@ -249,8 +269,13 @@ Return findings as JSON array."""
     async def _analyze_with_temperature(self, code: str, temperature: float) -> List[Dict]:
         """Run analysis with specific temperature for diversity"""
         try:
+            # Ensure API key is properly formatted as string
+            api_key_str = str(self.api_key).strip()
+            if not api_key_str:
+                raise ValueError("API key is empty")
+            
             headers = {
-                "Authorization": f"Bearer {self.api_key}",
+                "Authorization": f"Bearer {api_key_str}",
                 "Content-Type": "application/json"
             }
             
@@ -319,8 +344,13 @@ Return findings as JSON array."""
         Test if vulnerability is actually exploitable
         Uses adversary persona
         """
+        # Ensure API key is properly formatted as string
+        api_key_str = str(self.api_key).strip()
+        if not api_key_str:
+            return {"exploitable": False, "error": "API key is empty"}
+        
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {api_key_str}",
             "Content-Type": "application/json"
         }
         
@@ -367,8 +397,13 @@ Build a proof-of-concept exploit. Is this actually exploitable?"""
         Generate code patch to fix vulnerability
         Uses engineer persona
         """
+        # Ensure API key is properly formatted as string
+        api_key_str = str(self.api_key).strip()
+        if not api_key_str:
+            return {"error": "API key is empty"}
+        
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {api_key_str}",
             "Content-Type": "application/json"
         }
         
@@ -415,8 +450,13 @@ Generate a minimal, surgical patch to fix this vulnerability."""
         Generate patch for document vulnerabilities
         Uses engineer persona for document corrections
         """
+        # Ensure API key is properly formatted as string
+        api_key_str = str(self.api_key).strip()
+        if not api_key_str:
+            return {"error": "API key is empty"}
+        
         headers = {
-            "Authorization": f"Bearer {self.api_key}",
+            "Authorization": f"Bearer {api_key_str}",
             "Content-Type": "application/json"
         }
         
