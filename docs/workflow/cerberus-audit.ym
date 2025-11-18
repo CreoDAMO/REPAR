@@ -54,10 +54,7 @@ jobs:
       
       - name: Run Cerberus Auditor
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/cerberus_audit
         run: |
           cd auditor

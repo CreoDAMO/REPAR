@@ -778,17 +778,15 @@ Duration: {audit_report['duration_seconds']:.2f} seconds
 async def main():
     """Main entry point for the Cerberus Auditor"""
     
-    # Get API keys from environment
+    # Get API keys from environment (only NVIDIA for Aequitas AI sovereignty)
     api_keys = {
-        "openai": os.getenv("OPENAI_API_KEY"),
-        "anthropic": os.getenv("ANTHROPIC_API_KEY"),
-        "xai": os.getenv("XAI_API_KEY", ""),
-        "deepseek": os.getenv("DEEPSEEK_API_KEY", "")
+        "nvidia": os.getenv("NVIDIA_API_KEY")
     }
     
     # Validate required keys
-    if not api_keys["openai"] or not api_keys["anthropic"]:
-        print("❌ ERROR: OPENAI_API_KEY and ANTHROPIC_API_KEY are required")
+    if not api_keys["nvidia"]:
+        print("❌ ERROR: NVIDIA_API_KEY is required for Aequitas AI sovereignty")
+        print("   All AI operations now run through unified Aequitas AI (NVIDIA NIM)")
         sys.exit(1)
     
     # Detect repository root (go up from auditor/ to repo root)
