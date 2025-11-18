@@ -51,7 +51,7 @@ class AequitasAI:
         print(f"✅ Aequitas AI initialized with NVIDIA NIM")
         print(f"   Model: {self.model}")
         print(f"   Endpoint: {self.nim_endpoint}")
-        print(f"   API Key: {'*' * (len(self.api_key) - 4) + self.api_key[-4:]}")
+        print(f"   API Key: [REDACTED]")
     
     def _build_analyst_persona(self) -> str:
         """
