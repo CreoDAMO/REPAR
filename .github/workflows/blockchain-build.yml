@@ -33,6 +33,17 @@ jobs:
           go-version: '1.23.x'
           cache-dependency-path: aequitas/go.sum
 
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+            aequitas/vendor
+          key: ${{ runner.os }}-go-${{ hashFiles('aequitas/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Download dependencies
         working-directory: ./aequitas
         timeout-minutes: 15
