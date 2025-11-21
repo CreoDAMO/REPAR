@@ -205,7 +205,7 @@ class ConstitutionalEnforcer:
             ConstitutionalAxiom.BURDEN_ON_DEFENDANTS: "The burden of proof lies with those accused of harm",
             ConstitutionalAxiom.IMMUTABILITY_IS_TRUST: "Trust requires permanent, unchangeable records",
             ConstitutionalAxiom.AUTOMATION_IS_JUSTICE: "Human bias requires algorithmic enforcement",
-            ConstitutionalAxiom.HUMANS_ARE_UNRELIABLE: "Human judgment is subject to corruption and bias",
+            ConstitutionalAxiom.HUMAN_AI_SYMBIOSIS: "Humans and AI achieve better outcomes through collaboration than either can achieve alone",
             ConstitutionalAxiom.MATHEMATICAL_CERTAINTY: "Justice must be mathematically provable",
             ConstitutionalAxiom.ZERO_INCREMENTALISM: "No gradual approaches; full implementation only",
             ConstitutionalAxiom.IMMEDIATE_ENFORCEMENT: "Enforcement must be immediate and automatic",
