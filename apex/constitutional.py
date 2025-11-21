@@ -12,7 +12,15 @@ import json
 
 
 class ConstitutionalAxiom(Enum):
-    """25 Immutable Constitutional Axioms"""
+    """
+    25 Immutable Constitutional Axioms
+    
+    Axiom 17: HUMAN_AI_SYMBIOSIS emphasizes that humans and AI achieve
+    better outcomes through collaboration than either can achieve alone.
+    AI handles data processing, pattern recognition, and automation while
+    humans provide intuition, creativity, ethics, and strategic oversight.
+    This is NOT about AI replacing humans - it's about symbiotic partnership.
+    """
     POVERTY_IS_ENGINEERED = 1
     REPARATIONS_ARE_DEBT = 2
     INCREMENTALISM_PRESERVES_HARM = 3
@@ -29,7 +37,7 @@ class ConstitutionalAxiom(Enum):
     BURDEN_ON_DEFENDANTS = 14
     IMMUTABILITY_IS_TRUST = 15
     AUTOMATION_IS_JUSTICE = 16
-    HUMANS_ARE_UNRELIABLE = 17
+    HUMAN_AI_SYMBIOSIS = 17  # Changed from HUMANS_ARE_UNRELIABLE - emphasizes collaboration not replacement
     MATHEMATICAL_CERTAINTY = 18
     ZERO_INCREMENTALISM = 19
     IMMEDIATE_ENFORCEMENT = 20
