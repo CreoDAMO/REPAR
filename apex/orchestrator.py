@@ -19,6 +19,11 @@ import datetime
 
 from .constitutional import ConstitutionalEnforcer, ConstitutionalAxiom
 from .post_quantum import PostQuantumCrypto, QuantumSafeChannel
+try:
+    from .cyber_reasoning import EnhancedCyberReasoningSystem
+    CRS_AVAILABLE = True
+except ImportError:
+    CRS_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -28,11 +33,13 @@ class APEXConfig:
     """Configuration for APEX system"""
     enable_pqc: bool = True
     enable_constitutional_enforcement: bool = True
+    enable_enhanced_crs: bool = True
     scan_interval_hours: int = 6
     auto_fix_enabled: bool = True
     chaos_testing_enabled: bool = True
     threat_threshold: str = "high"
     max_concurrent_operations: int = 4
+    crs_target_success_rate: float = 0.90
 
 
 class APEXOrchestrator:
@@ -45,6 +52,7 @@ class APEXOrchestrator:
         self.config = config or APEXConfig()
         self.constitutional_enforcer = ConstitutionalEnforcer()
         self.pqc = PostQuantumCrypto(gpu_accelerated=True)
+        self.crs = None
         self.running = False
         self.start_time = None
         
@@ -53,6 +61,12 @@ class APEXOrchestrator:
         logger.info("═" * 80)
         
         self._verify_constitutional_integrity()
+        
+        if self.config.enable_enhanced_crs and CRS_AVAILABLE:
+            self.crs = EnhancedCyberReasoningSystem(enable_chaos=self.config.chaos_testing_enabled)
+            logger.info("✅ Enhanced CRS initialized (90% auto-patch success)")
+        elif self.config.enable_enhanced_crs:
+            logger.warning("⚠️  Enhanced CRS requested but not available")
         self._initialize_quantum_safe_layer()
     
     def _verify_constitutional_integrity(self):

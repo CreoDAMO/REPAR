@@ -17,6 +17,14 @@ __license__ = "Constitutional License"
 from .constitutional import ConstitutionalAxiom, ConstitutionalEnforcer
 from .post_quantum import PostQuantumCrypto
 from .orchestrator import APEXOrchestrator, APEXConfig
+from .cyber_reasoning import (
+    EnhancedCyberReasoningSystem,
+    Vulnerability,
+    PatchCandidate,
+    PatchResult,
+    VulnerabilitySeverity,
+    PatchStrategy
+)
 
 __all__ = [
     'ConstitutionalAxiom',
@@ -24,4 +32,10 @@ __all__ = [
     'PostQuantumCrypto',
     'APEXOrchestrator',
     'APEXConfig',
+    'EnhancedCyberReasoningSystem',
+    'Vulnerability',
+    'PatchCandidate',
+    'PatchResult',
+    'VulnerabilitySeverity',
+    'PatchStrategy',
 ]
