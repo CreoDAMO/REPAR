@@ -234,6 +234,39 @@ D = K × C × P
 
 ---
 
+### APEX SYSTEM AXIOM 17: HUMAN_AI_SYMBIOSIS (NEW - November 21, 2025)
+
+**Definition**: AI systems must amplify human judgment, NOT replace it. All enforcement actions require human oversight and constitutional compliance.
+
+**Enforcement**:
+```json
+{
+  "human_ai_collaboration": true,
+  "human_replacement_prohibited": true,
+  "human_judgment_required": true,
+  "ai_amplification_only": true
+}
+```
+
+**Key Distinction**:
+| Aspect | Wrong (Replaced) | Right (Amplified) |
+|--------|------------------|-------------------|
+| Judgment | AI decides → humans approve | Humans decide → AI recommends |
+| Authority | AI has authority | Humans retain authority |
+| Oversight | Minimal human involvement | Maximum human oversight |
+| Constitutional | Axiom violation | Axiom 17 compliance |
+
+**Implementation**:
+- ✅ REAL CRS provides patch recommendations, humans approve
+- ✅ Swarm robotics guided by human commanders
+- ✅ LLM ensemble provides analysis, humans make decisions
+- ✅ Constitutional axioms reviewed by human governance
+- ✅ All enforcement actions logged and auditable
+
+**APEX System Integration**: Axiom 17 embedded in `apex/constitutional.py` and enforced by `RealAPEXOrchestrator`
+
+---
+
 ## The Toggle System (Prosecutorial Evidence Tool)
 
 ### MODE A: Legacy World Logic
