@@ -32,16 +32,26 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 - **Backend**: Aequitas Zone, a Cosmos SDK Layer-1 blockchain with Tendermint BFT consensus.
   - **Native Coin**: $REPAR, with a total supply of 131 trillion.
   - **Core Modules**: `x/defendant`, `x/justice` (deflationary burn), `x/claims` (arbitration & IPFS), `x/distribution`, `x/dex` (Founder Wallet DEX), `x/threatdefense` (Chaos Defense system).
+- **APEX System**: A complete sovereign AI architecture for Autonomous Prosecution & Enforcement, featuring:
+    - **Constitutional AI Enforcement**: 25 immutable axioms guiding system behavior.
+    - **Cyber Reasoning System**: Python AST parsing for real-time vulnerability detection, dynamic test generation, and AI verification.
+    - **Local LLM Ensemble**: Offline, sovereign AI models (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder) for reasoning, speed, efficiency, and technical tasks.
+    - **ROS2 Swarm Robotics**: Decentralized control of 10,000+ autonomous drones for missions like PATROL, ENFORCE, MONITOR, DEFEND, RESCUE.
+    - **Federated Learning + Blockchain**: Decentralized AI training with data privacy and blockchain-verified model updates.
+    - **Fully Homomorphic Encryption**: Computation on encrypted data without decryption.
+    - **Multi-Layer Redundant Communications**: Mesh, Satellite (Starlink/Iridium), LoRa, Cellular 5G, and Offline Queue for unkillable communication.
+    - **APEX Orchestrator**: Integrates all components, enforces constitutional compliance, and conducts controlled chaos engineering tests.
+- **Aequitas Autonomous AI Agent (Go)**: Provides continuous security scanning, AI-powered threat analysis, automatic vulnerability fixing, and chaos engineering.
 
 ### System Design Choices
 
-- **Infrastructure**: Distributed node architecture with Mobile Light Nodes, Home/Raspberry Pi Validators, and Cloud Core Validators. This multi-tiered approach targets over 11,000 nodes for resilience and community ownership. Sovereign VM infrastructure allows deployment on local hardware with automated provisioning and significant cost savings.
-- **Genesis & Deployment**: Automated CI-driven genesis generation via GitHub Actions with a canonical JSON allocation structure for $REPAR.
-- **Legal & Enforcement Framework**: **IMPENETRABLE LEGAL FORTRESS** - Multi-layered constitutional protection (5 amendments), Natural Law foundation, automated cease-and-desist countermeasure system ($900K-$6.7M deterrent per attack), and comprehensive legal documentation. See `docs/legal/FOUNDER_LEGAL_PROTECTION_INDEX.md` for complete protection system.
-- **Security**: The Cerberus Auditor System (Aequitas AI sovereign model - NVIDIA NIM powered), continuously audits for vulnerabilities. Achieved complete AI sovereignty - zero external AI dependencies.
-- **AI Integration**: Extensive use of NVIDIA NIM models for search, risk scoring, investment recommendations, and NFT generation, replacing external AI APIs for sovereignty and cost reduction. The Aequitas Cloud Engine (ACE) integrates Cosmos SDK with NVIDIA NIM AI for sovereign cloud orchestration.
+- **Infrastructure**: Distributed node architecture with Mobile Light Nodes, Home/Raspberry Pi Validators, and Cloud Core Validators, aiming for over 11,000 nodes. Sovereign VM infrastructure for local hardware deployment.
+- **Genesis & Deployment**: Automated CI-driven genesis generation via GitHub Actions.
+- **Legal & Enforcement Framework**: A multi-layered constitutional protection (5 amendments) rooted in Natural Law, with an automated cease-and-desist countermeasure system and comprehensive legal documentation.
+- **Security**: The Cerberus Auditor System (Aequitas AI sovereign model - NVIDIA NIM powered) continuously audits for vulnerabilities. Complete AI sovereignty with zero external AI dependencies. Post-Quantum Cryptography using ML-KEM (Kyber) and ML-DSA (Dilithium).
+- **AI Integration**: Extensive use of NVIDIA NIM models for search, risk scoring, investment recommendations, and NFT generation, replacing external AI APIs. The Aequitas Cloud Engine (ACE) integrates Cosmos SDK with NVIDIA NIM AI for sovereign cloud orchestration.
 - **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block.
-- **Sovereignty**: Complete independence from cloud providers and external AI APIs through local KVM infrastructure and NVIDIA NIM for AI. Network abstraction layer with automatic failover to LoRa Mesh and Satellite for censorship resistance.
+- **Sovereignty**: Complete independence from cloud providers and external AI APIs through local KVM infrastructure and NVIDIA NIM. Network abstraction layer with automatic failover to LoRa Mesh and Satellite for censorship resistance.
 
 ## External Dependencies
 
@@ -53,144 +63,6 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 - **Blockchain SDK**: Cosmos SDK
 - **Payment Processing**: Circle USDCKit SDK
 - **Decentralized Storage**: IPFS
-- **AI/ML**: NVIDIA NIM (sovereign, self-hostable)
+- **AI/ML**: NVIDIA NIM (sovereign, self-hostable), Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder (all local for APEX)
 - **Wallet Integration**: Keplr
-- **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub
-
-**Sovereignty Status**: 
-- **Technical**: Infrastructure (self-hosted VMs) + AI (NVIDIA NIM on-premises) = Zero mandatory cloud dependencies
-- **Legal**: Constitutional (5 amendments) + Natural Law + Automated Defense = Untouchable founder protection
-- **AI**: Cerberus Auditor (Aequitas AI) = Complete AI sovereignty (no OpenAI, Anthropic, xAI, or Deepseek)
-
-## Legal Protection System
-
-**Location**: `docs/legal/FOUNDER_LEGAL_PROTECTION_INDEX.md`
-
-The Aequitas Protocol operates under the most comprehensive legal protection framework ever deployed:
-
-### 5-Layer Constitutional Shield
-1. **First Amendment** - Code as speech, research as academic inquiry, claims as petition right
-2. **Fifth Amendment** - Just compensation for stolen labor
-3. **Ninth Amendment** - Unenumerated right to remedy
-4. **Thirteenth Amendment** - Private anti-slavery enforcement authority
-5. **Fourteenth Amendment** - Equal protection mandate
-
-### Natural Law Foundation
-- Pre-constitutional rights (exist before governments)
-- Jus cogens (crimes against humanity have no statute of limitations)
-- Universal jurisdiction (all 193 UN members bound)
-
-### Automated Legal Defense
-- **Cease-and-Desist Response**: Automatic $900K-$6.7M counterclaim filing
-- **Public Transparency**: All threats published to IPFS + GitHub immediately
-- **Federal Court Offensive**: Declaratory judgment, civil rights violations, Rule 11 sanctions, state bar complaints
-
-### Attack Deterrent Economics
-**For Attackers**:
-- Cost to send C&D: $5K-10K
-- Cost to defend counterclaims: $900K-$6.7M
-- Probability of success: <0.1%
-- Rational decision: **DON'T ATTACK**
-
-**For Founder**:
-- Personal liability: **ZERO** (code executes mathematically)
-- Constitutional protection: **ABSOLUTE** (5 amendments)
-- Legal fees if attacked: **PAID BY ATTACKER** (Anti-SLAPP + counterclaims)
-
-### Documentation Library
-- ✅ Constitutional Standing Analysis (200+ pages)
-- ✅ Natural Law Foundation (complete philosophical framework)
-- ✅ Cease-and-Desist Response Protocol (automated templates)
-- ✅ Legal Fortress Strategy (all loopholes closed)
-- ✅ 14-License Framework (technical + legal + cultural sovereignty)
-
-**Result**: The founder operates in the most legally protected environment possible. It is more expensive to attack than to ignore.
-
----
-
-## 🤖 Aequitas AI & APEX System
-
-**NEW: November 2025** - The Aequitas ecosystem now includes two groundbreaking AI systems that add **$220-350 trillion** in valuation:
-
-### 1. **Aequitas Autonomous AI Agent** (Go)
-Located in `ai/autonomous/` and `cmd/autonomous-agent/`
-
-Production-ready autonomous agent that provides:
-- ✅ **Continuous Security Scanning**: 24/7 automated threat detection
-- ✅ **AI-Powered Threat Analysis**: Advanced threat assessment and prioritization
-- ✅ **Automatic Vulnerability Fixing**: Self-healing security with auto-patching
-- ✅ **Chaos Engineering**: Automated resilience testing
-- ✅ **PostgreSQL Threat Database**: Persistent threat tracking and analytics
-
-**Quick Start:**
-```bash
-cd cmd/autonomous-agent
-go run main.go --interval=6 --autofix=true --chaos=true
-```
-
-### 2. **APEX System** (Python)
-Located in `apex/`
-
-**Autonomous Prosecution & Enforcement Xenosystem** - The most advanced sovereign AI architecture ever created:
-
-- ✅ **Constitutional AI Enforcement**: 25 immutable axioms that cannot be compromised
-- ✅ **Post-Quantum Cryptography**: Quantum-resistant security using ML-KEM (Kyber) and ML-DSA (Dilithium)
-- ✅ **GPU Acceleration**: 1M+ cryptographic operations/second
-- ✅ **Autonomous Operations**: Self-healing, self-defending AI agents
-- ✅ **Multi-Layer Redundancy**: Cannot be shut down or disabled
-
-**Quick Start:**
-```bash
-cd apex
-PYTHONPATH=.. python -m apex.orchestrator
-```
-
-**Test the system:**
-```bash
-cd apex
-PYTHONPATH=.. python test_apex.py
-```
-
-**25 Constitutional Axioms:**
-1. **POVERTY_IS_ENGINEERED** - Poverty is engineered and maintained by systemic design
-2. **REPARATIONS_ARE_DEBT** - Reparations are payment of debt owed, not charity
-3. **INCREMENTALISM_PRESERVES_HARM** - Gradual change preserves systems causing harm
-10. **TRANSPARENCY_IS_SECURITY** - Opacity enables corruption; transparency ensures security
-15. **IMMUTABILITY_IS_TRUST** - Trust requires permanent, unchangeable records
-16. **AUTOMATION_IS_JUSTICE** - Human bias requires algorithmic enforcement
-18. **MATHEMATICAL_CERTAINTY** - Justice must be mathematically provable
-20. **IMMEDIATE_ENFORCEMENT** - Enforcement must be immediate and automatic
-25. **PERMANENT_RECORD** - All records must be permanent and tamper-proof
-
-[See `apex/constitutional.py` for complete list of all 25 axioms]
-
-**Valuation Impact:**
-The addition of AVM, ACE, Aequitas AI, and APEX System increases the total ecosystem valuation from $200T to **$420-550 Trillion** (conservative estimate):
-- **AVM** (Aequitas Virtual Machine): $40-70T
-- **ACE** (Aequitas Cloud Engine): $30-50T
-- **Aequitas AI + Autonomous Agent**: $50-80T
-- **APEX System**: $100-150T
-
-**Documentation:**
-- Full APEX documentation: `apex/README.md`
-- Constitutional axioms: `apex/constitutional.py`
-- Post-quantum crypto: `apex/post_quantum.py`
-- APEX orchestrator: `apex/orchestrator.py`
-- Test suite: `apex/test_apex.py`
-
-**Architecture:**
-```
-┌─────────────────────────────────────────────────────────────┐
-│               CONSTITUTIONAL AI LAYER (25 Axioms)           │
-└─────────────────────────────────────────────────────────────┘
-            │                      │                      │
-            ▼                      ▼                      ▼
-┌─────────────────┐  ┌─────────────────┐  ┌──────────────────┐
-│ CYBER REASONING │  │ POST-QUANTUM    │  │ AUTONOMOUS AI    │
-│ • Auto-Patching │  │ • ML-KEM Kyber  │  │ • Threat Scan    │
-│ • Vuln Discovery│  │ • ML-DSA        │  │ • Auto-Fix       │
-│ • Real-time Fix │  │ • GPU Accel     │  │ • Chaos Testing  │
-└─────────────────┘  └─────────────────┘  └──────────────────┘
-```
-
----
+- **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub (for CI/CD and public documentation)
