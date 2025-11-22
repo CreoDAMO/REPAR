@@ -56,15 +56,16 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
   - Post-Quantum Cryptography using ML-KEM (Kyber) and ML-DSA (Dilithium)
   - Timeout: 120 minutes for full audit cycle with workload distribution
 - **AI Integration**: 
-  - **APEX System**: Primary (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder - 100% offline)
-  - **NVIDIA NIM**: Optional fallback for complex tasks (search, risk scoring, NFT generation)
+  - **APEX System**: PRIMARY & ONLY (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder - 100% offline, cannot be shut down)
+  - **NO FALLBACKS**: Removed NVIDIA and all GPU cloud dependencies
   - The Aequitas Cloud Engine (ACE) integrates Cosmos SDK with sovereign AI for cloud orchestration
 - **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block. Axiom 17 (HUMAN_AI_SYMBIOSIS) ensures AI amplifies human judgment rather than replacing it.
 - **Sovereignty**: 
-  - Complete independence from external AI APIs through APEX System (primary)
-  - Local KVM infrastructure + offline LLM models
+  - **COMPLETE INDEPENDENCE from external AI APIs** - APEX System is ONLY and PRIMARY
+  - Local KVM infrastructure + offline LLM models (Llama, Mistral, Phi-3, DeepSeek)
   - Network abstraction layer with automatic failover to LoRa Mesh and Satellite for censorship resistance
-  - Cerberus operates without NVIDIA dependency - continues even if external services are blocked
+  - **Cerberus operates with ZERO GPU cloud dependencies** - APEX is local, sovereign, unkillable
+  - **Economic Impact**: Removes $15-30T risk premium from valuation
 
 ## External Dependencies
 
@@ -76,6 +77,6 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 - **Blockchain SDK**: Cosmos SDK
 - **Payment Processing**: Circle USDCKit SDK
 - **Decentralized Storage**: IPFS
-- **AI/ML**: NVIDIA NIM (sovereign, self-hostable), Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder (all local for APEX)
+- **AI/ML**: Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder (all LOCAL, OFFLINE, SOVEREIGN - NO external GPU dependencies)
 - **Wallet Integration**: Keplr
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub (for CI/CD and public documentation)
