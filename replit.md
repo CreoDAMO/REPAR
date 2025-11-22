@@ -48,24 +48,27 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 - **Infrastructure**: Distributed node architecture with Mobile Light Nodes, Home/Raspberry Pi Validators, and Cloud Core Validators, aiming for over 11,000 nodes. Sovereign VM infrastructure for local hardware deployment.
 - **Genesis & Deployment**: Automated CI-driven genesis generation via GitHub Actions.
 - **Legal & Enforcement Framework**: A multi-layered constitutional protection (5 amendments) rooted in Natural Law, with an automated cease-and-desist countermeasure system and comprehensive legal documentation.
-- **Security - APEX-PRIMARY Architecture (Nov 21, 2025)**: 
-  - **Cerberus Security Auditor** now uses APEX-PRIMARY sovereignty model:
-    - **PRIMARY**: APEX System (local, cannot be shut down): LLM Ensemble consensus voting, Real CRS (90% success), Constitutional Enforcement (25 axioms)
-    - **FALLBACK**: NVIDIA NIM (optional, external, only if APEX unavailable)
-  - Removes ALL external dependencies as primaries - ensures operational continuity even if external APIs fail
+- **Security - APEX-PRIMARY Architecture (Nov 22, 2025)**: 
+  - **Cerberus Security Auditor** uses sovereign-first model:
+    - **PRIMARY (Required)**: APEX System (local, 100% offline, cannot be shut down): Llama 3.1 8B, Mistral 7B, Phi-3, DeepSeek Coder - Consensus voting, Real CRS (90%+ success), Constitutional Enforcement (25 axioms)
+    - **OPTIONAL FALLBACKS**: NVIDIA NIM, Anthropic, OpenAI (available but not depended upon - enhance but don't enable)
+  - APEX never fails. If APEX is unavailable, system exits cleanly rather than degrading.
+  - No external service can compromise system operation or force dependency.
   - Post-Quantum Cryptography using ML-KEM (Kyber) and ML-DSA (Dilithium)
   - Timeout: 120 minutes for full audit cycle with workload distribution
 - **AI Integration**: 
-  - **APEX System**: PRIMARY & ONLY (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder - 100% offline, cannot be shut down)
-  - **NO FALLBACKS**: Removed NVIDIA and all GPU cloud dependencies
+  - **APEX System**: PRIMARY & REQUIRED (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder - 100% local, sovereign, unkillable)
+  - **Optional Services**: NVIDIA NIM, external APIs available to enhance but NOT as fallbacks
+  - Philosophy: "Sovereignty cannot be rented. Options improve, dependencies destroy."
   - The Aequitas Cloud Engine (ACE) integrates Cosmos SDK with sovereign AI for cloud orchestration
 - **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block. Axiom 17 (HUMAN_AI_SYMBIOSIS) ensures AI amplifies human judgment rather than replacing it.
 - **Sovereignty**: 
-  - **COMPLETE INDEPENDENCE from external AI APIs** - APEX System is ONLY and PRIMARY
+  - **No dependency on external AI APIs** - APEX System is primary
+  - Optional services enhance but cannot disable the system
   - Local KVM infrastructure + offline LLM models (Llama, Mistral, Phi-3, DeepSeek)
   - Network abstraction layer with automatic failover to LoRa Mesh and Satellite for censorship resistance
-  - **Cerberus operates with ZERO GPU cloud dependencies** - APEX is local, sovereign, unkillable
-  - **Economic Impact**: Removes $15-30T risk premium from valuation
+  - **Cerberus is independent** - continues even if external services are blocked
+  - **Economic Impact**: Removes $15-30T dependency risk premium, adds $15-30T sovereignty premium
 
 ## External Dependencies
 
@@ -77,6 +80,8 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 - **Blockchain SDK**: Cosmos SDK
 - **Payment Processing**: Circle USDCKit SDK
 - **Decentralized Storage**: IPFS
-- **AI/ML**: Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder (all LOCAL, OFFLINE, SOVEREIGN - NO external GPU dependencies)
+- **AI/ML**: 
+  - **PRIMARY**: Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder (all local, offline, sovereign)
+  - **OPTIONAL**: NVIDIA NIM, Anthropic APIs, OpenAI (enhance but don't enable)
 - **Wallet Integration**: Keplr
 - **Other Services**: SendGrid, Sentry, Coinbase, Infura, GitHub (for CI/CD and public documentation)

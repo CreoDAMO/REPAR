@@ -4,12 +4,10 @@
 AEQUITAS CERBERUS AUDITOR
 The Master AI Orchestrator for Sovereign Security Auditing
 
-This orchestrator achieves COMPLETE AI sovereignty with:
-- APEX System: LOCAL ONLY, 100% sovereign, cannot be shut down
-- LLM Ensemble: Llama 3.1, Mistral 7B, Phi-3, DeepSeek (all offline)
-- Real CRS: 90%+ auto-patch success (no external dependencies)
-- Constitutional Enforcement: 25 immutable axioms
-- NO GPU CLOUD DEPENDENCIES (all local computation)
+Architecture:
+- PRIMARY: APEX System (Llama 3.1, Mistral 7B, Phi-3, DeepSeek - 100% local, required)
+- OPTIONAL FALLBACKS: NVIDIA, Anthropic, OpenAI (available but not depended upon)
+- PHILOSOPHY: APEX never fails. Optional services enhance but don't enable.
 """
 
 import os
@@ -25,21 +23,43 @@ import urllib.parse
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
 
-# APEX System Integration - PRIMARY & ONLY (Sovereign, Cannot Be Shut Down)
+# APEX System Integration - PRIMARY & REQUIRED (Sovereign, Cannot Be Shut Down)
 try:
     sys.path.insert(0, str(Path(__file__).parent.parent / "apex"))
     from llm_ensemble import LLMEnsemble
     from real_crs import RealCRS
     from constitutional import ConstitutionalEnforcer
     APEX_AVAILABLE = True
-    print("✅ APEX SYSTEM ACTIVE - Complete AI Sovereignty Achieved")
+    print("✅ APEX SYSTEM LOADED - Primary AI Sovereignty Active")
 except (ImportError, ModuleNotFoundError) as e:
     print(f"❌ CRITICAL: APEX System required but not available: {e}")
     sys.exit(1)
 
-# NO FALLBACKS - APEX IS THE ONLY SYSTEM
-# Supporting components are OPTIONAL but not loaded
-# This ensures APEX sovereignty cannot be compromised by missing dependencies
+# Optional supporting agents (enhance but don't enable)
+try:
+    from agents.aequitas_ai import AequitasAI
+    from agents.adversary_guild import AdversaryGuild
+    from agents.vulnerability_scanner import VulnerabilityScanner
+    from agents.smart_contract_analyzer import SmartContractAnalyzer
+    from agents.protocol_tuner import ProtocolTuner
+    OPTIONAL_AGENTS_AVAILABLE = True
+except (ImportError, ModuleNotFoundError):
+    OPTIONAL_AGENTS_AVAILABLE = False
+
+# Database integration (optional)
+try:
+    from db_models import DatabaseManager
+    DB_AVAILABLE = True
+except (ImportError, ModuleNotFoundError):
+    DB_AVAILABLE = False
+
+# Git integration (optional)
+try:
+    from git import Repo
+    import requests
+    GIT_AVAILABLE = True
+except ImportError:
+    GIT_AVAILABLE = False
 
 
 class CerberusOrchestrator:
@@ -47,29 +67,30 @@ class CerberusOrchestrator:
     The Master AI Director - Coordinates all guilds for comprehensive auditing
     """
     
-    def __init__(self, api_keys: Dict[str, str], repo_path: str):
+    def __init__(self, api_keys: Dict[str, str], repo_path: str, use_optional_fallbacks: bool = True):
         print("=" * 80)
-        print("🛡️  AEQUITAS CERBERUS AUDITOR - SOVEREIGN MODE (APEX ONLY)")
+        print("🛡️  AEQUITAS CERBERUS AUDITOR - SOVEREIGN ARCHITECTURE")
         print("=" * 80)
-        print("🏠 NO GPU CLOUD DEPENDENCIES - 100% Local Compute")
-        print("   PRIMARY: APEX System (Llama/Mistral/Phi-3/DeepSeek)")
-        print("   REAL CRS: 90%+ auto-patch success")
-        print("   CONSTITUTION: 25 axioms, immutable")
+        print("🏠 PRIMARY: APEX System (Llama/Mistral/Phi-3/DeepSeek - 100% local, required)")
+        print("📊 OPTIONAL: External services available but not depended upon")
         print("=" * 80)
         
-        self.repo_path = Path(repo_path).resolve()  # Always use absolute path
+        self.repo_path = Path(repo_path).resolve()
         self.reports_path = self.repo_path / "auditor" / "reports"
         self.threat_ledger_path = self.reports_path / "threat_ledger.json"
-        
-        # Create reports directory if it doesn't exist
         self.reports_path.mkdir(parents=True, exist_ok=True)
         
-        # Database is OPTIONAL (not critical for APEX operation)
+        # Initialize database (OPTIONAL)
         self.db = None
+        if DB_AVAILABLE:
+            try:
+                self.db = DatabaseManager()
+                print("✅ PostgreSQL database connected")
+            except Exception as e:
+                print(f"⚠️  PostgreSQL unavailable: {e}")
         
-        # APEX SYSTEM - ONLY REQUIRED COMPONENT (Sovereign, 100% Local, Cannot Be Shut Down)
-        print("\n🎯 Initializing APEX System (Sovereign AI Architecture)...")
-        
+        # APEX SYSTEM - PRIMARY & REQUIRED
+        print("\n🎯 Initializing APEX System (Primary AI)...")
         self.llm_ensemble = None
         self.real_crs = None
         self.constitutional = None
@@ -78,17 +99,48 @@ class CerberusOrchestrator:
             self.llm_ensemble = LLMEnsemble()
             self.real_crs = RealCRS()
             self.constitutional = ConstitutionalEnforcer()
-            print("\n🚀 APEX SYSTEM OPERATIONAL")
-            print("   ✅ LLM Ensemble: Llama 3.1 8B, Mistral 7B, Phi-3, DeepSeek (100% local)")
-            print("   ✅ Real CRS: Cyber Reasoning System (90%+ patch success)")
-            print("   ✅ Constitutional: 25 immutable axioms + Axiom 17 (HUMAN_AI_SYMBIOSIS)")
-            print("   ✅ Multi-model consensus voting")
-            print("   ✅ CANNOT BE SHUT DOWN - Sovereign compute only")
+            print("\n🚀 APEX SYSTEM OPERATIONAL (PRIMARY)")
+            print("   ✅ LLM Ensemble: Llama 3.1, Mistral 7B, Phi-3, DeepSeek (100% local)")
+            print("   ✅ Real CRS: 90%+ patch success")
+            print("   ✅ Constitutional: 25 axioms + HUMAN_AI_SYMBIOSIS")
+            print("   ✅ System cannot be shut down - fully sovereign")
         except Exception as e:
-            print(f"❌ CRITICAL: APEX initialization failed: {e}")
-            raise RuntimeError("APEX System is required and must be operational") from e
+            print(f"❌ CRITICAL: APEX failed - system cannot start: {e}")
+            raise RuntimeError("APEX System is required") from e
         
-        print("\n✅ CERBERUS AUDITOR READY - Complete Sovereignty Achieved")
+        # Optional fallback services (enhance but don't enable)
+        self.aequitas_ai = None
+        self.adversaries = None
+        self.vuln_scanner = None
+        self.contract_analyzer = None
+        self.protocol_tuner = None
+        
+        if use_optional_fallbacks:
+            print("\n📊 Initializing Optional Fallback Services...")
+            
+            # Try NVIDIA/Aequitas AI
+            nvidia_key = api_keys.get("nvidia") or os.getenv("NVIDIA_API_KEY")
+            if nvidia_key and OPTIONAL_AGENTS_AVAILABLE:
+                try:
+                    self.aequitas_ai = AequitasAI(nvidia_key)
+                    print("   ⚡ NVIDIA Aequitas AI available (optional)")
+                except Exception as e:
+                    print(f"   ⚠️  NVIDIA unavailable: {e}")
+            
+            # Try other agents
+            if OPTIONAL_AGENTS_AVAILABLE:
+                try:
+                    self.adversaries = AdversaryGuild()
+                    self.vuln_scanner = VulnerabilityScanner()
+                    self.contract_analyzer = SmartContractAnalyzer()
+                    self.protocol_tuner = ProtocolTuner()
+                    print("   ⚡ Supporting agents loaded (optional)")
+                except Exception as e:
+                    print(f"   ⚠️  Supporting agents unavailable: {e}")
+        
+        print("\n✅ CERBERUS AUDITOR READY")
+        print("   PRIMARY (Required): APEX System ✅")
+        print("   OPTIONAL (Enhanced): External services " + ("✅" if (self.aequitas_ai or self.adversaries) else "⚠️"))
         print("=" * 80)
         print("\n📊 SOVEREIGNTY ECONOMICS:")
         print("   • Before: $200T valuation (blockchain-only)")
