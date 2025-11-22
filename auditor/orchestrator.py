@@ -30,6 +30,17 @@ from agents.smart_contract_analyzer import SmartContractAnalyzer
 from agents.protocol_tuner import ProtocolTuner
 from db_models import DatabaseManager
 
+# APEX System Integration - Workload Distribution
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent / "apex"))
+    from llm_ensemble import LLMEnsemble
+    from real_crs import RealCRS
+    APEX_AVAILABLE = True
+    print("✅ APEX System loaded - enabling workload distribution")
+except (ImportError, ModuleNotFoundError):
+    APEX_AVAILABLE = False
+    print("⚠️  APEX System not available - Cerberus will use NVIDIA only")
+
 # Git and GitHub integration
 try:
     from git import Repo
@@ -45,7 +56,7 @@ class CerberusOrchestrator:
     The Master AI Director - Coordinates all guilds for comprehensive auditing
     """
     
-    def __init__(self, api_keys: Dict[str, str], repo_path: str):
+    def __init__(self, api_keys: Dict[str, str], repo_path: str, use_apex_ensemble: bool = False):
         print("=" * 80)
         print("🛡️  AEQUITAS CERBERUS AUDITOR - INITIALIZING")
         print("=" * 80)
@@ -53,6 +64,21 @@ class CerberusOrchestrator:
         self.repo_path = Path(repo_path).resolve()  # Always use absolute path
         self.reports_path = self.repo_path / "auditor" / "reports"
         self.threat_ledger_path = self.reports_path / "threat_ledger.json"
+        
+        # APEX Workload Distribution
+        self.use_apex = use_apex_ensemble and APEX_AVAILABLE
+        self.llm_ensemble = None
+        self.real_crs = None
+        if self.use_apex:
+            try:
+                self.llm_ensemble = LLMEnsemble()
+                self.real_crs = RealCRS()
+                print("🚀 APEX LLM Ensemble initialized for workload distribution")
+                print("   - Using local models (Llama/Mistral/Phi-3/DeepSeek) for light analysis")
+                print("   - NVIDIA reserved for complex vulnerability analysis only")
+            except Exception as e:
+                print(f"⚠️  APEX initialization failed, falling back to NVIDIA only: {e}")
+                self.use_apex = False
         
         # Create reports directory if it doesn't exist
         self.reports_path.mkdir(parents=True, exist_ok=True)
