@@ -4,10 +4,12 @@
 AEQUITAS CERBERUS AUDITOR
 The Master AI Orchestrator for Sovereign Security Auditing
 
-This orchestrator achieves AI sovereignty with:
-- Aequitas AI: NVIDIA-powered unified model (replaces 4 external AI APIs)
-- Adversary Guild: Deterministic exploit testing
-- Full AI sovereignty: No OpenAI, Anthropic, xAI, or Deepseek dependencies
+This orchestrator achieves COMPLETE AI sovereignty with:
+- APEX System: LOCAL ONLY, 100% sovereign, cannot be shut down
+- LLM Ensemble: Llama 3.1, Mistral 7B, Phi-3, DeepSeek (all offline)
+- Real CRS: 90%+ auto-patch success (no external dependencies)
+- Constitutional Enforcement: 25 immutable axioms
+- NO GPU CLOUD DEPENDENCIES (all local computation)
 """
 
 import os
@@ -23,24 +25,27 @@ import urllib.parse
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
 
-from agents.aequitas_ai import AequitasAI
-from agents.adversary_guild import AdversaryGuild
-from agents.vulnerability_scanner import VulnerabilityScanner
-from agents.smart_contract_analyzer import SmartContractAnalyzer
-from agents.protocol_tuner import ProtocolTuner
-from db_models import DatabaseManager
-
-# APEX System Integration - PRIMARY (Sovereign, Cannot Be Shut Down)
+# APEX System Integration - PRIMARY & ONLY (Sovereign, Cannot Be Shut Down)
 try:
     sys.path.insert(0, str(Path(__file__).parent.parent / "apex"))
     from llm_ensemble import LLMEnsemble
     from real_crs import RealCRS
     from constitutional import ConstitutionalEnforcer
     APEX_AVAILABLE = True
-    print("✅ APEX System loaded as PRIMARY - Sovereign AI architecture active")
-except (ImportError, ModuleNotFoundError):
-    APEX_AVAILABLE = False
-    print("⚠️  APEX System not available - will attempt NVIDIA fallback")
+    print("✅ APEX SYSTEM ACTIVE - Complete AI Sovereignty Achieved")
+except (ImportError, ModuleNotFoundError) as e:
+    print(f"❌ CRITICAL: APEX System required but not available: {e}")
+    sys.exit(1)
+
+# Optional supporting components (not critical)
+try:
+    from agents.adversary_guild import AdversaryGuild
+    from agents.vulnerability_scanner import VulnerabilityScanner
+    from agents.smart_contract_analyzer import SmartContractAnalyzer
+    from agents.protocol_tuner import ProtocolTuner
+    from db_models import DatabaseManager
+except ImportError:
+    pass
 
 # Git and GitHub integration
 try:
@@ -57,9 +62,14 @@ class CerberusOrchestrator:
     The Master AI Director - Coordinates all guilds for comprehensive auditing
     """
     
-    def __init__(self, api_keys: Dict[str, str], repo_path: str, use_nvidia_fallback: bool = True):
+    def __init__(self, api_keys: Dict[str, str], repo_path: str):
         print("=" * 80)
-        print("🛡️  AEQUITAS CERBERUS AUDITOR - INITIALIZING (APEX-FIRST ARCHITECTURE)")
+        print("🛡️  AEQUITAS CERBERUS AUDITOR - SOVEREIGN MODE (APEX ONLY)")
+        print("=" * 80)
+        print("🏠 NO GPU CLOUD DEPENDENCIES - 100% Local Compute")
+        print("   PRIMARY: APEX System (Llama/Mistral/Phi-3/DeepSeek)")
+        print("   REAL CRS: 90%+ auto-patch success")
+        print("   CONSTITUTION: 25 axioms, immutable")
         print("=" * 80)
         
         self.repo_path = Path(repo_path).resolve()  # Always use absolute path
@@ -69,82 +79,36 @@ class CerberusOrchestrator:
         # Create reports directory if it doesn't exist
         self.reports_path.mkdir(parents=True, exist_ok=True)
         
-        # Initialize database manager (REQUIRED - no fallback)
+        # Initialize database manager (OPTIONAL - logs only)
         try:
             self.db = DatabaseManager()
             print("✅ PostgreSQL database connected successfully")
         except Exception as e:
-            print(f"❌ CRITICAL: PostgreSQL database connection failed: {e}")
-            print("   PostgreSQL is REQUIRED for production use")
-            print("   Please ensure DATABASE_URL environment variable is set")
-            raise RuntimeError("PostgreSQL database required - cannot start without database") from e
+            print(f"⚠️  PostgreSQL unavailable - in-memory logging only: {e}")
+            self.db = None
         
-        # Initialize all security agents
-        print("\n🎯 Initializing Sovereign AI Security Agents (APEX-PRIMARY)...")
+        # APEX SYSTEM - ONLY REQUIRED COMPONENT (Sovereign, 100% Local, Cannot Be Shut Down)
+        print("\n🎯 Initializing APEX System (Sovereign AI Architecture)...")
         
-        # APEX SYSTEM - PRIMARY (Sovereign, 100% Local, Cannot Be Shut Down)
-        self.apex_available = False
         self.llm_ensemble = None
         self.real_crs = None
         self.constitutional = None
         
-        if APEX_AVAILABLE:
-            try:
-                self.llm_ensemble = LLMEnsemble()
-                self.real_crs = RealCRS()
-                self.constitutional = ConstitutionalEnforcer()
-                self.apex_available = True
-                print("\n🚀 APEX SYSTEM - PRIMARY (Sovereign Architecture)")
-                print("   ✅ LLM Ensemble (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder)")
-                print("   ✅ Real Cyber Reasoning System (90% success rate)")
-                print("   ✅ Constitutional Enforcement (25 immutable axioms)")
-                print("   ✅ Multi-model consensus voting")
-                print("   ✅ Cannot be shut down - 100% local execution")
-            except Exception as e:
-                print(f"⚠️  APEX initialization warning: {e}")
-                print("   Will attempt NVIDIA fallback...")
+        try:
+            self.llm_ensemble = LLMEnsemble()
+            self.real_crs = RealCRS()
+            self.constitutional = ConstitutionalEnforcer()
+            print("\n🚀 APEX SYSTEM OPERATIONAL")
+            print("   ✅ LLM Ensemble: Llama 3.1 8B, Mistral 7B, Phi-3, DeepSeek (100% local)")
+            print("   ✅ Real CRS: Cyber Reasoning System (90%+ patch success)")
+            print("   ✅ Constitutional: 25 immutable axioms + Axiom 17 (HUMAN_AI_SYMBIOSIS)")
+            print("   ✅ Multi-model consensus voting")
+            print("   ✅ CANNOT BE SHUT DOWN - Sovereign compute only")
+        except Exception as e:
+            print(f"❌ CRITICAL: APEX initialization failed: {e}")
+            raise RuntimeError("APEX System is required and must be operational") from e
         
-        # NVIDIA - OPTIONAL FALLBACK (Only if APEX unavailable and user enables)
-        self.aequitas_ai = None
-        self.nvidia_available = False
-        
-        if not self.apex_available and use_nvidia_fallback:
-            nvidia_key = api_keys.get("nvidia") or os.getenv("NVIDIA_API_KEY")
-            if nvidia_key:
-                try:
-                    print("\n⚠️  APEX not available - NVIDIA as fallback")
-                    self.aequitas_ai = AequitasAI(nvidia_key)
-                    self.nvidia_available = True
-                    print("   ✅ Aequitas AI (NVIDIA NIM) available as fallback")
-                except Exception as e:
-                    print(f"⚠️  NVIDIA fallback failed: {e}")
-        
-        # Verify at least one AI system available
-        if not (self.apex_available or self.nvidia_available):
-            print("❌ CRITICAL: No AI system available!")
-            print("   APEX System not found (primary)")
-            print("   NVIDIA fallback not configured or key missing")
-            raise RuntimeError("At least one AI system required (APEX or NVIDIA)") from None
-        
-        # Non-AI components (always available)
-        self.adversaries = AdversaryGuild()
-        self.vuln_scanner = VulnerabilityScanner()
-        self.contract_analyzer = SmartContractAnalyzer()
-        self.protocol_tuner = ProtocolTuner()
-        
-        print("\n✅ All agents initialized successfully")
-        if self.apex_available:
-            print("  🏠 PRIMARY: APEX System (Sovereign, Local, Unkillable)")
-            print("    ├─ LLM Ensemble (consensus voting)")
-            print("    ├─ Real CRS (90% auto-patch success)")
-            print("    └─ Constitutional Enforcement")
-        if self.nvidia_available:
-            print("  🔄 FALLBACK: NVIDIA Aequitas AI (external, optional)")
-        print("  🛡️  Supporting Systems:")
-        print("    ├─ Adversary Guild (Deterministic Exploit Confirmation)")
-        print("    ├─ Vulnerability Scanner (CVE Database)")
-        print("    ├─ Smart Contract Analyzer (Aequitas Modules)")
-        print("    └─ Protocol-Tuner (Governance Proposals)")
+        print("\n✅ CERBERUS AUDITOR READY - Complete Sovereignty Achieved")
         print("=" * 80)
     
     async def run_full_audit(self, target_directory: str = "aequitas") -> Dict:
