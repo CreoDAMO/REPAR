@@ -26,7 +26,7 @@ sys.path.append(str(Path(__file__).parent))
 # APEX System Integration - PRIMARY & REQUIRED (Sovereign, Cannot Be Shut Down)
 try:
     sys.path.insert(0, str(Path(__file__).parent.parent / "apex"))
-    from llm_ensemble import LLMEnsemble
+    from llm_ensemble import LocalLLMEnsemble
     from real_crs import RealCRS
     from constitutional import ConstitutionalEnforcer
     APEX_AVAILABLE = True
@@ -96,7 +96,7 @@ class CerberusOrchestrator:
         self.constitutional = None
         
         try:
-            self.llm_ensemble = LLMEnsemble()
+            self.llm_ensemble = LocalLLMEnsemble(use_quantization=True, device="auto")
             self.real_crs = RealCRS()
             self.constitutional = ConstitutionalEnforcer()
             print("\n🚀 APEX SYSTEM OPERATIONAL (PRIMARY)")
