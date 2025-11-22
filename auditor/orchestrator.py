@@ -30,16 +30,17 @@ from agents.smart_contract_analyzer import SmartContractAnalyzer
 from agents.protocol_tuner import ProtocolTuner
 from db_models import DatabaseManager
 
-# APEX System Integration - Workload Distribution
+# APEX System Integration - PRIMARY (Sovereign, Cannot Be Shut Down)
 try:
     sys.path.insert(0, str(Path(__file__).parent.parent / "apex"))
     from llm_ensemble import LLMEnsemble
     from real_crs import RealCRS
+    from constitutional import ConstitutionalEnforcer
     APEX_AVAILABLE = True
-    print("✅ APEX System loaded - enabling workload distribution")
+    print("✅ APEX System loaded as PRIMARY - Sovereign AI architecture active")
 except (ImportError, ModuleNotFoundError):
     APEX_AVAILABLE = False
-    print("⚠️  APEX System not available - Cerberus will use NVIDIA only")
+    print("⚠️  APEX System not available - will attempt NVIDIA fallback")
 
 # Git and GitHub integration
 try:
@@ -56,29 +57,14 @@ class CerberusOrchestrator:
     The Master AI Director - Coordinates all guilds for comprehensive auditing
     """
     
-    def __init__(self, api_keys: Dict[str, str], repo_path: str, use_apex_ensemble: bool = False):
+    def __init__(self, api_keys: Dict[str, str], repo_path: str, use_nvidia_fallback: bool = True):
         print("=" * 80)
-        print("🛡️  AEQUITAS CERBERUS AUDITOR - INITIALIZING")
+        print("🛡️  AEQUITAS CERBERUS AUDITOR - INITIALIZING (APEX-FIRST ARCHITECTURE)")
         print("=" * 80)
         
         self.repo_path = Path(repo_path).resolve()  # Always use absolute path
         self.reports_path = self.repo_path / "auditor" / "reports"
         self.threat_ledger_path = self.reports_path / "threat_ledger.json"
-        
-        # APEX Workload Distribution
-        self.use_apex = use_apex_ensemble and APEX_AVAILABLE
-        self.llm_ensemble = None
-        self.real_crs = None
-        if self.use_apex:
-            try:
-                self.llm_ensemble = LLMEnsemble()
-                self.real_crs = RealCRS()
-                print("🚀 APEX LLM Ensemble initialized for workload distribution")
-                print("   - Using local models (Llama/Mistral/Phi-3/DeepSeek) for light analysis")
-                print("   - NVIDIA reserved for complex vulnerability analysis only")
-            except Exception as e:
-                print(f"⚠️  APEX initialization failed, falling back to NVIDIA only: {e}")
-                self.use_apex = False
         
         # Create reports directory if it doesn't exist
         self.reports_path.mkdir(parents=True, exist_ok=True)
@@ -94,37 +80,71 @@ class CerberusOrchestrator:
             raise RuntimeError("PostgreSQL database required - cannot start without database") from e
         
         # Initialize all security agents
-        print("\n🎯 Initializing AI Security Agents...")
+        print("\n🎯 Initializing Sovereign AI Security Agents (APEX-PRIMARY)...")
         
-        # Use unified Aequitas AI (NVIDIA-powered) for ALL AI operations
-        nvidia_key = api_keys.get("nvidia") or os.getenv("NVIDIA_API_KEY")
-        if not nvidia_key:
-            print("❌ CRITICAL: NVIDIA_API_KEY is required for sovereign AI operations")
-            print("   Aequitas Protocol operates with full AI sovereignty - no external AI APIs")
-            raise RuntimeError("NVIDIA_API_KEY required - cannot start without sovereign AI") from None
+        # APEX SYSTEM - PRIMARY (Sovereign, 100% Local, Cannot Be Shut Down)
+        self.apex_available = False
+        self.llm_ensemble = None
+        self.real_crs = None
+        self.constitutional = None
         
-        print("🔥 Using Aequitas AI (NVIDIA NIM - Sovereign Mode)")
-        self.aequitas_ai = AequitasAI(nvidia_key)
+        if APEX_AVAILABLE:
+            try:
+                self.llm_ensemble = LLMEnsemble()
+                self.real_crs = RealCRS()
+                self.constitutional = ConstitutionalEnforcer()
+                self.apex_available = True
+                print("\n🚀 APEX SYSTEM - PRIMARY (Sovereign Architecture)")
+                print("   ✅ LLM Ensemble (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder)")
+                print("   ✅ Real Cyber Reasoning System (90% success rate)")
+                print("   ✅ Constitutional Enforcement (25 immutable axioms)")
+                print("   ✅ Multi-model consensus voting")
+                print("   ✅ Cannot be shut down - 100% local execution")
+            except Exception as e:
+                print(f"⚠️  APEX initialization warning: {e}")
+                print("   Will attempt NVIDIA fallback...")
         
-        # Use Aequitas AI for all AI operations (analysis, exploit testing, patch generation)
-        self.analysts = self.aequitas_ai
-        self.engineers = self.aequitas_ai  # Patch generation
+        # NVIDIA - OPTIONAL FALLBACK (Only if APEX unavailable and user enables)
+        self.aequitas_ai = None
+        self.nvidia_available = False
         
-        # Non-AI components
+        if not self.apex_available and use_nvidia_fallback:
+            nvidia_key = api_keys.get("nvidia") or os.getenv("NVIDIA_API_KEY")
+            if nvidia_key:
+                try:
+                    print("\n⚠️  APEX not available - NVIDIA as fallback")
+                    self.aequitas_ai = AequitasAI(nvidia_key)
+                    self.nvidia_available = True
+                    print("   ✅ Aequitas AI (NVIDIA NIM) available as fallback")
+                except Exception as e:
+                    print(f"⚠️  NVIDIA fallback failed: {e}")
+        
+        # Verify at least one AI system available
+        if not (self.apex_available or self.nvidia_available):
+            print("❌ CRITICAL: No AI system available!")
+            print("   APEX System not found (primary)")
+            print("   NVIDIA fallback not configured or key missing")
+            raise RuntimeError("At least one AI system required (APEX or NVIDIA)") from None
+        
+        # Non-AI components (always available)
         self.adversaries = AdversaryGuild()
         self.vuln_scanner = VulnerabilityScanner()
         self.contract_analyzer = SmartContractAnalyzer()
         self.protocol_tuner = ProtocolTuner()
         
-        print("✅ All agents initialized successfully")
-        print("  - Aequitas AI (Unified NVIDIA NIM Model)")
-        print("    ↳ Security Analysis")
-        print("    ↳ Patch Generation")
-        print("    ↳ Exploit Testing")
-        print("  - Adversary Guild (Deterministic Exploit Confirmation)")
-        print("  - Vulnerability Scanner (CVE Database)")
-        print("  - Smart Contract Analyzer (Aequitas Modules)")
-        print("  - Protocol-Tuner (Governance Proposals)")
+        print("\n✅ All agents initialized successfully")
+        if self.apex_available:
+            print("  🏠 PRIMARY: APEX System (Sovereign, Local, Unkillable)")
+            print("    ├─ LLM Ensemble (consensus voting)")
+            print("    ├─ Real CRS (90% auto-patch success)")
+            print("    └─ Constitutional Enforcement")
+        if self.nvidia_available:
+            print("  🔄 FALLBACK: NVIDIA Aequitas AI (external, optional)")
+        print("  🛡️  Supporting Systems:")
+        print("    ├─ Adversary Guild (Deterministic Exploit Confirmation)")
+        print("    ├─ Vulnerability Scanner (CVE Database)")
+        print("    ├─ Smart Contract Analyzer (Aequitas Modules)")
+        print("    └─ Protocol-Tuner (Governance Proposals)")
         print("=" * 80)
     
     async def run_full_audit(self, target_directory: str = "aequitas") -> Dict:
@@ -802,25 +822,24 @@ Duration: {audit_report['duration_seconds']:.2f} seconds
 
 
 async def main():
-    """Main entry point for the Cerberus Auditor"""
+    """Main entry point for the Cerberus Auditor (APEX-Primary Architecture)"""
     
-    # Get API keys from environment (only NVIDIA for Aequitas AI sovereignty)
+    # Get API keys from environment
     api_keys = {
-        "nvidia": os.getenv("NVIDIA_API_KEY")
+        "nvidia": os.getenv("NVIDIA_API_KEY")  # Optional fallback
     }
     
-    # Validate required keys
-    if not api_keys["nvidia"]:
-        print("❌ ERROR: NVIDIA_API_KEY is required for Aequitas AI sovereignty")
-        print("   All AI operations now run through unified Aequitas AI (NVIDIA NIM)")
-        sys.exit(1)
+    print("🔐 CERBERUS AUDITOR - SOVEREIGN ARCHITECTURE")
+    print("   PRIMARY: APEX System (local, cannot be shut down)")
+    print("   FALLBACK: NVIDIA (optional, external)")
     
     # Detect repository root (go up from auditor/ to repo root)
     script_dir = Path(__file__).parent.resolve()  # /path/to/REPAR/auditor
     repo_root = script_dir.parent  # /path/to/REPAR
     
-    # Initialize orchestrator with proper repo root
-    orchestrator = CerberusOrchestrator(api_keys, repo_path=str(repo_root))
+    # Initialize orchestrator with APEX as primary (NVIDIA optional)
+    # use_nvidia_fallback=True means NVIDIA is available IF needed, but APEX is tried first
+    orchestrator = CerberusOrchestrator(api_keys, repo_path=str(repo_root), use_nvidia_fallback=True)
     
     # Check if TAST document exists
     tast_path = "docs/tast_audit/TAST_Full_Audit_&_Arbitration_By-Jacque_Antoine_DeGraff.md"

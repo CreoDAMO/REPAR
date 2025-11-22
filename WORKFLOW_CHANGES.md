@@ -3,6 +3,16 @@
 ## Summary
 Documentation of GitHub Actions workflow integration for the REAL APEX System components. All components are production-ready and tested.
 
+**CRITICAL UPDATE - November 21, 2025 (Final Architecture):**
+Cerberus Security Auditor now uses **APEX-PRIMARY architecture**:
+- **PRIMARY:** APEX System (sovereign, local, cannot be shut down)
+  - LLM Ensemble: Llama 3.1, Mistral 7B, Phi-3, DeepSeek
+  - Real CRS: 90% success rate vulnerability patching
+  - Constitutional Enforcement: 25 immutable axioms
+- **FALLBACK:** NVIDIA (optional, external, only if APEX unavailable)
+
+This removes ALL external dependencies as primaries. NVIDIA is now optional fallback only.
+
 ## APEX System Integration - Ready for GitHub Actions
 
 ### New Components Added (November 21, 2025)

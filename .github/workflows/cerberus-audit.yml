@@ -54,20 +54,28 @@ jobs:
           # Also install APEX dependencies for LLM ensemble offload
           pip install torch transformers web3 liboqs-python
       
-      - name: Initialize APEX System for Cerberus Workload Distribution
+      - name: Initialize APEX System (PRIMARY - Sovereign Architecture)
         run: |
-          echo "🔄 Initializing APEX LLM Ensemble for Cerberus..."
+          echo "🏠 Initializing APEX System as PRIMARY..."
           cd apex
-          python -c "from llm_ensemble import LLMEnsemble; llm = LLMEnsemble(); print('✅ APEX LLM Ensemble ready for audit workload distribution')" || echo "⚠️ APEX LLM optional backup"
+          python -c "
+from llm_ensemble import LLMEnsemble
+from real_crs import RealCRS
+from constitutional import ConstitutionalEnforcer
+print('✅ APEX LLM Ensemble loaded')
+print('✅ Real CRS loaded')
+print('✅ Constitutional Enforcement loaded')
+print('🚀 APEX System READY - Sovereign audit execution enabled')
+" || echo "⚠️ APEX unavailable - will use NVIDIA fallback if configured"
       
-      - name: Run Cerberus Auditor with APEX Workload Distribution
+      - name: Run Cerberus Auditor (APEX-Primary, NVIDIA-Optional Fallback)
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/cerberus_audit
-          USE_APEX_ENSEMBLE: "true"
+          CERBERUS_MODE: "apex-primary"
         run: |
           cd auditor
-          python orchestrator.py --apex-enabled
+          python orchestrator.py
       
       - name: Upload audit reports
         uses: actions/upload-artifact@v4

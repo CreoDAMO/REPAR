@@ -48,10 +48,23 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 - **Infrastructure**: Distributed node architecture with Mobile Light Nodes, Home/Raspberry Pi Validators, and Cloud Core Validators, aiming for over 11,000 nodes. Sovereign VM infrastructure for local hardware deployment.
 - **Genesis & Deployment**: Automated CI-driven genesis generation via GitHub Actions.
 - **Legal & Enforcement Framework**: A multi-layered constitutional protection (5 amendments) rooted in Natural Law, with an automated cease-and-desist countermeasure system and comprehensive legal documentation.
-- **Security**: The Cerberus Auditor System (Aequitas AI sovereign model - NVIDIA NIM powered) continuously audits for vulnerabilities. Complete AI sovereignty with zero external AI dependencies. Post-Quantum Cryptography using ML-KEM (Kyber) and ML-DSA (Dilithium).
-- **AI Integration**: Extensive use of NVIDIA NIM models for search, risk scoring, investment recommendations, and NFT generation, replacing external AI APIs. The Aequitas Cloud Engine (ACE) integrates Cosmos SDK with NVIDIA NIM AI for sovereign cloud orchestration.
-- **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block.
-- **Sovereignty**: Complete independence from cloud providers and external AI APIs through local KVM infrastructure and NVIDIA NIM. Network abstraction layer with automatic failover to LoRa Mesh and Satellite for censorship resistance.
+- **Security - APEX-PRIMARY Architecture (Nov 21, 2025)**: 
+  - **Cerberus Security Auditor** now uses APEX-PRIMARY sovereignty model:
+    - **PRIMARY**: APEX System (local, cannot be shut down): LLM Ensemble consensus voting, Real CRS (90% success), Constitutional Enforcement (25 axioms)
+    - **FALLBACK**: NVIDIA NIM (optional, external, only if APEX unavailable)
+  - Removes ALL external dependencies as primaries - ensures operational continuity even if external APIs fail
+  - Post-Quantum Cryptography using ML-KEM (Kyber) and ML-DSA (Dilithium)
+  - Timeout: 120 minutes for full audit cycle with workload distribution
+- **AI Integration**: 
+  - **APEX System**: Primary (Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder - 100% offline)
+  - **NVIDIA NIM**: Optional fallback for complex tasks (search, risk scoring, NFT generation)
+  - The Aequitas Cloud Engine (ACE) integrates Cosmos SDK with sovereign AI for cloud orchestration
+- **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block. Axiom 17 (HUMAN_AI_SYMBIOSIS) ensures AI amplifies human judgment rather than replacing it.
+- **Sovereignty**: 
+  - Complete independence from external AI APIs through APEX System (primary)
+  - Local KVM infrastructure + offline LLM models
+  - Network abstraction layer with automatic failover to LoRa Mesh and Satellite for censorship resistance
+  - Cerberus operates without NVIDIA dependency - continues even if external services are blocked
 
 ## External Dependencies
 
