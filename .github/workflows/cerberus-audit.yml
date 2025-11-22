@@ -19,7 +19,7 @@ on:
 jobs:
   security-audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 45
     
     services:
       postgres:
@@ -51,28 +51,11 @@ jobs:
         run: |
           cd auditor
           pip install -r requirements.txt
-          # Also install APEX dependencies for LLM ensemble offload
-          pip install torch transformers web3 liboqs-python
       
-      - name: Initialize APEX System (PRIMARY - Sovereign Architecture)
-        run: |
-          echo "🏠 Initializing APEX System as PRIMARY..."
-          cd apex
-          python -c "
-from llm_ensemble import LLMEnsemble
-from real_crs import RealCRS
-from constitutional import ConstitutionalEnforcer
-print('✅ APEX LLM Ensemble loaded')
-print('✅ Real CRS loaded')
-print('✅ Constitutional Enforcement loaded')
-print('🚀 APEX System READY - Sovereign audit execution enabled')
-" || echo "⚠️ APEX unavailable - will use NVIDIA fallback if configured"
-      
-      - name: Run Cerberus Auditor (APEX-Primary, NVIDIA-Optional Fallback)
+      - name: Run Cerberus Auditor
         env:
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/cerberus_audit
-          CERBERUS_MODE: "apex-primary"
         run: |
           cd auditor
           python orchestrator.py
