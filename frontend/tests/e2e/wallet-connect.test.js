@@ -39,11 +39,13 @@ describe('E2E: Wallet Connection Flow', () => {
 
     // Mock window.keplr
     mockWindow = { keplr: mockKeplr };
-    global.window = mockWindow;
+    // @ts-ignore - Global window mock for test
+    globalThis.window = mockWindow;
   });
 
   afterAll(() => {
-    delete global.window;
+    // @ts-ignore - Clean up global window mock
+    delete globalThis.window;
   });
 
   it('should detect Keplr wallet installation', () => {
@@ -52,14 +54,14 @@ describe('E2E: Wallet Connection Flow', () => {
   });
 
   it('should connect to Keplr wallet successfully', async () => {
-    const chainId = 'aequitas-1';
-    const result = await window.keplr.enable(chainId);
+    const _chainId = 'aequitas-1';
+    const result = await window.keplr.enable(_chainId);
     expect(result).toBe(true);
   });
 
   it('should retrieve wallet account information', async () => {
-    const chainId = 'aequitas-1';
-    const key = await window.keplr.getKey(chainId);
+    const _chainId = 'aequitas-1';
+    const key = await window.keplr.getKey(_chainId);
     
     expect(key).toBeDefined();
     expect(key.bech32Address).toBe('aequitas1test123456789');
@@ -67,8 +69,8 @@ describe('E2E: Wallet Connection Flow', () => {
   });
 
   it('should get offline signer for transactions', async () => {
-    const chainId = 'aequitas-1';
-    const signer = window.keplr.getOfflineSigner(chainId);
+    const _chainId = 'aequitas-1';
+    const signer = window.keplr.getOfflineSigner(_chainId);
     const accounts = await signer.getAccounts();
     
     expect(accounts).toHaveLength(1);

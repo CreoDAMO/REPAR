@@ -3,7 +3,7 @@ import { Shield, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import { cosmosClient } from '../utils/cosmosClient';
 
 export default function TransparencyLedger() {
-  const [actions, setActions] = useState([]);
+  const [_actions, _setActions] = useState([]);
   const [stats, setStats] = useState({
     totalClaimed: 0,
     activeCases: 0,

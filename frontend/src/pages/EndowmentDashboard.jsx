@@ -78,17 +78,17 @@ export default function EndowmentDashboard() {
     const socialPrincipal = 256500000;
     const totalFees = 60000000;
 
-    setLpEndowment({
-      ...lpEndowment,
+    setLpEndowment(prevState => ({
+      ...prevState,
       principal: lpPrincipal,
       yieldAccumulated: lpPrincipal * 0.07,
-    });
+    }));
 
-    setSocialEndowment({
-      ...socialEndowment,
+    setSocialEndowment(prevState => ({
+      ...prevState,
       principal: socialPrincipal,
       yieldAccumulated: socialPrincipal * 0.07,
-    });
+    }));
 
     setFeeDistribution({
       total: totalFees,

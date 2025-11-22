@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FileText, Download, ExternalLink, Shield, Book, DollarSign, CheckCircle, Lock, Globe } from 'lucide-react';
-import { SOVEREIGN_DOCUMENTS, getDocumentUrl } from '../data/sovereignDocuments';
+import { SOVEREIGN_DOCUMENTS } from '../data/sovereignDocuments';
 
 export default function SovereignDocuments() {
   const [selectedDoc, setSelectedDoc] = useState(null);
@@ -20,7 +20,7 @@ export default function SovereignDocuments() {
     }
   };
 
-  const formatLargeNumber = (num) => {
+  const _formatLargeNumber = (num) => {
     if (num >= 1000000000000000) {
       return `$${(num / 1000000000000000).toFixed(3)} quadrillion`;
     } else if (num >= 1000000000000) {

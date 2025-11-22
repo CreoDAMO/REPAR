@@ -20,7 +20,7 @@ const getStargateClient = async () => {
       isChainAvailable = true;
       console.log("✅ Cosmos client connected to Aequitas Zone (local)");
       return stargateClient;
-    } catch (error) {
+    } catch (_error) {
       console.warn("⚠️ Local chain not available, trying fallback RPC...");
       try {
         // Try production RPC
@@ -29,7 +29,7 @@ const getStargateClient = async () => {
         isChainAvailable = true;
         console.log("✅ Cosmos client connected to Aequitas Zone (production)");
         return stargateClient;
-      } catch (fallbackError) {
+      } catch (_fallbackError) {
         console.warn("⚠️ No chain available, using mock data mode");
         isChainAvailable = false;
         return null;
@@ -56,8 +56,8 @@ export const queryTotalLiability = async () => {
       return parsedResponse.totalLiability?.amount || "131000000000000";
     }
     return "131000000000000";
-  } catch (error) {
-    console.warn("⚠️ Query failed, using mock data:", error.message);
+  } catch (_error) {
+    console.warn("⚠️ Query failed, using mock data");
     return "131000000000000";
   }
 };

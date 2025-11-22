@@ -5,7 +5,7 @@ const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
 
 export default function Roadmap() {
   const [selectedPhase, setSelectedPhase] = useState('phase1');
-  const [githubStats, setGithubStats] = useState(null);
+  const [_githubStats, _setGithubStats] = useState(null);
 
   // Fetch GitHub project stats for live milestone tracking
   useEffect(() => {
@@ -14,7 +14,7 @@ export default function Roadmap() {
         const response = await fetch(`${BACKEND_URL}/api/github/stats`);
         if (response.ok) {
           const data = await response.json();
-          setGithubStats(data);
+          _setGithubStats(data);
           console.log('GitHub stats loaded:', data);
         }
       } catch (error) {

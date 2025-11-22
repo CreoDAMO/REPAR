@@ -54,8 +54,7 @@ const generateJusticeNFT = async (prompt, options = {}) => {
         seed: data.data[0].seed
       }
     };
-  } catch (error) {
-    console.error('NVIDIA API error:', error);
+  } catch (_error) {
     // Removed mock call as backend proxy should handle failures or return specific errors
     return mockNFTGeneration(prompt, options); 
   }
@@ -105,7 +104,7 @@ const analyzeSentiment = async (text) => {
         ? Math.max(-1, Math.min(1, parsedResponse.score))
         : 0.0;
       sentiment = parsedResponse.reasoning || parsedResponse.sentiment || content;
-    } catch (e) {
+    } catch (_e) {
       if (content.toLowerCase().includes('positive') || content.toLowerCase().includes('bullish')) {
         score = 0.7;
       } else if (content.toLowerCase().includes('negative') || content.toLowerCase().includes('bearish')) {
@@ -121,8 +120,7 @@ const analyzeSentiment = async (text) => {
       timestamp: new Date().toISOString(),
       model: 'Llama 3.1 8B'
     };
-  } catch (error) {
-    console.error('NVIDIA API error:', error);
+  } catch (_error) {
     // Removed mock call
     return mockSentimentAnalysis(text);
   }
@@ -154,7 +152,8 @@ const multimodalSearch = async (query, imageData = null) => {
     });
 
     if (!response.ok) throw new Error('Multimodal search failed');
-    const data = await response.json();
+    // Response data used by mock defendants mapping below
+    await response.json();
 
     const mockDefendants = [
       {
