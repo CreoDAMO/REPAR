@@ -10,7 +10,7 @@ import { cosmosClient } from '../utils/cosmosClient';
 
 export default function Dashboard() {
   const [walletAddress, setWalletAddress] = useState(null);
-  const [walletData, setWalletData] = useState(null);
+  const [_walletData, _setWalletData] = useState(null);
   const [chainData, setChainData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [holoMode, setHoloMode] = useState(false);

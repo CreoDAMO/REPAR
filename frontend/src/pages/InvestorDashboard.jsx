@@ -119,15 +119,15 @@ const FINANCIAL_PARAMETERS = {
 };
 
 export default function InvestorDashboard() {
-  const [loading, setLoading] = useState(true);
+  const [_loading, _setLoading] = useState(true);
   const [customInvestment, setCustomInvestment] = useState(22000000);
   const [customValuation, setCustomValuation] = useState(7000000000);
-  const [selectedScenario, setSelectedScenario] = useState('base');
+  const [_selectedScenario, _setSelectedScenario] = useState('base');
   const [showPitchDeck, setShowPitchDeck] = useState(false);
   const [showCrowdfunding, setShowCrowdfunding] = useState(false);
   const [aiAnalyzing, setAiAnalyzing] = useState(false);
   const [aiInsight, setAiInsight] = useState(null);
-  const [metrics, setMetrics] = useState({
+  const [_metrics, _setMetrics] = useState({
     totalStaked: 0,
     estimatedAPY: 0,
     totalReturns: 0,
@@ -136,11 +136,11 @@ export default function InvestorDashboard() {
 
   // State for portfolio data and loading indicator
   const [isLoading, setIsLoading] = useState(true);
-  const [totalInvested, setTotalInvested] = useState(0);
-  const [currentValue, setCurrentValue] = useState(0);
-  const [roi, setRoi] = useState(0);
-  const [yieldRate, setYieldRate] = useState(0);
-  const [portfolioData, setPortfolioData] = useState([]);
+  const [_totalInvested, _setTotalInvested] = useState(0);
+  const [_currentValue, _setCurrentValue] = useState(0);
+  const [_roi, _setRoi] = useState(0);
+  const [_yieldRate, _setYieldRate] = useState(0);
+  const [_portfolioData, _setPortfolioData] = useState([]);
 
 
   const formatCurrency = (value) => {

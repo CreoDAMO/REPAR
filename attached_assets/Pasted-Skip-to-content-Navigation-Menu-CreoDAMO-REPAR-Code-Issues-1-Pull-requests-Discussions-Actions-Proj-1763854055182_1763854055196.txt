@@ -1,0 +1,72 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+1
+Pull requests
+Discussions
+Actions
+Projects
+Wiki
+Security
+6
+CI - Full Stack Testing
+Update workflow documentation with latest system enhancements and arc… #385
+Jobs
+Run details
+Triggered via push 2 minutes ago
+@CreoDAMOCreoDAMO
+pushed
+ 137bc99
+main
+Status
+Success
+Total duration
+57s
+Artifacts
+–
+
+
+Integration Status Report summary
+📊 Aequitas Protocol CI Status
+Frontend: ✅ Build successful
+Blockchain: 🔄 Compilation in progress
+
+Next Steps:
+
+Complete blockchain build dependencies
+Implement custom modules (x/evidence, x/claims, x/defendant)
+Deploy testnet for frontend integration
+Job summary generated at run-time
+Annotations
+10 errors and 3 warnings
+Frontend Quality Checks: frontend/src/pages/InvestorDashboard.jsx#L130
+'metrics' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u            
+Frontend Quality Checks: frontend/src/pages/InvestorDashboard.jsx#L125
+'setSelectedScenario' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u
+Frontend Quality Checks: frontend/src/pages/InvestorDashboard.jsx#L125
+'selectedScenario' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u   
+Frontend Quality Checks: frontend/src/pages/InvestorDashboard.jsx#L122
+'setLoading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u         
+Frontend Quality Checks: frontend/src/pages/InvestorDashboard.jsx#L122
+'loading' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u            
+Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L20
+'setWalletAddresses' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u
+Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L14
+'setShowMultiSig' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u   
+Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L14
+'showMultiSig' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u      
+Frontend Quality Checks: frontend/src/pages/ForensicAudit.jsx#L3
+'historicalData' is defined but never used. Allowed unused vars must match /^[A-Z_]/u
+Frontend Quality Checks: frontend/src/pages/Dashboard.jsx#L13
+'walletData' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u
+Frontend Quality Checks: frontend/src/pages/NFTMarketplace.jsx#L178
+React Hook useEffect has a missing dependency: 'mockNFTs'. Either include it or remove the dependency array
+Frontend Quality Checks: frontend/src/pages/EndowmentDashboard.jsx#L102
+React Hook useEffect has missing dependencies: 'lpEndowment' and 'socialEndowment'. Either include them or remove the dependency array. You can also do a functional update 'setLpEndowment(l => ...)' if you only need 'lpEndowment' in the 'setLpEndowment' call
+Blockchain Compile Check
+Restore cache failed: Dependencies file is not found in /home/runner/work/REPAR/REPAR. Supported file pattern: go.sum
+ 

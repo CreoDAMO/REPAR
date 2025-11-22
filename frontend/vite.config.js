@@ -4,16 +4,16 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: process.env.NODE_ENV === 'production' ? '/REPAR/' : '/',
+  base: typeof process !== 'undefined' && process.env.NODE_ENV === 'production' ? '/REPAR/' : '/',
   server: {
     host: '0.0.0.0',
     port: 5000,
     allowedHosts: true,
     hmr: {
       // Replit environment HMR configuration
-      clientPort: process.env.REPLIT_DEV_DOMAIN ? 443 : 5000,
-      protocol: process.env.REPLIT_DEV_DOMAIN ? 'wss' : 'ws',
-      host: process.env.REPLIT_DEV_DOMAIN || 'localhost',
+      clientPort: typeof process !== 'undefined' && process.env.REPLIT_DEV_DOMAIN ? 443 : 5000,
+      protocol: typeof process !== 'undefined' && process.env.REPLIT_DEV_DOMAIN ? 'wss' : 'ws',
+      host: typeof process !== 'undefined' && process.env.REPLIT_DEV_DOMAIN ? process.env.REPLIT_DEV_DOMAIN : 'localhost',
     },
     proxy: {
       '/api': {

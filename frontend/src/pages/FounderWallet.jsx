@@ -11,13 +11,13 @@ import { cosmosClient } from '../utils/cosmosClient';
 const FounderWallet = () => {
   const navigate = useNavigate();
   const [selectedLayer, setSelectedLayer] = useState(null);
-  const [showMultiSig, setShowMultiSig] = useState(false);
+  const [_showMultiSig, _setShowMultiSig] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedDefendant, setSelectedDefendant] = useState(defendants[0]);
   const [connectedWallet, setConnectedWallet] = useState(null);
   const [walletBalance, setWalletBalance] = useState('0');
 
-  const [walletAddresses, setWalletAddresses] = useState({
+  const [_walletAddresses, _setWalletAddresses] = useState({
     layer1: FOUNDER_WALLETS.layer1.address,
     layer2: FOUNDER_WALLETS.layer2.address,
     layer3: FOUNDER_WALLETS.layer3.address,

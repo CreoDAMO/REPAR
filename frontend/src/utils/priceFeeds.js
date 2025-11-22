@@ -1,3 +1,4 @@
+import React from 'react';
 
 // Real-time cryptocurrency price feeds
 const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price';

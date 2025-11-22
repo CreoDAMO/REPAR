@@ -1,6 +1,6 @@
 import { FileText, Download, Search, AlertCircle, ExternalLink } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { regionalContributions, historicalData } from '../data/statistics';
+import { regionalContributions } from '../data/statistics';
 import { SOVEREIGN_DOCUMENTS } from '../data/sovereignDocuments';
 import { useNavigate } from 'react-router-dom';
 
