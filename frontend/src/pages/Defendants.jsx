@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
-import { Search, Building2, MapPin, TrendingUp, FileText, Sparkles, Brain, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Search, Building2, MapPin, TrendingUp, FileText, Sparkles, Brain, AlertTriangle, CheckCircle, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { defendants } from '../data/defendants';
 import EvidenceExplorer from '../components/EvidenceExplorer';
 import { multimodalSearch, analyzeSentiment } from '../utils/nvidiaAI';
 import { cosmosClient } from '../utils/cosmosClient';
 
 export default function Defendants() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
   const [filterStatus, setFilterStatus] = useState('All');
