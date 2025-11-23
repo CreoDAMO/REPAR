@@ -13,6 +13,7 @@ export default function Navigation() {
     { to: '/sovereign-documents', icon: Globe, label: 'Sovereign Documents' },
     { to: '/black-paper', icon: FileText, label: 'Black Paper' },
     { to: '/audit', icon: FileText, label: 'Forensic Audit' },
+    { to: '/concentrated-audit', icon: Shield, label: 'Concentrated Audit' },
     { to: '/defendants', icon: Database, label: 'Defendants' },
     { to: '/ledger', icon: Scale, label: 'Transparency Ledger' },
     { to: '/founder-wallet', icon: Wallet, label: 'Founder Wallet' },
