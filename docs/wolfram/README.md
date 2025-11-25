@@ -38,36 +38,55 @@ The APEX System (Autonomous Prosecution & Enforcement Xenosystem) implements all
 
 ## Core Documents
 
+### Playbook & Strategy (NEW - November 25, 2025)
+**🆕 1. [Wolfram Playbook v2.0](./WOLFRAM_PLAYBOOK_v2.md)** - Complete Mathematical Truth Engine
+   - Fixed sovereign valuation ($420-550T, reconciled)
+   - 30-year scenario analysis (conservative to aggressive exponential)
+   - Defendant collection strategy (top 20 targets mapped)
+   - Grok enhancements (surgical precision + fraudulent transfer detection)
+   - The perfect loop (how it all works together)
+
+**🆕 2. [Defendant Collection Strategy](./DEFENDANT_COLLECTION_STRATEGY.md)** - Second Audit Asset Recovery
+   - Tier 1 supreme targets ($1T+ liability) with seizable assets
+   - Real-time asset tracking (Cloudflare intelligence)
+   - Fraudulent transfer detection (6-badge framework + Harvard case study)
+   - Collection timeline (4 phases over 30 years)
+   - Defendant psychology playbook (decision trees, rational analysis)
+
 ### Constitutional Framework
-1. **[Constitutional Amendments](./CONSTITUTIONAL_AMENDMENTS.md)** - Immutable sovereign laws
+3. **[Constitutional Amendments](./CONSTITUTIONAL_AMENDMENTS.md)** - Immutable sovereign laws
    - Amendment 001: Timeline Physics (Resistance vs Justice)
    - Amendment 002: Surveillance Inversion Doctrine
 
 ### Mathematical Framework
-2. **[Structural Justice Axioms](./STRUCTURAL_JUSTICE_AXIOMS.md)** - Hard-coded laws and toggle modes
+4. **[Structural Justice Axioms](./STRUCTURAL_JUSTICE_AXIOMS.md)** - Hard-coded laws and toggle modes
    - 10 immutable axioms that define the sovereign operating system
    - Legacy vs Aequitas mode comparison
    - Prosecutorial evidence framework
 
-3. **[Mathematical Engines](./MATHEMATICAL_ENGINES.md)** - Core computational models
+5. **[Mathematical Engines](./MATHEMATICAL_ENGINES.md)** - Core computational models (NOW WITH GROK FIXES)
    - Price Engine (Deterministic valuation)
-   - Sovereign Valuation Engine
+   - Sovereign Valuation Engine (UPDATED: $420-550T reconciliation)
    - Structural Justice Engine
    - Dual Flywheel Adoption Model
+   - Resistance Timeline Calculator (ENHANCED: Defendant psychology)
+   - APEX System Integration (CRS, AI Sovereignty, Swarm, FHE enhancements)
 
 ### Legal & Defense Framework
-4. **[Vulnerability Closure Analysis](./VULNERABILITY_CLOSURE.md)** - Comprehensive threat analysis
+6. **[Vulnerability Closure Analysis](./VULNERABILITY_CLOSURE.md)** - Comprehensive threat analysis
    - Incrementalism Paradox - CLOSED
    - Surveillance Vulnerability - CLOSED (inverted to strength)
    - Attack surface analysis
 
-5. **[Deterrence Economics](./DETERRENCE_ECONOMICS.md)** - Economic warfare theory
+7. **[Deterrence Economics](./DETERRENCE_ECONOMICS.md)** - Economic warfare theory (ENHANCED)
    - $900K-$6.7M counterclaim mechanics
-   - Attack cost-benefit analysis
-   - Transparency as weapon
+   - Attack cost-benefit analysis ($86M-$708M total cost)
+   - Probability of success (<1%)
+   - Transparency as weapon (567x traditional security)
+   - Surveillance = deterrent transmission (Cloudflare analysis)
 
 ### Philosophical Foundation
-6. **[Poverty Eradication Framework](./POVERTY_ERADICATION.md)** - Structural poverty as engineered control
+8. **[Poverty Eradication Framework](./POVERTY_ERADICATION.md)** - Structural poverty as engineered control
    - Why poverty is designed, not accidental
    - Why incremental solutions preserve oppression
    - Why only sovereign redistribution works
