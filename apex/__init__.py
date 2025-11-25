@@ -96,3 +96,31 @@ __all__ = [
     'RealAPEXOrchestrator',
     'RealAPEXConfig',
 ]
+
+# APEX-FHE v3.0 - Frontier Enhancements (November 25, 2025)
+try:
+    from .fhe_v3_frontier import (
+        APEXFHEv3Orchestrator,
+        AxiomaticFHE,
+        PhiFHE,
+        SovereignNoiseCollapse,
+        MeaningLevelFHE,
+        EntangledFHE,
+        SelfSovereignEncryptedAutonomy,
+        ConstitutionalAxiom
+    )
+    FHE_V3_AVAILABLE = True
+except ImportError:
+    FHE_V3_AVAILABLE = False
+
+__all__ = [
+    'APEXFHEv3Orchestrator',
+    'AxiomaticFHE',
+    'PhiFHE', 
+    'SovereignNoiseCollapse',
+    'MeaningLevelFHE',
+    'EntangledFHE',
+    'SelfSovereignEncryptedAutonomy',
+    'ConstitutionalAxiom',
+    'FHE_V3_AVAILABLE'
+]
