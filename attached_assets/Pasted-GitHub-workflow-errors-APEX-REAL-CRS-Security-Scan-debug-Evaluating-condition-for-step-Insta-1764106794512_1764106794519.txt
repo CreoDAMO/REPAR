@@ -1,0 +1,151 @@
+GitHub workflow errors:
+
+APEX REAL CRS Security Scan
+
+##[debug]Evaluating condition for step: 'Install APEX dependencies'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Install APEX dependencies
+##[debug]Loading inputs
+##[debug]Loading env
+Run pip install torch transformers web3 liboqs-python pytest ast-parser
+pip install torch transformers web3 liboqs-python pytest ast-parser
+shell: /usr/bin/bash -e {0}
+env:
+pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/08af367c-2858-4296-bce2-22a228da2ba3.sh
+Collecting torch
+Downloading torch-2.9.1-cp311-cp311-manylinux_2_28_x86_64.whl.metadata (30 kB)
+Collecting transformers
+Downloading transformers-4.57.3-py3-none-any.whl.metadata (43 kB)
+Collecting web3
+Downloading web3-7.14.0-py3-none-any.whl.metadata (5.6 kB)
+Collecting liboqs-python
+Downloading liboqs_python-0.14.1-py3-none-any.whl.metadata (11 kB)
+Collecting pytest
+Downloading pytest-9.0.1-py3-none-any.whl.metadata (7.6 kB)
+ERROR: Ignored the following versions that require a different python version: 6.0.0b1 Requires-Python >=3.7,<3.11; 6.0.0b2 Requires-Python >=3.7,<3.11; 6.0.0b3 Requires-Python >=3.7.2,<3.11; 6.0.0b4 Requires-Python >=3.7.2,<3.11
+ERROR: Could not find a version that satisfies the requirement ast-parser (from versions: none)
+ERROR: No matching distribution found for ast-parser
+Error: Process completed with exit code 1.
+##[debug]Finishing: Install APEX dependencies
+
+##[debug]Evaluating condition for step: 'Generate patch candidates'
+##[debug]Evaluating: failure()
+##[debug]Evaluating failure:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Generate patch candidates
+##[debug]Loading inputs
+##[debug]Loading env
+Run cd apex
+cd apex
+echo "🔧 Generating automated patch candidates..."
+python -c "
+from real_crs import RealCyberReasoningSystem
+import json
+
+crs = RealCyberReasoningSystem()
+
+Load vulnerabilities
+
+with open('../apex_scan_results.json', 'r') as f:
+results = json.load(f)
+
+critical_vulns = [v for v in results['vulnerabilities'] if v['severity'] == 'CRITICAL']
+
+print(f'🔧 Generating patches for {len(critical_vulns)} critical vulnerabilities...')
+
+patches = []
+for vuln in critical_vulns:
+try:
+patch = crs.generate_patch_candidate(vuln)
+patches.append(patch)
+print(f'✅ Patch generated for: {vuln["type"]}')
+except Exception as e:
+print(f'⚠️ Could not generate patch: {e}')
+
+Save patches
+
+with open('../apex_patches.json', 'w') as f:
+json.dump(patches, f, indent=2)
+
+print(f'\n✅ Generated {len(patches)} patch candidates')
+print('📋 Review patches in apex_patches.json artifact')
+"
+shell: /usr/bin/bash -e {0}
+env:
+pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/67bc00c2-f47c-425e-813b-017e4c44989b.sh
+🔧 Generating automated patch candidates...
+Traceback (most recent call last):
+File "<string>", line 8, in <module>
+FileNotFoundError: [Errno 2] No such file or directory: '../apex_scan_results.json'
+Error: Process completed with exit code 1.
+##[debug]Finishing: Generate patch candidates
+
+APEX System Integration Test
+
+Run cd apex
+cd apex
+python -c "
+from constitutional import ConstitutionalEnforcer
+from real_crs import RealCyberReasoningSystem
+from llm_ensemble import LocalLLMEnsemble
+from swarm_robotics import ROS2SwarmSystem
+from federated_learning import FederatedBlockchainLearning
+from post_quantum import PostQuantumCrypto
+from fhe_compute import FHEComputeEngine
+from communications import RedundantCommunicationsLayer
+from real_orchestrator import RealAPEXOrchestrator
+
+print('✅ Constitutional AI (25 axioms) loaded')
+print('✅ REAL Cyber Reasoning System loaded')
+print('✅ Local LLM Ensemble (100% offline) loaded')
+print('✅ ROS2 Swarm Robotics (10K drones) loaded')
+print('✅ Federated Learning (encrypted updates) loaded')
+print('✅ Post-Quantum Crypto (ML-KEM/ML-DSA) loaded')
+print('✅ FHE Compute Engine (encrypted computation) loaded')
+print('✅ Multi-Layer Communications (mesh/satellite) loaded')
+print('✅ APEX Orchestrator (full integration) loaded')
+print('✅ ALL 10 COMPONENTS VERIFIED - SYSTEM OPERATIONAL')
+print('✅ PRIMARY (APEX): Required ✅ | OPTIONAL (NVIDIA/Anthropic): Available but not depended upon')
+"
+shell: /usr/bin/bash -e {0}
+env:
+pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+⚠️  ROS2 not available - install: https://docs.ros.org/en/humble/Installation.html
+liboqs not found, installing it in /home/runner/_oqs
+Installing in 5 seconds...
+Installing in 4 seconds...
+Installing in 3 seconds...
+Installing in 2 seconds...
+Installing in 1 seconds...
+Cloning into 'liboqs'...
+fatal: Remote branch 0.14.1 not found in upstream origin
+Error installing liboqs.
+Traceback (most recent call last):
+File "/opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/oqs/oqs.py", line 240, in _load_liboqs
+liboqs = _load_shared_obj(
+^^^^^^^^^^^^^^^^^
+File "/opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages/oqs/oqs.py", line 139, in _load_shared_obj
+raise RuntimeError(msg)
+RuntimeError: No oqs shared libraries found
+Error: Process completed with exit code 1.
