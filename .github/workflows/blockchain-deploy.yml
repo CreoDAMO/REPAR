@@ -1,5 +1,6 @@
-# Key changes to add to .github/workflows/blockchain-deploy.yml
-# Add these steps to the existing deployment jobs
+# blockchain-deploy.yml - BLOCKCHAIN DEPLOYMENT WITH APEX VALIDATION
+
+# Add these steps to your existing deployment jobs:
 
 # 1. ADD to deploy-to-docker job (after line 85, after "Deploy using Docker Compose")
       - name: Validate APEX System Before Deployment
@@ -36,7 +37,7 @@
           " || {
               echo "⚠️ APEX validation failed - this is a critical security issue"
               echo "Deployment proceeding with limited security features"
-              exit 0  # Don't block deployment, but warn
+              exit 0
           }
 
 # 2. ADD post-deployment APEX confirmation (after deployment verification in both docker and ACE jobs)
@@ -63,7 +64,7 @@
           print('✅ Deployed blockchain protected by APEX system')
           " || echo "⚠️ APEX deployed separately from blockchain"
 
-# 3. UPDATE post-deployment-summary job (after line 218)
+# 3. ADD post-deployment summary job (after existing deployment jobs)
   post-deployment-summary:
     name: Post-Deployment Summary
     needs: [prepare-deployment, deploy-to-docker, deploy-to-ace]
