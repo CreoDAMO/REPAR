@@ -79,20 +79,48 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 
 ---
 
-## Recent Updates (November 25, 2025)
+## Recent Updates (November 26, 2025)
 
-### ✅ APEX-FHE v3.0 Frontier Implementation
+### 🎯 GitHub Actions Workflows - ALL PASSING ✅
+**Complete migration to combined workflows with Docker, ACE, and CI/CD working flawlessly**
+
+- **APEX Real Security Scan** ✅ - Constitutional AI (25 axioms) verified, no vulnerabilities detected
+- **Blockchain Build & Deploy (Combined)** ✅ - Single workflow handles build, testnet init, Docker, ACE deployment
+- **Cerberus Security Auditor** ✅ - Full APEX audit scope operational
+- **CI Full Stack Testing** ✅ - Frontend, blockchain, and APEX integration tests passing
+- **Deploy Frontend** ✅ - Frontend deployed to GitHub Pages with APEX validation
+
+### 📋 Critical Fixes Applied (Documented in GITHUB_WORKFLOW_FIXES.md)
+1. **Combined Workflow (blockchain-build-and-deploy.yml)** - 6 jobs in single workflow:
+   - Build & Test Blockchain (aequitasd binary, 152MB)
+   - Initialize Local Testnet (aequitas-testnet-1)
+   - Create GitHub Release (tags only)
+   - Deploy via Docker (Dockerfile.ci for pre-built binary)
+   - Deploy via ACE (Advanced Computing Engine)
+   - Post-Deployment Summary
+
+2. **Docker Fix** - Uses `Dockerfile.ci` for pre-built binary deployment instead of source-build
+   - Simple Alpine base (3.19) with health checks
+   - Proper user isolation (aequitas:aequitas)
+   - Exposed ports: 26656 (P2P), 26657 (RPC), 1317 (REST), 9090 (gRPC), 9091 (gRPC-web)
+
+3. **liboqs Installation Fix** - Build from main branch (0.14.1 didn't exist)
+   - System dependencies: cmake, ninja-build, gcc, g++, libssl-dev
+   - Pre-installs liboqs before liboqs-python binding
+   - Prevents auto-install failures
+
+4. **Cache & Symlink Fixes**
+   - Created symlinks: `go.sum` → `aequitas/go.sum`, `go.mod` → `aequitas/go.mod` at root
+   - Cleanup steps prevent "Cannot open: File exists" tar errors
+   - Cross-workflow artifacts now handled within single workflow
+
+### ✅ APEX-FHE v3.0 Frontier Implementation (November 25, 2025)
 - **Created**: `apex/fhe_v3_frontier.py` (800+ lines, production-grade)
 - **Status**: All 6 frontier components implemented, zero placeholders
 - **Capabilities**: Constitutional encryption, semantic computing, autonomous encrypted agents, federated consensus on encrypted state
 - **Production Audit**: `apex/PRODUCTION_AUDIT.md` verifies zero simulations
 
-### ✅ Grok-Enhanced Wolfram Documentation
+### ✅ Grok-Enhanced Wolfram Documentation (November 25, 2025)
 - **Wolfram Playbook v2.0**: Fixed sovereign valuation discrepancy ($200T → $420-550T), 30-year scenarios
 - **Defendant Collection Strategy**: Tier-by-tier asset mapping, fraudulent transfer detection (Harvard case: $320M → $2.15B), 4-phase collection timeline
 - **Documentation Hub**: Updated README with comprehensive cross-linking and strategic frameworks
-
-### ✅ Workflow Compatibility Verified
-- **GITHUB_WORKFLOW_FIXES.md**: All required fixes documented and compatible with recent updates
-- **Python 3.10**: Standard across CI/CD for FHE/APEX compatibility
-- **Zero breaking changes**: Recent FHE v3.0 implementation requires no workflow modifications

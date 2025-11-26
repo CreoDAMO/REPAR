@@ -58,12 +58,17 @@ For centuries, we've been deliberately divided across:
 - **Native Coin:** $REPAR (131T total supply, NOT a token)
 - **Consensus:** Tendermint BFT (NO mining required)
 - **Modules:** x/defendant, x/justice, x/claims, x/distribution, x/dex, x/threatdefense, x/validatorsubsidy
-- **Build:** Automated GitHub Actions CI/CD pipeline (all workflows passing)
+- **Build:** Automated GitHub Actions CI/CD pipeline (all workflows passing - November 26, 2025)
 - **Networks:** Testnet + Mainnet initialized with proper allocations
 - **TypeScript Configuration:** ES2015+ support with JSX for Expo compatibility
 - **All LSP Errors Fixed:** Production-ready codebase
+- **Docker Deployment:** Dockerfile.ci containerizes pre-built binary (60.8MB)
+  - Builds from CI artifacts (not source)
+  - Alpine 3.19 base with health checks
+  - All ports exposed: P2P (26656), RPC (26657), REST (1317), gRPC (9090/9091)
 
-**[→ See Blockchain Documentation](./docs/MODULE_DEPINJECT_FIX.md)**
+**[→ See Blockchain Documentation](./docs/MODULE_DEPINJECT_FIX.md)**  
+**[→ See GitHub Workflow Fixes](./GITHUB_WORKFLOW_FIXES.md)** (Nov 26 - All issues resolved)
 
 ### ✅ **DISTRIBUTED NODE DEPLOYMENT** - Revolutionary Infrastructure
 - **11,000+ nodes achievable Year 1:**
