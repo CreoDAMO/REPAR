@@ -1687,10 +1687,251 @@ python -c "from swarm_robotics import ROS2SwarmSystem; print('✅ Swarm OK')"
 
 ---
 
+## NEW: Deploy Aequitas Zone Blockchain (#24) Fixes
+
+**Identified:** November 26, 2025  
+**Workflow:** `deploy-aequitas-blockchain.yml`
+
+Two jobs in this workflow are failing:
+
+### Issue 1: Deploy via Docker - Missing Dockerfile
+
+**Error:**
+```
+ERROR: failed to build: failed to solve: failed to read dockerfile: open Dockerfile: no such file or directory
+```
+
+**Root Cause:** The Docker build step is looking for a Dockerfile that doesn't exist in the expected location.
+
+**Fix Options:**
+
+**Option A:** Create the missing Dockerfile at the repository root or in the `aequitas/` directory:
+
+```dockerfile
+# Dockerfile for aequitas-blockchain-mainnet
+# Place at: ./aequitas/Dockerfile or ./Dockerfile
+
+FROM golang:1.23-alpine AS builder
+
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache make git gcc musl-dev
+
+# Copy go.mod and go.sum first for caching
+COPY aequitas/go.mod aequitas/go.sum ./
+RUN go mod download
+
+# Copy source code
+COPY aequitas/ ./
+
+# Build the binary
+RUN go build -o /aequitasd ./cmd/aequitasd
+
+# Production image
+FROM alpine:latest
+
+RUN apk add --no-cache ca-certificates
+
+COPY --from=builder /aequitasd /usr/local/bin/
+
+EXPOSE 26656 26657 1317 9090
+
+ENTRYPOINT ["aequitasd"]
+```
+
+**Option B:** Update the workflow to point to the correct Dockerfile path:
+
+```yaml
+# In .github/workflows/deploy-aequitas-blockchain.yml
+# Fix the Build Docker Image step
+
+- name: Build Docker Image
+  run: |
+    echo "Building Docker image for mainnet..."
+    docker build -t aequitas-blockchain-mainnet-${{ github.sha }} \
+      -f aequitas/Dockerfile \  # <-- Specify correct path
+      --build-arg BLOCKCHAIN_ENV=mainnet \
+      .
+```
+
+---
+
+### Issue 2: Deploy via ACE - Artifact Not Found
+
+**Error:**
+```
+Error: Unable to download artifact(s): Artifact not found for name: aequitasd-latest
+```
+
+**Root Cause:** The "Deploy via ACE" job depends on an artifact named `aequitasd-latest` that should be uploaded by a previous job (likely `blockchain-build.yml`), but it doesn't exist.
+
+**Fix Options:**
+
+**Option A:** Ensure the blockchain build workflow uploads the artifact with the correct name:
+
+```yaml
+# In .github/workflows/blockchain-build.yml
+# Add/fix the artifact upload step
+
+- name: Upload aequitasd binary
+  uses: actions/upload-artifact@v4
+  with:
+    name: aequitasd-latest  # <-- Must match exactly
+    path: aequitas/build/aequitasd
+    retention-days: 30
+    if-no-files-found: error  # Fail if binary wasn't built
+```
+
+**Option B:** Make the ACE deployment job conditional on the artifact existing:
+
+```yaml
+# In .github/workflows/deploy-aequitas-blockchain.yml
+# Fix the Deploy via ACE job
+
+deploy-ace:
+  name: Deploy via ACE (Advanced Computing Engine)
+  runs-on: ubuntu-latest
+  needs: [prepare-deployment]  # <-- Ensure this job creates the artifact
+  if: success()  # Only run if previous jobs succeeded
+  
+  steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download blockchain binary
+      uses: actions/download-artifact@v4
+      with:
+        name: aequitasd-latest
+      continue-on-error: true  # <-- Don't fail if artifact missing
+      id: download
+    
+    - name: Check artifact download
+      run: |
+        if [ ! -f aequitasd ]; then
+          echo "⚠️ aequitasd binary not found - building from source"
+          cd aequitas
+          go build -o ../aequitasd ./cmd/aequitasd
+        fi
+```
+
+**Option C:** Add a fallback build step if artifact is missing:
+
+```yaml
+- name: Download or Build Binary
+  run: |
+    # Try to download artifact first
+    if ! gh run download --name aequitasd-latest 2>/dev/null; then
+      echo "📦 Artifact not found, building from source..."
+      cd aequitas
+      go build -o ../build/aequitasd ./cmd/aequitasd
+    else
+      echo "✅ Artifact downloaded successfully"
+    fi
+```
+
+---
+
+### Recommended Workflow Structure
+
+To fix both issues, the deployment workflow should be structured like this:
+
+```yaml
+# .github/workflows/deploy-aequitas-blockchain.yml
+name: Deploy Aequitas Zone Blockchain
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'aequitas/**'
+
+jobs:
+  build-binary:
+    name: Build Blockchain Binary
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23.x'
+      
+      - name: Build aequitasd
+        working-directory: ./aequitas
+        run: |
+          mkdir -p build
+          go build -o build/aequitasd ./cmd/aequitasd
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aequitasd-latest
+          path: aequitas/build/aequitasd
+          retention-days: 30
+
+  deploy-docker:
+    name: Deploy via Docker
+    runs-on: ubuntu-latest
+    needs: [build-binary]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: aequitasd-latest
+          path: ./build
+      
+      - name: Build Docker Image
+        run: |
+          # Create Dockerfile if it doesn't exist
+          if [ ! -f Dockerfile ]; then
+            cat > Dockerfile << 'EOF'
+          FROM alpine:latest
+          RUN apk add --no-cache ca-certificates
+          COPY ./build/aequitasd /usr/local/bin/
+          EXPOSE 26656 26657 1317 9090
+          ENTRYPOINT ["aequitasd"]
+          EOF
+          fi
+          
+          docker build -t aequitas-blockchain:latest .
+      
+      - name: Deploy using Docker Compose
+        run: |
+          docker-compose up -d || echo "Docker Compose deployment pending"
+
+  deploy-ace:
+    name: Deploy via ACE
+    runs-on: ubuntu-latest
+    needs: [build-binary]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: aequitasd-latest
+          path: ./build
+      
+      - name: Deploy to ACE cluster
+        run: |
+          echo "Deploying to ACE..."
+          # ACE deployment logic here
+```
+
+---
+
 ## Version History
 
 | Date | Changes |
 |------|---------|
+| Nov 26, 2025 | Added Deploy Aequitas Zone Blockchain fixes (Docker + ACE artifact issues) |
 | Nov 25, 2025 | Initial fixes for all workflow failures |
 
 ---
