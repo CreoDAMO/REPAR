@@ -1927,10 +1927,237 @@ jobs:
 
 ---
 
+## NEW: Build Aequitas Zone Blockchain (#131) Additional Fixes
+
+**Identified:** November 26, 2025  
+**Workflow:** `blockchain-build.yml`
+
+### Issue 3: Cache Restore Failed - go.sum Not Found
+
+**Error:**
+```
+Restore cache failed: Dependencies file is not found in /home/runner/work/REPAR/REPAR. Supported file pattern: go.sum
+```
+
+**Root Cause:** The workflow cache action looks for `go.sum` at the repository root, but it's located in `aequitas/go.sum`.
+
+**Fix Applied (in codebase):** Created symlinks at the repo root:
+```bash
+# These symlinks have been created in the repo
+ln -s aequitas/go.sum go.sum
+ln -s aequitas/go.mod go.mod
+```
+
+**Alternative Fix (in workflow):**
+```yaml
+# Update the cache step to look in the correct path
+- name: Cache Go modules
+  uses: actions/cache@v4
+  with:
+    path: |
+      ~/.cache/go-build
+      ~/go/pkg/mod
+    key: ${{ runner.os }}-go-${{ hashFiles('aequitas/go.sum') }}
+    restore-keys: |
+      ${{ runner.os }}-go-
+```
+
+---
+
+### Issue 4: "Cannot open: File exists" Errors (10 times)
+
+**Error:**
+```
+Build & Test Blockchain: Cannot open: File exists
+```
+
+**Root Cause:** The tar extraction during cache restore or artifact upload is encountering existing files. This is a warning, not a fatal error - the build still succeeds.
+
+**Fix (in workflow):**
+```yaml
+# Add --overwrite flag to tar operations or clean up before extraction
+- name: Clean build directory
+  run: rm -rf ./build 2>/dev/null || true
+
+- name: Download artifact
+  uses: actions/download-artifact@v4
+  with:
+    name: aequitasd-latest
+    path: ./build
+```
+
+---
+
+### Issue 5: Create GitHub Release Requires a Tag
+
+**Error:**
+```
+⚠️ GitHub Releases requires a tag
+```
+
+**Root Cause:** The workflow tries to create a GitHub Release, but releases require a git tag.
+
+**Fix (in workflow):**
+```yaml
+# Only run release step when a tag is pushed
+create-release:
+  name: Create GitHub Release
+  runs-on: ubuntu-latest
+  if: startsWith(github.ref, 'refs/tags/')  # <-- Only run on tags
+  
+  steps:
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          build/aequitasd
+          genesis-*.json
+```
+
+---
+
+### Issue 6: Cross-Workflow Artifact Access
+
+**Error:**
+```
+Unable to download artifact(s): Artifact not found for name: aequitasd-latest
+```
+
+**Root Cause:** The `blockchain-deploy.yml` workflow runs separately from `blockchain-build.yml`. GitHub Actions artifacts are **workflow-run scoped**, meaning artifacts from one workflow run cannot be accessed by a different workflow run.
+
+**Fix Options:**
+
+**Option A: Use `workflow_run` trigger (Recommended)**
+```yaml
+# blockchain-deploy.yml
+name: Deploy Aequitas Zone Blockchain
+
+on:
+  workflow_run:
+    workflows: ["Build Aequitas Zone Blockchain"]
+    types: [completed]
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Download artifact from build workflow
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: blockchain-build.yml
+          workflow_conclusion: success
+          name: aequitasd-latest
+          path: ./build
+```
+
+**Option B: Combine into single workflow**
+```yaml
+# blockchain-build-and-deploy.yml
+name: Build and Deploy Aequitas Zone Blockchain
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'aequitas/**'
+
+jobs:
+  build:
+    name: Build Blockchain
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.upload.outputs.artifact-name }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build aequitasd
+        run: |
+          cd aequitas
+          go build -o ../build/aequitasd ./cmd/aequitasd
+      
+      - name: Upload artifact
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: aequitasd-latest
+          path: build/aequitasd
+
+  deploy-docker:
+    name: Deploy via Docker
+    needs: [build]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aequitasd-latest
+          path: ./build
+      
+      - name: Build and deploy
+        run: docker build -t aequitas-blockchain .
+
+  deploy-ace:
+    name: Deploy via ACE
+    needs: [build]
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: aequitasd-latest
+          path: ./build
+      
+      - name: Deploy to ACE
+        run: echo "Deploying to ACE..."
+```
+
+**Option C: Use GitHub Actions artifact download from another workflow**
+
+Install the `dawidd6/action-download-artifact` action:
+```yaml
+- name: Download artifact from triggering workflow
+  uses: dawidd6/action-download-artifact@v3
+  with:
+    github_token: ${{ secrets.GITHUB_TOKEN }}
+    workflow: blockchain-build.yml
+    run_id: ${{ github.event.workflow_run.id }}
+    name: aequitasd-latest
+    path: ./build
+```
+
+---
+
+## Summary of All Required Changes
+
+### Changes Made in Codebase (Already Done):
+1. ✅ Created `aequitas/Dockerfile` - Multi-stage Go build
+2. ✅ Created `Dockerfile` (root) - For workflows expecting root-level Dockerfile
+3. ✅ Created symlinks `go.sum` and `go.mod` at root - For cache restore
+
+### Changes Needed in GitHub Workflows:
+1. Update cache path to use `aequitas/go.sum` OR use root symlinks
+2. Add `--overwrite` or cleanup before tar extraction
+3. Add `if: startsWith(github.ref, 'refs/tags/')` to release job
+4. Either:
+   - Combine build and deploy into single workflow, OR
+   - Use `workflow_run` trigger with `dawidd6/action-download-artifact`
+
+---
+
 ## Version History
 
 | Date | Changes |
 |------|---------|
+| Nov 26, 2025 | Added symlinks for go.sum/go.mod at root, documented cross-workflow artifact issue |
 | Nov 26, 2025 | Added Deploy Aequitas Zone Blockchain fixes (Docker + ACE artifact issues) |
 | Nov 25, 2025 | Initial fixes for all workflow failures |
 
