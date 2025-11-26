@@ -1,4 +1,4 @@
-# Key changes to add to .github/workflows/deploy-frontend.yml
+# Key changes to add to deploy-frontend.yml
 # Add these steps to the existing workflow
 
 # 1. ADD APEX security validation (after line 44, after "Build frontend" step)
