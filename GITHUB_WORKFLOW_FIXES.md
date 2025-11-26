@@ -2452,20 +2452,34 @@ jobs:
         run: |
           chmod +x ./build/aequitasd
           
-          # Use Dockerfile if it exists, otherwise create one
-          if [ ! -f Dockerfile ]; then
-            cat > Dockerfile << 'EOF'
+          # IMPORTANT: Always create a Dockerfile for pre-built binary
+          # The repo's Dockerfile builds from source which fails in CI
+          # This creates a simple Dockerfile that uses the pre-built binary
+          cat > Dockerfile.ci << 'DOCKERFILE'
           FROM alpine:3.19
-          RUN apk add --no-cache ca-certificates
+          
+          RUN apk add --no-cache ca-certificates jq bash curl
+          
+          RUN addgroup -S aequitas && adduser -S aequitas -G aequitas
+          
           COPY ./build/aequitasd /usr/local/bin/
-          RUN chmod +x /usr/local/bin/aequitasd
+          RUN chmod +x /usr/local/bin/aequitasd && \
+              chown aequitas:aequitas /usr/local/bin/aequitasd
+          
+          USER aequitas
+          WORKDIR /home/aequitas
+          
           EXPOSE 26656 26657 1317 9090 9091
+          
+          HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+              CMD curl -f http://localhost:26657/health || exit 1
+          
           ENTRYPOINT ["aequitasd"]
           CMD ["start"]
-          EOF
-          fi
+          DOCKERFILE
           
-          docker build -t aequitas-blockchain:latest -t aequitas-blockchain:${{ github.sha }} .
+          # Build using the CI Dockerfile (not the source-build Dockerfile)
+          docker build -f Dockerfile.ci -t aequitas-blockchain:latest -t aequitas-blockchain:${{ github.sha }} .
           
           echo "✅ Docker image built successfully"
       
@@ -2616,6 +2630,7 @@ jobs:
 
 | Date | Changes |
 |------|---------|
+| Nov 26, 2025 | **Fixed Docker build** - Uses `Dockerfile.ci` for pre-built binary instead of source-build Dockerfile |
 | Nov 26, 2025 | **Added complete combined workflow** - `blockchain-build-and-deploy.yml` replaces both build and deploy workflows |
 | Nov 26, 2025 | Added symlinks for go.sum/go.mod at root, documented cross-workflow artifact issue |
 | Nov 26, 2025 | Added Deploy Aequitas Zone Blockchain fixes (Docker + ACE artifact issues) |

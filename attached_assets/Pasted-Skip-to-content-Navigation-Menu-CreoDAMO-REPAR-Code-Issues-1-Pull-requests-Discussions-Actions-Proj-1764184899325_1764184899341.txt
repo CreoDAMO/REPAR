@@ -1,0 +1,94 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+1
+Pull requests
+Discussions
+Actions
+Projects
+Wiki
+Security
+12
+Build and Deploy Aequitas Zone Blockchain
+Create blockchain-build-and-deploy.yml #1
+Jobs
+Run details
+Triggered via push 9 minutes ago
+@CreoDAMOCreoDAMO
+pushed
+ b31dc90
+main
+Status
+Failure
+Total duration
+5m 10s
+Artifacts
+2
+
+
+Build & Test Blockchain summary
+🚀 Aequitas Zone Blockchain Build Status
+Build Details:
+
+Go Version: go1.24.10
+Cosmos SDK: v0.54.0-alpha
+Native Coin: $REPAR
+Total Supply: 131 Trillion $REPAR
+Commit: b31dc90d67995740b8c23ddbabc5ae69d51e07e1
+Status: ✅ Build successful
+Binary Size: 152M
+
+Coin Allocation:
+
+Founder Total: 23.58T REPAR (18%)
+Wallet: 15.72T REPAR (12%)
+Endowment: 7.86T REPAR (6%, locked 8 years)
+Community & Descendants: 56.33T REPAR (43%)
+Claims & Compensation: 32.75T REPAR (25%)
+Enforcement Treasury: 13.1T REPAR (10%)
+Foundation Reserves: 5.24T REPAR (4%)
+Artifacts:
+
+aequitasd-b31dc90d67995740b8c23ddbabc5ae69d51e07e1 - Blockchain binary (versioned)
+aequitasd-latest - Latest binary
+genesis-b31dc90d67995740b8c23ddbabc5ae69d51e07e1 - Genesis files
+allocation-structure - Allocation configuration
+Job summary generated at run-time
+Initialize Local Testnet summary
+🌐 Testnet Initialization Status
+Status: ✅ Testnet configuration successful
+Chain ID: aequitas-testnet-1
+Home Directory: ~/.aequitas-test
+
+Ready for: Local development and testing
+
+Job summary generated at run-time
+Deploy via ACE (Advanced Computing Engine) summary
+⚡ ACE Deployment Status
+Status: ✅ Deployment initiated
+Environment: mainnet
+Binary: aequitasd-b31dc90d67995740b8c23ddbabc5ae69d51e07e1
+
+Job summary generated at run-time
+Post-Deployment Summary summary
+Annotations
+1 error and 2 warnings
+Deploy via Docker
+Process completed with exit code 1.
+Build & Test Blockchain
+No files were found with the provided path: aequitas/allocation*.json. No artifacts will be uploaded.
+Build & Test Blockchain
+No files were found with the provided path: build/genesis*.json. No artifacts will be uploaded.
+Artifacts
+Produced during runtime
+Name	Size	Digest	
+aequitasd-b31dc90d67995740b8c23ddbabc5ae69d51e07e1
+60.8 MB	
+sha256:bdc985b0ee51df8709a3716467d1300c4d64fcdba8031db617106739bdae9c23
+aequitasd-latest
+60.8 MB	
+sha256:bdc985b0ee51df8709a3716467d1300c4d64fcdba8031db617106739bdae9c23
