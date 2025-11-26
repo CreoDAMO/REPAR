@@ -282,6 +282,8 @@ jobs:
   deploy-docker:
     name: Deploy via Docker
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [build]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
