@@ -416,6 +416,7 @@ jobs:
   # ============================================
   post-deploy-summary:
     name: Post-Deployment Summary
+    permissions: {}
     runs-on: ubuntu-latest
     needs: [build, deploy-docker, deploy-ace]
     if: always() && github.ref == 'refs/heads/main'
