@@ -12,7 +12,7 @@ The following root causes were identified in the failing workflows:
 | Issue | Root Cause | Fix |
 |-------|-----------|-----|
 | `ast-parser` not found | Package doesn't exist on PyPI | Replace with `astor` or `asttokens` |
-| Python 3.11 compatibility | Some packages lack 3.11 wheels | Pin to Python 3.10 or use compatible versions |
+| Python 3.11 incompatibility with APEX | Auditor imports fail on Python 3.11 GitHub Actions | Use Python 3.11+ (torch/transformers support 3.9-3.13, liboqs 3.9+) |
 | `apex_scan_results.json` not found | File created in wrong order | Add guard clause and proper sequencing |
 | `liboqs` branch 0.14.1 not found | Version mismatch in liboqs-python | Use correct version or build from main branch |
 | ROS2 not available | Cannot install ROS2 on GitHub Actions | Build ROS2 components on Replit instead |
@@ -57,8 +57,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          # FIX #1: Use Python 3.10 for better ML/AI package compatibility
-          python-version: '3.10'
+          # FIX #1: Use Python 3.11 (compatible with torch 2.5+, transformers 4.x, liboqs 3.9+)
+          python-version: '3.11'
           cache: 'pip'
       
       - name: Install APEX dependencies
