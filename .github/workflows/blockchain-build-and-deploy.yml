@@ -360,6 +360,8 @@ jobs:
   deploy-ace:
     name: Deploy via ACE (Advanced Computing Engine)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs: [build]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
