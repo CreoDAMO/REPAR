@@ -5,6 +5,7 @@
 [![Mobile App](https://img.shields.io/badge/mobile%20app-complete-blue)](./mobile)
 [![License](https://img.shields.io/badge/license-MIT-green)](./docs/LICENSE.md)
 [![APEX Real Security Scan](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-security-scan.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-security-scan.yml)
+[![Cerberus Security Auditor](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml)
 [![Build and Deploy Aequitas Zone Blockchain](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml)
 
 ---
