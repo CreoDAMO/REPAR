@@ -1,6 +1,5 @@
 # ⚖️ AEQUITAS PROTOCOL ($REPAR) - The Justice Machine
-
-[![Build Frontend](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml/badge.svg?branch=main&event=page_build)](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml)
+[![Deploy Frontend](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml)
 [![Production Ready](https://img.shields.io/badge/status-production%20ready-success)](https://github.com/CreoDAMO/REPAR)
 [![Mobile App](https://img.shields.io/badge/mobile%20app-complete-blue)](./mobile)
 [![License](https://img.shields.io/badge/license-MIT-green)](./docs/LICENSE.md)
