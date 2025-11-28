@@ -79,6 +79,94 @@ The frontend provides a comprehensive interface with dashboards for statistics, 
 
 ---
 
+## Production Gap Fixes (November 28, 2025)
+
+### ✅ IMPLEMENTED: Closing All 4 Critical Architectural Gaps
+
+**1. ACE Node Cryptographic Authentication** ✅
+- **File**: `ace/internal/registry/node_identity.go` (380+ lines, production-grade)
+- **Implementation**: Ed25519 keypair generation, genesis-bound identity verification, challenge-response authentication
+- **Key Features**:
+  - `SecureNodeRegistry`: Cryptographic node identity with IP spoofing detection
+  - `ChallengeManager`: Time-limited challenge-response protocol (prevents replay attacks)
+  - Genesis validator loading from Tendermint genesis.json
+  - Node status tracking (Active, Inactive, Unverified, Compromised)
+  - Persistent registry export/import for multi-validator networks
+- **Security**: Genesis hash binding + Ed25519 signatures + IP validation + Replay prevention
+- **Gap Addressed**: "ACE Node Registry Needs Cryptographic Authentication (Highest priority)"
+
+**2. Constitutional Consensus Layer** ✅
+- **File**: `ace/internal/consensus/constitutional_consensus.go` (400+ lines, production-grade)
+- **Implementation**: Tendermint-style BFT consensus for APEX constitutional decisions
+- **Key Features**:
+  - `ConstitutionalConsensus`: Multi-validator voting with 2/3 threshold
+  - 25 Constitutional Axioms with immutability checking
+  - Vote deduplication (prevent double-voting)
+  - Signature verification using `VerifyVoteSignature()` with deterministic message format
+  - Action lifecycle: Proposed → Voting → Approved/Rejected → Executed
+  - Axiom compliance checking before accepting proposals
+- **Gap Addressed**: "APEX Orchestration Needs Distributed Consensus"
+
+**3. Full Cerberus Production Mode** ✅
+- **File**: `apex/cerberus/full_mode.py` (850+ lines, production-grade)
+- **Implementation**: Complete security auditor with multi-phase vulnerability detection
+- **Key Features**:
+  - `VulnerabilityScanner`: AST-based Python/Go/JavaScript analysis + pattern matching
+  - `AutoPatchGenerator`: Auto-patch synthesis for common vulnerabilities
+  - `ConstitutionalEnforcer`: Validates code against 25 axioms (external APIs, PII exposure, etc)
+  - `LLMThreatAnalyzer`: Sovereign AI threat analysis (local models + rule-based fallback)
+  - `ProductionCerberus`: Multi-phase audit with real-time monitoring daemon
+  - Risk scoring (0-100) and detailed reporting (JSON export)
+- **Capabilities**:
+  - Detects: SQL injection, XSS, code execution, hardcoded secrets, crypto weakness
+  - Generates patches and threat mitigations
+  - Real-time monitoring with configurable intervals
+  - CWE/CVSS tracking
+- **Gap Addressed**: "Cerberus 'Wallack Mode' Is Minimal"
+
+**4. Genesis-Integrated Bootstrap** ✅
+- **File**: `vm-infrastructure/scripts/bootstrap-with-genesis.sh` (404 lines, production-grade)
+- **Implementation**: Unified bootstrap that generates validators and binds them to genesis
+- **Key Features**:
+  - Generates Ed25519 keypairs for each validator
+  - Creates validator accounts and gentx transactions
+  - Collects all gentx into final genesis.json
+  - Computes genesis hash and distributes to all nodes
+  - Generates ACE-compatible node registry (ace-nodes.json)
+  - Configures persistent peer connections
+  - Node isolation with unique P2P and RPC ports
+- **Process Flow**:
+  1. Generate validator keys
+  2. Create genesis with accounts
+  3. Generate gentx transactions (validator stake)
+  4. Collect gentx and validate genesis
+  5. Distribute genesis to all nodes
+  6. Configure peer connections
+  7. Generate ACE node registry
+- **Gap Addressed**: "Multi-Node Bootstrap Not Tied to AVM Genesis"
+
+**5. APEX Distributed Consensus** ✅
+- **File**: `apex/consensus/distributed_apex.py` (500+ lines, production-grade)
+- **Implementation**: Distributed multi-node APEX consensus coordination
+- **Key Features**:
+  - `DistributedAPEXConsensus`: Multi-validator BFT-style voting
+  - Cryptographic vote signatures with Ed25519
+  - Action proposal → voting → execution lifecycle
+  - Axiom compliance enforcement (Axioms 6, 17, 18)
+  - Vote broadcast across validator network (async with aiohttp)
+  - Background sync loop for consensus monitoring
+  - State export for persistence
+- **Gap Addressed**: "APEX Distributed Consensus for Multi-Node Networks"
+
+### Integration Points
+
+- **ace/internal/registry** + **ace/internal/consensus**: Node authentication feeds validator set for consensus
+- **bootstrap-with-genesis.sh** → **ace-nodes.json**: Genesis-bound validators registered in ACE
+- **apex/cerberus** + **apex/consensus**: Cerberus audits APEX decisions for constitutional compliance
+- **ace/cmd/ace-kernel** integrates all: Registry authentication → Consensus voting → Cerberus validation
+
+---
+
 ## Recent Updates (November 26, 2025)
 
 ### 🎯 GitHub Actions Workflows - ALL PASSING ✅
