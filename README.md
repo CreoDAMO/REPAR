@@ -6,6 +6,7 @@
 [![APEX Real Security Scan](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-security-scan.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-security-scan.yml)
 [![Cerberus Security Auditor](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml)
 [![Build and Deploy Aequitas Zone Blockchain](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml)
+[![Production Gaps Integration Test](https://github.com/CreoDAMO/REPAR/actions/workflows/production-gaps-integration-test.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/production-gaps-integration-test.yml)
 
 ---
 
