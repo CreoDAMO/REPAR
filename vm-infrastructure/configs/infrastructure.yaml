@@ -1,0 +1,317 @@
+# Aequitas Protocol - Sovereign Infrastructure Configuration
+# This file defines how ACE, AVM, APEX, and all services are deployed
+# UPDATED: Migrated from DigitalOcean to Sovereign ACE/AVM infrastructure
+
+infrastructure:
+  # Primary infrastructure type: sovereign, ace, digitalocean, or hybrid
+  primary_type: sovereign
+  
+  # Node identification
+  node:
+    id: aequitas-node-001
+    name: "Sovereign Validator Node"
+    region: "sovereign-us-east"
+    sovereignty_level: 100  # 100% = your hardware, 0% = cloud dependency
+
+  # Sovereign VM Configuration
+  sovereign:
+    enabled: true
+    provider: local-kvm  # local-kvm, proxmox, vmware, or bare-metal
+    
+    # Auto-detect or specify IP
+    primary_vm_ip: auto  # or specific IP like "192.168.1.100"
+    
+    # Hardware specs (minimum for full APEX/ACE/AVM stack)
+    resources:
+      cpu_cores: 8
+      ram_gb: 16
+      storage_gb: 500
+      gpu_required: false  # APEX transcends GPU requirements
+    
+    # Network configuration
+    network:
+      public_ip: auto
+      internal_ip: auto
+      ports:
+        - 26656  # P2P
+        - 26657  # RPC
+        - 1317   # REST API
+        - 9090   # gRPC
+        - 8080   # ACE API
+        - 8001   # ACE AI Sidecar
+        - 5000   # Frontend
+        - 3001   # Explorer
+        - 3002   # Backend
+
+  # ACE (Aequitas Cloud Engine) Configuration
+  ace:
+    enabled: true
+    api_endpoint: http://localhost:8080
+    auto_register_nodes: true
+    
+    # Orchestration settings
+    orchestration:
+      auto_scaling: true
+      health_check_interval: 30s
+      failover_enabled: true
+      load_balancing: round-robin
+    
+    # Constitutional enforcement
+    constitutional_enforcement:
+      enabled: true
+      axioms_required: 25
+      violation_action: reject  # reject, warn, or log
+    
+    # AI Sidecar
+    ai_sidecar:
+      enabled: true
+      port: 8001
+      model: aequitas-1.0
+
+  # AVM (Aequitas Virtual Machine) Configuration
+  avm:
+    enabled: true
+    chain_id: aequitas-1
+    
+    # Genesis configuration
+    genesis:
+      total_supply: "131000000000000"  # 131 trillion $REPAR
+      initial_allocation:
+        founder_vested: "15720000000000"
+        founder_endowment: "7860000000000"
+        community: "56130000000000"
+        claims: "32750000000000"
+        enforcement: "13100000000000"
+        foundation: "5240000000000"
+    
+    # Validator settings
+    validator:
+      enabled: true
+      moniker: "Sovereign Validator"
+      commission_rate: "0.10"
+      min_self_delegation: "1000000"
+
+  # APEX System Configuration
+  apex:
+    enabled: true
+    
+    # Constitutional AI
+    constitutional_ai:
+      axioms_count: 25
+      enforcement_mode: strict
+      immutable: true
+    
+    # Cyber Reasoning System
+    cyber_reasoning:
+      auto_patch: true
+      vulnerability_scan_interval: 6h
+      threat_threshold: high
+    
+    # Post-Quantum Cryptography
+    pqc:
+      enabled: true
+      algorithms:
+        kem: ML-KEM-768
+        signature: ML-DSA-3
+      gpu_acceleration: false  # APEX doesn't need GPU
+    
+    # Autonomous Agent
+    autonomous_agent:
+      enabled: true
+      auto_fix: true
+      chaos_testing: true
+      monitoring_interval: 1h
+
+  # Cerberus Security Auditor
+  cerberus:
+    enabled: true
+    audit_mode: wallack  # full, wallack, or minimal
+    
+    features:
+      constitutional_validation: true
+      vulnerability_detection: true
+      ai_threat_analysis: true
+      auto_patch_generation: true
+
+  # DigitalOcean (Optional Fallback - DISABLED by default)
+  digitalocean:
+    enabled: false  # Set to true for hybrid mode
+    region: nyc3
+    droplet_size: s-4vcpu-8gb
+    
+    # Only used if sovereign infrastructure fails
+    failover_priority: 3  # Lower number = higher priority
+
+  # Cloudflare Integration
+  cloudflare:
+    enabled: true
+    
+    # Auto-detect from environment or specify
+    zone_id: auto
+    api_token_env: CLOUDFLARE_API_TOKEN
+    
+    # Domain configuration
+    domain: aequitasprotocol.zone
+    
+    # DNS management
+    auto_update_dns: true
+    health_check_before_update: true
+    ttl: 300  # 5 minutes
+    
+    # SSL/TLS
+    ssl_mode: full_strict
+    always_use_https: true
+    min_tls_version: "1.3"
+    
+    # Security
+    proxy_enabled: true  # Orange cloud for DDoS protection
+    proxy_exceptions:
+      - rpc
+      - api
+      - grpc
+      - ws
+    
+    # Firewall
+    firewall:
+      rate_limiting: true
+      bot_protection: true
+      ddos_protection: true
+
+  # Monitoring & Observability
+  monitoring:
+    enabled: true
+    
+    # Prometheus metrics
+    prometheus:
+      enabled: true
+      port: 9090
+      retention: 30d
+    
+    # Grafana dashboards
+    grafana:
+      enabled: true
+      port: 3000
+      dashboards:
+        - constitutional_compliance
+        - blockchain_metrics
+        - ace_orchestration
+        - apex_security
+    
+    # Alerting
+    alerts:
+      constitutional_violation:
+        severity: critical
+        action: auto_reject
+      
+      node_down:
+        severity: high
+        action: failover
+      
+      high_latency:
+        severity: medium
+        action: log
+
+  # Backup & Recovery
+  backup:
+    enabled: true
+    interval: 24h
+    retention_days: 30
+    
+    targets:
+      - blockchain_state
+      - configuration
+      - forensic_audit_logs
+      - constitutional_records
+    
+    destinations:
+      - type: local
+        path: /backup
+      - type: ipfs
+        enabled: true
+
+  # Deployment Strategy
+  deployment:
+    strategy: rolling  # rolling, blue-green, or canary
+    
+    # Health checks
+    health_checks:
+      enabled: true
+      timeout: 30s
+      interval: 10s
+      retries: 3
+    
+    # Rollback on failure
+    auto_rollback: true
+    
+    # Pre-deployment checks
+    pre_deployment:
+      - constitutional_validation
+      - security_scan
+      - health_check
+    
+    # Post-deployment checks
+    post_deployment:
+      - dns_propagation
+      - endpoint_availability
+      - constitutional_enforcement
+
+# Service Definitions
+services:
+  frontend:
+    enabled: true
+    port: 5000
+    path: /app
+    replicas: 1
+    
+  blockchain:
+    enabled: true
+    binary: aequitasd
+    home: ~/.aequitas
+    
+  explorer:
+    enabled: true
+    port: 3001
+    
+  backend:
+    enabled: true
+    port: 3002
+    api_prefix: /api/v1
+
+# Environment-specific overrides
+environments:
+  development:
+    apex:
+      autonomous_agent:
+        auto_fix: false
+    
+    cloudflare:
+      auto_update_dns: false
+  
+  production:
+    sovereign:
+      resources:
+        cpu_cores: 16
+        ram_gb: 32
+    
+    backup:
+      interval: 12h
+    
+    monitoring:
+      alerts:
+        enabled: true
+
+# Cost Analysis
+cost_analysis:
+  sovereign:
+    hardware_cost_usd: 700  # One-time
+    monthly_electricity_usd: 20
+    total_first_year: 940
+    
+  digitalocean_equivalent:
+    monthly_cost_usd: 120
+    total_first_year: 1440
+    
+  savings:
+    first_year_usd: 500
+    yearly_after_usd: 1200
+    sovereignty_benefit: priceless
