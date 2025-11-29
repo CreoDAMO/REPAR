@@ -468,7 +468,12 @@ if __name__ == "__main__":
     # Create mobile validator satellites
     mobile1 = assp.create_mobile_satellite("validator-001")
     
-    logger.info(f"\n🌍 Constellation Status:\n{json.dumps(assp.get_constellation_status(), indent=2)}\n")
+    # Prepare redacted constellation status with position omitted for logging
+    constellation_status = assp.get_constellation_status()
+    for sat in constellation_status['satellites']:
+        if 'position' in sat:
+            sat['position'] = {"lat": "REDACTED", "lon": "REDACTED", "alt_km": "REDACTED"}
+    logger.info(f"\n🌍 Constellation Status:\n{json.dumps(constellation_status, indent=2)}\n")
     
     # Test packet routing
     packet = SatellitePacket(
