@@ -1,0 +1,269 @@
+# CI Fullstack Testing with APEX Errors
+## Frontend Quality Check/ Lint
+Run npm run lint || echo "Lint warnings found" 
+  npm run lint || echo "Lint warnings found" 
+  shell: /usr/bin/bash -e {0} 
+ 
+> frontend@0.0.0 lint 
+> eslint . 
+ 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/ConcentratedAudit.jsx 
+Error:   3:39  error  'auditMetadata' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/Dashboard.jsx 
+Error:   104:5  error  'setWalletData' is not defined  no-undef 
+Error:   109:5  error  'setWalletData' is not defined  no-undef 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/Defendants.jsx 
+Error:   10:9  error  'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/FounderWallet.jsx 
+Error:   177:93   error  'walletAddresses' is not defined  no-undef 
+Error:   177:208  error  'walletAddresses' is not defined  no-undef 
+Error:   199:93   error  'walletAddresses' is not defined  no-undef 
+Error:   199:208  error  'walletAddresses' is not defined  no-undef 
+Error:   636:30   error  'walletAddresses' is not defined  no-undef 
+Error:   636:58   error  'walletAddresses' is not defined  no-undef 
+Error:   636:86   error  'walletAddresses' is not defined  no-undef 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/InvestorDashboard.jsx 
+Error:   224:13  error  'setTotalInvested' is not defined                                                             no-undef 
+Error:   225:13  error  'setCurrentValue' is not defined                                                              no-undef 
+Error:   226:13  error  'setRoi' is not defined                                                                       no-undef 
+Error:   235:19  error  'stakingQuery' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars 
+Error:   244:19  error  'lpQuery' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u       no-unused-vars 
+Error:   254:13  error  'setPortfolioData' is not defined                                                             no-undef 
+Error:   265:11  error  'setTotalInvested' is not defined                                                             no-undef 
+Error:   266:11  error  'setCurrentValue' is not defined                                                              no-undef 
+Error:   267:11  error  'setRoi' is not defined                                                                       no-undef 
+Error:   268:11  error  'setYieldRate' is not defined                                                                 no-undef 
+Error:   270:11  error  'setPortfolioData' is not defined                                                             no-undef 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/NFTMarketplace.jsx 
+Error:   125:7   error  'setLoadingNFTs' is not defined  no-undef 
+Error:   167:13  error  'setListings' is not defined     no-undef 
+Error:   815:72  error  'auctions' is not defined        no-undef 
+Error:   830:16  error  'auctions' is not defined        no-undef 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/TransparencyLedger.jsx 
+Error:   7:10  error  'stats' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/pages/ValidatorSubsidy.jsx 
+Error:    56:15   error  'setTotalDistributed' is not defined                                                                     no-undef 
+Error:    57:15   error  'setLastDistribution' is not defined                                                                     no-undef 
+Error:    58:15   error  'setNextDistribution' is not defined                                                                     no-undef 
+Error:   120:15   error  'setTotalDistributed' is not defined                                                                     no-undef 
+Error:   121:15   error  'setLastDistribution' is not defined                                                                     no-undef 
+Error:   122:15   error  'setNextDistribution' is not defined                                                                     no-undef 
+Error:   137:13   error  'setTotalDistributed' is not defined                                                                     no-undef 
+Error:   138:13   error  'setLastDistribution' is not defined                                                                     no-undef 
+Error:   139:13   error  'setNextDistribution' is not defined                                                                     no-undef 
+Error:   154:11   error  'setLastDistribution' is not defined                                                                     no-undef 
+Error:   155:11   error  'setNextDistribution' is not defined                                                                     no-undef 
+Error:   156:11   error  'setTotalDistributed' is not defined                                                                     no-undef 
+Error:   192:9    error  'setTotalDistributed' is not defined                                                                     no-undef 
+Error:   193:9    error  'setLastDistribution' is not defined                                                                     no-undef 
+Error:   194:9    error  'setNextDistribution' is not defined                                                                     no-undef 
+Error:   256:9    error  'currentPoolBalance' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u       no-unused-vars 
+Error:   257:9    error  'currentOperatorExpenses' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars 
+Error:   258:9    error  'currentTotalDistributed' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars 
+Error:   258:35   error  'totalDistributed' is not defined                                                                        no-undef 
+Error:   259:92   error  'budget' is not defined                                                                                  no-undef 
+Error:   260:101  error  'emergency' is not defined                                                                               no-undef 
+Error:   261:33   error  'infrastructure' is not defined                                                                          no-undef 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/utils/cosmosClient.js 
+Error:   23:14  error  '_error' is defined but never used          no-unused-vars 
+Error:   32:16  error  '_fallbackError' is defined but never used  no-unused-vars 
+Error:   59:12  error  '_error' is defined but never used          no-unused-vars 
+ 
+/home/runner/work/REPAR/REPAR/frontend/src/utils/nvidiaAI.js 
+Error:    57:12  error  '_error' is defined but never used  no-unused-vars 
+Error:   107:14  error  '_e' is defined but never used      no-unused-vars 
+Error:   123:12  error  '_error' is defined but never used  no-unused-vars 
+ 
+/home/runner/work/REPAR/REPAR/frontend/tests/e2e/wallet-connect.test.js 
+Error:   24:22  error  'chainId' is defined but never used  no-unused-vars 
+Error:   31:26  error  'chainId' is defined but never used  no-unused-vars 
+ 
+/home/runner/work/REPAR/REPAR/frontend/vite.config.js 
+Error:    7:43  error  'process' is not defined  no-undef 
+Error:   14:53  error  'process' is not defined  no-undef 
+Error:   15:51  error  'process' is not defined  no-undef 
+Error:   16:47  error  'process' is not defined  no-undef 
+Error:   16:79  error  'process' is not defined  no-undef 
+ 
+✖ 62 problems (62 errors, 0 warnings) 
+ 
+Lint warnings found
+## Blockchain Compile Check/ Cache Go Modules
+[in Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#logs)
+succeeded 18 minutes ago in 1m 36s
+2s
+4s
+28s
+24s
+Run actions/cache@v4
+ with:
+  path: ~/.cache/go-build
+ ~/go/pkg/mod
+ 
+  key: Linux-go-f3d5a78547105256ba650dcc2f6585feb9f43eccbfbf456014951a917b173617
+  restore-keys: Linux-go-
+ 
+  enableCrossOsArchive: false
+  fail-on-cache-miss: false
+  lookup-only: false
+  save-always: false
+Cache hit for: Linux-go-f3d5a78547105256ba650dcc2f6585feb9f43eccbfbf456014951a917b173617
+Received 37748736 of 1086822939 (3.5%), 36.0 MBs/sec
+Received 167772160 of 1086822939 (15.4%), 79.9 MBs/sec
+Received 301989888 of 1086822939 (27.8%), 95.7 MBs/sec
+Received 406847488 of 1086822939 (37.4%), 96.8 MBs/sec
+Received 536870912 of 1086822939 (49.4%), 102.0 MBs/sec
+Received 671088640 of 1086822939 (61.7%), 106.1 MBs/sec
+Received 801112064 of 1086822939 (73.7%), 108.7 MBs/sec
+Received 939524096 of 1086822939 (86.4%), 110.3 MBs/sec
+Received 1073741824 of 1086822939 (98.8%), 112.3 MBs/sec
+Received 1086822939 of 1086822939 (100.0%), 109.9 MBs/sec
+Cache Size: ~1036 MB (1086822939 B)
+/usr/bin/tar -xf /home/runner/work/_temp/b0c427ef-30a6-4b3b-b379-f3aaa38349a5/cache.tzst -P -C /home/runner/work/REPAR/REPAR --use-compress-program unzstd
+/usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/LICENSE: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1beta1/modulev1beta1connect/commit_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1beta1/modulev1beta1connect/module_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1beta1/modulev1beta1connect/resource_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1beta1/modulev1beta1connect/label_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1beta1/modulev1beta1connect/upload_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1beta1/modulev1beta1connect/graph_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1beta1/modulev1beta1connect/download_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/commit_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/module_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/resource_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/label_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/upload_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/graph_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/download_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/module/v1/modulev1connect/file_descriptor_set_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/owner/v1/ownerv1connect/organization_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/owner/v1/ownerv1connect/owner_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/owner/v1/ownerv1connect/user_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/plugin/v1beta1/pluginv1beta1connect/check_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/plugin/v1beta1/pluginv1beta1connect/collection_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/plugin/v1beta1/pluginv1beta1connect/commit_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/plugin/v1beta1/pluginv1beta1connect/resource_service.connect.go: Cannot open: File exists
+Error: /usr/bin/tar: ../../../go/pkg/mod/buf.build/gen/go/bufbuild/registry/connectrpc/go@v1.19.1-20250924144421-cb55f06efbd2.2/buf/registry/plugin/v1beta1/pluginv1beta1connect/label_service.connect.go: Cannot open: File exists
+0s
+5s
+10s
+0s
+10s
+9s
+0s
+0s
+This is longer than it actually is so we need to test this to find the errors fully
+—------
+# APEX System Integration Test summary
+### ✅ APEX System Status
+Components Verified: Core modules operational ✅Constitutional Axioms: 25/25 ✅Axiom 17 (HUMAN_AI_SYMBIOSIS): ✅ ActiveCRS Validation: 90% success rate vs 68% DARPA baseline ✅LLM Sovereignty: 100% offline (Llama/Mistral/Phi-3/DeepSeek) ✅Post-Quantum Crypto: ML-KEM/ML-DSA (requires liboqs) ⚠️FHE Compute: Simulation mode (OpenFHE on Replit) ⚠️ROS2 Swarm: Simulation mode (ROS2 on Replit) ⚠️
+Architecture: APEX-PRIMARY (required) + Optional Services ✅
+Note: Full ROS2, PQC, and OpenFHE available on Replit environment
+[Job summary generated at run-time](https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary)
+# Integration Status Report summary
+### 📊 Aequitas Protocol CI Status
+Frontend: ✅ Build successfulBlockchain: 🔄 Compilation in progressAPEX System: ✅ Core components operational
+APEX Components:
+1. 
+✅ Constitutional AI (25 axioms including HUMAN_AI_SYMBIOSIS)
+
+2. 
+✅ REAL Cyber Reasoning System (90%+ patch success)
+
+3. 
+✅ Local LLM Ensemble (100% offline sovereignty)
+
+4. 
+⚠️ ROS2 Swarm Robotics (simulation - full on Replit)
+
+5. 
+✅ Federated Learning (encrypted blockchain updates)
+
+6. 
+⚠️ Post-Quantum Cryptography (liboqs on Replit)
+
+7. 
+⚠️ FHE Compute Engine (OpenFHE on Replit)
+
+8. 
+✅ Multi-Layer Communications (5-layer redundancy)
+
+9. 
+✅ APEX Orchestrator (full integration)
+
+10. 
+✅ Cerberus Auditor (continuous security)
+
+
+Replit Environment Features:
+- 
+Full ROS2 Humble via nix-ros-overlay
+
+- 
+OpenFHE 1.4.2 with CKKS/TFHE/FHEW schemes
+
+- 
+liboqs post-quantum cryptography
+
+- 
+Custom quantum algorithm support
+
+
+Valuation Impact: 20-550T (from 00T baseline)
+[Job summary generated at run-time](https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary)
+# Annotations
+20 errors and 2 warnings
+[Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L636](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931125)
+'walletAddresses' is not defined
+[Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L636](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931127)
+'walletAddresses' is not defined
+[Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L199](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931132)
+'walletAddresses' is not defined
+[Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L199](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931135)
+'walletAddresses' is not defined
+[Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L177](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931137)
+'walletAddresses' is not defined
+[Frontend Quality Checks: frontend/src/pages/FounderWallet.jsx#L177](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931139)
+'walletAddresses' is not defined
+[Frontend Quality Checks: frontend/src/pages/Defendants.jsx#L10](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931142)
+'navigate' is assigned a value but never used. Allowed unused vars must match /^[A-Z_]/u
+[Frontend Quality Checks: frontend/src/pages/Dashboard.jsx#L109](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931144)
+'setWalletData' is not defined
+[Frontend Quality Checks: frontend/src/pages/Dashboard.jsx#L104](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931147)
+'setWalletData' is not defined
+[Frontend Quality Checks: frontend/src/pages/ConcentratedAudit.jsx#L3](https://github.com/CreoDAMO/REPAR/commit/5a9069fe68a0432036d8637a8570144794c236d1#annotation_42283931149)
+'auditMetadata' is defined but never used. Allowed unused vars must match /^[A-Z_]/u
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:37)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:36)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:35)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:34)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:33)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:32)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:31)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:30)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:29)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:28)
+Cannot open: File exists
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:4:80208)
+Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
+[Blockchain Compile Check](https://github.com/CreoDAMO/REPAR/actions/runs/19789278961/job/56700052510#step:3:10800)
+Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
+# Let's update the to-do list address all Errors & All warnings first as this system must not fail and should now run in ace & the vm-infrastructure removing all dependencies, even Replit
