@@ -1,9 +1,17 @@
 # AEQUITAS SOVEREIGN SKY INFRASTRUCTURE
-## True Sovereignty: Software + Hardware + Community = Unkillable Network
+## ARCHIVED: See AEQUITAS_PROTOCOL_SUBSTRATE_LAYER.md for Updated Architecture
+
+**IMPORTANT:** This document represents the hardware-first approach. The evolution to **protocol-first** sovereignty is documented in:
+
+**→ [AEQUITAS_PROTOCOL_SUBSTRATE_LAYER.md](./AEQUITAS_PROTOCOL_SUBSTRATE_LAYER.md)**
+
+This newer architecture removes hardware dependencies entirely by defining "satellites" as behavioral protocols that can run on ANY substrate (datacenters, phones, Raspberry Pis, or eventually physical CubeSats).
+
+---
 
 **Date:** November 29, 2025  
-**Status:** Implementation Ready  
-**Philosophy:** "Sovereignty cannot be rented. Dependencies destroy nations."
+**Status:** Superseded by Protocol-First Approach  
+**Philosophy:** "Hardware is optional. Protocols are eternal."
 
 ---
 
