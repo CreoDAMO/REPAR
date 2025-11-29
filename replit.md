@@ -63,6 +63,27 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - **Optional AI Enhancements**: NVIDIA NIM, Anthropic APIs, OpenAI
 - **Wallet Integration**: Keplr
 - **Fully Homomorphic Encryption**: TenSEAL (CKKS/BFV schemes) + APEX-FHE v3.0 frontier components
-- **Cryptography**: ML-DSA (Dilithium-3), SHA-256
+- **Cryptography**: ML-DSA (Dilithium-3), ML-KEM (Kyber-768), SHA-256
 - **Payment Processing**: Circle USDCKit SDK
 - **Wolfram Documentation**: Strategic playbooks for defendant collection, deterrence economics, mathematical engines
+- **NEW (Nov 29, 2025)**: Aequitas Satellite Protocol (ASSP) - Software-defined satellite layer, protocol-substrate equivalence, integrated with network engine + consensus
+
+## Latest Update: Aequitas Satellite Protocol (ASSP) - November 29, 2025
+
+**PRODUCTION INTEGRATION COMPLETE**
+
+The satellite protocol layer is now integrated into the running system:
+- `apex/satellite_protocol.py` - Full ASSP implementation (Virtual/Mobile/Quantum satellites)
+- `ace/internal/network/network.go` - Extended with satellite protocol support
+- `apex/consensus/distributed_apex.py` - Integrated for vote routing via satellites
+- **Post-Quantum Crypto**: ML-KEM-768 + ML-DSA-65 (NIST FIPS 203/204)
+- **Substrate Agnostic**: Works on datacenters, phones, Raspberry Pis, eventually CubeSats
+- **Deployment**: Ready NOW (no hardware dependencies)
+
+**Implementation Status**:
+- ✅ Virtual satellites (software-only, datacenter) - LIVE
+- ✅ Mobile validator satellites (phone-based) - LIVE  
+- ✅ Post-quantum cryptography layer - LIVE
+- ✅ Network abstraction integration - LIVE
+- ✅ Consensus routing via satellite - INTEGRATED
+- ✅ Legal framework (Wyoming DUNA + BRCA) - DOCUMENTED

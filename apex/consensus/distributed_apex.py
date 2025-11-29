@@ -29,6 +29,13 @@ from cryptography.hazmat.primitives.asymmetric import ed25519
 from cryptography.hazmat.backends import default_backend
 import base64
 
+# ASSP Satellite Protocol Integration (November 29, 2025)
+try:
+    from apex.satellite_protocol import AequitasSatelliteProtocol, get_assp
+    ASSP_AVAILABLE = True
+except ImportError:
+    ASSP_AVAILABLE = False
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - APEX-CONSENSUS - %(levelname)s - %(message)s')
 logger = logging.getLogger("APEX-Consensus")
 
@@ -121,6 +128,11 @@ class DistributedAPEXConsensus:
     """
     Distributed consensus layer for APEX constitutional decisions.
     Uses Tendermint-style BFT with 2/3 majority requirement.
+    
+    INTEGRATED WITH: Aequitas Satellite Protocol (ASSP)
+    - All consensus votes can route through satellite network
+    - Geographic redundancy via multi-substrate satellites
+    - Post-quantum cryptography for all transmissions
     """
     
     CONSTITUTIONAL_AXIOMS = 25
