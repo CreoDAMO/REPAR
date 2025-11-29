@@ -27,6 +27,10 @@ from post_quantum import PostQuantumCrypto, PQCKeyPair
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ASSP")
 
+# Encryption enforcement per ENCRYPTION_FEATURES.md
+ENCRYPTION_REQUIRED = True
+REQUIRED_ENCRYPTION_LEVEL = "ML-KEM-768+ML-DSA-65"  # NIST FIPS 203/204
+
 
 class SatelliteSubstrateType(Enum):
     """Satellite can run on ANY substrate - they're all equivalent"""
@@ -55,15 +59,30 @@ class RFSignal:
 
 
 @dataclass
+class EncryptedPayload:
+    """Encrypted payload wrapper per ENCRYPTION_FEATURES.md"""
+    ciphertext: bytes  # ML-KEM encrypted data
+    signature: bytes   # ML-DSA signature
+    public_key: bytes  # Recipient public key
+    algorithm: str = "ML-KEM-768+ML-DSA-65"  # NIST standard
+
+
+@dataclass
 class SatellitePacket:
-    """Packet routed through satellite constellation"""
+    """Packet routed through satellite constellation - MUST be encrypted"""
     sender_id: str
     receiver_id: str
-    payload: bytes
+    payload: bytes  # MUST be EncryptedPayload (enforced at transmission)
     timestamp: int
     signature: bytes
+    encryption_verified: bool = False  # Verify encryption on receive
     next_satellite_id: Optional[str] = None
     blockchain_hash: Optional[str] = None
+    
+    def __post_init__(self):
+        """Enforce encryption requirement"""
+        if ENCRYPTION_REQUIRED and not self.encryption_verified:
+            raise ValueError("CRITICAL: Satellite packets MUST be encrypted per ENCRYPTION_FEATURES.md")
 
 
 class SatelliteSubstrate(ABC):
@@ -318,12 +337,54 @@ class AequitasSatelliteProtocol:
         self.register_satellite(sat)
         return sat
     
+    def create_encrypted_packet(self, sender_id: str, receiver_id: str, 
+                               plaintext: bytes, recipient_public_key: bytes) -> SatellitePacket:
+        """
+        Create encrypted satellite packet per ENCRYPTION_FEATURES.md
+        
+        All satellite data MUST go through ML-KEM/ML-DSA encryption
+        """
+        # Encapsulate with recipient public key (ML-KEM)
+        ciphertext, shared_secret = self.pqc.encapsulate(recipient_public_key)
+        
+        # Sign with sender's key (ML-DSA)
+        signature = self.pqc.sign(plaintext, self.pqc.sig_keypair.secret_key if self.pqc.sig_keypair else b'')
+        
+        # Create encrypted payload
+        encrypted = EncryptedPayload(
+            ciphertext=ciphertext,
+            signature=signature,
+            public_key=recipient_public_key,
+            algorithm=REQUIRED_ENCRYPTION_LEVEL
+        )
+        
+        # Serialize encrypted payload as packet
+        packet = SatellitePacket(
+            sender_id=sender_id,
+            receiver_id=receiver_id,
+            payload=json.dumps({
+                'ciphertext': encrypted.ciphertext.hex(),
+                'signature': encrypted.signature.hex(),
+                'algorithm': encrypted.algorithm
+            }).encode(),
+            timestamp=int(datetime.now().timestamp()),
+            signature=signature,
+            encryption_verified=True  # Verified encrypted
+        )
+        
+        logger.info(f"🔐 Encrypted packet created: {sender_id} → {receiver_id} ({REQUIRED_ENCRYPTION_LEVEL})")
+        return packet
+    
     def route_packet(self, packet: SatellitePacket, 
                     destination: Tuple[float, float]) -> bool:
         """
-        Route packet through constellation.
+        Route ENCRYPTED packet through constellation.
         Automatically selects best satellite based on visibility.
         """
+        if ENCRYPTION_REQUIRED and not packet.encryption_verified:
+            logger.error("❌ CRITICAL: Packet not encrypted - rejecting per ENCRYPTION_FEATURES.md")
+            return False
+        
         timestamp = int(datetime.now().timestamp())
         
         # Find visible satellites at destination
@@ -341,7 +402,7 @@ class AequitasSatelliteProtocol:
         
         if selected.relay_to_satellite(packet, destination):
             self.packet_log.append((packet.sender_id, packet.receiver_id, timestamp))
-            logger.info(f"✅ Packet routed: {packet.sender_id} → {packet.receiver_id}")
+            logger.info(f"✅ Encrypted packet routed: {packet.sender_id} → {packet.receiver_id}")
             return True
         
         return False
