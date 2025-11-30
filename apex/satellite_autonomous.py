@@ -87,6 +87,16 @@ class ScalingDecision:
     executed: bool = False
 
 
+@dataclass
+class UtilizationMetrics:
+    avg_cpu: float
+    avg_memory: float
+    avg_latency: float
+    total_packets: int
+    packets_per_node: float
+    healthy_ratio: float
+
+
 class AutonomousSatelliteLoop:
     """
     Autonomous management loop for satellite constellation.
@@ -94,7 +104,7 @@ class AutonomousSatelliteLoop:
     Implements the core autonomous behaviors:
     1. Self-Healing: Detect and recover failed nodes
     2. Self-Monitoring: Continuous health checks and metrics
-    3. Self-Scaling: Dynamic capacity management
+    3. Self-Scaling: Dynamic capacity management based on utilization
     """
     
     MIN_HEALTHY_NODES = 3
@@ -102,18 +112,27 @@ class AutonomousSatelliteLoop:
     HEALTH_CHECK_INTERVAL = 30
     SCALING_COOLDOWN = 300
     
+    SCALE_UP_CPU_THRESHOLD = 75.0
+    SCALE_UP_MEMORY_THRESHOLD = 80.0
+    SCALE_DOWN_CPU_THRESHOLD = 25.0
+    SCALE_DOWN_MEMORY_THRESHOLD = 30.0
+    SCALE_UP_LATENCY_THRESHOLD = 300.0
+    MIN_HEALTHY_RATIO = 0.6
+    
     def __init__(self, node_id: str = "autonomous-controller"):
         self.node_id = node_id
         self.node_health: Dict[str, NodeHealth] = {}
         self.metrics_history: List[ConstellationMetrics] = []
         self.scaling_history: List[ScalingDecision] = []
         self.recovered_nodes: Set[str] = set()
+        self.utilization_history: List[UtilizationMetrics] = []
         
         self.assp = get_assp() if ASSP_AVAILABLE else None
         self.coordinator = get_coordinator() if ASSP_AVAILABLE else None
         
         self._running = False
         self._last_scaling = datetime.now() - timedelta(seconds=self.SCALING_COOLDOWN)
+        self._cooldown_enforced = True
         
         logger.info("=" * 80)
         logger.info("AUTONOMOUS SATELLITE LOOP INITIALIZED")
@@ -122,6 +141,9 @@ class AutonomousSatelliteLoop:
         logger.info(f"Min Healthy Nodes: {self.MIN_HEALTHY_NODES}")
         logger.info(f"Max Nodes: {self.MAX_NODES}")
         logger.info(f"Health Check Interval: {self.HEALTH_CHECK_INTERVAL}s")
+        logger.info(f"Scale Up CPU Threshold: {self.SCALE_UP_CPU_THRESHOLD}%")
+        logger.info(f"Scale Down CPU Threshold: {self.SCALE_DOWN_CPU_THRESHOLD}%")
+        logger.info(f"Scaling Cooldown: {self.SCALING_COOLDOWN}s")
         logger.info("=" * 80)
     
     async def start(self) -> None:
@@ -297,46 +319,108 @@ class AutonomousSatelliteLoop:
             packet_loss_rate=packet_loss
         )
     
-    async def _scaling_decision(self, metrics: ConstellationMetrics) -> ScalingDecision:
-        """Decide whether to scale the constellation"""
+    def _collect_utilization(self) -> UtilizationMetrics:
+        """Collect utilization metrics for scaling decisions"""
+        if not self.node_health:
+            return UtilizationMetrics(
+                avg_cpu=0, avg_memory=0, avg_latency=0,
+                total_packets=0, packets_per_node=0, healthy_ratio=0
+            )
         
-        if datetime.now() - self._last_scaling < timedelta(seconds=self.SCALING_COOLDOWN):
+        healthy = sum(1 for h in self.node_health.values() if h.state == NodeState.HEALTHY)
+        
+        return UtilizationMetrics(
+            avg_cpu=sum(h.cpu_usage for h in self.node_health.values()) / len(self.node_health),
+            avg_memory=sum(h.memory_usage for h in self.node_health.values()) / len(self.node_health),
+            avg_latency=sum(h.network_latency_ms for h in self.node_health.values()) / len(self.node_health),
+            total_packets=sum(h.packets_processed for h in self.node_health.values()),
+            packets_per_node=sum(h.packets_processed for h in self.node_health.values()) / len(self.node_health),
+            healthy_ratio=healthy / len(self.node_health) if self.node_health else 0
+        )
+    
+    async def _scaling_decision(self, metrics: ConstellationMetrics) -> ScalingDecision:
+        """Decide whether to scale based on utilization metrics with cooldown enforcement"""
+        
+        time_since_last = datetime.now() - self._last_scaling
+        cooldown_active = time_since_last < timedelta(seconds=self.SCALING_COOLDOWN)
+        
+        if cooldown_active and self._cooldown_enforced:
+            remaining = self.SCALING_COOLDOWN - time_since_last.seconds
             return ScalingDecision(
                 action=ScalingAction.NONE,
                 target_node_count=metrics.total_nodes,
-                reason="Scaling cooldown active"
+                reason=f"Scaling cooldown active ({remaining}s remaining)"
             )
+        
+        utilization = self._collect_utilization()
+        self.utilization_history.append(utilization)
+        
+        if len(self.utilization_history) > 100:
+            self.utilization_history = self.utilization_history[-100:]
         
         if metrics.healthy_nodes < self.MIN_HEALTHY_NODES:
             target = self.MIN_HEALTHY_NODES + 2
             return ScalingDecision(
                 action=ScalingAction.SCALE_UP,
                 target_node_count=target,
-                reason=f"Healthy nodes ({metrics.healthy_nodes}) below minimum ({self.MIN_HEALTHY_NODES})"
+                reason=f"CRITICAL: Healthy nodes ({metrics.healthy_nodes}) below minimum ({self.MIN_HEALTHY_NODES})"
             )
         
-        avg_load = sum(h.cpu_usage for h in self.node_health.values()) / max(len(self.node_health), 1)
+        if utilization.healthy_ratio < self.MIN_HEALTHY_RATIO:
+            current = len(self.node_health)
+            target = min(current + 3, self.MAX_NODES)
+            return ScalingDecision(
+                action=ScalingAction.SCALE_UP,
+                target_node_count=target,
+                reason=f"Low healthy ratio ({utilization.healthy_ratio:.1%} < {self.MIN_HEALTHY_RATIO:.1%})"
+            )
         
-        if avg_load > 80:
+        if utilization.avg_cpu > self.SCALE_UP_CPU_THRESHOLD:
             target = min(metrics.total_nodes + 3, self.MAX_NODES)
             return ScalingDecision(
                 action=ScalingAction.SCALE_UP,
                 target_node_count=target,
-                reason=f"High load detected ({avg_load:.1f}% average CPU)"
+                reason=f"High CPU utilization ({utilization.avg_cpu:.1f}% > {self.SCALE_UP_CPU_THRESHOLD}%)"
             )
         
-        if avg_load < 20 and metrics.total_nodes > self.MIN_HEALTHY_NODES + 2:
-            target = max(metrics.total_nodes - 2, self.MIN_HEALTHY_NODES)
+        if utilization.avg_memory > self.SCALE_UP_MEMORY_THRESHOLD:
+            target = min(metrics.total_nodes + 2, self.MAX_NODES)
             return ScalingDecision(
-                action=ScalingAction.SCALE_DOWN,
+                action=ScalingAction.SCALE_UP,
                 target_node_count=target,
-                reason=f"Low load detected ({avg_load:.1f}% average CPU)"
+                reason=f"High memory utilization ({utilization.avg_memory:.1f}% > {self.SCALE_UP_MEMORY_THRESHOLD}%)"
             )
+        
+        if utilization.avg_latency > self.SCALE_UP_LATENCY_THRESHOLD:
+            target = min(metrics.total_nodes + 2, self.MAX_NODES)
+            return ScalingDecision(
+                action=ScalingAction.SCALE_UP,
+                target_node_count=target,
+                reason=f"High latency ({utilization.avg_latency:.1f}ms > {self.SCALE_UP_LATENCY_THRESHOLD}ms)"
+            )
+        
+        can_scale_down = (
+            utilization.avg_cpu < self.SCALE_DOWN_CPU_THRESHOLD and
+            utilization.avg_memory < self.SCALE_DOWN_MEMORY_THRESHOLD and
+            metrics.total_nodes > self.MIN_HEALTHY_NODES + 2 and
+            utilization.healthy_ratio > 0.9
+        )
+        
+        if can_scale_down:
+            if len(self.utilization_history) >= 5:
+                recent_cpu = [u.avg_cpu for u in self.utilization_history[-5:]]
+                if all(c < self.SCALE_DOWN_CPU_THRESHOLD for c in recent_cpu):
+                    target = max(metrics.total_nodes - 2, self.MIN_HEALTHY_NODES)
+                    return ScalingDecision(
+                        action=ScalingAction.SCALE_DOWN,
+                        target_node_count=target,
+                        reason=f"Sustained low utilization (CPU: {utilization.avg_cpu:.1f}%, Memory: {utilization.avg_memory:.1f}%)"
+                    )
         
         return ScalingDecision(
             action=ScalingAction.NONE,
             target_node_count=metrics.total_nodes,
-            reason="No scaling needed"
+            reason=f"Utilization within bounds (CPU: {utilization.avg_cpu:.1f}%, Memory: {utilization.avg_memory:.1f}%)"
         )
     
     async def _execute_scaling(self, decision: ScalingDecision) -> None:

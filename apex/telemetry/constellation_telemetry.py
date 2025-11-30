@@ -98,11 +98,11 @@ class ConstellationTelemetry:
     DEFAULT_AGGREGATION_WINDOW = 60
     
     THRESHOLDS = {
-        MetricType.LATENCY: {"warning": 200, "critical": 500},
-        MetricType.PACKET_LOSS: {"warning": 0.05, "critical": 0.15},
-        MetricType.CPU_USAGE: {"warning": 70, "critical": 90},
-        MetricType.MEMORY_USAGE: {"warning": 75, "critical": 90},
-        MetricType.THROUGHPUT: {"warning": 100, "critical": 50},
+        MetricType.LATENCY: {"warning": 200, "critical": 500, "direction": "higher_is_worse"},
+        MetricType.PACKET_LOSS: {"warning": 0.05, "critical": 0.15, "direction": "higher_is_worse"},
+        MetricType.CPU_USAGE: {"warning": 70, "critical": 90, "direction": "higher_is_worse"},
+        MetricType.MEMORY_USAGE: {"warning": 75, "critical": 90, "direction": "higher_is_worse"},
+        MetricType.THROUGHPUT: {"warning": 100, "critical": 50, "direction": "lower_is_worse"},
     }
     
     def __init__(self, 
@@ -163,12 +163,28 @@ class ConstellationTelemetry:
         ))
     
     def _check_thresholds(self, data_point: MetricDataPoint) -> None:
-        """Check if metric exceeds thresholds and create alerts"""
+        """Check if metric exceeds thresholds and create alerts (supports both directions)"""
         
         if data_point.metric_type not in self.THRESHOLDS:
             return
         
         thresholds = self.THRESHOLDS[data_point.metric_type]
+        direction = thresholds.get("direction", "higher_is_worse")
+        
+        if direction == "lower_is_worse":
+            if data_point.value <= thresholds["critical"]:
+                self._create_alert(
+                    AlertSeverity.CRITICAL,
+                    data_point,
+                    thresholds["critical"]
+                )
+            elif data_point.value <= thresholds["warning"]:
+                self._create_alert(
+                    AlertSeverity.WARNING,
+                    data_point,
+                    thresholds["warning"]
+                )
+            return
         
         if data_point.value >= thresholds["critical"]:
             self._create_alert(
