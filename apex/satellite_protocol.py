@@ -21,6 +21,7 @@ from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime
 from enum import Enum
 from abc import ABC, abstractmethod
+import copy
 
 from post_quantum import PostQuantumCrypto, PQCKeyPair
 
@@ -444,6 +445,16 @@ class AequitasSatelliteProtocol:
             for sender, receiver, ts in self.packet_log
         ]
 
+    def get_redacted_constellation_status(self) -> Dict[str, Any]:
+        """
+        Return constellation status with sensitive position fields redacted.
+        """
+        status = copy.deepcopy(self.get_constellation_status())
+        # Redact position info for every satellite
+        for sat in status.get('satellites', []):
+            if 'position' in sat:
+                sat['position'] = {"lat": "REDACTED", "lon": "REDACTED", "alt_km": "REDACTED"}
+        return status
 
 # Global satellite protocol instance
 _global_assp: Optional[AequitasSatelliteProtocol] = None
@@ -468,12 +479,9 @@ if __name__ == "__main__":
     # Create mobile validator satellites
     mobile1 = assp.create_mobile_satellite("validator-001")
     
-    # Prepare redacted constellation status with position omitted for logging
-    constellation_status = assp.get_constellation_status()
-    for sat in constellation_status['satellites']:
-        if 'position' in sat:
-            sat['position'] = {"lat": "REDACTED", "lon": "REDACTED", "alt_km": "REDACTED"}
-    logger.info(f"\n🌍 Constellation Status:\n{json.dumps(constellation_status, indent=2)}\n")
+    # Log only redacted constellation status to avoid leaking sensitive positional data
+    redacted_constellation_status = assp.get_redacted_constellation_status()
+    logger.info(f"\n🌍 Constellation Status:\n{json.dumps(redacted_constellation_status, indent=2)}\n")
     
     # Test packet routing
     packet = SatellitePacket(
