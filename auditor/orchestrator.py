@@ -15,6 +15,7 @@ import sys
 import json
 import time
 import asyncio
+import hashlib
 from pathlib import Path
 from datetime import datetime
 from typing import List, Dict, Optional
@@ -22,6 +23,14 @@ import urllib.parse
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
+
+# Satellite integration
+try:
+    sys.path.insert(0, str(Path(__file__).parent.parent / "apex"))
+    from satellite_coordinator import get_coordinator, SubsystemType, CrossSubsystemMessage, MessagePriority
+    SATELLITE_AVAILABLE = True
+except ImportError:
+    SATELLITE_AVAILABLE = False
 
 # APEX System Integration - PRIMARY & REQUIRED (Sovereign, Cannot Be Shut Down)
 try:
@@ -73,12 +82,23 @@ class CerberusOrchestrator:
         print("=" * 80)
         print("🏠 PRIMARY: APEX System (Llama/Mistral/Phi-3/DeepSeek - 100% local, required)")
         print("📊 OPTIONAL: External services available but not depended upon")
+        print("🛰️  SATELLITE: Cross-subsystem communication via satellite protocol")
         print("=" * 80)
         
         self.repo_path = Path(repo_path).resolve()
         self.reports_path = self.repo_path / "auditor" / "reports"
         self.threat_ledger_path = self.reports_path / "threat_ledger.json"
         self.reports_path.mkdir(parents=True, exist_ok=True)
+        
+        # Satellite integration
+        self.satellite_coordinator = None
+        if SATELLITE_AVAILABLE:
+            try:
+                self.satellite_coordinator = get_coordinator()
+                self.satellite_coordinator.register_subsystem(SubsystemType.AUDITOR, "http://auditor:8000/api")
+                print("✅ Satellite coordinator connected - distributed audit logging enabled")
+            except Exception as e:
+                print(f"⚠️  Satellite integration failed: {e}")
         
         # Initialize database (OPTIONAL)
         self.db = None
@@ -223,6 +243,39 @@ class CerberusOrchestrator:
                 print("✅ Report saved to database")
             except Exception as e:
                 print(f"⚠️  Database report save failed: {e}")
+        
+        # Broadcast report through satellite protocol
+        if self.satellite_coordinator and len(all_findings) > 0:
+            try:
+                await self._broadcast_findings_via_satellite(all_findings)
+                print("✅ Audit findings broadcast to constellation")
+            except Exception as e:
+                print(f"⚠️  Satellite broadcast failed: {e}")
+    
+    async def _broadcast_findings_via_satellite(self, findings: List[Dict]) -> None:
+        """Broadcast audit findings through satellite protocol to all subsystems"""
+        if not self.satellite_coordinator or not findings:
+            return
+        
+        summary = {
+            "audit_type": "distributed_security_audit",
+            "finding_count": len(findings),
+            "critical_findings": sum(1 for f in findings if f.get("severity") == "CRITICAL"),
+            "timestamp": datetime.now().isoformat(),
+            "findings_hash": hashlib.sha256(json.dumps(findings, sort_keys=True).encode()).hexdigest()
+        }
+        
+        try:
+            message = CrossSubsystemMessage(
+                id=f"audit-{datetime.now().timestamp()}",
+                source=SubsystemType.AUDITOR,
+                destination=SubsystemType.APEX,
+                payload={"audit_summary": summary, "findings_count": len(findings)},
+                priority=MessagePriority.HIGH
+            )
+            await self.satellite_coordinator.send_message(message)
+        except Exception as e:
+            print(f"Failed to broadcast findings: {e}")
         
         print("\n" + "=" * 80)
         print("✅ AUDIT COMPLETE")
