@@ -31,8 +31,8 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          # FIX #1: Use Python 3.10 for better ML/AI package compatibility
-          python-version: '3.10'
+          # FIX #1: Use Python 3.11 (compatible with torch 2.5+, transformers 4.x, liboqs 3.9+)
+          python-version: '3.11'
           cache: 'pip'
       
       - name: Install APEX dependencies
