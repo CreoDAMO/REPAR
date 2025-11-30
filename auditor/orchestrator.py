@@ -4,8 +4,13 @@
 AEQUITAS CERBERUS AUDITOR
 The Master AI Orchestrator for Sovereign Security Auditing
 
+CRITICAL: All security operations run on AVM/ACE constellation nodes via satellite protocol
+
 Architecture:
 - PRIMARY: APEX System (Llama 3.1, Mistral 7B, Phi-3, DeepSeek - 100% local, required)
+- VULNERABILITY DETECTION: Runs on ACE constellation nodes via satellite (NOT Replit)
+- THREAT ANALYSIS: Runs on AVM constellation nodes via satellite (NOT Replit)
+- PATCH GENERATION: Runs on AVM constellation nodes via satellite (NOT Replit)
 - OPTIONAL FALLBACKS: NVIDIA, Anthropic, OpenAI (available but not depended upon)
 - PHILOSOPHY: APEX never fails. Optional services enhance but don't enable.
 """
