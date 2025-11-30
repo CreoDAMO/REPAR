@@ -13,9 +13,9 @@ const DeploymentVerification = () => {
   const API_CATEGORIES = {
     critical: [
       { name: 'Cloudflare DNS', key: 'cloudflare', icon: Cloud, description: 'DNS & CDN management' },
-      { name: 'DigitalOcean', key: 'digitalocean', icon: Server, description: 'Deployment infrastructure' },
-      { name: 'Anthropic Claude', key: 'anthropic', icon: Cpu, description: 'AI legal analysis' },
-      { name: 'OpenAI GPT-4', key: 'openai', icon: Cpu, description: 'AI claim parsing' },
+      { name: 'ACE/AVM Constellation', key: 'constellation', icon: Server, description: 'Distributed deployment (satellite protocol)' },
+      { name: 'APEX LLM Ensemble', key: 'apex', icon: Cpu, description: 'Local AI reasoning (sovereign)' },
+      { name: 'OpenAI GPT-4', key: 'openai', icon: Cpu, description: 'Optional AI enhancement' },
       { name: 'X.AI Grok', key: 'xai', icon: Cpu, description: 'Real-time intelligence' },
       { name: 'DeepSeek', key: 'deepseek', icon: Cpu, description: 'Cost-effective AI' },
       { name: 'Coinbase', key: 'coinbase', icon: DollarSign, description: 'Fiat on/off ramp' },
@@ -291,7 +291,7 @@ const DeploymentVerification = () => {
               ✓ System Ready for Production
             </h3>
             <p className="text-green-800">
-              All critical APIs are configured and verified. The system is ready for deployment to DigitalOcean.
+              All critical APIs are configured and verified. The system is ready for deployment to ACE/AVM constellation nodes via satellite protocol.
             </p>
           </div>
         )}

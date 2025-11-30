@@ -289,8 +289,8 @@ export default function ValidatorSubsidy() {
           />
           <StatCard
             title="Payment Source"
-            value="DEX Treasury"
-            subtitle="Funded by trading fees (USDC)"
+            value="DEX Treasury (Constellation)"
+            subtitle="ACE/AVM nodes, funded by trading fees (USDC)"
             icon={<Shield className="h-8 w-8 text-orange-600" />}
             color="orange"
           />
@@ -328,10 +328,13 @@ export default function ValidatorSubsidy() {
               <div className="bg-green-50 p-6 rounded-lg border-2 border-green-200">
                 <div className="flex items-center space-x-2 mb-3">
                   <DollarSign className="h-6 w-6 text-green-600" />
-                  <h3 className="text-lg font-bold text-green-900">Monthly Infrastructure</h3>
+                  <h3 className="text-lg font-bold text-green-900">Monthly Infrastructure (ACE/AVM Constellation)</h3>
                 </div>
                 <p className="text-sm text-green-800">
-                  Multi-server architecture: Validator Core ($168), RPC Fleet ($74), AI Engine ($30), Secure API Gateway ($32)
+                  Distributed constellation architecture: Validator Node ($168), Satellite Relay ($74), APEX AI Engine ($30), Secure Constellation Gateway ($32)
+                </p>
+                <p className="text-sm text-green-800 mt-2">
+                  Deployment: ACE/AVM constellation nodes (not centralized cloud)
                 </p>
                 <p className="text-sm text-green-800 mt-2">
                   Total: ${currentInfrastructure.toLocaleString()}/month

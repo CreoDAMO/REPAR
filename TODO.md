@@ -148,6 +148,38 @@
 
 ---
 
+## 🆕 FRONTEND DASHBOARD UPDATES (NEW TASKS)
+
+### Task 20 - Fix BlackPaper Dashboard (IN PROGRESS)
+- **Status:** ⏳ IN PROGRESS
+- **Description:** Ensure all BlackPaper dashboard tabs work properly and display correctly
+- **File:** `frontend/src/pages/BlackPaper.jsx`
+- **Changes:** Verify tab navigation, add missing sections if needed
+- **Started:** December 1, 2025
+
+### Task 21 - Update Development Roadmap Dashboard (IN PROGRESS)
+- **Status:** ⏳ IN PROGRESS
+- **Description:** Update Roadmap to reflect current constellation architecture (infrastructure has surpassed original roadmap phases)
+- **File:** `frontend/src/pages/Roadmap.jsx`
+- **Changes:** Replace outdated Phase 1-5 with current constellation deployment status, reflect ASSP integration, satellite autonomy
+- **Started:** December 1, 2025
+
+### Task 22 - Fix Validator Dashboard (IN PROGRESS)
+- **Status:** ⏳ IN PROGRESS
+- **Description:** Remove DigitalOcean dependency references, update to show ACE/AVM constellation deployment
+- **File:** `frontend/src/pages/ValidatorSubsidy.jsx`
+- **Changes:** Replace "DigitalOcean" references with "ACE/AVM Constellation", update infrastructure descriptions
+- **Started:** December 1, 2025
+
+### Task 23 - Update Deployment Verification Dashboard (IN PROGRESS)
+- **Status:** ⏳ IN PROGRESS
+- **Description:** Remove DigitalOcean as critical dependency, replace with constellation deployment verification
+- **File:** `frontend/src/pages/DeploymentVerification.jsx`
+- **Changes:** Replace "DigitalOcean" with "ACE/AVM Constellation", update critical/recommended/optional API categories
+- **Started:** December 1, 2025
+
+---
+
 ## Summary
 
 | Category | Completed | Deferred | Total |
