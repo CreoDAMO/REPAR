@@ -49,6 +49,15 @@ except (ImportError, ModuleNotFoundError) as e:
     print(f"❌ CRITICAL: APEX System required but not available: {e}")
     sys.exit(1)
 
+# Constellation-Deployed Security Modules (ACE/AVM nodes via satellite)
+try:
+    from vulnerability_detector import VulnerabilityDetector
+    from threat_analyzer import ThreatAnalyzer
+    from patch_generator import PatchGenerator
+    CONSTELLATION_MODULES_AVAILABLE = True
+except (ImportError, ModuleNotFoundError):
+    CONSTELLATION_MODULES_AVAILABLE = False
+
 # Optional supporting agents (enhance but don't enable)
 try:
     from agents.aequitas_ai import AequitasAI
@@ -133,6 +142,26 @@ class CerberusOrchestrator:
             print(f"❌ CRITICAL: APEX failed - system cannot start: {e}")
             raise RuntimeError("APEX System is required") from e
         
+        # Constellation-Deployed Security Modules (ACE/AVM nodes via satellite)
+        self.vuln_detector = None
+        self.threat_analyzer = None
+        self.patch_generator = None
+        
+        print("\n🛰️  Initializing Constellation-Deployed Security Modules...")
+        
+        if CONSTELLATION_MODULES_AVAILABLE:
+            try:
+                self.vuln_detector = VulnerabilityDetector()
+                self.threat_analyzer = ThreatAnalyzer()
+                self.patch_generator = PatchGenerator()
+                print("   ✅ Vulnerability Detector (ACE constellation)")
+                print("   ✅ Threat Analyzer (AVM constellation)")
+                print("   ✅ Patch Generator (AVM constellation)")
+            except Exception as e:
+                print(f"   ⚠️  Constellation modules failed: {e}")
+        else:
+            print("   ⚠️  Constellation modules not available (optional)")
+        
         # Optional fallback services (enhance but don't enable)
         self.aequitas_ai = None
         self.adversaries = None
@@ -165,6 +194,7 @@ class CerberusOrchestrator:
         
         print("\n✅ CERBERUS AUDITOR READY")
         print("   PRIMARY (Required): APEX System ✅")
+        print("   CONSTELLATION: Security modules (ACE/AVM) ✅")
         print("   OPTIONAL (Enhanced): External services " + ("✅" if (self.aequitas_ai or self.adversaries) else "⚠️"))
         print("=" * 80)
         print("\n📊 SOVEREIGNTY ECONOMICS:")
@@ -229,13 +259,52 @@ class CerberusOrchestrator:
                 if fixes:
                     all_fixes.extend(fixes)
         
-        # Generate report
+        # CONSTELLATION-DEPLOYED SECURITY ANALYSIS
+        print("\n🛰️  Executing constellation-deployed security analysis...")
+        constellation_results = {}
+        
+        # Phase 1: Vulnerability Detection on ACE constellation nodes
+        if self.vuln_detector:
+            try:
+                vuln_results = await self.vuln_detector.scan_codebase(str(target_path), satellite_route=True)
+                constellation_results['vulnerabilities'] = vuln_results
+                print(f"✅ Vulnerability Detection (ACE constellation): {vuln_results.get('scan_count', 0)} found")
+                # Merge findings
+                if vuln_results.get('vulnerabilities'):
+                    all_findings.extend(vuln_results['vulnerabilities'])
+            except Exception as e:
+                print(f"⚠️  Vulnerability detection failed: {e}")
+        
+        # Phase 2: Threat Analysis on AVM constellation nodes
+        if self.threat_analyzer and all_findings:
+            try:
+                threat_results = await self.threat_analyzer.analyze_threats(all_findings, satellite_route=True)
+                constellation_results['threats'] = threat_results
+                print(f"✅ Threat Analysis (AVM constellation): {threat_results.get('threat_count', 0)} analyzed")
+            except Exception as e:
+                print(f"⚠️  Threat analysis failed: {e}")
+        
+        # Phase 3: Patch Generation on AVM constellation nodes
+        if self.patch_generator and constellation_results.get('threats'):
+            try:
+                threat_list = constellation_results['threats'].get('threats', [])
+                patch_results = await self.patch_generator.generate_patches(threat_list, satellite_route=True)
+                constellation_results['patches'] = patch_results
+                print(f"✅ Patch Generation (AVM constellation): {patch_results.get('patch_count', 0)} generated")
+                # Merge patches
+                if patch_results.get('patches'):
+                    all_fixes.extend(patch_results['patches'])
+            except Exception as e:
+                print(f"⚠️  Patch generation failed: {e}")
+        
+        # Generate report with constellation results
         elapsed = time.time() - start_time
         report = self._generate_comprehensive_report(
             all_findings,
             all_fixes,
             target_directory,
-            elapsed
+            elapsed,
+            constellation_results
         )
         
         # Save report
@@ -560,9 +629,10 @@ class CerberusOrchestrator:
         findings: List[Dict],
         fixes: List[Dict],
         target: str,
-        elapsed: float
+        elapsed: float,
+        constellation_results: Optional[Dict] = None
     ) -> Dict:
-        """Generate comprehensive audit report"""
+        """Generate comprehensive audit report with constellation results"""
         
         severity_counts = {
             'CRITICAL': len([f for f in findings if f.get('severity') == 'CRITICAL']),
@@ -579,7 +649,7 @@ class CerberusOrchestrator:
         score -= severity_counts['LOW'] * 2
         score = max(0, score)
         
-        return {
+        report = {
             'audit_type': 'full_codebase',
             'target': target,
             'timestamp': datetime.now().isoformat(),
@@ -594,6 +664,28 @@ class CerberusOrchestrator:
             'fixes': fixes,
             'recommendations': self._generate_recommendations(findings)
         }
+        
+        # Add constellation deployment results
+        if constellation_results:
+            report['constellation_deployment'] = {
+                'vulnerability_detection': {
+                    'status': constellation_results.get('vulnerabilities', {}).get('status', 'pending'),
+                    'deployment': 'ACE constellation (via satellite protocol)',
+                    'count': constellation_results.get('vulnerabilities', {}).get('scan_count', 0)
+                },
+                'threat_analysis': {
+                    'status': constellation_results.get('threats', {}).get('status', 'pending'),
+                    'deployment': 'AVM constellation (via satellite protocol)',
+                    'count': constellation_results.get('threats', {}).get('threat_count', 0)
+                },
+                'patch_generation': {
+                    'status': constellation_results.get('patches', {}).get('status', 'pending'),
+                    'deployment': 'AVM constellation (via satellite protocol)',
+                    'count': constellation_results.get('patches', {}).get('patch_count', 0)
+                }
+            }
+        
+        return report
     
     def _generate_document_report(
         self,
