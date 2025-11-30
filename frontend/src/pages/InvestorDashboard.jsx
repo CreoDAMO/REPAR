@@ -119,28 +119,20 @@ const FINANCIAL_PARAMETERS = {
 };
 
 export default function InvestorDashboard() {
-  const [_loading, _setLoading] = useState(true);
   const [customInvestment, setCustomInvestment] = useState(22000000);
   const [customValuation, setCustomValuation] = useState(7000000000);
-  const [_selectedScenario, _setSelectedScenario] = useState('base');
   const [showPitchDeck, setShowPitchDeck] = useState(false);
   const [showCrowdfunding, setShowCrowdfunding] = useState(false);
   const [aiAnalyzing, setAiAnalyzing] = useState(false);
   const [aiInsight, setAiInsight] = useState(null);
-  const [_metrics, _setMetrics] = useState({
-    totalStaked: 0,
-    estimatedAPY: 0,
-    totalReturns: 0,
-    portfolioValue: 0,
-  });
 
   // State for portfolio data and loading indicator
   const [isLoading, setIsLoading] = useState(true);
-  const [_totalInvested, _setTotalInvested] = useState(0);
-  const [_currentValue, _setCurrentValue] = useState(0);
-  const [_roi, _setRoi] = useState(0);
-  const [_yieldRate, _setYieldRate] = useState(0);
-  const [_portfolioData, _setPortfolioData] = useState([]);
+  const [totalInvested, setTotalInvested] = useState(0);
+  const [currentValue, setCurrentValue] = useState(0);
+  const [roi, setRoi] = useState(0);
+  const [yieldRate, setYieldRate] = useState(0);
+  const [portfolioData, setPortfolioData] = useState([]);
 
 
   const formatCurrency = (value) => {
@@ -231,8 +223,8 @@ export default function InvestorDashboard() {
         const client = await cosmosClient.getStargateClient();
         if (client && cosmosClient.account) {
           try {
-            // Query staking delegations
-            const stakingQuery = {
+            // Query staking delegations (placeholder - will be used when blockchain is live)
+            const _stakingQuery = {
               path: "/cosmos.staking.v1beta1.Query/DelegatorDelegations",
               data: new TextEncoder().encode(JSON.stringify({ 
                 delegator_addr: cosmosClient.account.address 
@@ -240,8 +232,8 @@ export default function InvestorDashboard() {
               prove: false,
             };
 
-            // Query DEX liquidity positions
-            const lpQuery = {
+            // Query DEX liquidity positions (placeholder - will be used when blockchain is live)
+            const _lpQuery = {
               path: "/aequitas.dex.v1.Query/UserPositions",
               data: new TextEncoder().encode(JSON.stringify({ 
                 user: cosmosClient.account.address 
@@ -251,6 +243,8 @@ export default function InvestorDashboard() {
 
             // Process results and update portfolio data
             // This is a placeholder - actual implementation depends on response format
+            void _stakingQuery; // Mark as intentionally unused for now
+            void _lpQuery; // Mark as intentionally unused for now
             setPortfolioData([
               { name: 'Direct Holdings', value: 3500000, percentage: 56 },
               { name: 'Justice Burns', value: 1500000, percentage: 24 },

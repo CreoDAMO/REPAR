@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, Zap, Lock, AlertTriangle, CheckCircle, Layers, TrendingUp, FileText, Bitcoin } from 'lucide-react';
-import { concentratedAuditDefendants, auditMetadata } from '../data/concentratedAuditData';
+import { concentratedAuditDefendants } from '../data/concentratedAuditData';
 
 export default function ConcentratedAudit() {
   const [expandedDefendant, setExpandedDefendant] = useState(null);

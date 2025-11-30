@@ -1,19 +1,22 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const isProduction = process.env.NODE_ENV === 'production';
+const replitDevDomain = process.env.REPLIT_DEV_DOMAIN;
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: typeof process !== 'undefined' && process.env.NODE_ENV === 'production' ? '/REPAR/' : '/',
+  base: isProduction ? '/REPAR/' : '/',
   server: {
     host: '0.0.0.0',
     port: 5000,
     allowedHosts: true,
     hmr: {
       // Replit environment HMR configuration
-      clientPort: typeof process !== 'undefined' && process.env.REPLIT_DEV_DOMAIN ? 443 : 5000,
-      protocol: typeof process !== 'undefined' && process.env.REPLIT_DEV_DOMAIN ? 'wss' : 'ws',
-      host: typeof process !== 'undefined' && process.env.REPLIT_DEV_DOMAIN ? process.env.REPLIT_DEV_DOMAIN : 'localhost',
+      clientPort: replitDevDomain ? 443 : 5000,
+      protocol: replitDevDomain ? 'wss' : 'ws',
+      host: replitDevDomain || 'localhost',
     },
     proxy: {
       '/api': {

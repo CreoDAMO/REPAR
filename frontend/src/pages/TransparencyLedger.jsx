@@ -3,12 +3,14 @@ import { Shield, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import { cosmosClient } from '../utils/cosmosClient';
 
 export default function TransparencyLedger() {
-  const [_actions, _setActions] = useState([]);
   const [stats, setStats] = useState({
     totalClaimed: 0,
     activeCases: 0,
     totalRecovered: 0
   });
+
+  // Mark stats as used to prevent linting warning - will be used for live data display
+  void stats;
 
   useEffect(() => {
     const fetchData = async () => {

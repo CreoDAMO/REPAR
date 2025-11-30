@@ -54,14 +54,14 @@ describe('E2E: Wallet Connection Flow', () => {
   });
 
   it('should connect to Keplr wallet successfully', async () => {
-    const _chainId = 'aequitas-1';
-    const result = await window.keplr.enable(_chainId);
+    const chainId = 'aequitas-1';
+    const result = await window.keplr.enable(chainId);
     expect(result).toBe(true);
   });
 
   it('should retrieve wallet account information', async () => {
-    const _chainId = 'aequitas-1';
-    const key = await window.keplr.getKey(_chainId);
+    const chainId = 'aequitas-1';
+    const key = await window.keplr.getKey(chainId);
     
     expect(key).toBeDefined();
     expect(key.bech32Address).toBe('aequitas1test123456789');
@@ -69,8 +69,8 @@ describe('E2E: Wallet Connection Flow', () => {
   });
 
   it('should get offline signer for transactions', async () => {
-    const _chainId = 'aequitas-1';
-    const signer = window.keplr.getOfflineSigner(_chainId);
+    const chainId = 'aequitas-1';
+    const signer = window.keplr.getOfflineSigner(chainId);
     const accounts = await signer.getAccounts();
     
     expect(accounts).toHaveLength(1);

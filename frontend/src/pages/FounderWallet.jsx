@@ -17,7 +17,7 @@ const FounderWallet = () => {
   const [connectedWallet, setConnectedWallet] = useState(null);
   const [walletBalance, setWalletBalance] = useState('0');
 
-  const [_walletAddresses, _setWalletAddresses] = useState({
+  const [walletAddresses] = useState({
     layer1: FOUNDER_WALLETS.layer1.address,
     layer2: FOUNDER_WALLETS.layer2.address,
     layer3: FOUNDER_WALLETS.layer3.address,

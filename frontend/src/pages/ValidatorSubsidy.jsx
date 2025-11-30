@@ -12,16 +12,16 @@ export default function ValidatorSubsidy() {
   const [loading, setLoading] = useState(true);
 
   // Mock data for initial display or fallback
-  const [_budget, _setBudget] = useState(6456); // $6,456 USDC/month
-  const [_emergency, _setEmergency] = useState(2152); // $2,152 emergency reserve
-  const [_infrastructure, _setInfrastructure] = useState(4304); // $4,304 base infrastructure
+  const [budget] = useState(6456); // $6,456 USDC/month
+  const [emergency] = useState(2152); // $2,152 emergency reserve
+  const [infrastructure] = useState(4304); // $4,304 base infrastructure
 
   // Mock state for pool balance, operator expenses, etc. which will be replaced by live data
   const [poolBalance, setPoolBalance] = useState(45000000);
   const [operatorExpenses, setOperatorExpenses] = useState(12500000);
-  const [_lastDistribution, _setLastDistribution] = useState(new Date(Date.now() - 86400000)); // 1 day ago
-  const [_nextDistribution, _setNextDistribution] = useState(new Date(Date.now() + 86400000)); // 1 day from now
-  const [_totalDistributed, _setTotalDistributed] = useState(128000000);
+  const [lastDistribution, setLastDistribution] = useState(new Date(Date.now() - 86400000)); // 1 day ago
+  const [nextDistribution, setNextDistribution] = useState(new Date(Date.now() + 86400000)); // 1 day from now
+  const [totalDistributed, setTotalDistributed] = useState(128000000);
 
 
   useEffect(() => {

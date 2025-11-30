@@ -110,10 +110,10 @@ export default function NFTMarketplace() {
 
   const [nfts, setNfts] = useState(mockNFTs);
   const [userNFTs, setUserNFTs] = useState([mockNFTs[2]]); // Mock: User owns NFT #3
-  const [_loadingNFTs, _setLoadingNFTs] = useState(false);
+  const [loadingNFTs, setLoadingNFTs] = useState(false);
 
   // Mock listings
-  const [_listings, _setListings] = useState([
+  const [listings, setListings] = useState([
     { id: 'listing-1', nft_id: 'nft-1', price: '500000', seller: 'aequitas1xyz...', status: 'active' },
     { id: 'listing-2', nft_id: 'nft-2', price: '250000', seller: 'aequitas1abc...', status: 'active' },
     { id: 'listing-4', nft_id: 'nft-4', price: '750000', seller: 'aequitas1mno...', status: 'active' },
@@ -170,7 +170,7 @@ export default function NFTMarketplace() {
       } catch (error) {
         console.warn('Using mock NFT data (blockchain unavailable):', error.message);
       } finally {
-        _setLoadingNFTs(false);
+        setLoadingNFTs(false);
       }
     };
 
@@ -179,7 +179,7 @@ export default function NFTMarketplace() {
   }, []);
 
   // Mock auctions
-  const [_auctions, _setAuctions] = useState([
+  const [auctions] = useState([
     {
       id: 'auction-1',
       nft_id: 'nft-1',
