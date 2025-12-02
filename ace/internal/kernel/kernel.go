@@ -3,13 +3,16 @@ package kernel
 import (
         "encoding/json"
         "fmt"
-        "log"
         "net/http"
         "sync"
+
+        "github.com/CreoDAMO/aequitas-cloud-engine/pkg/observability"
+        "go.uber.org/zap"
 )
 
 type Config struct {
         BlockchainRPC     string
+        ChainID           string
         GovernanceEnabled bool
 }
 
@@ -23,6 +26,8 @@ type Resource struct {
 
 type ACEKernel struct {
         config           *Config
+        logger           *zap.Logger
+        metrics          *observability.Metrics
         resourcePool     map[string]*Resource
         identityEngine   IdentityEngine
         scheduler        Scheduler
@@ -80,9 +85,11 @@ type NodeRegistration struct {
         Metadata map[string]string `json:"metadata"`
 }
 
-func NewACEKernel(config *Config) *ACEKernel {
+func NewACEKernel(config *Config, logger *zap.Logger, metrics *observability.Metrics) *ACEKernel {
         return &ACEKernel{
                 config:       config,
+                logger:       logger,
+                metrics:      metrics,
                 resourcePool: make(map[string]*Resource),
                 running:      false,
         }
@@ -103,7 +110,9 @@ func (k *ACEKernel) Initialize(
         k.governanceEngine = governance
         k.aiIntegration = ai
 
-        log.Println("✅ ACE Kernel initialized with all subsystems")
+        if k.logger != nil {
+                k.logger.Info("ACE Kernel initialized with all subsystems")
+        }
 }
 
 func (k *ACEKernel) Start() {
@@ -113,10 +122,14 @@ func (k *ACEKernel) Start() {
         k.running = true
         
         if err := k.aiIntegration.InitializeLocalAI(); err != nil {
-                log.Printf("⚠️  AI integration not available: %v\n", err)
+                if k.logger != nil {
+                        k.logger.Warn("AI integration not available", zap.Error(err))
+                }
         }
         
-        log.Println("🚀 ACE Kernel control plane started")
+        if k.logger != nil {
+                k.logger.Info("ACE Kernel control plane started")
+        }
 }
 
 func (k *ACEKernel) Stop() {
@@ -124,7 +137,9 @@ func (k *ACEKernel) Stop() {
         defer k.mu.Unlock()
         
         k.running = false
-        log.Println("🛑 ACE Kernel control plane stopped")
+        if k.logger != nil {
+                k.logger.Info("ACE Kernel control plane stopped")
+        }
 }
 
 func (k *ACEKernel) AllocateWithConsensus(userDID string, request WorkloadRequest) error {
@@ -143,7 +158,9 @@ func (k *ACEKernel) AllocateWithConsensus(userDID string, request WorkloadReques
                 return fmt.Errorf("scheduling failed: %w", err)
         }
 
-        log.Printf("✅ Allocated workload for %s on node %s\n", userDID, nodeID)
+        if k.logger != nil {
+                k.logger.Info("Allocated workload", zap.String("userDID", userDID), zap.String("nodeID", nodeID))
+        }
         return nil
 }
 
@@ -176,7 +193,9 @@ func (k *ACEKernel) HandleRegisterNode(w http.ResponseWriter, r *http.Request) {
         }
         k.mu.Unlock()
 
-        log.Printf("📡 Node registered: %s (hardware: %s, stake: %d)\n", reg.Identity, reg.Hardware, reg.Stake)
+        if k.logger != nil {
+                k.logger.Info("Node registered", zap.String("identity", reg.Identity), zap.String("hardware", reg.Hardware), zap.Int64("stake", reg.Stake))
+        }
 
         response := map[string]interface{}{
                 "status":      "registered",

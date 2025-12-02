@@ -4,11 +4,15 @@ import (
         "crypto/sha256"
         "encoding/hex"
         "fmt"
-        "log"
+
+        "github.com/CreoDAMO/aequitas-cloud-engine/pkg/observability"
+        "go.uber.org/zap"
 )
 
 type AIWorkloadScheduler struct {
         NIMEndpoint string
+        logger      *zap.Logger
+        metrics     *observability.Metrics
 }
 
 type WorkloadRequest struct {
@@ -36,9 +40,11 @@ type WorkloadPrediction struct {
         Reasoning   string
 }
 
-func NewAIWorkloadScheduler(nimEndpoint string) *AIWorkloadScheduler {
+func NewAIWorkloadScheduler(nimEndpoint string, logger *zap.Logger, metrics *observability.Metrics) *AIWorkloadScheduler {
         return &AIWorkloadScheduler{
                 NIMEndpoint: nimEndpoint,
+                logger:      logger,
+                metrics:     metrics,
         }
 }
 
@@ -65,24 +71,31 @@ func (s *AIWorkloadScheduler) PredictOptimalNode(request interface{}, userStake 
                 }
         }
 
-        log.Printf("🤖 AI Scheduler: Analyzing workload type=%s, priority=%d, stake=%d\n", 
-                workloadType, priority, userStake)
+        if s.logger != nil {
+                s.logger.Info("AI Scheduler analyzing workload", zap.String("type", workloadType), zap.Int("priority", priority), zap.Int64("stake", userStake))
+        }
 
         if s.NIMEndpoint != "" && s.NIMEndpoint != "http://localhost:8000" {
                 prediction := s.CallNIMForPrediction(workloadType, userDID, userStake)
                 if prediction.Confidence > 0.7 {
-                        log.Printf("✅ AI prediction: node=%s, confidence=%.2f\n", prediction.OptimalNode, prediction.Confidence)
+                        if s.logger != nil {
+                                s.logger.Info("AI prediction", zap.String("node", prediction.OptimalNode), zap.Float64("confidence", prediction.Confidence))
+                        }
                         return prediction.OptimalNode, nil
                 }
         }
 
         nodeID := s.simpleSchedule(workloadType, userDID, userStake)
-        log.Printf("📊 Fallback scheduler selected: %s\n", nodeID)
+        if s.logger != nil {
+                s.logger.Info("Fallback scheduler selected", zap.String("nodeID", nodeID))
+        }
         return nodeID, nil
 }
 
 func (s *AIWorkloadScheduler) CallNIMForPrediction(workloadType, userDID string, userStake int64) WorkloadPrediction {
-        log.Printf("⚠️  NVIDIA NIM integration stub - using fallback scheduling\n")
+        if s.logger != nil {
+                s.logger.Warn("NVIDIA NIM integration stub - using fallback scheduling")
+        }
         
         return WorkloadPrediction{
                 OptimalNode: s.simpleSchedule(workloadType, userDID, userStake),

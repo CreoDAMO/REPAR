@@ -2,9 +2,11 @@ package network
 
 import (
         "fmt"
-        "log"
         "sync"
         "time"
+
+        "github.com/CreoDAMO/aequitas-cloud-engine/pkg/observability"
+        "go.uber.org/zap"
 )
 
 type SatelliteType string
@@ -50,6 +52,8 @@ type NetworkEngine struct {
         latencyOptimization     bool
         
         routingStats            *RoutingStats
+        logger                  *zap.Logger
+        metrics                 *observability.Metrics
 }
 
 type RoutingStats struct {
@@ -61,7 +65,7 @@ type RoutingStats struct {
         LastStatUpdate          time.Time
 }
 
-func NewNetworkEngine(initialMode string) *NetworkEngine {
+func NewNetworkEngine(initialMode string, logger *zap.Logger, metrics *observability.Metrics) *NetworkEngine {
         return &NetworkEngine{
                 CurrentLayer:            initialMode,
                 layers:                  []string{"internet", "lora", "satellite", "mesh", "quantum"},
@@ -72,6 +76,8 @@ func NewNetworkEngine(initialMode string) *NetworkEngine {
                 geoRedundancyEnabled:    true,
                 latencyOptimization:     true,
                 routingStats:            &RoutingStats{LastStatUpdate: time.Now()},
+                logger:                  logger,
+                metrics:                 metrics,
         }
 }
 
@@ -87,8 +93,9 @@ func (n *NetworkEngine) RegisterSatelliteRoute(route *SatelliteRoute) error {
         route.Metrics.LastUpdated = time.Now()
         n.satelliteRoutes[route.ID] = route
         
-        log.Printf("🛰️  Registered satellite route: %s (%s) in region %s\n", 
-                route.ID, route.Type, route.GeoRegion)
+        if n.logger != nil {
+                n.logger.Info("Registered satellite route", zap.String("id", route.ID), zap.String("type", string(route.Type)), zap.String("region", route.GeoRegion))
+        }
         
         return nil
 }
@@ -162,7 +169,9 @@ func (n *NetworkEngine) RoutePacket(packet []byte, targetRegion string) error {
                 return n.handleRoutingFailure(packet, err)
         }
         
-        log.Printf("📡 Routing packet via %s (%s)\n", route.ID, route.Type)
+        if n.logger != nil {
+                n.logger.Debug("Routing packet", zap.String("route", route.ID), zap.String("type", string(route.Type)))
+        }
         
         n.routingStats.TotalPacketsRouted++
         n.routingStats.LastStatUpdate = time.Now()
@@ -171,14 +180,18 @@ func (n *NetworkEngine) RoutePacket(packet []byte, targetRegion string) error {
 }
 
 func (n *NetworkEngine) handleRoutingFailure(packet []byte, originalErr error) error {
-        log.Printf("⚠️  Primary routing failed: %v, attempting failover\n", originalErr)
+        if n.logger != nil {
+                n.logger.Warn("Primary routing failed, attempting failover", zap.Error(originalErr))
+        }
         
         n.routesMutex.RLock()
         defer n.routesMutex.RUnlock()
         
         for _, route := range n.satelliteRoutes {
                 if route.Active && route.Metrics.ConsecutiveFailures < 3 {
-                        log.Printf("🔄 Failover to route: %s\n", route.ID)
+                        if n.logger != nil {
+                                n.logger.Info("Failover to route", zap.String("route", route.ID))
+                        }
                         n.routingStats.FailoverCount++
                         return nil
                 }
@@ -201,7 +214,9 @@ func (n *NetworkEngine) UpdateRouteMetrics(routeID string, metrics RouteMetrics)
         
         if metrics.ConsecutiveFailures >= 5 {
                 route.Active = false
-                log.Printf("❌ Route %s marked inactive due to failures\n", routeID)
+                if n.logger != nil {
+                        n.logger.Warn("Route marked inactive due to failures", zap.String("route", routeID))
+                }
         }
         
         return nil
@@ -216,7 +231,9 @@ func (n *NetworkEngine) AutoFailover(detectedRisk bool) error {
         nextIndex := (currentIndex + 1) % len(n.layers)
         nextLayer := n.layers[nextIndex]
 
-        log.Printf("⚠️  Network risk detected! Failing over: %s → %s\n", n.CurrentLayer, nextLayer)
+        if n.logger != nil {
+                n.logger.Warn("Network risk detected! Failing over", zap.String("from", n.CurrentLayer), zap.String("to", nextLayer))
+        }
 
         if err := n.SwitchToLayer(nextLayer); err != nil {
                 return fmt.Errorf("failover failed: %w", err)
@@ -224,7 +241,9 @@ func (n *NetworkEngine) AutoFailover(detectedRisk bool) error {
 
         n.lastFailover = time.Now()
         n.routingStats.FailoverCount++
-        log.Printf("✅ Failover successful to %s layer\n", nextLayer)
+        if n.logger != nil {
+                n.logger.Info("Failover successful", zap.String("layer", nextLayer))
+        }
         return nil
 }
 
@@ -242,7 +261,9 @@ func (n *NetworkEngine) SwitchToLayer(layer string) error {
         }
 
         n.CurrentLayer = layer
-        log.Printf("🌐 Network layer switched to: %s\n", layer)
+        if n.logger != nil {
+                n.logger.Info("Network layer switched", zap.String("layer", layer))
+        }
         return nil
 }
 
@@ -286,22 +307,30 @@ func (n *NetworkEngine) GetStatus() map[string]interface{} {
 
 func (n *NetworkEngine) EnableSatelliteProtocol() {
         n.satelliteProtocolActive = true
-        log.Printf("🛰️  Aequitas Satellite Protocol (ASSP) activated\n")
+        if n.logger != nil {
+                n.logger.Info("Aequitas Satellite Protocol (ASSP) activated")
+        }
 }
 
 func (n *NetworkEngine) EnableMultiLayerRouting() {
         n.multiLayerEnabled = true
-        log.Printf("🌐 Multi-layer routing enabled\n")
+        if n.logger != nil {
+                n.logger.Info("Multi-layer routing enabled")
+        }
 }
 
 func (n *NetworkEngine) EnableGeoRedundancy() {
         n.geoRedundancyEnabled = true
-        log.Printf("🌍 Geo-redundancy enabled\n")
+        if n.logger != nil {
+                n.logger.Info("Geo-redundancy enabled")
+        }
 }
 
 func (n *NetworkEngine) EnableLatencyOptimization() {
         n.latencyOptimization = true
-        log.Printf("⚡ Latency optimization enabled\n")
+        if n.logger != nil {
+                n.logger.Info("Latency optimization enabled")
+        }
 }
 
 func (n *NetworkEngine) GetRoutingStats() *RoutingStats {
