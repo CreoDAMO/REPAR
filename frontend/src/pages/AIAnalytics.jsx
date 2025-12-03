@@ -5,7 +5,7 @@ import WarRoomVisualization from '../components/ai/WarRoomVisualization';
 import CerberusAuditor from '../components/ai/CerberusAuditor';
 import { cosmosClient } from '../utils/cosmosClient';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 export default function AIAnalytics() {
   const [activeModel, setActiveModel] = useState('predictive');

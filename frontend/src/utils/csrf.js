@@ -5,7 +5,7 @@ export async function getCsrfToken(apiBaseUrl) {
   if (csrfToken) return csrfToken;
   
   // Use provided base URL or fall back to environment variable
-  const baseUrl = apiBaseUrl || import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3002';
+  const baseUrl = apiBaseUrl || import.meta.env.VITE_BACKEND_API_URL || '';
   
   try {
     const response = await fetch(`${baseUrl}/api/csrf-token`, {

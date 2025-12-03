@@ -15,7 +15,7 @@ export default function CerberusAuditor() {
 
   const fetchAuditHistory = async () => {
     try {
-      const response = await fetch('http://localhost:3002/api/auditor/history');
+      const response = await fetch('/api/auditor/history');
       const data = await response.json();
       if (data.success) {
         setHistory(data.reports);
@@ -42,7 +42,7 @@ export default function CerberusAuditor() {
     try {
       const filePaths = selectedFiles.map(f => f.name);
       
-      const response = await fetch('http://localhost:3002/api/auditor/scan', {
+      const response = await fetch('/api/auditor/scan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ files: filePaths, threatLevel })

@@ -5,8 +5,8 @@
 
 import { getCsrfToken } from './csrf.js';
 
-// Backend API URL
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3002';
+// Backend API URL - use relative URLs for the vite proxy to work
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || '';
 
 /**
  * Make an authenticated API request to the backend

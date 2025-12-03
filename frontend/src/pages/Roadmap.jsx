@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, Circle, Clock, Brain, TrendingUp, Shield, Zap, Globe, Rocket } from 'lucide-react';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 export default function Roadmap() {
   const [selectedPhase, setSelectedPhase] = useState('phase1');

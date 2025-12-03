@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import AgentFactory from '../components/ai/AgentFactory';
 import { FiActivity, FiCheckCircle, FiClock } from 'react-icons/fi';
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3002';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || '';
 
 const AgentKit = () => {
   const [agents, setAgents] = useState([]);
