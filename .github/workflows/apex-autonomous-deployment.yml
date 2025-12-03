@@ -1,4 +1,4 @@
-# apex-autonomous-deployment.yml
+# .github/workflows/apex-autonomous-deployment.yml
 # APEX Autonomous 7-Node Constellation Deployment
 # Deploys Founder Node first, then bootstraps remaining 6 validators
 # Created: December 3, 2025
@@ -175,7 +175,7 @@ jobs:
           # Verify constitutional compliance
           from constitutional import ConstitutionalEnforcer
           enforcer = ConstitutionalEnforcer()
-          assert len(list(enforcer.axioms.values())) == 25, 'Missing constitutional axioms'
+          assert len(enforcer.axioms) == 25, 'Missing constitutional axioms'  # axioms is a list from Enum
           print('   ✅ Constitutional Axioms: 25/25')
           
           print('✅ APEX Autonomous Systems VALIDATED')
