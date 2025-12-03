@@ -114,8 +114,8 @@ class ASSPCoordinator:
         self._process_task = None
         
         if self.pqc:
-            self.coordinator_keypair = self.pqc.generate_keypair()
-            self.coordinator_public_key = self.pqc.get_public_key()
+            self.coordinator_keypair = self.pqc.generate_kem_keypair()
+            self.coordinator_public_key = self.coordinator_keypair.public_key if self.coordinator_keypair else None
         else:
             self.coordinator_keypair = None
             self.coordinator_public_key = None
