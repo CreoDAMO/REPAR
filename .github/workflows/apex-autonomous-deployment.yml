@@ -1,4 +1,4 @@
-# .github/workflows/apex-autonomous-deployment.yml
+# apex-autonomous-deployment.yml
 # APEX Autonomous 7-Node Constellation Deployment
 # Deploys Founder Node first, then bootstraps remaining 6 validators
 # Created: December 3, 2025
