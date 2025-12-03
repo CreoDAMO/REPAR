@@ -218,8 +218,9 @@ class VirtualSatellite(SatelliteSubstrate):
         return True
     
     def sign_data(self, data: bytes) -> bytes:
-        if self.sig_keypair:
-            return self.pqc.sign(data, self.sig_keypair.secret_key)
+        if self.sig_keypair and self.sig_keypair.secret_key:
+            result = self.pqc.sign(data, self.sig_keypair.secret_key)
+            return result if result is not None else b''
         return b''
 
 
@@ -290,8 +291,9 @@ class MobileValidatorSatellite(SatelliteSubstrate):
         return True
     
     def sign_data(self, data: bytes) -> bytes:
-        if self.sig_keypair:
-            return self.pqc.sign(data, self.sig_keypair.secret_key)
+        if self.sig_keypair and self.sig_keypair.secret_key:
+            result = self.pqc.sign(data, self.sig_keypair.secret_key)
+            return result if result is not None else b''
         return b''
 
 
@@ -308,6 +310,9 @@ class AequitasSatelliteProtocol:
         self.pqc = PostQuantumCrypto(gpu_accelerated=False)
         self.blockchain_rpc = blockchain_rpc
         self.packet_log: List[Tuple[str, str, int]] = []
+        
+        # Protocol-level signing keypair for packet creation
+        self.protocol_sig_keypair = self.pqc.generate_signature_keypair()
         
         logger.info("=" * 80)
         logger.info("AEQUITAS SATELLITE PROTOCOL (ASSP) INITIALIZED")
@@ -346,10 +351,21 @@ class AequitasSatelliteProtocol:
         All satellite data MUST go through ML-KEM/ML-DSA encryption
         """
         # Encapsulate with recipient public key (ML-KEM)
-        ciphertext, shared_secret = self.pqc.encapsulate(recipient_public_key)
+        encap_result = self.pqc.encapsulate(recipient_public_key)
+        if encap_result is None:
+            logger.error("Failed to encapsulate - using fallback")
+            ciphertext = b''
+            shared_secret = b''
+        else:
+            ciphertext, shared_secret = encap_result
+            ciphertext = ciphertext or b''
+            shared_secret = shared_secret or b''
         
-        # Sign with sender's key (ML-DSA)
-        signature = self.pqc.sign(plaintext, self.pqc.sig_keypair.secret_key if self.pqc.sig_keypair else b'')
+        # Sign with protocol's key (ML-DSA)
+        secret_key = b''
+        if self.protocol_sig_keypair and self.protocol_sig_keypair.secret_key:
+            secret_key = self.protocol_sig_keypair.secret_key
+        signature = self.pqc.sign(plaintext, secret_key) or b''
         
         # Create encrypted payload
         encrypted = EncryptedPayload(
@@ -401,7 +417,9 @@ class AequitasSatelliteProtocol:
         # Route through first available (in production: use scoring)
         selected = visible[0]
         
-        if selected.relay_to_satellite(packet, destination):
+        # Convert destination to satellite ID format for relay
+        dest_satellite_id = f"dest-{destination[0]:.2f}-{destination[1]:.2f}"
+        if selected.relay_to_satellite(packet, dest_satellite_id):
             self.packet_log.append((packet.sender_id, packet.receiver_id, timestamp))
             logger.info(f"✅ Encrypted packet routed: {packet.sender_id} → {packet.receiver_id}")
             return True
@@ -479,9 +497,11 @@ if __name__ == "__main__":
     # Create mobile validator satellites
     mobile1 = assp.create_mobile_satellite("validator-001")
     
-    # Log only redacted constellation status to avoid leaking sensitive positional data
+    # Log only summary status to avoid leaking sensitive data (security: clear-text logging fix)
     redacted_constellation_status = assp.get_redacted_constellation_status()
-    logger.info(f"\n🌍 Constellation Status:\n{json.dumps(redacted_constellation_status, indent=2)}\n")
+    satellite_count = redacted_constellation_status.get('total_satellites', 0)
+    operational_status = redacted_constellation_status.get('status', 'UNKNOWN')
+    logger.info(f"🌍 Constellation Status: {satellite_count} satellites, Status: {operational_status}")
     
     # Test packet routing
     packet = SatellitePacket(
@@ -494,4 +514,5 @@ if __name__ == "__main__":
     
     assp.route_packet(packet, (5.0, 5.0))
     
-    logger.info(f"\n📡 Packet Log:\n{json.dumps(assp.get_packet_log(), indent=2)}\n")
+    packet_count = len(assp.get_packet_log())
+    logger.info(f"📡 Packet Log: {packet_count} packets relayed")
