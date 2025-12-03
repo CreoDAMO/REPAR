@@ -273,7 +273,7 @@ jobs:
               from constitutional import ConstitutionalEnforcer
               
               enforcer = ConstitutionalEnforcer()
-              axioms = list(enforcer.axioms.values())
+              axioms = list(enforcer.axioms)  # axioms is already a list from Enum
               
               print('⚖️ Constitutional AI Verification:')
               print(f'   Total Axioms: {len(axioms)}')
@@ -1187,11 +1187,11 @@ jobs:
               print('✅ APEX Orchestrator operational')
               
               enforcer = ConstitutionalEnforcer()
-              axiom_count = len(list(enforcer.axioms.values()))
+              axiom_count = len(enforcer.axioms)  # axioms is a list from Enum
               print(f'✅ Constitutional AI: {axiom_count} axioms active')
               
               if axiom_count > 16:
-                  axiom_17 = list(enforcer.axioms.values())[16]
+                  axiom_17 = enforcer.axioms[16]  # Direct list access
                   print(f'✅ Axiom 17: {axiom_17.name}')
               
               print('✅ Deployed blockchain protected by APEX system')
@@ -1589,7 +1589,7 @@ jobs:
               from constitutional import ConstitutionalEnforcer
               apex_status = 'LOADED'
               enforcer = ConstitutionalEnforcer()
-              audit_results['apex_axioms'] = len(list(enforcer.axioms.values()))
+              audit_results['apex_axioms'] = len(enforcer.axioms)  # axioms is a list from Enum
               print(f'✅ APEX SYSTEM: {apex_status} ({audit_results[\"apex_axioms\"]} axioms)')
           except (ImportError, Exception) as e:
               print(f'⚠️ APEX SYSTEM: {apex_status} (simulation mode)')
@@ -3080,7 +3080,7 @@ jobs:
           # Verify constitutional compliance
           from constitutional import ConstitutionalEnforcer
           enforcer = ConstitutionalEnforcer()
-          assert len(list(enforcer.axioms.values())) == 25, 'Missing constitutional axioms'
+          assert len(enforcer.axioms) == 25, 'Missing constitutional axioms'  # axioms is a list from Enum
           print('   ✅ Constitutional Axioms: 25/25')
           
           print('✅ APEX Autonomous Systems VALIDATED')
