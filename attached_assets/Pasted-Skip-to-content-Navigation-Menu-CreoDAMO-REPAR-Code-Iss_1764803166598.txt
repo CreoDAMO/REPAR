@@ -1,0 +1,748 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+1
+Pull requests
+Discussions
+Actions
+Projects
+Wiki
+Security
+7
+Releases: CreoDAMO/REPAR
+ReleasesTags
+Find a release
+Aequitas Zone v0.1.0 (Build 114)
+2 weeks ago
+@github-actions github-actions
+ v0.1.0-build-114
+ 73aa0e4
+Aequitas Zone v0.1.0 (Build 114) Pre-release
+🚀 Aequitas Zone Blockchain - Build 73aa0e4
+Overview
+Sovereign Layer-1 blockchain for enforcing $131 trillion in reparations for the transatlantic slave trade genocide.
+
+Build Information
+Commit: 73aa0e47899e8354ccc982665c5c53e1f0813eee
+Short Hash: 73aa0e4
+Build Date: 2025-11-20 16:49:24
+Cosmos SDK: v0.54.0-alpha
+Native Coin: $REPAR
+Total Supply: 131 Trillion $REPAR
+Coin Allocation
+Founder Total: 23.58T REPAR (18%)
+Wallet: 15.72T REPAR (12%)
+Endowment: 7.86T REPAR (6%, locked 8 years)
+Community & Descendants: 56.33T REPAR (43%)
+Claims & Compensation: 32.75T REPAR (25%)
+Enforcement Treasury: 13.1T REPAR (10%)
+Foundation Reserves: 5.24T REPAR (4%)
+Network Configurations
+Testnet (aequitas-testnet-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+Mainnet (aequitas-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+What's Included
+✅ Binary Artifact:
+
+Blockchain daemon binary (152MB)
+SHA-256 checksum
+✅ Genesis Files:
+
+Testnet genesis + checksum
+Mainnet genesis + checksum
+✅ Allocation Structure:
+
+Canonical coin allocation specification
+Installation & Validation
+1. Download & Verify Binary
+# Download
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/aequitasd-linux-amd64.tar.gz
+
+# Verify checksum
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/aequitasd.sha256
+sha256sum -c aequitasd.sha256
+
+# Extract
+tar -xzf aequitasd-linux-amd64.tar.gz
+chmod +x aequitasd
+sudo mv aequitasd /usr/local/bin/
+
+# Verify installation
+aequitasd version
+2. Initialize Node
+Testnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/genesis-testnet.tar.gz
+tar -xzf genesis-testnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-testnet-1 --home ~/.aequitas-testnet
+
+# Copy genesis
+cp testnet/genesis-testnet.json ~/.aequitas-testnet/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas-testnet
+Mainnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/genesis-mainnet.tar.gz
+tar -xzf genesis-mainnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-1 --home ~/.aequitas
+
+# Copy genesis
+cp mainnet/genesis-mainnet.json ~/.aequitas/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas
+3. Configure & Start
+�[?2004h�)0�[1;24r�[m�(B�[4l�[?7h�[?25l��[H�[J�[22;11H�[0;7m�(B[ Directory '/home/runner/.aequitas/config' does not exist ]�[m�(B�[?25h�[24;1H
+�[?2004l
+
+Custom Modules
+x/defendant - Manages 200+ defendants and payment types
+x/justice - Deflationary burn mechanism
+x/claims - Arbitration demands across 172 jurisdictions
+x/distribution - Reparations distribution to descendants
+x/dex - Founder Wallet DEX (REPAR/USDC pairs, x*y=k)
+x/threatdefense - 10% Chaos Defense + ThreatOracle + NFT evidence
+x/governance - DAO governance with weighted voting
+x/staking - Modified staking for validator participation
+x/evidence - IPFS integration for immutable evidence storage
+Security Features
+Cerberus Auditor: Multi-agent AI continuous security auditing
+Chaos Defense: 10% controlled vulnerabilities with threat detection
+ThreatOracle: Automated threat intelligence and response
+FRE 901 Compliance: Legal evidence authentication standards
+Documentation
+Blockchain Build Documentation
+Genesis Generation Guide
+Forensic Audit
+Support
+Issues: https://github.com/CreoDAMO/REPAR/issues
+Discussions: https://github.com/CreoDAMO/REPAR/discussions
+Website: https://aequitasprotocol.zone
+Legal Framework
+This blockchain implements enforcement of international law violations:
+
+Genocide Convention (1948)
+Universal Declaration of Human Rights (1948)
+Jus cogens norms (peremptory international law)
+UCC Article 9 (secured transactions)
+Black's Law (legal definitions and precedents)
+⚖️ The Justice Machine - $REPAR Native Coin
+
+Assets
+7
+Aequitas Zone v0.1.0 (Build 112)
+2 weeks ago
+@github-actions github-actions
+ v0.1.0-build-112
+ 4816bc9
+Aequitas Zone v0.1.0 (Build 112) Pre-release
+🚀 Aequitas Zone Blockchain - Build 4816bc9
+Overview
+Sovereign Layer-1 blockchain for enforcing $131 trillion in reparations for the transatlantic slave trade genocide.
+
+Build Information
+Commit: 4816bc9dff78be74270f21c14e5cced980711ee2
+Short Hash: 4816bc9
+Build Date: 2025-11-18 22:42:57
+Cosmos SDK: v0.54.0-alpha
+Native Coin: $REPAR
+Total Supply: 131 Trillion $REPAR
+Coin Allocation
+Founder Total: 23.58T REPAR (18%)
+Wallet: 15.72T REPAR (12%)
+Endowment: 7.86T REPAR (6%, locked 8 years)
+Community & Descendants: 56.33T REPAR (43%)
+Claims & Compensation: 32.75T REPAR (25%)
+Enforcement Treasury: 13.1T REPAR (10%)
+Foundation Reserves: 5.24T REPAR (4%)
+Network Configurations
+Testnet (aequitas-testnet-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+Mainnet (aequitas-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+What's Included
+✅ Binary Artifact:
+
+Blockchain daemon binary (152MB)
+SHA-256 checksum
+✅ Genesis Files:
+
+Testnet genesis + checksum
+Mainnet genesis + checksum
+✅ Allocation Structure:
+
+Canonical coin allocation specification
+Installation & Validation
+1. Download & Verify Binary
+# Download
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-112/aequitasd-linux-amd64.tar.gz
+
+# Verify checksum
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-112/aequitasd.sha256
+sha256sum -c aequitasd.sha256
+
+# Extract
+tar -xzf aequitasd-linux-amd64.tar.gz
+chmod +x aequitasd
+sudo mv aequitasd /usr/local/bin/
+
+# Verify installation
+aequitasd version
+2. Initialize Node
+Testnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-112/genesis-testnet.tar.gz
+tar -xzf genesis-testnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-testnet-1 --home ~/.aequitas-testnet
+
+# Copy genesis
+cp testnet/genesis-testnet.json ~/.aequitas-testnet/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas-testnet
+Mainnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-112/genesis-mainnet.tar.gz
+tar -xzf genesis-mainnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-1 --home ~/.aequitas
+
+# Copy genesis
+cp mainnet/genesis-mainnet.json ~/.aequitas/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas
+3. Configure & Start
+�[?2004h�)0�[1;24r�[m�(B�[4l�[?7h�[?25l��[H�[J�[22;11H�[0;7m�(B[ Directory '/home/runner/.aequitas/config' does not exist ]�[m�(B�[?25h�[24;1H
+�[?2004l
+
+Custom Modules
+x/defendant - Manages 200+ defendants and payment types
+x/justice - Deflationary burn mechanism
+x/claims - Arbitration demands across 172 jurisdictions
+x/distribution - Reparations distribution to descendants
+x/dex - Founder Wallet DEX (REPAR/USDC pairs, x*y=k)
+x/threatdefense - 10% Chaos Defense + ThreatOracle + NFT evidence
+x/governance - DAO governance with weighted voting
+x/staking - Modified staking for validator participation
+x/evidence - IPFS integration for immutable evidence storage
+Security Features
+Cerberus Auditor: Multi-agent AI continuous security auditing
+Chaos Defense: 10% controlled vulnerabilities with threat detection
+ThreatOracle: Automated threat intelligence and response
+FRE 901 Compliance: Legal evidence authentication standards
+Documentation
+Blockchain Build Documentation
+Genesis Generation Guide
+Forensic Audit
+Support
+Issues: https://github.com/CreoDAMO/REPAR/issues
+Discussions: https://github.com/CreoDAMO/REPAR/discussions
+Website: https://aequitasprotocol.zone
+Legal Framework
+This blockchain implements enforcement of international law violations:
+
+Genocide Convention (1948)
+Universal Declaration of Human Rights (1948)
+Jus cogens norms (peremptory international law)
+UCC Article 9 (secured transactions)
+Black's Law (legal definitions and precedents)
+⚖️ The Justice Machine - $REPAR Native Coin
+
+Assets
+7
+Aequitas Zone v0.1.0 (Build 108)
+3 weeks ago
+@github-actions github-actions
+ v0.1.0-build-108
+ cc61000
+Aequitas Zone v0.1.0 (Build 108) Pre-release
+🚀 Aequitas Zone Blockchain - Build cc61000
+Overview
+Sovereign Layer-1 blockchain for enforcing $131 trillion in reparations for the transatlantic slave trade genocide.
+
+Build Information
+Commit: cc61000c2de9786f5edf2054d8c12f697be41636
+Short Hash: cc61000
+Build Date: 2025-11-11 23:18:36
+Cosmos SDK: v0.54.0-alpha
+Native Coin: $REPAR
+Total Supply: 131 Trillion $REPAR
+Coin Allocation
+Founder Total: 23.58T REPAR (18%)
+Wallet: 15.72T REPAR (12%)
+Endowment: 7.86T REPAR (6%, locked 8 years)
+Community & Descendants: 56.33T REPAR (43%)
+Claims & Compensation: 32.75T REPAR (25%)
+Enforcement Treasury: 13.1T REPAR (10%)
+Foundation Reserves: 5.24T REPAR (4%)
+Network Configurations
+Testnet (aequitas-testnet-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+Mainnet (aequitas-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+What's Included
+✅ Binary Artifact:
+
+Blockchain daemon binary (152MB)
+SHA-256 checksum
+✅ Genesis Files:
+
+Testnet genesis + checksum
+Mainnet genesis + checksum
+✅ Allocation Structure:
+
+Canonical coin allocation specification
+Installation & Validation
+1. Download & Verify Binary
+# Download
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-108/aequitasd-linux-amd64.tar.gz
+
+# Verify checksum
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-108/aequitasd.sha256
+sha256sum -c aequitasd.sha256
+
+# Extract
+tar -xzf aequitasd-linux-amd64.tar.gz
+chmod +x aequitasd
+sudo mv aequitasd /usr/local/bin/
+
+# Verify installation
+aequitasd version
+2. Initialize Node
+Testnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-108/genesis-testnet.tar.gz
+tar -xzf genesis-testnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-testnet-1 --home ~/.aequitas-testnet
+
+# Copy genesis
+cp testnet/genesis-testnet.json ~/.aequitas-testnet/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas-testnet
+Mainnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-108/genesis-mainnet.tar.gz
+tar -xzf genesis-mainnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-1 --home ~/.aequitas
+
+# Copy genesis
+cp mainnet/genesis-mainnet.json ~/.aequitas/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas
+3. Configure & Start
+�[?2004h�)0�[1;24r�[m�(B�[4l�[?7h�[?25l��[H�[J�[22;11H�[0;7m�(B[ Directory '/home/runner/.aequitas/config' does not exist ]�[m�(B�[?25h�[24;1H
+�[?2004l
+
+Custom Modules
+x/defendant - Manages 200+ defendants and payment types
+x/justice - Deflationary burn mechanism
+x/claims - Arbitration demands across 172 jurisdictions
+x/distribution - Reparations distribution to descendants
+x/dex - Founder Wallet DEX (REPAR/USDC pairs, x*y=k)
+x/threatdefense - 10% Chaos Defense + ThreatOracle + NFT evidence
+x/governance - DAO governance with weighted voting
+x/staking - Modified staking for validator participation
+x/evidence - IPFS integration for immutable evidence storage
+Security Features
+Cerberus Auditor: Multi-agent AI continuous security auditing
+Chaos Defense: 10% controlled vulnerabilities with threat detection
+ThreatOracle: Automated threat intelligence and response
+FRE 901 Compliance: Legal evidence authentication standards
+Documentation
+Blockchain Build Documentation
+Genesis Generation Guide
+Forensic Audit
+Support
+Issues: https://github.com/CreoDAMO/REPAR/issues
+Discussions: https://github.com/CreoDAMO/REPAR/discussions
+Website: https://aequitasprotocol.zone
+Legal Framework
+This blockchain implements enforcement of international law violations:
+
+Genocide Convention (1948)
+Universal Declaration of Human Rights (1948)
+Jus cogens norms (peremptory international law)
+UCC Article 9 (secured transactions)
+Black's Law (legal definitions and precedents)
+⚖️ The Justice Machine - $REPAR Native Coin
+
+Assets
+7
+You reacted
+Aequitas Zone v0.1.0 (Build 107)
+3 weeks ago
+@github-actions github-actions
+ v0.1.0-build-107
+ e2efb7a
+Aequitas Zone v0.1.0 (Build 107) Pre-release
+🚀 Aequitas Zone Blockchain - Build e2efb7a
+Overview
+Sovereign Layer-1 blockchain for enforcing $131 trillion in reparations for the transatlantic slave trade genocide.
+
+Build Information
+Commit: e2efb7afbe4dbc30e12567d9c2d4df91ebbc372d
+Short Hash: e2efb7a
+Build Date: 2025-11-11 15:56:12
+Cosmos SDK: v0.54.0-alpha
+Native Coin: $REPAR
+Total Supply: 131 Trillion $REPAR
+Coin Allocation
+Founder Total: 23.58T REPAR (18%)
+Wallet: 15.72T REPAR (12%)
+Endowment: 7.86T REPAR (6%, locked 8 years)
+Community & Descendants: 56.33T REPAR (43%)
+Claims & Compensation: 32.75T REPAR (25%)
+Enforcement Treasury: 13.1T REPAR (10%)
+Foundation Reserves: 5.24T REPAR (4%)
+Network Configurations
+Testnet (aequitas-testnet-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+Mainnet (aequitas-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+What's Included
+✅ Binary Artifact:
+
+Blockchain daemon binary (152MB)
+SHA-256 checksum
+✅ Genesis Files:
+
+Testnet genesis + checksum
+Mainnet genesis + checksum
+✅ Allocation Structure:
+
+Canonical coin allocation specification
+Installation & Validation
+1. Download & Verify Binary
+# Download
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-107/aequitasd-linux-amd64.tar.gz
+
+# Verify checksum
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-107/aequitasd.sha256
+sha256sum -c aequitasd.sha256
+
+# Extract
+tar -xzf aequitasd-linux-amd64.tar.gz
+chmod +x aequitasd
+sudo mv aequitasd /usr/local/bin/
+
+# Verify installation
+aequitasd version
+2. Initialize Node
+Testnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-107/genesis-testnet.tar.gz
+tar -xzf genesis-testnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-testnet-1 --home ~/.aequitas-testnet
+
+# Copy genesis
+cp testnet/genesis-testnet.json ~/.aequitas-testnet/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas-testnet
+Mainnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-107/genesis-mainnet.tar.gz
+tar -xzf genesis-mainnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-1 --home ~/.aequitas
+
+# Copy genesis
+cp mainnet/genesis-mainnet.json ~/.aequitas/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas
+3. Configure & Start
+�[?2004h�)0�[1;24r�[m�(B�[4l�[?7h�[?25l��[H�[J�[22;11H�[0;7m�(B[ Directory '/home/runner/.aequitas/config' does not exist ]�[m�(B�[?25h�[24;1H
+�[?2004l
+
+Custom Modules
+x/defendant - Manages 200+ defendants and payment types
+x/justice - Deflationary burn mechanism
+x/claims - Arbitration demands across 172 jurisdictions
+x/distribution - Reparations distribution to descendants
+x/dex - Founder Wallet DEX (REPAR/USDC pairs, x*y=k)
+x/threatdefense - 10% Chaos Defense + ThreatOracle + NFT evidence
+x/governance - DAO governance with weighted voting
+x/staking - Modified staking for validator participation
+x/evidence - IPFS integration for immutable evidence storage
+Security Features
+Cerberus Auditor: Multi-agent AI continuous security auditing
+Chaos Defense: 10% controlled vulnerabilities with threat detection
+ThreatOracle: Automated threat intelligence and response
+FRE 901 Compliance: Legal evidence authentication standards
+Documentation
+Blockchain Build Documentation
+Genesis Generation Guide
+Forensic Audit
+Support
+Issues: https://github.com/CreoDAMO/REPAR/issues
+Discussions: https://github.com/CreoDAMO/REPAR/discussions
+Website: https://aequitasprotocol.zone
+Legal Framework
+This blockchain implements enforcement of international law violations:
+
+Genocide Convention (1948)
+Universal Declaration of Human Rights (1948)
+Jus cogens norms (peremptory international law)
+UCC Article 9 (secured transactions)
+Black's Law (legal definitions and precedents)
+⚖️ The Justice Machine - $REPAR Native Coin
+
+Assets
+7
+Aequitas Zone v0.1.0 (Build 105)
+3 weeks ago
+@github-actions github-actions
+ v0.1.0-build-105
+ 1950a9e
+Aequitas Zone v0.1.0 (Build 105) Latest
+Aequitas Zone Blockchain - Build 1950a9e
+Overview
+Sovereign Layer-1 for $131T reparations enforcement.
+
+Build Information
+Commit: 1950a9e638cf5c731f2b2df0867d15e60ccabe6a
+Build Date: $(date)
+Cosmos SDK: v0.54.0-alpha
+Native Coin: $REPAR
+Auto-Deploy
+Validator #105 deploying via DigitalOcean...
+
+Fund the nation: https://opencollective.com/aequitas-zone
+
+#AequitasZone #Coinomics #AutoDeploy
+
+Assets
+7
+Loading
+Aequitas Zone v0.1.0 (Build 103)
+Nov 1
+@github-actions github-actions
+ v0.1.0-build-103
+ f3ff3f7
+Aequitas Zone v0.1.0 (Build 103) Pre-release
+🚀 Aequitas Zone Blockchain - Build f3ff3f7
+Overview
+Sovereign Layer-1 blockchain for enforcing $131 trillion in reparations for the transatlantic slave trade genocide.
+
+Build Information
+Commit: f3ff3f78d9575f8434e64520f8dc7040121e54eb
+Short Hash: f3ff3f7
+Build Date: 2025-11-01 18:24:51
+Cosmos SDK: v0.54.0-alpha
+Native Coin: $REPAR
+Total Supply: 131 Trillion $REPAR
+Coin Allocation
+Founder Total: 23.58T REPAR (18%)
+Wallet: 15.72T REPAR (12%)
+Endowment: 7.86T REPAR (6%, locked 8 years)
+Community & Descendants: 56.33T REPAR (43%)
+Claims & Compensation: 32.75T REPAR (25%)
+Enforcement Treasury: 13.1T REPAR (10%)
+Foundation Reserves: 5.24T REPAR (4%)
+Network Configurations
+Testnet (aequitas-testnet-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+Mainnet (aequitas-1)
+Genesis file:
+RPC:
+REST:
+gRPC:
+What's Included
+✅ Binary Artifact:
+
+Blockchain daemon binary (152MB)
+SHA-256 checksum
+✅ Genesis Files:
+
+Testnet genesis + checksum
+Mainnet genesis + checksum
+✅ Allocation Structure:
+
+Canonical coin allocation specification
+Installation & Validation
+1. Download & Verify Binary
+# Download
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-103/aequitasd-linux-amd64.tar.gz
+
+# Verify checksum
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-103/aequitasd.sha256
+sha256sum -c aequitasd.sha256
+
+# Extract
+tar -xzf aequitasd-linux-amd64.tar.gz
+chmod +x aequitasd
+sudo mv aequitasd /usr/local/bin/
+
+# Verify installation
+aequitasd version
+2. Initialize Node
+Testnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-103/genesis-testnet.tar.gz
+tar -xzf genesis-testnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-testnet-1 --home ~/.aequitas-testnet
+
+# Copy genesis
+cp testnet/genesis-testnet.json ~/.aequitas-testnet/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas-testnet
+Mainnet:
+
+# Download genesis
+wget https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-103/genesis-mainnet.tar.gz
+tar -xzf genesis-mainnet.tar.gz
+
+# Initialize
+aequitasd init <moniker> --chain-id aequitas-1 --home ~/.aequitas
+
+# Copy genesis
+cp mainnet/genesis-mainnet.json ~/.aequitas/config/genesis.json
+
+# Verify genesis
+aequitasd validate-genesis --home ~/.aequitas
+3. Configure & Start
+�[?2004h�)0�[1;24r�[m�(B�[4l�[?7h�[?25l��[H�[J�[22;11H�[0;7m�(B[ Directory '/home/runner/.aequitas/config' does not exist ]�[m�(B�[?25h�[24;1H
+�[?2004l
+
+Custom Modules
+x/defendant - Manages 200+ defendants and payment types
+x/justice - Deflationary burn mechanism
+x/claims - Arbitration demands across 172 jurisdictions
+x/distribution - Reparations distribution to descendants
+x/dex - Founder Wallet DEX (REPAR/USDC pairs, x*y=k)
+x/threatdefense - 10% Chaos Defense + ThreatOracle + NFT evidence
+x/governance - DAO governance with weighted voting
+x/staking - Modified staking for validator participation
+x/evidence - IPFS integration for immutable evidence storage
+Security Features
+Cerberus Auditor: Multi-agent AI continuous security auditing
+Chaos Defense: 10% controlled vulnerabilities with threat detection
+ThreatOracle: Automated threat intelligence and response
+FRE 901 Compliance: Legal evidence authentication standards
+Documentation
+Blockchain Build Documentation
+Genesis Generation Guide
+Forensic Audit
+Support
+Issues: https://github.com/CreoDAMO/REPAR/issues
+Discussions: https://github.com/CreoDAMO/REPAR/discussions
+Website: https://aequitasprotocol.zone
+Legal Framework
+This blockchain implements enforcement of international law violations:
+
+Genocide Convention (1948)
+Universal Declaration of Human Rights (1948)
+Jus cogens norms (peremptory international law)
+UCC Article 9 (secured transactions)
+Black's Law (legal definitions and precedents)
+⚖️ The Justice Machine - $REPAR Native Coin
+
+Assets
+7
+Aequitas Zone Blockchain v1.0.0
+Oct 31
+@CreoDAMO CreoDAMO
+ v1.0.0-blockchain
+ 295525e
+Aequitas Zone Blockchain v1.0.0
+Aequitas Zone Blockchain Binary
+Pre-built blockchain binary for deployment to production servers.
+
+What's Included:
+aequitasd - Aequitas Zone blockchain binary (152MB uncompressed)
+Built with Go 1.23.3
+Cosmos SDK v0.50.14
+CometBFT consensus
+Download & Install:
+# Download binary
+wget https://github.com/CreoDAMO/REPAR/releases/download/v1.0.0-blockchain/aequitasd-v1.0.0-linux-amd64.gz
+
+# Extract
+gunzip aequitasd-v1.0.0-linux-amd64.gz
+
+# Install
+chmod +x aequitasd-v1.0.0-linux-amd64
+sudo mv aequitasd-v1.0.0-linux-amd64 /usr/local/bin/aequitasd
+
+# Verify
+aequitasd version
+Deploy to DigitalOcean:
+After installing the binary, initialize and start the blockchain:
+
+# Initialize Mainnet
+aequitasd init validator-mainnet --chain-id aequitas-1
+wget https://raw.githubusercontent.com/CreoDAMO/REPAR/main/chain-config/mainnet/genesis-mainnet.json
+mv genesis-mainnet.json ~/.aequitas/config/genesis.json
+
+# Start node
+aequitasd start
+Checksums:
+MD5: 294acde0c93dfcfe3021ba7ec799fe92
+Build Date: October 30, 2025
+Chain ID (Mainnet): aequitas-1
+Chain ID (Testnet): aequitas-testnet-1
+Assets
+3
