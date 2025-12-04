@@ -9,52 +9,52 @@
  */
 
 // Aequitas Zone Configuration for Keplr
+// CRITICAL: Uses "repar" denom (NOT "urepar") with 0 decimals to match genesis
 const aequitasChainConfig = {
   chainId: "aequitas-1",
   chainName: "Aequitas Zone",
-  rpc: "http://localhost:26657",  // Update with your production RPC
-  rest: "http://localhost:1317",  // Update with your production REST API
+  rpc: "https://rpc.aequitasprotocol.zone",
+  rest: "https://api.aequitasprotocol.zone",
   bip44: {
     coinType: 118,
   },
   bech32Config: {
-    bech32PrefixAccAddr: "aequitas",
-    bech32PrefixAccPub: "aequitaspub",
-    bech32PrefixValAddr: "aequitasvaloper",
-    bech32PrefixValPub": "aequitasvaloperpub",
-    bech32PrefixConsAddr: "aequitasvalcons",
-    bech32PrefixConsPub: "aequitasvalconspub"
+    bech32PrefixAccAddr: "repar",
+    bech32PrefixAccPub: "reparpub",
+    bech32PrefixValAddr: "reparvaloper",
+    bech32PrefixValPub: "reparvaloperpub",
+    bech32PrefixConsAddr: "reparvalcons",
+    bech32PrefixConsPub: "reparvalconspub"
   },
   currencies: [
     {
       coinDenom: "REPAR",
-      coinMinimalDenom: "urepar",
-      coinDecimals: 6,
-      coinGeckoId: "aequitas-repar", // Update when listed on CoinGecko
+      coinMinimalDenom: "repar",
+      coinDecimals: 0,
+      coinGeckoId: "repar",
     }
   ],
   feeCurrencies: [
     {
       coinDenom: "REPAR",
-      coinMinimalDenom: "urepar",
-      coinDecimals: 6,
-      coinGeckoId: "aequitas-repar",
+      coinMinimalDenom: "repar",
+      coinDecimals: 0,
+      coinGeckoId: "repar",
       gasPriceStep: {
-        low: 0.01,
-        average: 0.025,
-        high: 0.04
+        low: 1,
+        average: 10,
+        high: 100
       }
     }
   ],
   stakeCurrency: {
     coinDenom: "REPAR",
-    coinMinimalDenom: "urepar",
-    coinDecimals: 6,
-    coinGeckoId: "aequitas-repar"
+    coinMinimalDenom: "repar",
+    coinDecimals: 0,
+    coinGeckoId: "repar"
   },
-  features: ["ibc-transfer", "ibc-go"],
-  // Optional: Add explorer URL when available
-  // explorerUrl: "https://explorer.aequitas.zone"
+  features: ["ibc-transfer", "ibc-go", "cosmwasm"],
+  explorerUrl: "https://explorer.aequitasprotocol.zone"
 };
 
 /**

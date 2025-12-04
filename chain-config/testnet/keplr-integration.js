@@ -8,50 +8,51 @@ export async function addAequitasTestnetToKeplr() {
     return false;
   }
 
+  // CRITICAL: Uses "repar" denom (NOT "urepar") with 0 decimals to match genesis
   const chainConfig = {
     chainId: 'aequitas-testnet-1',
     chainName: 'Aequitas Testnet',
-    rpc: 'http://localhost:26657',
-    rest: 'http://localhost:1317',
+    rpc: 'https://rpc-testnet.aequitasprotocol.zone',
+    rest: 'https://api-testnet.aequitasprotocol.zone',
     bip44: {
       coinType: 118,
     },
     bech32Config: {
-      bech32PrefixAccAddr: 'aequitas',
-      bech32PrefixAccPub: 'aequitaspub',
-      bech32PrefixValAddr: 'aequitasvaloper',
-      bech32PrefixValPub: 'aequitasvaloperpub',
-      bech32PrefixConsAddr: 'aequitasvalcons',
-      bech32PrefixConsPub: 'aequitasvalconspub',
+      bech32PrefixAccAddr: 'repar',
+      bech32PrefixAccPub: 'reparpub',
+      bech32PrefixValAddr: 'reparvaloper',
+      bech32PrefixValPub: 'reparvaloperpub',
+      bech32PrefixConsAddr: 'reparvalcons',
+      bech32PrefixConsPub: 'reparvalconspub',
     },
     currencies: [
       {
         coinDenom: 'REPAR',
-        coinMinimalDenom: 'urepar',
-        coinDecimals: 6,
-        coinGeckoId: 'aequitas-repar-testnet',
+        coinMinimalDenom: 'repar',
+        coinDecimals: 0,
+        coinGeckoId: 'repar-testnet',
       },
     ],
     feeCurrencies: [
       {
         coinDenom: 'REPAR',
-        coinMinimalDenom: 'urepar',
-        coinDecimals: 6,
-        coinGeckoId: 'aequitas-repar-testnet',
+        coinMinimalDenom: 'repar',
+        coinDecimals: 0,
+        coinGeckoId: 'repar-testnet',
         gasPriceStep: {
-          low: 0.01,
-          average: 0.025,
-          high: 0.04,
+          low: 1,
+          average: 10,
+          high: 100,
         },
       },
     ],
     stakeCurrency: {
       coinDenom: 'REPAR',
-      coinMinimalDenom: 'urepar',
-      coinDecimals: 6,
-      coinGeckoId: 'aequitas-repar-testnet',
+      coinMinimalDenom: 'repar',
+      coinDecimals: 0,
+      coinGeckoId: 'repar-testnet',
     },
-    features: ['ibc-transfer', 'ibc-go'],
+    features: ['ibc-transfer', 'ibc-go', 'cosmwasm'],
   };
 
   try {
