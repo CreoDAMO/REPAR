@@ -50,6 +50,64 @@ The following CRITICAL issues were resolved to enable proper wallet functionalit
 
 **Pre-defined Founder Address:** `repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun`
 
+### Issue 5: KEPLR REGISTRY CI FAILURE (December 4, 2025)
+| Problem | Fix |
+|---------|-----|
+| Keplr JSON generation fails with exit code 1 | Missing target directory for Keplr JSON output |
+| `keplr-chain-registry/cosmos/aequitas.json` not created | Directory doesn't exist before write |
+
+**Fix Applied:**
+```yaml
+- name: Generate Keplr Chain Registry
+  run: |
+    mkdir -p keplr-chain-registry/cosmos
+    cat > keplr-chain-registry/cosmos/aequitas.json <<EOF
+    {
+      "chainId": "aequitas-1",
+      "chainName": "Aequitas Protocol",
+      "rpc": "https://rpc.aequitasprotocol.zone",
+      "rest": "https://api.aequitasprotocol.zone",
+      "bip44": {
+        "coinType": 118
+      },
+      "bech32Config": {
+        "bech32PrefixAccAddr": "repar",
+        "bech32PrefixAccPub": "reparpub",
+        "bech32PrefixValAddr": "reparvaloper",
+        "bech32PrefixValPub": "reparvaloperpub",
+        "bech32PrefixConsAddr": "reparvalcons",
+        "bech32PrefixConsPub": "reparvalconspub"
+      },
+      "currencies": [{
+        "coinDenom": "REPAR",
+        "coinMinimalDenom": "urepar",
+        "coinDecimals": 6
+      }],
+      "feeCurrencies": [{
+        "coinDenom": "REPAR",
+        "coinMinimalDenom": "urepar",
+        "coinDecimals": 6,
+        "gasPriceStep": {
+          "low": 0.01,
+          "average": 0.025,
+          "high": 0.04
+        }
+      }],
+      "stakeCurrency": {
+        "coinDenom": "REPAR",
+        "coinMinimalDenom": "urepar",
+        "coinDecimals": 6
+      }
+    }
+    EOF
+```
+
+**This fix ensures:**
+- Directory is created before file write
+- Keplr JSON uses correct `urepar` base denomination
+- Proper 6-decimal structure for wallet display
+- Consistent bech32 prefix (`repar`)
+
 ### Genesis Allocations (Display Values - Unchanged)
 | Allocation | REPAR Amount | urepar Amount (internal) |
 |------------|--------------|--------------------------|
@@ -96,6 +154,7 @@ The following root causes were identified in the failing workflows:
 | `apex_scan_results.json` not found | File created in wrong order | Add guard clause and proper sequencing |
 | `liboqs` branch 0.14.1 not found | Version mismatch in liboqs-python | Use correct version or build from main branch |
 | ROS2 not available | Cannot install ROS2 on GitHub Actions | Build ROS2 components on AVM/ACE constellation nodes |
+| Keplr registry CI failure | Missing `keplr-chain-registry/cosmos` directory | Add `mkdir -p keplr-chain-registry/cosmos` before JSON write |
 
 ---
 

@@ -157,8 +157,8 @@
           "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "15720000000000"
+              "denom": "urepar",
+              "amount": "15720000000000000000"
             }
           ]
         },
@@ -166,8 +166,8 @@
           "address": "repar17xpfvakm2amg962yls6f84z3kell8c5lc66g0s",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "56330000000000"
+              "denom": "urepar",
+              "amount": "56330000000000000000"
             }
           ]
         },
@@ -175,8 +175,8 @@
           "address": "repar1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8lyv94w",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "32750000000000"
+              "denom": "urepar",
+              "amount": "32750000000000000000"
             }
           ]
         },
@@ -184,8 +184,8 @@
           "address": "repar10d07y265gmmuvt4z0w9aw880jnsr700j6z2zm3",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "7860000000000"
+              "denom": "urepar",
+              "amount": "7860000000000000000"
             }
           ]
         },
@@ -193,8 +193,8 @@
           "address": "repar1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3h6cprl",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "13100000000000"
+              "denom": "urepar",
+              "amount": "13100000000000000000"
             }
           ]
         },
@@ -202,39 +202,51 @@
           "address": "repar1tygms3xhhs3yv487phx3dw4a95jn7t7lr6yxtq",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "5240000000000"
+              "denom": "urepar",
+              "amount": "5240000000000000000"
             }
           ]
         }
       ],
       "supply": [
         {
-          "denom": "repar",
-          "amount": "131000000000000"
+          "denom": "urepar",
+          "amount": "131000000000000000000"
         }
       ],
       "denom_metadata": [
         {
-          "description": "The native coin of Aequitas Zone - REPAR. Justice-backed, 100% deflationary. Burns only, no minting.",
+          "description": "The native coin of Aequitas Zone - REPAR. Justice-backed, 100% deflationary. Burns only, no minting. $18.33 at genesis, 1:1 peg when burned. Supports both settlements and adoption.",
           "denom_units": [
             {
-              "denom": "repar",
+              "denom": "urepar",
               "exponent": 0,
-              "aliases": []
+              "aliases": ["microrepar"]
+            },
+            {
+              "denom": "mrepar",
+              "exponent": 3,
+              "aliases": ["millirepar"]
+            },
+            {
+              "denom": "repar",
+              "exponent": 6,
+              "aliases": ["REPAR"]
             }
           ],
-          "base": "repar",
+          "base": "urepar",
           "display": "repar",
           "name": "REPAR",
-          "symbol": "REPAR"
+          "symbol": "REPAR",
+          "uri": "",
+          "uri_hash": ""
         }
       ]
     },
     "founderendowment": {
       "endowment": {
         "id": "founder-endowment-1",
-        "principal": "7860000000000",
+        "principal": "7860000000000000000",
         "yield_accumulated": "0",
         "target_apy_bps": "450",
         "last_yield_calc": "0",
