@@ -80,10 +80,31 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - CRITICAL: Removed all "minter" permissions from module accounts
 - All 5 module accounts (descendant_fund, claims_fund, founderendowment, enforcement_treasury, foundation_treasury) now have "burner" only permissions
 - Genesis descriptions updated to state "100% deflationary. Burns only, no minting."
-- Applies to: mainnet, testnet, and bin genesis files
+- Applies to: all 4 genesis files (mainnet/testnet in both chain-config and bin directories)
+
+### Micro-Denomination Alignment (Triple-Verified)
+- All 4 genesis files now have consistent denomination structure:
+  - `urepar` (base, exponent 0) - blockchain internal
+  - `mrepar` (exponent 3) - milli-REPAR
+  - `repar` (exponent 6) - display unit (what users see)
+- All balances/supply now use `urepar` denom with amounts scaled ×10^6
+- Total supply: 131,000,000,000,000,000,000 urepar = 131T REPAR (display)
+- Supports micropayments as low as ~$0.00001833 (1 urepar)
+
+### Keplr Registry CI Fix Documented
+- Issue 5 added to GITHUB_WORKFLOW_FIXES.md
+- Fix: `mkdir -p keplr-chain-registry/cosmos` before JSON write
+- Keplr JSON uses correct `urepar` base denomination with 6 decimals
 
 ### Economic Model Preserved
 - Total supply: 131 trillion REPAR (unchanged)
 - Zero inflation from genesis block 0
 - Supply can only decrease through Justice Burn mechanism
 - Value preservation at $18.33/REPAR peg with enforcement
+
+### External AI Verification (December 4, 2025)
+- ChatGPT 5, DeepSeek, and Claude Sonnet 4.5 triple-verified:
+  - ✅ No minter permissions remain (burner-only)
+  - ✅ Terminology consistent (native coin, not token)
+  - ✅ Micro-denomination structure aligned across all genesis files
+  - ✅ Economic integrity mathematically guaranteed
