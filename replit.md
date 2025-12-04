@@ -67,3 +67,23 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - **Cryptography**: ML-DSA (Dilithium-3), ML-KEM (Kyber-768), SHA-256
 - **Payment Processing**: Circle USDCKit SDK
 - **Wolfram Documentation**: Strategic playbooks for defendant collection, deterrence economics, mathematical engines
+
+## Recent Changes (December 4, 2025)
+
+### Terminology Audit Complete
+- Replaced all "token/tokenomics" references with "coin/coinomics" across 15+ files
+- REPAR is a NATIVE COIN (like ETH on Ethereum), not a token
+- DNS subdomain changed from `tokenomics.` to `coinomics.`
+- AI sentiment prompts updated to reference "REPAR coin"
+
+### Genesis Deflationary Enforcement
+- CRITICAL: Removed all "minter" permissions from module accounts
+- All 5 module accounts (descendant_fund, claims_fund, founderendowment, enforcement_treasury, foundation_treasury) now have "burner" only permissions
+- Genesis descriptions updated to state "100% deflationary. Burns only, no minting."
+- Applies to: mainnet, testnet, and bin genesis files
+
+### Economic Model Preserved
+- Total supply: 131 trillion REPAR (unchanged)
+- Zero inflation from genesis block 0
+- Supply can only decrease through Justice Burn mechanism
+- Value preservation at $18.33/REPAR peg with enforcement
