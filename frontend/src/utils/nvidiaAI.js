@@ -82,7 +82,7 @@ const analyzeSentiment = async (text) => {
           },
           {
             role: 'user',
-            content: `Analyze sentiment for REPAR token: ${text}`
+            content: `Analyze sentiment for REPAR coin: ${text}`
           }
         ],
         temperature: 0.2,

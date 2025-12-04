@@ -142,7 +142,7 @@ This document lists all required subdomains for the complete Aequitas Protocol e
 |-----------|------|-----------|---------|
 | `repar` | CNAME | `app.aequitasprotocol.zone` | $REPAR coin hub |
 | `economics` | CNAME | `repar.aequitasprotocol.zone` | Economics dashboard |
-| `tokenomics` | CNAME | `repar.aequitasprotocol.zone` | Tokenomics viewer |
+| `coinomics` | CNAME | `repar.aequitasprotocol.zone` | Coinomics viewer |
 | `burn` | CNAME | `repar.aequitasprotocol.zone` | Justice Burn tracker |
 
 ### Cryptocurrency Comparison
@@ -155,7 +155,7 @@ This document lists all required subdomains for the complete Aequitas Protocol e
 | Subdomain | Type | Points To | Purpose |
 |-----------|------|-----------|---------|
 | `dex` | CNAME | `app.aequitasprotocol.zone` | Decentralized exchange |
-| `swap` | CNAME | `dex.aequitasprotocol.zone` | Token swap interface |
+| `swap` | CNAME | `dex.aequitasprotocol.zone` | Coin swap interface |
 | `trade` | CNAME | `dex.aequitasprotocol.zone` | Trading interface |
 | `liquidity` | CNAME | `dex.aequitasprotocol.zone` | Liquidity pools |
 

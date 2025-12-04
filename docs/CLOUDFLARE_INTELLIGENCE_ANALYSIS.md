@@ -138,7 +138,7 @@ Conclusion: Settlement likely if enforcement is credible
 
 **Evidence**:
 - After-hours deep dives (evening/weekend traffic)
-- Focus on economics documentation ($REPAR tokenomics)
+- Focus on economics documentation ($REPAR coinomics)
 - No public engagement (NDA-phase due diligence)
 - Return visitor pattern (3-5 visits over 30 days)
 

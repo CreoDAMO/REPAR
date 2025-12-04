@@ -72,14 +72,14 @@ All module accounts have been configured with **burner-only permissions** (no mi
 
 | Module Account | Permission | Effect |
 |----------------|------------|--------|
-| descendant_fund | burner | Can burn tokens, cannot mint |
-| claims_fund | burner | Can burn tokens, cannot mint |
-| founderendowment | burner | Can burn tokens, cannot mint |
-| enforcement_treasury | burner | Can burn tokens, cannot mint |
-| foundation_treasury | burner | Can burn tokens, cannot mint |
+| descendant_fund | burner | Can burn coins, cannot mint |
+| claims_fund | burner | Can burn coins, cannot mint |
+| founderendowment | burner | Can burn coins, cannot mint |
+| enforcement_treasury | burner | Can burn coins, cannot mint |
+| foundation_treasury | burner | Can burn coins, cannot mint |
 
 This ensures:
-- **No new tokens can ever be minted**
+- **No new coins can ever be minted**
 - **Supply can only decrease through burns**
 - **100% deflationary from genesis block 0**
 

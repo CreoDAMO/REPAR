@@ -137,7 +137,7 @@ create_dns_record "ncobra.${DOMAIN}" "CNAME" "alliances.${DOMAIN}"
 echo -e "\n${BLUE}📋 Phase 14: \$REPAR Economics${NC}"
 create_dns_record "repar.${DOMAIN}" "CNAME" "app.${DOMAIN}"
 create_dns_record "economics.${DOMAIN}" "CNAME" "repar.${DOMAIN}"
-create_dns_record "tokenomics.${DOMAIN}" "CNAME" "repar.${DOMAIN}"
+create_dns_record "coinomics.${DOMAIN}" "CNAME" "repar.${DOMAIN}"
 create_dns_record "burn.${DOMAIN}" "CNAME" "repar.${DOMAIN}"
 
 echo -e "\n${BLUE}📋 Phase 15: Crypto Comparison${NC}"

@@ -78,7 +78,7 @@ The Founder's Endowment ensures the protocol is **fully self-funded from genesis
 - **No VC capital required**
 - **No sell pressure on REPAR**
 - **$478M/year in protocol funding**
-- **Pure deflationary tokenomics**
+- **Pure deflationary coinomics**
 
 This is not an investment vehicle. This is a **restitution protocol** with **institutional-grade endowment funding**.
 

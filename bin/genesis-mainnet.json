@@ -90,7 +90,6 @@
           },
           "name": "descendant_fund",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -104,7 +103,6 @@
           },
           "name": "claims_fund",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -118,7 +116,6 @@
           },
           "name": "founderendowment",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -132,7 +129,6 @@
           },
           "name": "enforcement_treasury",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -146,7 +142,6 @@
           },
           "name": "foundation_treasury",
           "permissions": [
-            "minter",
             "burner"
           ]
         }
@@ -221,7 +216,7 @@
       ],
       "denom_metadata": [
         {
-          "description": "The native token of Aequitas Zone - REPAR Coin",
+          "description": "The native coin of Aequitas Zone - REPAR. Justice-backed, 100% deflationary. Burns only, no minting.",
           "denom_units": [
             {
               "denom": "repar",

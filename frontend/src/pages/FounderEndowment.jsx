@@ -161,7 +161,7 @@ export default function FounderEndowment() {
         Evaluate long-term sustainability:
         8-year renewal model with 6% bonus
         90/10 split (90% to protocol, 10% to founder)
-        Zero inflation tokenomics
+        Zero inflation coinomics
         Deflationary burn mechanism via Justice Burns
         No sell pressure (all rewards in USDC)
         Day 1 self-sufficiency without ICO or VC funding

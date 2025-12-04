@@ -49,7 +49,7 @@
 - Constitutional law (5 Amendments weaponized)
 - International law (jus cogens, genocide conventions)
 - Cryptography (BIP39, Tendermint BFT)
-- Economics (deflationary tokenomics)
+- Economics (deflationary coinomics)
 - Mathematics (verified by Wolfram)
 
 **My credentials:** This working blockchain  

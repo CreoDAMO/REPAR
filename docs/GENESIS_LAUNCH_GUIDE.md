@@ -12,8 +12,8 @@ This guide provides complete instructions for initializing and launching the Aeq
 - **Initial Height**: `1`
 - **EVM Chain ID**: `1619` (for EVM compatibility layer)
 
-### Token Economics
-- **Token Symbol**: REPAR
+### Coin Economics
+- **Coin Symbol**: REPAR
 - **Base Denomination**: urepar (micro-REPAR, 10^-6 REPAR)
 - **Total Supply**: 131,000,000,000,000 REPAR (131 Trillion)
   - In base units: `131000000000000000000` urepar
@@ -27,8 +27,8 @@ This guide provides complete instructions for initializing and launching the Aeq
 ```json
 "inflation": "0.000000000000000000"
 ```
-- **No new token issuance**: REPAR has ZERO inflation
-- All tokens exist at genesis
+- **No new coin issuance**: REPAR has ZERO inflation
+- All coins exist at genesis
 - Supply can only decrease through Justice Burn mechanism
 
 #### 2. Validator Subsidy Protocol

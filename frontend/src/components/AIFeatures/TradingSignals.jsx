@@ -11,7 +11,7 @@ const TradingSignals = () => {
   const exampleTexts = [
     "REPAR price up 10% after major partnership announcement",
     "Market uncertainty as regulations tighten for crypto",
-    "Strong institutional buying pressure on REPAR token"
+    "Strong institutional buying pressure on REPAR coin"
   ];
 
   const handleAnalyze = async (text = inputText) => {

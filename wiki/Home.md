@@ -45,7 +45,7 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain that transforms reparati
 - **[Digital Citizenship](./Digital-Citizenship.md)** - DC-SSI framework and DIDs
 
 ### 💰 Economics
-- **[$REPAR Economics](./REPAR-Economics.md)** - Native coin design and tokenomics
+- **[$REPAR Economics](./REPAR-Economics.md)** - Native coin design and coinomics
 - **[Distribution Model](./Distribution-Model.md)** - Justice-first allocation
 - **[DEX & Trading](./DEX-Trading.md)** - Founder Wallet DEX (REPAR/USDC)
 - **[Fee Structure](./Fee-Structure.md)** - Transaction fees and burn mechanism

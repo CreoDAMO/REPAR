@@ -55,8 +55,8 @@ The Aequitas Testnet (aequitas-testnet-1) serves as:
 
 ### B. Testnet Characteristics
 
-- **Currency**: Test-REPAR tokens with no real economic value
-- **Faucet**: Free test tokens available for legitimate development
+- **Currency**: Test-REPAR coins with no real economic value
+- **Faucet**: Free test coins available for legitimate development
 - **Reset Policy**: Network may be reset for major upgrades or testing iterations
 - **Governance**: Experimental governance proposals (2-day voting periods)
 - **Validator Requirements**: Lower barriers to entry for testing purposes
@@ -78,7 +78,7 @@ The Aequitas Testnet (aequitas-testnet-1) serves as:
 ### D. Testnet Limitations
 
 ⚠️ **Testnet Disclaimers:**
-- Test tokens have NO REAL VALUE
+- Test coins have NO REAL VALUE
 - Network may be RESET without notice
 - Not suitable for production legal actions
 - Evidence stored may not be permanent

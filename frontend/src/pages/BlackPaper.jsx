@@ -297,7 +297,7 @@ export default function BlackPaper() {
                       </li>
                     </ul>
                     <p className="text-gray-700 leading-relaxed">
-                      As the protocol enforces reparations claims, the burning mechanism increases $REPAR scarcity, driving token appreciation for holders who funded the enforcement infrastructure.
+                      As the protocol enforces reparations claims, the burning mechanism increases $REPAR scarcity, driving coin appreciation for holders who funded the enforcement infrastructure.
                     </p>
                   </>
                 )}
