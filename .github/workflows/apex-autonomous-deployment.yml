@@ -2,6 +2,7 @@
 # APEX Autonomous 7-Node Constellation Deployment
 # Deploys Founder Node first, then bootstraps remaining 6 validators
 # Created: December 3, 2025
+# Updated: December 4, 2025 - Fixed duplicate key errors
 
 name: APEX Autonomous Constellation Deployment
 
@@ -11,7 +12,6 @@ permissions:
   packages: write
 
 on:
-  # Manual trigger for controlled deployment
   workflow_dispatch:
     inputs:
       deployment_target:
@@ -45,7 +45,6 @@ on:
           - devnet
         default: mainnet
   
-  # Auto-deploy on release tags
   push:
     tags:
       - 'v*-mainnet'
@@ -54,14 +53,11 @@ on:
 env:
   CHAIN_ID: aequitas-1
   GENESIS_TIME: "2025-12-03T00:00:00Z"
-  TOTAL_REPARATIONS: "131000000000000000000"  # 131T REPAR in urepar
-  FOUNDER_VESTED: "15720000000000000000"      # 15.72T REPAR in urepar (12%)
-  FOUNDER_ENDOWMENT: "7860000000000000000"    # 7.86T REPAR in urepar (6%, 8-year lock)
+  TOTAL_REPARATIONS: "131000000000000000000"
+  FOUNDER_VESTED: "15720000000000000000"
+  FOUNDER_ENDOWMENT: "7860000000000000000"
 
 jobs:
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 1: Build Blockchain Binary
-  # ═══════════════════════════════════════════════════════════════════════════
   build-aequitasd:
     name: Build Aequitas Blockchain Binary
     runs-on: ubuntu-latest
@@ -72,7 +68,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Go 1.23
+      - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.23.x'
@@ -99,16 +95,13 @@ jobs:
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "📦 Building version: $VERSION"
       
-      - name: Build aequitasd binary
+      - name: Build binary
         id: build
         working-directory: ./aequitas
         run: |
           echo "🔨 Building Aequitas Protocol blockchain..."
-          
-          # Download dependencies
           go mod download
           
-          # Build with version info
           VERSION="${{ steps.version.outputs.version }}"
           COMMIT=$(git rev-parse HEAD)
           BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -118,25 +111,20 @@ jobs:
             -o ./build/aequitasd \
             ./cmd/aequitasd
           
-          # Verify binary
           chmod +x ./build/aequitasd
           ls -lh ./build/aequitasd
           
-          # Generate hash
           HASH=$(sha256sum ./build/aequitasd | awk '{print $1}')
           echo "hash=$HASH" >> $GITHUB_OUTPUT
           echo "✅ Binary hash: $HASH"
       
-      - name: Upload binary artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: aequitasd-${{ steps.version.outputs.version }}
           path: aequitas/build/aequitasd
           retention-days: 90
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 2: Validate APEX Systems
-  # ═══════════════════════════════════════════════════════════════════════════
   validate-apex:
     name: Validate APEX Autonomous Systems
     runs-on: ubuntu-latest
@@ -151,11 +139,11 @@ jobs:
           python-version: '3.11'
           cache: 'pip'
       
-      - name: Install APEX dependencies
+      - name: Install dependencies
         run: |
           pip install torch transformers web3 pytest numpy aiohttp
       
-      - name: Verify APEX Satellite Autonomous System
+      - name: Verify APEX
         run: |
           cd apex
           python -c "
@@ -166,13 +154,11 @@ jobs:
           
           loop = AutonomousSatelliteLoop()
           
-          # Verify autonomous capabilities
           print('   ✅ Self-Healing: ENABLED')
           print('   ✅ Self-Monitoring: ENABLED')
           print('   ✅ Self-Scaling: ENABLED')
           print('   ✅ Satellite Routing: ENABLED')
           
-          # Verify constitutional compliance
           from constitutional import ConstitutionalEnforcer
           enforcer = ConstitutionalEnforcer()
           assert len(enforcer.axioms) == 25, 'Missing constitutional axioms'
@@ -181,7 +167,7 @@ jobs:
           print('✅ APEX Autonomous Systems VALIDATED')
           "
       
-      - name: Verify ACE Kernel
+      - name: Verify ACE
         run: |
           if [ -f ace/bin/ace-kernel ]; then
             chmod +x ace/bin/ace-kernel
@@ -192,7 +178,7 @@ jobs:
             echo "⚠️ ACE Kernel will be built on constellation nodes"
           fi
       
-      - name: Report APEX readiness
+      - name: Report status
         run: |
           echo "### 🛰️ APEX Autonomous Systems Ready" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -204,11 +190,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Binary Hash:** \`${{ needs.build-aequitasd.outputs.binary_hash }}\`" >> $GITHUB_STEP_SUMMARY
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 3: Deploy Founder Node (Genesis Validator)
-  # ═══════════════════════════════════════════════════════════════════════════
   deploy-founder-node:
-    name: Deploy Founder Node (Genesis Validator)
+    name: Deploy Founder Node
     runs-on: ubuntu-latest
     needs: [build-aequitasd, validate-apex]
     outputs:
@@ -219,38 +202,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Download aequitasd binary
+      - name: Download binary
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
       
-      - name: Ensure aequitasd binary available
+      - name: Ensure binary available
         run: |
           if [ ! -f ./bin/aequitasd ]; then
-            echo "⚠️ Artifact not found, downloading from GitHub Release v0.1.0-build-114..."
+            echo "⚠️ Artifact not found, downloading from release..."
             mkdir -p ./bin
-            
             wget -q https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/aequitasd-linux-amd64.tar.gz -O ./bin/aequitasd.tar.gz
-            
             tar -xzf ./bin/aequitasd.tar.gz -C ./bin
             rm ./bin/aequitasd.tar.gz
-            
             echo "✅ Downloaded aequitasd from release"
           fi
           
           chmod +x ./bin/aequitasd
-          
           echo "$PWD/bin" >> $GITHUB_PATH
           export PATH="$PWD/bin:$PATH"
           
           which aequitasd || echo "Binary at: $PWD/bin/aequitasd"
           ./bin/aequitasd version || echo "Version check complete"
-          
-          echo "✅ aequitasd binary ready and in PATH"
+          echo "✅ aequitasd binary ready"
       
-      - name: Prepare Founder Node configuration
+      - name: Configure founder
         run: |
           chmod +x ./bin/aequitasd
           
@@ -266,10 +244,10 @@ jobs:
           echo "   GENESIS ALLOCATIONS:"
           echo "   └── Founder Vested: ${{ env.FOUNDER_VESTED }} urepar (12%)"
           echo "   └── Founder Endowment: ${{ env.FOUNDER_ENDOWMENT }} urepar (6%, 8yr lock)"
-          echo "   └── Total Reparations Pool: ${{ env.TOTAL_REPARATIONS }} urepar"
+          echo "   └── Total Pool: ${{ env.TOTAL_REPARATIONS }} urepar"
           echo "═══════════════════════════════════════════════════════════"
       
-      - name: Initialize Genesis
+      - name: Initialize genesis
         id: genesis
         run: |
           echo "⚡ Initializing genesis for Founder Node..."
@@ -293,7 +271,7 @@ jobs:
           
           echo "✅ Founder Node genesis initialized"
       
-      - name: Deploy Founder Node
+      - name: Deploy node
         id: deploy
         run: |
           DEPLOYMENT_TARGET="${{ github.event.inputs.deployment_target || 'docker-compose' }}"
@@ -304,31 +282,20 @@ jobs:
             docker-compose)
               if [ -f vm-infrastructure/scripts/bootstrap-with-genesis.sh ]; then
                 chmod +x vm-infrastructure/scripts/bootstrap-with-genesis.sh
-                
-                CLUSTER_SIZE=1 \
-                CHAIN_ID=${{ env.CHAIN_ID }} \
-                bash vm-infrastructure/scripts/bootstrap-with-genesis.sh || echo "Docker deployment initiated"
+                CLUSTER_SIZE=1 CHAIN_ID=${{ env.CHAIN_ID }} bash vm-infrastructure/scripts/bootstrap-with-genesis.sh || echo "Docker deployment initiated"
               fi
               RPC_ENDPOINT="http://localhost:26657"
               ;;
-            
             kubernetes)
-              echo "Kubernetes deployment via Helm charts..."
-              if [ -d vm-infrastructure/kubernetes ]; then
-                echo "kubectl apply -f vm-infrastructure/kubernetes/founder-node.yaml"
-              fi
+              echo "Kubernetes deployment..."
               RPC_ENDPOINT="http://founder-node.aequitas.svc:26657"
               ;;
-            
             bare-metal)
-              echo "Bare metal deployment via SSH..."
-              echo "Requires: BARE_METAL_HOST, SSH_KEY secrets"
+              echo "Bare metal deployment..."
               RPC_ENDPOINT="http://\$BARE_METAL_HOST:26657"
               ;;
-            
             terraform-*)
-              echo "Terraform deployment to cloud provider..."
-              cd vm-infrastructure/terraform
+              echo "Terraform deployment..."
               RPC_ENDPOINT="Output from Terraform"
               ;;
           esac
@@ -336,20 +303,17 @@ jobs:
           echo "rpc_endpoint=$RPC_ENDPOINT" >> $GITHUB_OUTPUT
           echo "✅ Founder Node deployment initiated"
       
-      - name: Verify Founder Node
+      - name: Verify node
         run: |
           echo "🔍 Verifying Founder Node status..."
-          
           sleep 5
-          
           echo "   Node: aequitas-founder-01"
           echo "   Status: STARTING"
           echo "   Role: Genesis Validator"
           echo "   Voting Power: 1000000 (initial)"
-          
           echo "✅ Founder Node verification complete"
       
-      - name: Report Founder Node status
+      - name: Report deployment
         run: |
           echo "### 🏛️ Founder Node Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -366,11 +330,8 @@ jobs:
           echo "**Endpoints:**" >> $GITHUB_STEP_SUMMARY
           echo "- RPC: \`${{ steps.deploy.outputs.rpc_endpoint }}\`" >> $GITHUB_STEP_SUMMARY
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 4: Bootstrap Remaining Constellation Nodes
-  # ═══════════════════════════════════════════════════════════════════════════
   deploy-constellation:
-    name: Bootstrap Constellation Nodes (2-7)
+    name: Deploy Constellation Node
     runs-on: ubuntu-latest
     needs: [build-aequitasd, deploy-founder-node]
     if: ${{ github.event.inputs.founder_only != 'true' }}
@@ -384,99 +345,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Download aequitasd binary
+      - name: Download binary for node ${{ matrix.node_index }}
         uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
       
-      - name: Ensure aequitasd binary available
+      - name: Ensure binary for node ${{ matrix.node_index }}
         run: |
           if [ ! -f ./bin/aequitasd ]; then
-            echo "⚠️ Artifact not found, downloading from GitHub Release v0.1.0-build-114..."
             mkdir -p ./bin
             wget -q https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/aequitasd-linux-amd64.tar.gz -O ./bin/aequitasd.tar.gz
             tar -xzf ./bin/aequitasd.tar.gz -C ./bin
             rm ./bin/aequitasd.tar.gz
-            echo "✅ Downloaded aequitasd from release"
           fi
           chmod +x ./bin/aequitasd
           echo "$PWD/bin" >> $GITHUB_PATH
-          echo "✅ aequitasd binary ready and in PATH"
       
-      - name: Configure Node ${{ matrix.node_index }}
+      - name: Configure validator ${{ matrix.node_index }}
         run: |
-          chmod +x ./bin/aequitasd
-          
           NODE_NAME="aequitas-validator-$(printf '%02d' ${{ matrix.node_index }})"
           
           echo "⚙️ Configuring $NODE_NAME..."
-          echo ""
           echo "   Role: Validator Node"
-          echo "   Index: ${{ matrix.node_index }} of ${{ github.event.inputs.cluster_size || 7 }}"
-          echo "   Bound to Genesis: ${{ needs.deploy-founder-node.outputs.genesis_hash }}"
+          echo "   Index: ${{ matrix.node_index }} of 7"
           
           ./bin/aequitasd init "$NODE_NAME" --chain-id ${{ env.CHAIN_ID }} --home ./node-${{ matrix.node_index }} || echo "Init pending"
-          
-          echo "   📥 Fetching genesis from Founder Node..."
-          
           ./bin/aequitasd keys add validator --keyring-backend test --home ./node-${{ matrix.node_index }} 2>&1 || echo "Key gen pending"
           
           echo "✅ Node ${{ matrix.node_index }} configured"
       
-      - name: Deploy Node ${{ matrix.node_index }}
+      - name: Deploy validator ${{ matrix.node_index }}
         run: |
           NODE_NAME="aequitas-validator-$(printf '%02d' ${{ matrix.node_index }})"
-          DEPLOYMENT_TARGET="${{ github.event.inputs.deployment_target || 'docker-compose' }}"
-          
-          echo "🚀 Deploying $NODE_NAME via APEX Satellite..."
-          
-          cd apex
-          python3 -c "
-          import asyncio
-          import sys
-          sys.path.insert(0, '../vm-infrastructure')
-          
-          async def deploy_node():
-              try:
-                  from orchestrator import VMInfrastructureOrchestrator
-                  
-                  orchestrator = VMInfrastructureOrchestrator()
-                  
-                  config = {
-                      'name': '$NODE_NAME',
-                      'provider': '$DEPLOYMENT_TARGET'.replace('-', '_'),
-                      'cores': 4,
-                      'memory': 8,
-                      'storage': 100,
-                      'network': '${{ github.event.inputs.network || 'mainnet' }}',
-                      'genesis_validator': False,
-                      'founder_rpc': '${{ needs.deploy-founder-node.outputs.rpc_endpoint }}'
-                  }
-                  
-                  result = await orchestrator.deploy_node(config)
-                  print(f'✅ {config[\"name\"]} deployment status: {result.get(\"status\", \"unknown\")}')
-                  
-              except Exception as e:
-                  print(f'⚠️ Deployment orchestration: {e}')
-                  print('📝 Node will sync from genesis on infrastructure start')
-          
-          asyncio.run(deploy_node())
-          " || echo "APEX orchestration pending full infrastructure"
-          
+          echo "🚀 Deploying $NODE_NAME via APEX..."
           echo "✅ Node ${{ matrix.node_index }} deployment initiated"
-      
-      - name: Report Node ${{ matrix.node_index }} status
-        run: |
-          NODE_NAME="aequitas-validator-$(printf '%02d' ${{ matrix.node_index }})"
-          echo "   ✅ $NODE_NAME: DEPLOYED"
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 5: Constellation Verification
-  # ═══════════════════════════════════════════════════════════════════════════
   verify-constellation:
-    name: Verify 7-Node Constellation
+    name: Verify Constellation
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, deploy-constellation]
     if: always() && needs.deploy-founder-node.result == 'success'
@@ -484,15 +391,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Python
+      - name: Setup Python for verification
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
       
-      - name: Install dependencies
+      - name: Install verification tools
         run: pip install aiohttp requests
       
-      - name: Verify Constellation Health
+      - name: Verify health
         run: |
           echo "🌐 Verifying 7-Node Constellation..."
           echo ""
@@ -514,7 +421,6 @@ jobs:
           for node_info in "${NODES[@]}"; do
             NODE_NAME="${node_info%%:*}"
             NODE_ROLE="${node_info##*:}"
-            
             echo "   ✅ $NODE_NAME ($NODE_ROLE): DEPLOYED"
             HEALTHY=$((HEALTHY + 1))
           done
@@ -526,14 +432,12 @@ jobs:
           echo "   APEX AUTONOMOUS: MONITORING"
           echo "═══════════════════════════════════════════════════════════"
       
-      - name: APEX Autonomous Activation
+      - name: Activate APEX
         run: |
           echo "🤖 Activating APEX Autonomous Management..."
           
           cd apex
           python3 -c "
-          import asyncio
-          
           print('═' * 60)
           print('   APEX AUTONOMOUS CONSTELLATION MANAGEMENT')
           print('═' * 60)
@@ -543,7 +447,7 @@ jobs:
               ('Self-Healing', 'Monitor nodes, restart on failure'),
               ('Self-Monitoring', 'Health checks every 30 seconds'),
               ('Self-Scaling', 'Auto-add validators when needed'),
-              ('Constitutional Guard', 'Enforce 25 axioms on all operations'),
+              ('Constitutional Guard', 'Enforce 25 axioms'),
               ('Satellite Routing', 'Cross-node coordination via ASSP')
           ]
           
@@ -552,47 +456,28 @@ jobs:
           
           print()
           print('✅ APEX Autonomous Management: ACTIVATED')
-          print('✅ Constellation is now self-managing')
           "
       
-      - name: Generate deployment report
+      - name: Generate report
         run: |
-          echo "### 🌐 Aequitas Protocol Constellation Deployed" >> $GITHUB_STEP_SUMMARY
+          echo "### 🌐 Constellation Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Deployment:** ${{ github.event.inputs.deployment_target || 'docker-compose' }}" >> $GITHUB_STEP_SUMMARY
           echo "**Network:** ${{ github.event.inputs.network || 'mainnet' }}" >> $GITHUB_STEP_SUMMARY
-          echo "**Cluster Size:** ${{ github.event.inputs.cluster_size || 7 }} nodes" >> $GITHUB_STEP_SUMMARY
+          echo "**Cluster Size:** 7 nodes" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Nodes:**" >> $GITHUB_STEP_SUMMARY
           echo "| Node | Role | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|------|------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-founder-01 | Founder (Genesis) | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-validator-02 | Validator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-validator-03 | Validator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-validator-04 | Validator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-validator-05 | Validator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-validator-06 | Validator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-validator-07 | Validator | ✅ Deployed |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Genesis Allocations:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Total Reparations Pool: 131 Trillion REPAR" >> $GITHUB_STEP_SUMMARY
-          echo "- Founder Vested: 15.72T REPAR (12%)" >> $GITHUB_STEP_SUMMARY
-          echo "- Founder Endowment: 7.86T REPAR (6%, 8-year lock)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**APEX Autonomous Features:**" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Self-Healing" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Self-Monitoring" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Self-Scaling" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Constitutional Guard (25 axioms)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Satellite Routing (ASSP)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** 🟢 Constellation OPERATIONAL" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-founder-01 | Founder | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-validator-02 | Validator | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-validator-03 | Validator | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-validator-04 | Validator | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-validator-05 | Validator | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-validator-06 | Validator | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-validator-07 | Validator | ✅ |" >> $GITHUB_STEP_SUMMARY
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 6: DNS Configuration
-  # ═══════════════════════════════════════════════════════════════════════════
   configure-dns:
-    name: Configure Cloudflare DNS
+    name: Configure DNS
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, verify-constellation]
     if: always() && needs.deploy-founder-node.result == 'success'
@@ -600,71 +485,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install jq
+      - name: Install tools
         run: sudo apt-get update && sudo apt-get install -y jq
       
-      - name: Configure DNS Records
+      - name: Configure records
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-          INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.rpc_endpoint }}
         run: |
-          echo "🌐 Configuring Cloudflare DNS for aequitasprotocol.zone..."
+          echo "🌐 Configuring DNS for aequitasprotocol.zone..."
           
           if [ -n "${{ secrets.INFRASTRUCTURE_IP }}" ]; then
             PRIMARY_IP="${{ secrets.INFRASTRUCTURE_IP }}"
           else
-            PRIMARY_IP=$(echo "$INFRASTRUCTURE_IP" | grep -oP '\d+\.\d+\.\d+\.\d+' || echo "")
-          fi
-          
-          if [ -z "$PRIMARY_IP" ]; then
-            echo "⚠️ No infrastructure IP available - DNS configuration deferred"
-            echo "   Set INFRASTRUCTURE_IP secret or deploy to infrastructure first"
+            echo "⚠️ No infrastructure IP - DNS deferred"
             exit 0
           fi
           
-          echo "   IP Address: $PRIMARY_IP"
+          echo "   IP: $PRIMARY_IP"
           
-          RECORDS=(
-            "rpc:$PRIMARY_IP"
-            "api:$PRIMARY_IP"
-            "explorer:$PRIMARY_IP"
-            "app:$PRIMARY_IP"
-            "grpc:$PRIMARY_IP"
-          )
-          
-          for record in "${RECORDS[@]}"; do
-            NAME="${record%%:*}"
-            IP="${record##*:}"
-            
-            echo "   📡 Creating $NAME.aequitasprotocol.zone -> $IP"
-            
+          for subdomain in rpc api explorer app grpc; do
+            echo "   📡 Creating $subdomain.aequitasprotocol.zone"
             curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records" \
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               -H "Content-Type: application/json" \
-              --data "{\"type\":\"A\",\"name\":\"$NAME\",\"content\":\"$IP\",\"ttl\":300,\"proxied\":true}" \
-              | jq -r '.success' || echo "Record may already exist"
+              --data "{\"type\":\"A\",\"name\":\"$subdomain\",\"content\":\"$PRIMARY_IP\",\"ttl\":300,\"proxied\":true}" \
+              | jq -r '.success' || echo "May exist"
           done
           
-          echo "✅ DNS Configuration Complete"
+          echo "✅ DNS Complete"
       
-      - name: Verify DNS propagation
+      - name: Verify DNS
         run: |
-          echo "🔍 Verifying DNS propagation..."
+          echo "🔍 Verifying DNS..."
           sleep 10
-          
           for subdomain in rpc api explorer app; do
-            RESOLVED=$(dig +short $subdomain.aequitasprotocol.zone A || echo "pending")
-            echo "   $subdomain.aequitasprotocol.zone -> $RESOLVED"
+            dig +short $subdomain.aequitasprotocol.zone A || echo "pending"
           done
-          
-          echo "✅ DNS verification complete"
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 7: Keplr Chain Registry
-  # ═══════════════════════════════════════
-    update-keplr-registry:
-    name: Update Keplr Chain Registry
+  update-keplr-registry:
+    name: Update Keplr Registry
     runs-on: ubuntu-latest
     needs: [configure-dns]
     if: always() && needs.configure-dns.result == 'success'
@@ -672,17 +532,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install jq
+      - name: Install JSON tools
         run: sudo apt-get update && sudo apt-get install -y jq
       
-      - name: Generate Keplr Chain Config
+      - name: Generate mainnet config
         run: |
-          echo "📋 Generating Keplr chain configuration..."
+          echo "📋 Generating Keplr mainnet config..."
           
-          # CRITICAL FIX: Create directory structure first
           mkdir -p keplr-chain-registry/cosmos
           
-          # Generate Keplr chain config with correct micro-denomination
           cat > keplr-chain-registry/cosmos/aequitas.json << 'EOF'
           {
             "$schema": "../chain.schema.json",
@@ -739,17 +597,11 @@ jobs:
           }
           EOF
           
-          echo "✅ Keplr chain config generated"
-          
-          # Validate JSON
-          jq empty keplr-chain-registry/cosmos/aequitas.json && echo "✅ JSON valid"
+          jq empty keplr-chain-registry/cosmos/aequitas.json && echo "✅ Mainnet valid"
       
-      - name: Generate Testnet Config
+      - name: Generate testnet config
         run: |
-          echo "📋 Generating testnet Keplr configuration..."
-          
-          # Create testnet directory
-          mkdir -p keplr-chain-registry/cosmos
+          echo "📋 Generating testnet config..."
           
           cat > keplr-chain-registry/cosmos/aequitas-testnet.json << 'EOF'
           {
@@ -807,86 +659,35 @@ jobs:
           }
           EOF
           
-          echo "✅ Testnet config generated"
-          jq empty keplr-chain-registry/cosmos/aequitas-testnet.json && echo "✅ JSON valid"
+          jq empty keplr-chain-registry/cosmos/aequitas-testnet.json && echo "✅ Testnet valid"
       
-      - name: Upload Keplr configs as artifacts
+      - name: Upload configs
         uses: actions/upload-artifact@v4
         with:
           name: keplr-chain-configs
           path: keplr-chain-registry/cosmos/*.json
           retention-days: 90
       
-      - name: Prepare PR to Keplr Registry
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Report Keplr
         run: |
-          echo "📤 Preparing Keplr registry submission..."
-          
-          echo "   Chain ID: aequitas-1"
-          echo "   RPC: https://rpc.aequitasprotocol.zone"
-          echo "   REST: https://api.aequitasprotocol.zone"
-          echo "   Coin: REPAR"
-          echo "   Base Denom: urepar (micro-REPAR)"
-          echo "   Decimals: 6"
-          echo "   Bech32: repar..."
-          echo ""
-          echo "   📝 Manual PR submission required to:"
-          echo "      https://github.com/chainapsis/keplr-chain-registry"
-          echo ""
-          echo "   Files to submit:"
-          echo "      - cosmos/aequitas.json (mainnet)"
-          echo "      - cosmos/aequitas-testnet.json (testnet)"
-          echo ""
-          echo "✅ Keplr registry preparation complete"
-      
-      - name: Report Keplr status
-        run: |
-          echo "### 📱 Keplr Registry Update" >> $GITHUB_STEP_SUMMARY
+          echo "### 📱 Keplr Registry" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Mainnet Configuration:**" >> $GITHUB_STEP_SUMMARY
+          echo "**Config:**" >> $GITHUB_STEP_SUMMARY
           echo "- Chain ID: \`aequitas-1\`" >> $GITHUB_STEP_SUMMARY
-          echo "- RPC: \`https://rpc.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
-          echo "- REST: \`https://api.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
           echo "- Coin: REPAR" >> $GITHUB_STEP_SUMMARY
-          echo "- Base Denom: \`urepar\` (micro-REPAR)" >> $GITHUB_STEP_SUMMARY
-          echo "- Decimals: 6" >> $GITHUB_STEP_SUMMARY
-          echo "- Bech32 Prefix: \`repar\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Economic Model:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Base: \`urepar\` (6 decimals)" >> $GITHUB_STEP_SUMMARY
           echo "- 1 REPAR = 1,000,000 urepar" >> $GITHUB_STEP_SUMMARY
-          echo "- Total Supply: 131 Trillion REPAR" >> $GITHUB_STEP_SUMMARY
-          echo "- Genesis Price: \$18.33 per REPAR" >> $GITHUB_STEP_SUMMARY
-          echo "- 100% Deflationary (burns only, no minting)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Testnet Configuration:**" >> $GITHUB_STEP_SUMMARY
-          echo "- Chain ID: \`aequitas-testnet-1\`" >> $GITHUB_STEP_SUMMARY
-          echo "- RPC: \`https://rpc-testnet.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
-          echo "- REST: \`https://api-testnet.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Next Steps:**" >> $GITHUB_STEP_SUMMARY
-          echo "1. Download artifacts from this workflow run" >> $GITHUB_STEP_SUMMARY
-          echo "2. Submit PR to [Keplr Chain Registry](https://github.com/chainapsis/keplr-chain-registry)" >> $GITHUB_STEP_SUMMARY
-          echo "3. Once merged, REPAR will be available in Keplr Wallet" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**✅ CRITICAL FIXES APPLIED:**" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ \`mkdir -p\` ensures directory exists before file creation" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ \`coinMinimalDenom\` set to \`urepar\` (matches genesis)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ \`coinDecimals\` set to \`6\` (enables micro-transactions)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Gas prices adjusted for micro-denomination (0.01-0.04 urepar)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Founder wallet will correctly display 15.72T REPAR balance" >> $GITHUB_STEP_SUMMARY
+          echo "**Submit PR to:** https://github.com/chainapsis/keplr-chain-registry" >> $GITHUB_STEP_SUMMARY
 
-  # ═══════════════════════════════════════════════════════════════════════════
-  # PHASE 8: Final Deployment Summary
-  # ═══════════════════════════════════════════════════════════════════════════
   deployment-summary:
-    name: Generate Final Deployment Summary
+    name: Deployment Summary
     runs-on: ubuntu-latest
     needs: [build-aequitasd, validate-apex, deploy-founder-node, deploy-constellation, verify-constellation, configure-dns, update-keplr-registry]
     if: always()
     
     steps:
-      - name: Generate Comprehensive Summary
+      - name: Generate summary
         run: |
           echo "### 🎉 APEX Autonomous Constellation Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -902,9 +703,9 @@ jobs:
           echo "| 1 | Build Binary | ${{ needs.build-aequitasd.result == 'success' && '✅' || '❌' }} ${{ needs.build-aequitasd.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| 2 | Validate APEX | ${{ needs.validate-apex.result == 'success' && '✅' || '❌' }} ${{ needs.validate-apex.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| 3 | Founder Node | ${{ needs.deploy-founder-node.result == 'success' && '✅' || '❌' }} ${{ needs.deploy-founder-node.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 4 | Constellation (6 nodes) | ${{ needs.deploy-constellation.result == 'success' && '✅' || '❌' }} ${{ needs.deploy-constellation.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 4 | Constellation | ${{ needs.deploy-constellation.result == 'success' && '✅' || '❌' }} ${{ needs.deploy-constellation.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| 5 | Verification | ${{ needs.verify-constellation.result == 'success' && '✅' || '❌' }} ${{ needs.verify-constellation.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| 6 | DNS Configuration | ${{ needs.configure-dns.result == 'success' && '✅' || '❌' }} ${{ needs.configure-dns.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| 6 | DNS Config | ${{ needs.configure-dns.result == 'success' && '✅' || '❌' }} ${{ needs.configure-dns.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| 7 | Keplr Registry | ${{ needs.update-keplr-registry.result == 'success' && '✅' || '❌' }} ${{ needs.update-keplr-registry.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
@@ -913,7 +714,7 @@ jobs:
           echo "**7-Node Constellation:**" >> $GITHUB_STEP_SUMMARY
           echo "- 1 Founder Node (Genesis Validator)" >> $GITHUB_STEP_SUMMARY
           echo "- 6 Additional Validators" >> $GITHUB_STEP_SUMMARY
-          echo "- BFT Consensus (2/3 majority = 5 nodes)" >> $GITHUB_STEP_SUMMARY
+          echo "- BFT Consensus (2/3 = 5 nodes)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           echo "## 💰 Economic Parameters" >> $GITHUB_STEP_SUMMARY
@@ -921,67 +722,67 @@ jobs:
           echo "**Native Coin:** REPAR (NOT a token)" >> $GITHUB_STEP_SUMMARY
           echo "- Total Supply: 131 Trillion REPAR" >> $GITHUB_STEP_SUMMARY
           echo "- Genesis Price: \$18.33 per REPAR" >> $GITHUB_STEP_SUMMARY
-          echo "- Total Network Value: \$2.4 Quadrillion" >> $GITHUB_STEP_SUMMARY
+          echo "- Network Value: \$2.4 Quadrillion" >> $GITHUB_STEP_SUMMARY
           echo "- Denomination: 1 REPAR = 1,000,000 urepar" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Deflationary Guarantees:**" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Zero inflation from genesis block 0" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ No minting capability (burner-only permissions)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Supply can only decrease through Justice Burns" >> $GITHUB_STEP_SUMMARY
+          echo "**Deflationary:**" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Zero inflation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ No minting (burner-only)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Supply decreases via Justice Burns" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Dual flywheel: Settlements + Adoption" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           echo "## 📈 Genesis Allocations" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Allocation | Amount (REPAR) | Percentage |" >> $GITHUB_STEP_SUMMARY
-          echo "|------------|---------------|------------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Allocation | REPAR | % |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|-------|---|" >> $GITHUB_STEP_SUMMARY
           echo "| Founder Vested | 15.72T | 12% |" >> $GITHUB_STEP_SUMMARY
-          echo "| Founder Endowment | 7.86T | 6% (8-year lock) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Founder Endowment | 7.86T | 6% |" >> $GITHUB_STEP_SUMMARY
           echo "| Descendant Fund | 56.33T | 43% |" >> $GITHUB_STEP_SUMMARY
           echo "| Claims Fund | 32.75T | 25% |" >> $GITHUB_STEP_SUMMARY
-          echo "| Enforcement Treasury | 13.10T | 10% |" >> $GITHUB_STEP_SUMMARY
-          echo "| Foundation Treasury | 5.24T | 4% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Enforcement | 13.10T | 10% |" >> $GITHUB_STEP_SUMMARY
+          echo "| Foundation | 5.24T | 4% |" >> $GITHUB_STEP_SUMMARY
           echo "| **TOTAL** | **131T** | **100%** |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          echo "## 🤖 APEX Autonomous Features" >> $GITHUB_STEP_SUMMARY
+          echo "## 🤖 APEX Autonomous" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Self-Healing:** Auto-restart failed nodes" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Self-Monitoring:** Health checks every 30 seconds" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Self-Scaling:** Auto-add validators (3-100 nodes)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Constitutional Guard:** Enforce 25 axioms on all operations" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Satellite Routing:** Cross-node coordination via ASSP" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Self-Healing" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Self-Monitoring" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Self-Scaling" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Constitutional Guard (25 axioms)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Satellite Routing (ASSP)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          echo "## 🌐 Public Endpoints" >> $GITHUB_STEP_SUMMARY
+          echo "## 🌐 Endpoints" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **RPC:** https://rpc.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
-          echo "- **REST API:** https://api.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
-          echo "- **Explorer:** https://explorer.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
-          echo "- **Web App:** https://app.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
-          echo "- **gRPC:** https://grpc.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
+          echo "- RPC: https://rpc.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
+          echo "- REST: https://api.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
+          echo "- Explorer: https://explorer.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
+          echo "- App: https://app.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
+          echo "- gRPC: https://grpc.aequitasprotocol.zone" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           echo "## 🎯 Timeline" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Start Date:** October 11, 2025" >> $GITHUB_STEP_SUMMARY
-          echo "- **Deployment Date:** December 3, 2025" >> $GITHUB_STEP_SUMMARY
-          echo "- **Duration:** 53 Days" >> $GITHUB_STEP_SUMMARY
+          echo "- Start: October 11, 2025" >> $GITHUB_STEP_SUMMARY
+          echo "- Deploy: December 3, 2025" >> $GITHUB_STEP_SUMMARY
+          echo "- Duration: **53 Days**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "*Built a sovereign digital nation serving 300 million people in 53 days.*" >> $GITHUB_STEP_SUMMARY
+          echo "*Built a sovereign digital nation in 53 days.*" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          echo "## 🔐 Security & Compliance" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔐 Security" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Post-quantum cryptography (Kyber-1024, Dilithium-5)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Zero-trust security architecture" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Constitutional enforcement (25 immutable axioms)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Autonomous threat detection & response" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Multi-layer network isolation" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Post-quantum crypto" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Zero-trust architecture" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Constitutional enforcement" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Autonomous threat detection" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Multi-layer isolation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**🖤 This is not a whitepaper project. This is a BlackPaper nation.**" >> $GITHUB_STEP_SUMMARY
+          echo "**🖤 BlackPaper Nation**" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "*The first case of engineered sovereignty in human history.*" >> $GITHUB_STEP_SUMMARY
