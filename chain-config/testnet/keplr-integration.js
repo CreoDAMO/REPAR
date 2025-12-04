@@ -1,5 +1,12 @@
-// Keplr Integration for Aequitas Testnet
-// Add Aequitas testnet to Keplr wallet
+/**
+ * Keplr Integration for Aequitas Testnet
+ * 
+ * DENOMINATION: urepar (micro-REPAR) is the base unit, REPAR is display unit
+ * 1 REPAR = 1,000,000 urepar (6 decimals)
+ * 
+ * ECONOMICS: 100% deflationary - burns only, no minting
+ * Genesis value: $18.33/REPAR, 1:1 peg when burned
+ */
 
 export async function addAequitasTestnetToKeplr() {
   if (!window.keplr) {
@@ -8,7 +15,6 @@ export async function addAequitasTestnetToKeplr() {
     return false;
   }
 
-  // CRITICAL: Uses "repar" denom (NOT "urepar") with 0 decimals to match genesis
   const chainConfig = {
     chainId: 'aequitas-testnet-1',
     chainName: 'Aequitas Testnet',
@@ -28,28 +34,28 @@ export async function addAequitasTestnetToKeplr() {
     currencies: [
       {
         coinDenom: 'REPAR',
-        coinMinimalDenom: 'repar',
-        coinDecimals: 0,
+        coinMinimalDenom: 'urepar',
+        coinDecimals: 6,
         coinGeckoId: 'repar-testnet',
       },
     ],
     feeCurrencies: [
       {
         coinDenom: 'REPAR',
-        coinMinimalDenom: 'repar',
-        coinDecimals: 0,
+        coinMinimalDenom: 'urepar',
+        coinDecimals: 6,
         coinGeckoId: 'repar-testnet',
         gasPriceStep: {
-          low: 1,
-          average: 10,
-          high: 100,
+          low: 0.01,
+          average: 0.025,
+          high: 0.04,
         },
       },
     ],
     stakeCurrency: {
       coinDenom: 'REPAR',
-      coinMinimalDenom: 'repar',
-      coinDecimals: 0,
+      coinMinimalDenom: 'urepar',
+      coinDecimals: 6,
       coinGeckoId: 'repar-testnet',
     },
     features: ['ibc-transfer', 'ibc-go', 'cosmwasm'],
@@ -58,16 +64,15 @@ export async function addAequitasTestnetToKeplr() {
   try {
     await window.keplr.experimentalSuggestChain(chainConfig);
     await window.keplr.enable(chainConfig.chainId);
-    console.log('✅ Aequitas Testnet added to Keplr successfully');
+    console.log('Aequitas Testnet added to Keplr successfully');
     return true;
   } catch (error) {
-    console.error('❌ Error adding Aequitas Testnet to Keplr:', error);
+    console.error('Error adding Aequitas Testnet to Keplr:', error);
     alert('Failed to add Aequitas Testnet to Keplr: ' + error.message);
     return false;
   }
 }
 
-// Export for use in HTML
 if (typeof window !== 'undefined') {
   window.addAequitasTestnetToKeplr = addAequitasTestnetToKeplr;
 }

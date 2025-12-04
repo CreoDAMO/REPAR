@@ -90,7 +90,6 @@
           },
           "name": "descendant_fund",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -104,7 +103,6 @@
           },
           "name": "claims_fund",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -118,7 +116,6 @@
           },
           "name": "founderendowment",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -132,7 +129,6 @@
           },
           "name": "enforcement_treasury",
           "permissions": [
-            "minter",
             "burner"
           ]
         },
@@ -146,7 +142,6 @@
           },
           "name": "foundation_treasury",
           "permissions": [
-            "minter",
             "burner"
           ]
         }
@@ -162,8 +157,8 @@
           "address": "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "15720000000000"
+              "denom": "urepar",
+              "amount": "15720000000000000000"
             }
           ]
         },
@@ -171,8 +166,8 @@
           "address": "repar17xpfvakm2amg962yls6f84z3kell8c5lc66g0s",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "56330000000000"
+              "denom": "urepar",
+              "amount": "56330000000000000000"
             }
           ]
         },
@@ -180,8 +175,8 @@
           "address": "repar1jv65s3grqf6v6jl3dp4t6c9t9rk99cd8lyv94w",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "32750000000000"
+              "denom": "urepar",
+              "amount": "32750000000000000000"
             }
           ]
         },
@@ -189,8 +184,8 @@
           "address": "repar10d07y265gmmuvt4z0w9aw880jnsr700j6z2zm3",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "7860000000000"
+              "denom": "urepar",
+              "amount": "7860000000000000000"
             }
           ]
         },
@@ -198,8 +193,8 @@
           "address": "repar1fl48vsnmsdzcv85q5d2q4z5ajdha8yu3h6cprl",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "13100000000000"
+              "denom": "urepar",
+              "amount": "13100000000000000000"
             }
           ]
         },
@@ -207,39 +202,51 @@
           "address": "repar1tygms3xhhs3yv487phx3dw4a95jn7t7lr6yxtq",
           "coins": [
             {
-              "denom": "repar",
-              "amount": "5240000000000"
+              "denom": "urepar",
+              "amount": "5240000000000000000"
             }
           ]
         }
       ],
       "supply": [
         {
-          "denom": "repar",
-          "amount": "131000000000000"
+          "denom": "urepar",
+          "amount": "131000000000000000000"
         }
       ],
       "denom_metadata": [
         {
-          "description": "The native token of Aequitas Zone - REPAR Coin",
+          "description": "The native coin of Aequitas Zone - REPAR. Justice-backed, 100% deflationary. Burns only, no minting. $18.33 at genesis, 1:1 peg when burned. Supports both settlements and adoption.",
           "denom_units": [
             {
-              "denom": "repar",
+              "denom": "urepar",
               "exponent": 0,
-              "aliases": []
+              "aliases": ["microrepar"]
+            },
+            {
+              "denom": "mrepar",
+              "exponent": 3,
+              "aliases": ["millirepar"]
+            },
+            {
+              "denom": "repar",
+              "exponent": 6,
+              "aliases": ["REPAR"]
             }
           ],
-          "base": "repar",
+          "base": "urepar",
           "display": "repar",
           "name": "REPAR",
-          "symbol": "REPAR"
+          "symbol": "REPAR",
+          "uri": "",
+          "uri_hash": ""
         }
       ]
     },
     "founderendowment": {
       "endowment": {
         "id": "founder-endowment-1",
-        "principal": "7860000000000",
+        "principal": "7860000000000000000",
         "yield_accumulated": "0",
         "target_apy_bps": "450",
         "last_yield_calc": "0",
@@ -286,13 +293,13 @@
     },
     "validatorsubsidy": {
       "params": {
-        "subsidy_amount": "6456000000",
+        "subsidy_amount": "6456000000000000",
         "distribution_period": "2592000"
       },
       "pool": {
         "total_allocated": "0",
-        "monthly_budget": "1000000000000",
-        "emergency_reserve": "500000000000",
+        "monthly_budget": "1000000000000000000",
+        "emergency_reserve": "500000000000000000",
         "last_distribution": "0"
       },
       "validators": [],
@@ -310,7 +317,7 @@
         "max_validators": 100,
         "max_entries": 7,
         "historical_entries": 10000,
-        "bond_denom": "repar"
+        "bond_denom": "urepar"
       },
       "last_total_power": "0",
       "last_validator_powers": [],
@@ -340,12 +347,12 @@
         "burn_count": "0",
         "largest_burn": "0"
       },
-      "initial_supply": "131000000000000"
+      "initial_supply": "131000000000000000000"
     },
     "dex": {
       "params": {
-        "pool_creation_fee": "1000000",
-        "min_initial_pool_liquidity": "1000000000",
+        "pool_creation_fee": "1000000000000",
+        "min_initial_pool_liquidity": "1000000000000000",
         "max_swap_fee_rate": "1000"
       },
       "pools": [],

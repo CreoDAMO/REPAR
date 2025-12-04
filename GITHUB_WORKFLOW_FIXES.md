@@ -8,20 +8,33 @@
 
 ## ⚠️ CRITICAL FIXES APPLIED (December 4, 2025)
 
-The following CRITICAL issues were causing the **founder wallet to show 0 REPAR** in Keplr:
+The following CRITICAL issues were resolved to enable proper wallet functionality and economic model support:
 
-### Issue 1: DENOM MISMATCH (ROOT CAUSE)
-| Problem | Fix |
-|---------|-----|
-| Genesis file uses `"denom": "repar"` | Changed Keplr config to use `"coinMinimalDenom": "repar"` |
-| Keplr was looking for `"urepar"` | Changed `"coinDecimals"` from `6` to `0` |
-| Result: Keplr couldn't find any balance | Now Keplr queries the correct denom |
+### Issue 1: MICRO-DENOMINATION IMPLEMENTATION (ECONOMIC MODEL FIX)
+| Problem | Solution |
+|---------|----------|
+| Genesis had no micro-units (exponent 0 only) | Added proper two-tier denomination structure |
+| Cannot transact fractional REPAR at $18.33/REPAR | Now supports micropayments, staking precision, DEX pricing |
+| Minimum transaction was $18.33 | Now minimum is ~$0.00001833 (1 urepar) |
+
+**New Denomination Structure:**
+| Unit | Exponent | Description |
+|------|----------|-------------|
+| `urepar` | 0 | Base unit (micro-REPAR) - blockchain internal |
+| `mrepar` | 3 | Milli-REPAR (1/1000 REPAR) |
+| `REPAR` | 6 | Display unit - what users see in wallets |
+
+**Scaling Applied:**
+- 1 REPAR = 1,000,000 urepar
+- All genesis allocations scaled by 10^6 internally
+- **Total supply unchanged: 131 trillion REPAR**
+- **100% DEFLATIONARY: Burns only, no minting**
 
 ### Issue 2: MISSING WORKFLOW PHASES
 | Missing Phase | Added |
 |---------------|-------|
-| Phase 6: DNS Configuration | Added - Configures Cloudflare DNS records |
-| Phase 7: Keplr Registry | Added - Updates Keplr chain registry with correct config |
+| Phase 6: DNS Configuration | Configures Cloudflare DNS records |
+| Phase 7: Keplr Registry | Updates Keplr chain registry with correct config |
 
 ### Issue 3: BECH32 PREFIX MISMATCH
 | Problem | Fix |
@@ -36,6 +49,39 @@ The following CRITICAL issues were causing the **founder wallet to show 0 REPAR*
 | New address doesn't match genesis allocation | Use `--recover` with mnemonic OR use pre-generated genesis |
 
 **Pre-defined Founder Address:** `repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun`
+
+### Genesis Allocations (Display Values - Unchanged)
+| Allocation | REPAR Amount | urepar Amount (internal) |
+|------------|--------------|--------------------------|
+| Founder (vested 12%) | 15.72T | 15,720,000,000,000,000,000 |
+| Descendant Fund (43%) | 56.33T | 56,330,000,000,000,000,000 |
+| Claims Fund (25%) | 32.75T | 32,750,000,000,000,000,000 |
+| Founder Endowment (6%, 8yr lock) | 7.86T | 7,860,000,000,000,000,000 |
+| Enforcement Treasury (10%) | 13.10T | 13,100,000,000,000,000,000 |
+| Foundation Treasury (4%) | 5.24T | 5,240,000,000,000,000,000 |
+| **TOTAL** | **131T REPAR** | **131,000,000,000,000,000,000 urepar** |
+
+### Economic Model Preserved
+- **Value at Genesis:** $18.33 per REPAR
+- **Peg:** 1:1 when burned against settlements
+- **Adoption:** Supports both settlements AND market adoption
+- **Deflationary:** Burns only, no minting
+
+### Deflationary Enforcement (Genesis Level)
+All module accounts have been configured with **burner-only permissions** (no minter):
+
+| Module Account | Permission | Effect |
+|----------------|------------|--------|
+| descendant_fund | burner | Can burn tokens, cannot mint |
+| claims_fund | burner | Can burn tokens, cannot mint |
+| founderendowment | burner | Can burn tokens, cannot mint |
+| enforcement_treasury | burner | Can burn tokens, cannot mint |
+| foundation_treasury | burner | Can burn tokens, cannot mint |
+
+This ensures:
+- **No new tokens can ever be minted**
+- **Supply can only decrease through burns**
+- **100% deflationary from genesis block 0**
 
 ---
 

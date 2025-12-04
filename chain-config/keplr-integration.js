@@ -4,12 +4,13 @@
  * This script allows users to add Aequitas Zone to their Keplr wallet
  * with a single click. Use this for Cosmos-based blockchain integration.
  * 
- * NOTE: MetaMask is for EVM chains only. Aequitas is a Cosmos SDK chain,
- * so it requires Keplr wallet.
+ * DENOMINATION: urepar (micro-REPAR) is the base unit, REPAR is display unit
+ * 1 REPAR = 1,000,000 urepar (6 decimals)
+ * 
+ * ECONOMICS: 100% deflationary - burns only, no minting
+ * Genesis value: $18.33/REPAR, 1:1 peg when burned
  */
 
-// Aequitas Zone Configuration for Keplr
-// CRITICAL: Uses "repar" denom (NOT "urepar") with 0 decimals to match genesis
 const aequitasChainConfig = {
   chainId: "aequitas-1",
   chainName: "Aequitas Zone",
@@ -29,28 +30,28 @@ const aequitasChainConfig = {
   currencies: [
     {
       coinDenom: "REPAR",
-      coinMinimalDenom: "repar",
-      coinDecimals: 0,
+      coinMinimalDenom: "urepar",
+      coinDecimals: 6,
       coinGeckoId: "repar",
     }
   ],
   feeCurrencies: [
     {
       coinDenom: "REPAR",
-      coinMinimalDenom: "repar",
-      coinDecimals: 0,
+      coinMinimalDenom: "urepar",
+      coinDecimals: 6,
       coinGeckoId: "repar",
       gasPriceStep: {
-        low: 1,
-        average: 10,
-        high: 100
+        low: 0.01,
+        average: 0.025,
+        high: 0.04
       }
     }
   ],
   stakeCurrency: {
     coinDenom: "REPAR",
-    coinMinimalDenom: "repar",
-    coinDecimals: 0,
+    coinMinimalDenom: "urepar",
+    coinDecimals: 6,
     coinGeckoId: "repar"
   },
   features: ["ibc-transfer", "ibc-go", "cosmwasm"],
@@ -69,16 +70,12 @@ async function addAequitasToKeplr() {
   }
 
   try {
-    // Suggest chain to Keplr
     await window.keplr.experimentalSuggestChain(aequitasChainConfig);
-    
-    // Enable the chain
     await window.keplr.enable(aequitasChainConfig.chainId);
     
     console.log("Aequitas Zone successfully added to Keplr!");
     alert("Aequitas Zone has been added to your Keplr wallet!");
     
-    // Get the user's address
     const offlineSigner = window.keplr.getOfflineSigner(aequitasChainConfig.chainId);
     const accounts = await offlineSigner.getAccounts();
     console.log("Your Aequitas address:", accounts[0].address);
@@ -106,7 +103,6 @@ async function checkKeplrConnection() {
   }
 }
 
-// Export for use in React/Vue/etc
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     aequitasChainConfig,

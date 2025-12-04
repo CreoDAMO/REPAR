@@ -17,28 +17,28 @@
   "currencies": [
     {
       "coinDenom": "REPAR",
-      "coinMinimalDenom": "repar",
-      "coinDecimals": 0,
+      "coinMinimalDenom": "urepar",
+      "coinDecimals": 6,
       "coinGeckoId": "repar-testnet"
     }
   ],
   "feeCurrencies": [
     {
       "coinDenom": "REPAR",
-      "coinMinimalDenom": "repar",
-      "coinDecimals": 0,
+      "coinMinimalDenom": "urepar",
+      "coinDecimals": 6,
       "coinGeckoId": "repar-testnet",
       "gasPriceStep": {
-        "low": 1,
-        "average": 10,
-        "high": 100
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.04
       }
     }
   ],
   "stakeCurrency": {
     "coinDenom": "REPAR",
-    "coinMinimalDenom": "repar",
-    "coinDecimals": 0,
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
     "coinGeckoId": "repar-testnet"
   },
   "features": ["ibc-transfer", "ibc-go", "cosmwasm"]
