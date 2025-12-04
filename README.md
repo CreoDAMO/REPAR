@@ -9,6 +9,7 @@
 [![Cerberus Security Auditor](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml)
 [![Build and Deploy Aequitas Zone Blockchain](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml)
 [![Production Gaps Integration Test](https://github.com/CreoDAMO/REPAR/actions/workflows/production-gaps-integration-test.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/production-gaps-integration-test.yml)
+[![APEX Autonomous Constellation Deployment](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-autonomous-deployment.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-autonomous-deployment.yml)
 [![Sovereign Nation](https://img.shields.io/badge/53%20Days-Sovereign%20Nation%20Built-gold)](https://github.com/CreoDAMO/REPAR)
 
 ---
