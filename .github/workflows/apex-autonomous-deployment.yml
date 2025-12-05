@@ -468,50 +468,50 @@ jobs:
           cd keplr-chain-registry
           mkdir -p cosmos images/aequitas
           
-          cat > cosmos/aequitas.json << 'EOFMARKER'
-{
-  "chainId": "aequitas-1",
-  "chainName": "Aequitas Protocol",
-  "rpc": "https://rpc.aequitasprotocol.zone",
-  "rest": "https://api.aequitasprotocol.zone",
-  "bip44": {
-    "coinType": 118
-  },
-  "bech32Config": {
-    "bech32PrefixAccAddr": "repar",
-    "bech32PrefixAccPub": "reparpub",
-    "bech32PrefixValAddr": "reparvaloper",
-    "bech32PrefixValPub": "reparvaloperpub",
-    "bech32PrefixConsAddr": "reparvalcons",
-    "bech32PrefixConsPub": "reparvalconspub"
-  },
-  "currencies": [
-    {
-      "coinDenom": "REPAR",
-      "coinMinimalDenom": "urepar",
-      "coinDecimals": 6
-    }
-  ],
-  "feeCurrencies": [
-    {
-      "coinDenom": "REPAR",
-      "coinMinimalDenom": "urepar",
-      "coinDecimals": 6,
-      "gasPriceStep": {
-        "low": 0.01,
-        "average": 0.025,
-        "high": 0.04
-      }
-    }
-  ],
-  "stakeCurrency": {
-    "coinDenom": "REPAR",
-    "coinMinimalDenom": "urepar",
-    "coinDecimals": 6
-  },
-  "features": ["ibc-transfer", "ibc-go"]
-}
-EOFMARKER
+          printf '%s\n' \
+            '{' \
+            '  "chainId": "aequitas-1",' \
+            '  "chainName": "Aequitas Protocol",' \
+            '  "rpc": "https://rpc.aequitasprotocol.zone",' \
+            '  "rest": "https://api.aequitasprotocol.zone",' \
+            '  "bip44": {' \
+            '    "coinType": 118' \
+            '  },' \
+            '  "bech32Config": {' \
+            '    "bech32PrefixAccAddr": "repar",' \
+            '    "bech32PrefixAccPub": "reparpub",' \
+            '    "bech32PrefixValAddr": "reparvaloper",' \
+            '    "bech32PrefixValPub": "reparvaloperpub",' \
+            '    "bech32PrefixConsAddr": "reparvalcons",' \
+            '    "bech32PrefixConsPub": "reparvalconspub"' \
+            '  },' \
+            '  "currencies": [' \
+            '    {' \
+            '      "coinDenom": "REPAR",' \
+            '      "coinMinimalDenom": "urepar",' \
+            '      "coinDecimals": 6' \
+            '    }' \
+            '  ],' \
+            '  "feeCurrencies": [' \
+            '    {' \
+            '      "coinDenom": "REPAR",' \
+            '      "coinMinimalDenom": "urepar",' \
+            '      "coinDecimals": 6,' \
+            '      "gasPriceStep": {' \
+            '        "low": 0.01,' \
+            '        "average": 0.025,' \
+            '        "high": 0.04' \
+            '      }' \
+            '    }' \
+            '  ],' \
+            '  "stakeCurrency": {' \
+            '    "coinDenom": "REPAR",' \
+            '    "coinMinimalDenom": "urepar",' \
+            '    "coinDecimals": 6' \
+            '  },' \
+            '  "features": ["ibc-transfer", "ibc-go"]' \
+            '}' \
+            > cosmos/aequitas.json
           
           if command -v jq &> /dev/null; then
             jq empty cosmos/aequitas.json && echo "Valid JSON"
