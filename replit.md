@@ -70,8 +70,19 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 
 ## Recent Changes (December 5, 2025)
 
-### DNS JQ NULL ITERATION FIX (CRITICAL)
-- **Fixed GitHub workflow line 338 error**: `jq: error (at :1): Cannot iterate over null (null)`
+### YAML SYNTAX ERROR FIX - LINE 338 (CRITICAL)
+- **Fixed GitHub workflow line 338 error**: `Invalid workflow file - You have an error in your yaml syntax on line 338`
+- **Root Cause**: Nested heredoc with `[Unit]` at column 0 was parsed as YAML syntax instead of bash script content
+- **Solution**: Replaced nested heredoc with `printf` approach for systemd service file creation
+- **Why this happens**: In YAML with `run: |`, all lines must be indented. `[Unit]` at column 0 looks like YAML anchor syntax
+- **Fix in GITHUB_WORKFLOW_FIXES.md**:
+  - Changed from: `cat << 'SERVICE'` with unindented `[Unit]`
+  - Changed to: `printf "%s\n" "[Unit]" "Description=..." > /etc/systemd/system/aequitasd.service`
+  - This keeps all content properly indented within the YAML structure
+- **IMPORTANT**: User must copy updated workflow from `GITHUB_WORKFLOW_FIXES.md` to `.github/workflows/apex-autonomous-deployment.yml` on GitHub
+
+### DNS JQ NULL ITERATION FIX (ALSO APPLIED)
+- **Fixed jq runtime error**: `jq: error (at :1): Cannot iterate over null (null)`
 - **Root Cause**: CLOUDFLARE_API_TOKEN was empty/missing, causing Cloudflare API to return null
 - **Solution in GITHUB_WORKFLOW_FIXES.md**:
   1. Added credential validation BEFORE API calls (check if CLOUDFLARE_API_TOKEN and CLOUDFLARE_ZONE_ID are set)
@@ -79,7 +90,6 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
   3. Added JSON validation before parsing with `jq empty`
   4. Changed from `exit 1` to `exit 0` with graceful error messages
   5. Added `2>/dev/null` fallbacks on all jq commands
-- **IMPORTANT**: User must copy updated workflow from `GITHUB_WORKFLOW_FIXES.md` to `.github/workflows/apex-autonomous-deployment.yml` on GitHub
 
 ### KEPLR CHAIN REGISTRY FIX (CRITICAL)
 - **Fixed coinDecimals**: Changed from 18 to 6 (urepar → REPAR = 10^6)

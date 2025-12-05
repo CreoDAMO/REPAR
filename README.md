@@ -82,15 +82,16 @@ This is not a blockchain. This is not a DAO. This is not a startup.
 
 ### GitHub Workflow Fixes (APEX Autonomous Deployment)
 
-**Problem Solved:** Line 338 `jq: error (at :1): Cannot iterate over null (null)`
+**Problem Solved:** Line 338 `Invalid workflow file - You have an error in your yaml syntax on line 338`
 
-**Root Cause:** Empty `CLOUDFLARE_API_TOKEN` caused Cloudflare API to return null, crashing the DNS migration job.
+**Root Cause:** Nested heredoc for systemd service had `[Unit]` at column 0, which YAML parsed as syntax instead of bash script content.
 
 **Solution Applied:**
-1. **Credential Validation** - Checks tokens BEFORE making API calls
-2. **Null-Safe jq Patterns** - `(.result // [])`, `.success // false`, `// empty`
-3. **Graceful Error Handling** - `exit 0` with informative messages (no hard crashes)
-4. **JSON Validation** - `jq empty` before parsing responses
+1. **Replaced nested heredoc** with `printf` approach for systemd service creation
+2. **All script content properly indented** within YAML `run: |` blocks
+3. **Credential Validation** - Checks tokens BEFORE making API calls (for DNS job)
+4. **Null-Safe jq Patterns** - `(.result // [])`, `.success // false`, `// empty`
+5. **Graceful Error Handling** - `exit 0` with informative messages (no hard crashes)
 
 ### Keplr Chain Registry Integration (2025 Compliant)
 
