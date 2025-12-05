@@ -323,8 +323,8 @@ jobs:
                 echo "Deploying to $SSH_USER@$SSH_HOST..."
                 scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ./bin/aequitasd $SSH_USER@$SSH_HOST:/usr/local/bin/ || echo "Binary transfer"
                 
-                # Start node on bare-metal
-                ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST << 'EOF'
+                # Start node on bare-metal - use printf to avoid nested heredoc YAML issues
+                ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
                   systemctl stop aequitasd 2>/dev/null || true
                   chmod +x /usr/local/bin/aequitasd
                   
@@ -333,29 +333,29 @@ jobs:
                     /usr/local/bin/aequitasd init "aequitas-founder-01" --chain-id aequitas-1
                   fi
                   
-                  # Start as systemd service
-                  cat > /etc/systemd/system/aequitasd.service << 'SERVICE'
-[Unit]
-Description=Aequitas Protocol Blockchain Node
-After=network.target
-
-[Service]
-Type=simple
-User=root
-ExecStart=/usr/local/bin/aequitasd start
-Restart=always
-RestartSec=3
-
-[Install]
-WantedBy=multi-user.target
-SERVICE
+                  # Create systemd service using printf (avoids nested heredoc)
+                  printf "%s\n" \
+                    "[Unit]" \
+                    "Description=Aequitas Protocol Blockchain Node" \
+                    "After=network.target" \
+                    "" \
+                    "[Service]" \
+                    "Type=simple" \
+                    "User=root" \
+                    "ExecStart=/usr/local/bin/aequitasd start" \
+                    "Restart=always" \
+                    "RestartSec=3" \
+                    "" \
+                    "[Install]" \
+                    "WantedBy=multi-user.target" \
+                    > /etc/systemd/system/aequitasd.service
                   
                   systemctl daemon-reload
                   systemctl enable aequitasd
                   systemctl start aequitasd
                   
                   echo "Aequitas node started on bare-metal"
-EOF
+                '
                 
                 RPC_ENDPOINT="http://$SSH_HOST:26657"
                 echo "ssh_deployed=true" >> $GITHUB_OUTPUT
