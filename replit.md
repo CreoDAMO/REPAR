@@ -68,7 +68,32 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - **Payment Processing**: Circle USDCKit SDK
 - **Wolfram Documentation**: Strategic playbooks for defendant collection, deterrence economics, mathematical engines
 
-## Recent Changes (December 4, 2025)
+## Recent Changes (December 5, 2025)
+
+### Script Organization Complete
+- Moved 10 legacy DigitalOcean scripts to `docs/scripts/legacy/`
+- Created comprehensive legacy README documenting migration path
+- Created `scripts/README.md` with all 25 active scripts categorized
+- Legacy scripts include: deploy-to-digitalocean.sh, setup-cloudflare-dns.sh, etc.
+
+### Automated GitHub Workflow Updated
+- GITHUB_WORKFLOW_FIXES.md now contains fully automated workflow for:
+  - **DNS Migration**: Removes old DigitalOcean IPs (159.203.92.230, 76.223.105.230)
+  - **DNS Update**: Creates/updates all subdomains to sovereign infrastructure IP
+  - **Keplr Registry PR**: Automatically forks, pushes chain.json/assetlist.json, creates PR
+- Workflow properly handles root domain "@" queries
+- Uses PATCH for existing records, POST for new records
+- Keplr job: Fork → Commit → Push → Create PR (with proper GH_TOKEN auth)
+
+### Required GitHub Secrets for Automation
+- `CLOUDFLARE_API_TOKEN` - Cloudflare API token with DNS:Edit
+- `CLOUDFLARE_ZONE_ID` - Zone ID for aequitasprotocol.zone
+- `INFRASTRUCTURE_IP` - Sovereign ACE/AVM infrastructure IP
+- `GH_PAT` - GitHub Personal Access Token with repo scope
+
+---
+
+## Previous Changes (December 4, 2025)
 
 ### Terminology Audit Complete
 - Replaced all "token/tokenomics" references with "coin/coinomics" across 15+ files
