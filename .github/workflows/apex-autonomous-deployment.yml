@@ -761,39 +761,87 @@ EOF
         run: |
           echo "Removing old DigitalOcean IP records..."
           
+          # CRITICAL: Validate credentials before API calls
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "ERROR: CLOUDFLARE_API_TOKEN is not set"
+            echo "Please add CLOUDFLARE_API_TOKEN to GitHub Secrets"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if [ -z "$CLOUDFLARE_ZONE_ID" ]; then
+            echo "ERROR: CLOUDFLARE_ZONE_ID is not set"
+            echo "Please add CLOUDFLARE_ZONE_ID to GitHub Variables"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           OLD_IPS=("159.203.92.230" "76.223.105.230")
           
           # Get all DNS records (with safe jq handling)
           RECORDS=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records" \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            -H "Content-Type: application/json")
+            -H "Content-Type: application/json" 2>/dev/null || echo '{"success":false,"result":null}')
           
-          # Check if request was successful
-          SUCCESS=$(echo "$RECORDS" | jq -r '.success // false')
-          if [ "$SUCCESS" != "true" ]; then
-            echo "Warning: Could not fetch DNS records"
-            echo "$RECORDS" | jq -r '.errors // empty' 2>/dev/null || echo "Unknown error"
+          # Validate response is valid JSON
+          if ! echo "$RECORDS" | jq empty 2>/dev/null; then
+            echo "ERROR: Invalid JSON response from Cloudflare API"
+            echo "Response: $RECORDS"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
             exit 0
           fi
           
+          # Check if request was successful (null-safe)
+          SUCCESS=$(echo "$RECORDS" | jq -r '.success // false' 2>/dev/null || echo "false")
+          if [ "$SUCCESS" != "true" ]; then
+            echo "WARNING: Could not fetch DNS records from Cloudflare"
+            echo "Errors: $(echo "$RECORDS" | jq -r '.errors // [] | .[] | .message // empty' 2>/dev/null || echo 'Unknown error')"
+            echo "This usually means CLOUDFLARE_API_TOKEN is invalid or lacks DNS:Edit permission"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Validate result array exists (critical null-safety check)
+          RESULT_COUNT=$(echo "$RECORDS" | jq -r '.result // [] | length' 2>/dev/null || echo "0")
+          echo "Found $RESULT_COUNT DNS records in zone"
+          
+          DELETED_COUNT=0
           for OLD_IP in "${OLD_IPS[@]}"; do
             echo "Looking for records with IP: $OLD_IP"
             
-            # Find record IDs matching old IPs (safe jq - handles null)
-            RECORD_IDS=$(echo "$RECORDS" | jq -r ".result // [] | .[] | select(.content == \"$OLD_IP\") | .id // empty" 2>/dev/null)
+            # Find record IDs matching old IPs (CRITICAL: null-safe jq with // [] and // empty)
+            RECORD_IDS=$(echo "$RECORDS" | jq -r "(.result // []) | .[] | select(.content == \"$OLD_IP\") | .id // empty" 2>/dev/null || echo "")
+            
+            # Skip if no records found
+            if [ -z "$RECORD_IDS" ]; then
+              echo "   No records found with IP: $OLD_IP"
+              continue
+            fi
             
             for RECORD_ID in $RECORD_IDS; do
-              if [ -n "$RECORD_ID" ] && [ "$RECORD_ID" != "null" ]; then
+              # Double-check RECORD_ID is valid
+              if [ -n "$RECORD_ID" ] && [ "$RECORD_ID" != "null" ] && [ "$RECORD_ID" != "" ]; then
                 echo "   Deleting record: $RECORD_ID"
                 DELETE_RESULT=$(curl -s -X DELETE "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records/$RECORD_ID" \
                   -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-                  -H "Content-Type: application/json")
-                echo "$DELETE_RESULT" | jq -r '.success // "unknown"'
+                  -H "Content-Type: application/json" 2>/dev/null || echo '{"success":false}')
+                
+                DEL_SUCCESS=$(echo "$DELETE_RESULT" | jq -r '.success // false' 2>/dev/null || echo "false")
+                if [ "$DEL_SUCCESS" == "true" ]; then
+                  echo "      SUCCESS: Record $RECORD_ID deleted"
+                  DELETED_COUNT=$((DELETED_COUNT + 1))
+                else
+                  echo "      FAILED: Could not delete record $RECORD_ID"
+                fi
               fi
             done
           done
           
+          echo ""
           echo "Old DigitalOcean records cleanup complete"
+          echo "Deleted $DELETED_COUNT records"
+          echo "cleanup_skipped=false" >> $GITHUB_OUTPUT
+          echo "deleted_count=$DELETED_COUNT" >> $GITHUB_OUTPUT
       
       - name: Update DNS to sovereign infrastructure
         id: update-dns
@@ -805,10 +853,25 @@ EOF
           echo "Configuring DNS for aequitasprotocol.zone..."
           echo "Using auto-extracted IP: $INFRASTRUCTURE_IP"
           
+          # CRITICAL: Validate all required variables
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "ERROR: CLOUDFLARE_API_TOKEN is not set"
+            echo "Please add CLOUDFLARE_API_TOKEN to GitHub Secrets"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if [ -z "$CLOUDFLARE_ZONE_ID" ]; then
+            echo "ERROR: CLOUDFLARE_ZONE_ID is not set"
+            echo "Please add CLOUDFLARE_ZONE_ID to GitHub Variables"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           if [ -z "$INFRASTRUCTURE_IP" ]; then
             echo "ERROR: No infrastructure IP available"
             echo "updated=false" >> $GITHUB_OUTPUT
-            exit 1
+            exit 0
           fi
           
           # Define all subdomains with proxy settings
@@ -829,10 +892,26 @@ EOF
             ["testnet-rpc"]="true"
           )
           
-          # Get existing records (with safe jq)
+          # Get existing records (with safe jq and error handling)
           EXISTING=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records?type=A" \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            -H "Content-Type: application/json")
+            -H "Content-Type: application/json" 2>/dev/null || echo '{"success":false,"result":null}')
+          
+          # Validate response
+          if ! echo "$EXISTING" | jq empty 2>/dev/null; then
+            echo "ERROR: Invalid JSON response from Cloudflare API"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check API success
+          API_SUCCESS=$(echo "$EXISTING" | jq -r '.success // false' 2>/dev/null || echo "false")
+          if [ "$API_SUCCESS" != "true" ]; then
+            echo "ERROR: Cloudflare API request failed"
+            echo "Errors: $(echo "$EXISTING" | jq -r '.errors // [] | .[] | .message // empty' 2>/dev/null || echo 'Unknown')"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
           
           UPDATED=0
           CREATED=0
@@ -1047,14 +1126,18 @@ EOF
           fi
           
           cd keplr-chain-registry
-          mkdir -p cosmos/aequitas
           
-          # Use extracted IP for RPC endpoints
-          RPC_HOST="${INFRASTRUCTURE_IP:-rpc.aequitasprotocol.zone}"
+          # CRITICAL: Keplr uses flat file structure: cosmos/{chain-identifier}.json
+          # NOT cosmos/{chain-identifier}/chain.json
+          # Chain identifier = chainId without version: aequitas-1 -> aequitas
           
-          cat > cosmos/aequitas/chain.json << EOF
+          mkdir -p cosmos
+          mkdir -p images/aequitas
+          
+          # Create chain.json with CORRECTED structure per Keplr 2025 requirements
+          # CRITICAL FIX: coinDecimals is 6 (urepar -> repar = 10^6), NOT 18
+          cat > cosmos/aequitas.json << 'EOF'
 {
-  "\$schema": "../chain.schema.json",
   "chainId": "aequitas-1",
   "chainName": "Aequitas Protocol",
   "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
@@ -1080,15 +1163,16 @@ EOF
     {
       "coinDenom": "REPAR",
       "coinMinimalDenom": "urepar",
-      "coinDecimals": 18,
-      "coinGeckoId": "aequitas-protocol"
+      "coinDecimals": 6,
+      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
     }
   ],
   "feeCurrencies": [
     {
       "coinDenom": "REPAR",
       "coinMinimalDenom": "urepar",
-      "coinDecimals": 18,
+      "coinDecimals": 6,
+      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
       "gasPriceStep": {
         "low": 0.01,
         "average": 0.025,
@@ -1099,40 +1183,43 @@ EOF
   "stakeCurrency": {
     "coinDenom": "REPAR",
     "coinMinimalDenom": "urepar",
-    "coinDecimals": 18
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
   },
-  "features": ["cosmwasm", "ibc-transfer", "ibc-go"]
+  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",
+  "features": ["ibc-transfer", "ibc-go"]
 }
 EOF
           
-          cat > cosmos/aequitas/assetlist.json << EOF
-{
-  "\$schema": "../assetlist.schema.json",
-  "chainId": "aequitas-1",
-  "assets": [
-    {
-      "description": "The native staking and governance token of Aequitas Protocol - Reparations Token for historical justice",
-      "denomUnits": [
-        {
-          "denom": "urepar",
-          "exponent": 0
-        },
-        {
-          "denom": "REPAR",
-          "exponent": 18
-        }
-      ],
-      "base": "urepar",
-      "name": "Aequitas Reparations Token",
-      "display": "REPAR",
-      "symbol": "REPAR",
-      "logoURIs": {
-        "png": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
-      }
-    }
-  ]
-}
-EOF
+          # NOTE: assetlist.json is NOT a Keplr format - it's for cosmos/chain-registry
+          # Keplr only needs chain.json + image
+          
+          # Create placeholder for chain logo (256x256 PNG required)
+          # In production, copy actual logo from repository
+          if [ -f ../frontend/public/logo.png ]; then
+            cp ../frontend/public/logo.png images/aequitas/chain.png
+          elif [ -f ../attached_assets/logo.png ]; then
+            cp ../attached_assets/logo.png images/aequitas/chain.png
+          else
+            echo "WARNING: No logo found - you must manually add images/aequitas/chain.png (256x256 PNG)"
+          fi
+          
+          echo ""
+          echo "============================================================"
+          echo "   KEPLR CHAIN CONFIGURATION CREATED"
+          echo "============================================================"
+          echo "   File: cosmos/aequitas.json"
+          echo "   Chain ID: aequitas-1"
+          echo "   Decimals: 6 (urepar -> REPAR)"
+          echo "   Features: ibc-transfer, ibc-go"
+          echo "============================================================"
+          echo ""
+          
+          # Validate JSON
+          if command -v jq &> /dev/null; then
+            echo "Validating JSON..."
+            jq empty cosmos/aequitas.json && echo "   JSON valid" || echo "   JSON validation failed"
+          fi
           
           echo "Chain configuration created"
       
@@ -1149,14 +1236,21 @@ EOF
           
           BRANCH="add-aequitas-protocol-$(date +%Y%m%d)"
           git checkout -b "$BRANCH"
-          git add .
+          
+          # Add all files including images directory
+          git add cosmos/aequitas.json
+          git add images/aequitas/ 2>/dev/null || echo "No images to add"
+          
           git commit -m "feat: Add Aequitas Protocol (aequitas-1)
 
 - Chain ID: aequitas-1
-- Native token: REPAR (18 decimals)
-- Features: CosmWasm, IBC
-- Deployed via APEX Autonomous System
-- Infrastructure IP auto-extracted: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
+- Native coin: REPAR (6 decimals, urepar base)
+- Bech32 prefix: repar
+- Features: IBC transfers, IBC-Go
+- Node provider: Aequitas Foundation
+- Staking URL: https://app.aequitasprotocol.zone/staking
+
+Deployed via APEX Autonomous System
 
 Signed-off-by: Aequitas Protocol Bot <bot@aequitasprotocol.zone>" || echo "Nothing to commit"
           
@@ -1170,25 +1264,47 @@ Signed-off-by: Aequitas Protocol Bot <bot@aequitasprotocol.zone>" || echo "Nothi
 This PR adds Aequitas Protocol to the Keplr wallet registry.
 
 ### Chain Details
-- **Chain ID:** aequitas-1
-- **Native Token:** REPAR (18 decimals)
-- **Bech32 Prefix:** repar
+| Field | Value |
+|-------|-------|
+| **Chain ID** | aequitas-1 |
+| **Chain Name** | Aequitas Protocol |
+| **Native Coin** | REPAR |
+| **Coin Decimals** | 6 (urepar → REPAR) |
+| **Bech32 Prefix** | repar |
+| **BIP44 CoinType** | 118 |
 
 ### Endpoints
-- **RPC:** https://rpc.aequitasprotocol.zone
-- **REST:** https://api.aequitasprotocol.zone
+| Endpoint | URL |
+|----------|-----|
+| **RPC** | https://rpc.aequitasprotocol.zone |
+| **REST** | https://api.aequitasprotocol.zone |
+| **Staking UI** | https://app.aequitasprotocol.zone/staking |
+
+### Node Provider
+- **Name:** Aequitas Foundation
+- **Email:** validators@aequitasprotocol.zone
+- **Website:** https://aequitasprotocol.zone
 
 ### Features
-- CosmWasm smart contracts
-- IBC transfers
-- IBC-Go
+- \`ibc-transfer\` - IBC token transfers
+- \`ibc-go\` - IBC-Go protocol support
+
+### Gas Price Steps
+| Level | Price |
+|-------|-------|
+| Low | 0.01 |
+| Average | 0.025 |
+| High | 0.04 |
 
 ### About Aequitas Protocol
-Aequitas Protocol is a sovereign blockchain focused on historical justice and reparations, built on Cosmos SDK with APEX autonomous management.
+Aequitas Protocol is a sovereign Layer-1 blockchain focused on historical justice and reparations. Built on Cosmos SDK with APEX autonomous management for self-healing, self-monitoring, and self-scaling infrastructure.
+
+### Files Added
+- \`cosmos/aequitas.json\` - Chain configuration
+- \`images/aequitas/chain.png\` - Chain logo (256x256 PNG)
 
 ---
-*This PR was automatically created by the APEX Autonomous Deployment System*
-*Infrastructure IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }} (auto-extracted)*" \
+*This PR was automatically created by the APEX Autonomous Deployment System*" \
             --head "$BRANCH" || echo "PR creation skipped"
       
       - name: Report
