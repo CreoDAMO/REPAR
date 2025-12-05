@@ -81,6 +81,28 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
   5. Added `2>/dev/null` fallbacks on all jq commands
 - **IMPORTANT**: User must copy updated workflow from `GITHUB_WORKFLOW_FIXES.md` to `.github/workflows/apex-autonomous-deployment.yml` on GitHub
 
+### KEPLR CHAIN REGISTRY FIX (CRITICAL)
+- **Fixed coinDecimals**: Changed from 18 to 6 (urepar → REPAR = 10^6)
+- **Fixed file structure**: Uses `cosmos/aequitas.json` (flat), NOT `cosmos/aequitas/chain.json` (nested)
+- **Removed assetlist.json**: Not a Keplr format (that's for cosmos/chain-registry)
+- **Added required fields**:
+  - `coinImageUrl` in currencies, feeCurrencies, stakeCurrency
+  - `walletUrlForStaking`: https://app.aequitasprotocol.zone/staking
+  - `nodeProvider` with name, email, website
+- **Updated features array**: `["ibc-transfer", "ibc-go"]` (removed cosmwasm until verified)
+- **Per Keplr 2025 requirements**:
+  - Image must be 256x256 PNG at `images/aequitas/chain.png`
+  - All 6 bech32 prefixes required
+  - coinGeckoId optional (omitted until listed)
+
+### CLOUDFLARE API 2025 UPDATES (Verified)
+- **API is stable**: No breaking changes to core DNS Records API
+- **Best practices applied**:
+  - Using Bearer token authentication (not legacy API key)
+  - Using PATCH for partial updates (more efficient than PUT)
+  - Added error handling for all API responses
+- **Note**: CNAME Flattening endpoint migrating June 8, 2025 (not affecting our use case)
+
 ### FULLY AUTONOMOUS IP EXTRACTION (CRITICAL UPDATE)
 - **ZERO manual IP entry required** - IP is auto-extracted from deployment
 - Bare-metal is now the default deployment target (not docker-compose)

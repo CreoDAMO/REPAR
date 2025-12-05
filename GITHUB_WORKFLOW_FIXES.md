@@ -1185,14 +1185,18 @@ EOF
           fi
           
           cd keplr-chain-registry
-          mkdir -p cosmos/aequitas
           
-          # Use extracted IP for RPC endpoints
-          RPC_HOST="${INFRASTRUCTURE_IP:-rpc.aequitasprotocol.zone}"
+          # CRITICAL: Keplr uses flat file structure: cosmos/{chain-identifier}.json
+          # NOT cosmos/{chain-identifier}/chain.json
+          # Chain identifier = chainId without version: aequitas-1 -> aequitas
           
-          cat > cosmos/aequitas/chain.json << EOF
+          mkdir -p cosmos
+          mkdir -p images/aequitas
+          
+          # Create chain.json with CORRECTED structure per Keplr 2025 requirements
+          # CRITICAL FIX: coinDecimals is 6 (urepar -> repar = 10^6), NOT 18
+          cat > cosmos/aequitas.json << 'EOF'
 {
-  "\$schema": "../chain.schema.json",
   "chainId": "aequitas-1",
   "chainName": "Aequitas Protocol",
   "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
@@ -1218,15 +1222,16 @@ EOF
     {
       "coinDenom": "REPAR",
       "coinMinimalDenom": "urepar",
-      "coinDecimals": 18,
-      "coinGeckoId": "aequitas-protocol"
+      "coinDecimals": 6,
+      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
     }
   ],
   "feeCurrencies": [
     {
       "coinDenom": "REPAR",
       "coinMinimalDenom": "urepar",
-      "coinDecimals": 18,
+      "coinDecimals": 6,
+      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
       "gasPriceStep": {
         "low": 0.01,
         "average": 0.025,
@@ -1237,40 +1242,43 @@ EOF
   "stakeCurrency": {
     "coinDenom": "REPAR",
     "coinMinimalDenom": "urepar",
-    "coinDecimals": 18
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
   },
-  "features": ["cosmwasm", "ibc-transfer", "ibc-go"]
+  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",
+  "features": ["ibc-transfer", "ibc-go"]
 }
 EOF
           
-          cat > cosmos/aequitas/assetlist.json << EOF
-{
-  "\$schema": "../assetlist.schema.json",
-  "chainId": "aequitas-1",
-  "assets": [
-    {
-      "description": "The native staking and governance token of Aequitas Protocol - Reparations Token for historical justice",
-      "denomUnits": [
-        {
-          "denom": "urepar",
-          "exponent": 0
-        },
-        {
-          "denom": "REPAR",
-          "exponent": 18
-        }
-      ],
-      "base": "urepar",
-      "name": "Aequitas Reparations Token",
-      "display": "REPAR",
-      "symbol": "REPAR",
-      "logoURIs": {
-        "png": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
-      }
-    }
-  ]
-}
-EOF
+          # NOTE: assetlist.json is NOT a Keplr format - it's for cosmos/chain-registry
+          # Keplr only needs chain.json + image
+          
+          # Create placeholder for chain logo (256x256 PNG required)
+          # In production, copy actual logo from repository
+          if [ -f ../frontend/public/logo.png ]; then
+            cp ../frontend/public/logo.png images/aequitas/chain.png
+          elif [ -f ../attached_assets/logo.png ]; then
+            cp ../attached_assets/logo.png images/aequitas/chain.png
+          else
+            echo "WARNING: No logo found - you must manually add images/aequitas/chain.png (256x256 PNG)"
+          fi
+          
+          echo ""
+          echo "============================================================"
+          echo "   KEPLR CHAIN CONFIGURATION CREATED"
+          echo "============================================================"
+          echo "   File: cosmos/aequitas.json"
+          echo "   Chain ID: aequitas-1"
+          echo "   Decimals: 6 (urepar -> REPAR)"
+          echo "   Features: ibc-transfer, ibc-go"
+          echo "============================================================"
+          echo ""
+          
+          # Validate JSON
+          if command -v jq &> /dev/null; then
+            echo "Validating JSON..."
+            jq empty cosmos/aequitas.json && echo "   JSON valid" || echo "   JSON validation failed"
+          fi
           
           echo "Chain configuration created"
       
@@ -1287,14 +1295,21 @@ EOF
           
           BRANCH="add-aequitas-protocol-$(date +%Y%m%d)"
           git checkout -b "$BRANCH"
-          git add .
+          
+          # Add all files including images directory
+          git add cosmos/aequitas.json
+          git add images/aequitas/ 2>/dev/null || echo "No images to add"
+          
           git commit -m "feat: Add Aequitas Protocol (aequitas-1)
 
 - Chain ID: aequitas-1
-- Native token: REPAR (18 decimals)
-- Features: CosmWasm, IBC
-- Deployed via APEX Autonomous System
-- Infrastructure IP auto-extracted: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
+- Native coin: REPAR (6 decimals, urepar base)
+- Bech32 prefix: repar
+- Features: IBC transfers, IBC-Go
+- Node provider: Aequitas Foundation
+- Staking URL: https://app.aequitasprotocol.zone/staking
+
+Deployed via APEX Autonomous System
 
 Signed-off-by: Aequitas Protocol Bot <bot@aequitasprotocol.zone>" || echo "Nothing to commit"
           
@@ -1308,25 +1323,47 @@ Signed-off-by: Aequitas Protocol Bot <bot@aequitasprotocol.zone>" || echo "Nothi
 This PR adds Aequitas Protocol to the Keplr wallet registry.
 
 ### Chain Details
-- **Chain ID:** aequitas-1
-- **Native Token:** REPAR (18 decimals)
-- **Bech32 Prefix:** repar
+| Field | Value |
+|-------|-------|
+| **Chain ID** | aequitas-1 |
+| **Chain Name** | Aequitas Protocol |
+| **Native Coin** | REPAR |
+| **Coin Decimals** | 6 (urepar → REPAR) |
+| **Bech32 Prefix** | repar |
+| **BIP44 CoinType** | 118 |
 
 ### Endpoints
-- **RPC:** https://rpc.aequitasprotocol.zone
-- **REST:** https://api.aequitasprotocol.zone
+| Endpoint | URL |
+|----------|-----|
+| **RPC** | https://rpc.aequitasprotocol.zone |
+| **REST** | https://api.aequitasprotocol.zone |
+| **Staking UI** | https://app.aequitasprotocol.zone/staking |
+
+### Node Provider
+- **Name:** Aequitas Foundation
+- **Email:** validators@aequitasprotocol.zone
+- **Website:** https://aequitasprotocol.zone
 
 ### Features
-- CosmWasm smart contracts
-- IBC transfers
-- IBC-Go
+- \`ibc-transfer\` - IBC token transfers
+- \`ibc-go\` - IBC-Go protocol support
+
+### Gas Price Steps
+| Level | Price |
+|-------|-------|
+| Low | 0.01 |
+| Average | 0.025 |
+| High | 0.04 |
 
 ### About Aequitas Protocol
-Aequitas Protocol is a sovereign blockchain focused on historical justice and reparations, built on Cosmos SDK with APEX autonomous management.
+Aequitas Protocol is a sovereign Layer-1 blockchain focused on historical justice and reparations. Built on Cosmos SDK with APEX autonomous management for self-healing, self-monitoring, and self-scaling infrastructure.
+
+### Files Added
+- \`cosmos/aequitas.json\` - Chain configuration
+- \`images/aequitas/chain.png\` - Chain logo (256x256 PNG)
 
 ---
-*This PR was automatically created by the APEX Autonomous Deployment System*
-*Infrastructure IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }} (auto-extracted)*" \
+*This PR was automatically created by the APEX Autonomous Deployment System*" \
             --head "$BRANCH" || echo "PR creation skipped"
       
       - name: Report
