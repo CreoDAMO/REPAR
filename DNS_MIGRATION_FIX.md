@@ -130,13 +130,22 @@ curl ifconfig.me
 
 ## GitHub Workflow Integration
 
-The `apex-autonomous-deployment.yml` workflow can auto-update DNS. Ensure these secrets are set:
+The `apex-autonomous-deployment.yml` workflow can auto-update DNS. Configure these in GitHub:
+
+### Secrets (Settings > Secrets and variables > Actions > Secrets)
 
 | Secret | Description |
 |--------|-------------|
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with DNS:Edit |
-| `CLOUDFLARE_ZONE_ID` | Zone ID for aequitasprotocol.zone |
-| `INFRASTRUCTURE_IP` | Your sovereign infrastructure IP |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token with DNS:Edit permission |
+
+### Variables (Settings > Secrets and variables > Actions > Variables)
+
+| Variable | Description |
+|----------|-------------|
+| `CLOUDFLARE_ZONE_ID` | Zone ID for aequitasprotocol.zone (not sensitive) |
+| `INFRASTRUCTURE_IP` | Your sovereign infrastructure IP (not sensitive) |
+
+> **Note:** IP addresses and Zone IDs are NOT secrets - they're configuration values. Store them as Variables (not Secrets) so they appear in logs for easier debugging. The workflow also accepts `infrastructure_ip` as a workflow input for one-time overrides.
 
 The workflow's `configure-dns` job will automatically update DNS on deployment.
 

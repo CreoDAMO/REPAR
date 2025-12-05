@@ -21,14 +21,30 @@
 
 ---
 
-## Required Secrets
+## Required GitHub Configuration
+
+### Secrets (Sensitive - Go in Settings > Secrets)
 
 | Secret | Description |
 |--------|-------------|
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API token with DNS:Edit permission |
-| `CLOUDFLARE_ZONE_ID` | Zone ID for aequitasprotocol.zone |
-| `INFRASTRUCTURE_IP` | Your sovereign ACE/AVM infrastructure IP |
 | `GH_PAT` | GitHub Personal Access Token with repo scope (for Keplr PR) |
+
+### Variables (Configuration - Go in Settings > Variables)
+
+| Variable | Description |
+|----------|-------------|
+| `CLOUDFLARE_ZONE_ID` | Zone ID for aequitasprotocol.zone (not sensitive - public identifier) |
+| `INFRASTRUCTURE_IP` | Your sovereign ACE/AVM infrastructure IP (not sensitive - can also be provided via workflow input or auto-detected) |
+
+> **IMPORTANT:** IP addresses and Zone IDs are NOT secrets. Storing them as secrets masks them in logs, making debugging difficult. Use GitHub Actions Variables instead, or provide the IP as a workflow input.
+
+### Workflow Input (Alternative for Infrastructure IP)
+
+The workflow also accepts `infrastructure_ip` as a manual input, which is useful for:
+- One-time overrides without changing variables
+- Testing with different IPs
+- Auto-detection fallback when no IP is configured
 
 ---
 
@@ -94,6 +110,11 @@ on:
         required: false
         type: boolean
         default: false
+      infrastructure_ip:
+        description: 'Sovereign infrastructure IP (optional - uses variable or auto-detect if not provided)'
+        required: false
+        type: string
+        default: ''
   
   push:
     tags:
@@ -547,7 +568,7 @@ jobs:
         id: cleanup-old-dns
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+          CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
         run: |
           echo "Removing old DigitalOcean IP records..."
           
@@ -580,15 +601,31 @@ jobs:
         id: update-dns
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
-          INFRASTRUCTURE_IP: ${{ secrets.INFRASTRUCTURE_IP }}
+          CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
+          INPUT_IP: ${{ github.event.inputs.infrastructure_ip }}
+          VAR_IP: ${{ vars.INFRASTRUCTURE_IP }}
         run: |
           echo "Configuring DNS for aequitasprotocol.zone..."
           
-          if [ -z "$INFRASTRUCTURE_IP" ]; then
-            echo "No infrastructure IP configured - DNS deferred"
-            echo "updated=false" >> $GITHUB_OUTPUT
-            exit 0
+          # IP Resolution Priority: 1) Workflow Input, 2) Variable, 3) Auto-detect from ACE API
+          if [ -n "$INPUT_IP" ]; then
+            INFRASTRUCTURE_IP="$INPUT_IP"
+            echo "Using workflow input IP: $INFRASTRUCTURE_IP"
+          elif [ -n "$VAR_IP" ]; then
+            INFRASTRUCTURE_IP="$VAR_IP"
+            echo "Using repository variable IP: $INFRASTRUCTURE_IP"
+          else
+            # Attempt auto-detection from ACE API (if available)
+            echo "No IP configured - attempting auto-detection..."
+            DETECTED_IP=$(curl -s --connect-timeout 5 "https://ace.aequitasprotocol.zone/api/v1/infrastructure/ip" 2>/dev/null | jq -r '.ip // empty' || echo "")
+            if [ -n "$DETECTED_IP" ]; then
+              INFRASTRUCTURE_IP="$DETECTED_IP"
+              echo "Auto-detected IP from ACE API: $INFRASTRUCTURE_IP"
+            else
+              echo "No infrastructure IP found - DNS configuration deferred"
+              echo "updated=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
           fi
           
           echo "Sovereign Infrastructure IP: $INFRASTRUCTURE_IP"
@@ -669,12 +706,24 @@ jobs:
           dig +short aequitasprotocol.zone A || echo "pending"
       
       - name: Generate DNS report
+        env:
+          INPUT_IP: ${{ github.event.inputs.infrastructure_ip }}
+          VAR_IP: ${{ vars.INFRASTRUCTURE_IP }}
         run: |
+          # Determine which IP was used for reporting
+          if [ -n "$INPUT_IP" ]; then
+            USED_IP="$INPUT_IP (workflow input)"
+          elif [ -n "$VAR_IP" ]; then
+            USED_IP="$VAR_IP (repository variable)"
+          else
+            USED_IP="auto-detected"
+          fi
+          
           echo "### DNS Migration Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Migration Details:**" >> $GITHUB_STEP_SUMMARY
           echo "- Removed old DigitalOcean IPs: \`159.203.92.230\`, \`76.223.105.230\`" >> $GITHUB_STEP_SUMMARY
-          echo "- Updated to sovereign IP: \`${{ secrets.INFRASTRUCTURE_IP }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Updated to sovereign IP: $USED_IP" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Updated Subdomains:**" >> $GITHUB_STEP_SUMMARY
           echo "| Subdomain | Purpose | Proxied |" >> $GITHUB_STEP_SUMMARY
@@ -1627,29 +1676,40 @@ dns-health-validation  create-keplr-registry-pr (parallel)
 
 ## How to Use
 
-### 1. Set Required Secrets
+### 1. Set Required Secrets (Sensitive Credentials Only)
 
-In your GitHub repository, go to **Settings > Secrets and variables > Actions** and add:
+In your GitHub repository, go to **Settings > Secrets and variables > Actions > Secrets** and add:
 
 ```
 CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
-CLOUDFLARE_ZONE_ID=your-zone-id
-INFRASTRUCTURE_IP=your-sovereign-ip
 GH_PAT=your-github-personal-access-token
 ```
 
-### 2. Copy Workflow File
+### 2. Set Repository Variables (Configuration Values)
+
+In your GitHub repository, go to **Settings > Secrets and variables > Actions > Variables** and add:
+
+```
+CLOUDFLARE_ZONE_ID=your-zone-id
+INFRASTRUCTURE_IP=your-sovereign-ip
+```
+
+> **Why separate?** Secrets mask values in logs, making debugging difficult. IP addresses and Zone IDs are NOT sensitive - they're configuration. Using Variables keeps them visible in logs for easier troubleshooting.
+
+### 3. Copy Workflow File
 
 Copy the entire YAML block above to:
 ```
 .github/workflows/apex-autonomous-deployment.yml
 ```
 
-### 3. Run Workflow
+### 4. Run Workflow
 
 Go to **Actions > APEX Autonomous Constellation Deployment > Run workflow**
 
 Select options and click **Run workflow**.
+
+**Alternative:** You can also provide `infrastructure_ip` directly in the workflow input to override the variable for one-time deployments.
 
 ---
 
