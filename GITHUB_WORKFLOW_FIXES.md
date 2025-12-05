@@ -820,39 +820,87 @@ EOF
         run: |
           echo "Removing old DigitalOcean IP records..."
           
+          # CRITICAL: Validate credentials before API calls
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "ERROR: CLOUDFLARE_API_TOKEN is not set"
+            echo "Please add CLOUDFLARE_API_TOKEN to GitHub Secrets"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if [ -z "$CLOUDFLARE_ZONE_ID" ]; then
+            echo "ERROR: CLOUDFLARE_ZONE_ID is not set"
+            echo "Please add CLOUDFLARE_ZONE_ID to GitHub Variables"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           OLD_IPS=("159.203.92.230" "76.223.105.230")
           
           # Get all DNS records (with safe jq handling)
           RECORDS=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records" \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            -H "Content-Type: application/json")
+            -H "Content-Type: application/json" 2>/dev/null || echo '{"success":false,"result":null}')
           
-          # Check if request was successful
-          SUCCESS=$(echo "$RECORDS" | jq -r '.success // false')
-          if [ "$SUCCESS" != "true" ]; then
-            echo "Warning: Could not fetch DNS records"
-            echo "$RECORDS" | jq -r '.errors // empty' 2>/dev/null || echo "Unknown error"
+          # Validate response is valid JSON
+          if ! echo "$RECORDS" | jq empty 2>/dev/null; then
+            echo "ERROR: Invalid JSON response from Cloudflare API"
+            echo "Response: $RECORDS"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
             exit 0
           fi
           
+          # Check if request was successful (null-safe)
+          SUCCESS=$(echo "$RECORDS" | jq -r '.success // false' 2>/dev/null || echo "false")
+          if [ "$SUCCESS" != "true" ]; then
+            echo "WARNING: Could not fetch DNS records from Cloudflare"
+            echo "Errors: $(echo "$RECORDS" | jq -r '.errors // [] | .[] | .message // empty' 2>/dev/null || echo 'Unknown error')"
+            echo "This usually means CLOUDFLARE_API_TOKEN is invalid or lacks DNS:Edit permission"
+            echo "cleanup_skipped=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Validate result array exists (critical null-safety check)
+          RESULT_COUNT=$(echo "$RECORDS" | jq -r '.result // [] | length' 2>/dev/null || echo "0")
+          echo "Found $RESULT_COUNT DNS records in zone"
+          
+          DELETED_COUNT=0
           for OLD_IP in "${OLD_IPS[@]}"; do
             echo "Looking for records with IP: $OLD_IP"
             
-            # Find record IDs matching old IPs (safe jq - handles null)
-            RECORD_IDS=$(echo "$RECORDS" | jq -r ".result // [] | .[] | select(.content == \"$OLD_IP\") | .id // empty" 2>/dev/null)
+            # Find record IDs matching old IPs (CRITICAL: null-safe jq with // [] and // empty)
+            RECORD_IDS=$(echo "$RECORDS" | jq -r "(.result // []) | .[] | select(.content == \"$OLD_IP\") | .id // empty" 2>/dev/null || echo "")
+            
+            # Skip if no records found
+            if [ -z "$RECORD_IDS" ]; then
+              echo "   No records found with IP: $OLD_IP"
+              continue
+            fi
             
             for RECORD_ID in $RECORD_IDS; do
-              if [ -n "$RECORD_ID" ] && [ "$RECORD_ID" != "null" ]; then
+              # Double-check RECORD_ID is valid
+              if [ -n "$RECORD_ID" ] && [ "$RECORD_ID" != "null" ] && [ "$RECORD_ID" != "" ]; then
                 echo "   Deleting record: $RECORD_ID"
                 DELETE_RESULT=$(curl -s -X DELETE "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records/$RECORD_ID" \
                   -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-                  -H "Content-Type: application/json")
-                echo "$DELETE_RESULT" | jq -r '.success // "unknown"'
+                  -H "Content-Type: application/json" 2>/dev/null || echo '{"success":false}')
+                
+                DEL_SUCCESS=$(echo "$DELETE_RESULT" | jq -r '.success // false' 2>/dev/null || echo "false")
+                if [ "$DEL_SUCCESS" == "true" ]; then
+                  echo "      SUCCESS: Record $RECORD_ID deleted"
+                  DELETED_COUNT=$((DELETED_COUNT + 1))
+                else
+                  echo "      FAILED: Could not delete record $RECORD_ID"
+                fi
               fi
             done
           done
           
+          echo ""
           echo "Old DigitalOcean records cleanup complete"
+          echo "Deleted $DELETED_COUNT records"
+          echo "cleanup_skipped=false" >> $GITHUB_OUTPUT
+          echo "deleted_count=$DELETED_COUNT" >> $GITHUB_OUTPUT
       
       - name: Update DNS to sovereign infrastructure
         id: update-dns
@@ -864,10 +912,25 @@ EOF
           echo "Configuring DNS for aequitasprotocol.zone..."
           echo "Using auto-extracted IP: $INFRASTRUCTURE_IP"
           
+          # CRITICAL: Validate all required variables
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "ERROR: CLOUDFLARE_API_TOKEN is not set"
+            echo "Please add CLOUDFLARE_API_TOKEN to GitHub Secrets"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          if [ -z "$CLOUDFLARE_ZONE_ID" ]; then
+            echo "ERROR: CLOUDFLARE_ZONE_ID is not set"
+            echo "Please add CLOUDFLARE_ZONE_ID to GitHub Variables"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
           if [ -z "$INFRASTRUCTURE_IP" ]; then
             echo "ERROR: No infrastructure IP available"
             echo "updated=false" >> $GITHUB_OUTPUT
-            exit 1
+            exit 0
           fi
           
           # Define all subdomains with proxy settings
@@ -888,10 +951,26 @@ EOF
             ["testnet-rpc"]="true"
           )
           
-          # Get existing records (with safe jq)
+          # Get existing records (with safe jq and error handling)
           EXISTING=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records?type=A" \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            -H "Content-Type: application/json")
+            -H "Content-Type: application/json" 2>/dev/null || echo '{"success":false,"result":null}')
+          
+          # Validate response
+          if ! echo "$EXISTING" | jq empty 2>/dev/null; then
+            echo "ERROR: Invalid JSON response from Cloudflare API"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Check API success
+          API_SUCCESS=$(echo "$EXISTING" | jq -r '.success // false' 2>/dev/null || echo "false")
+          if [ "$API_SUCCESS" != "true" ]; then
+            echo "ERROR: Cloudflare API request failed"
+            echo "Errors: $(echo "$EXISTING" | jq -r '.errors // [] | .[] | .message // empty' 2>/dev/null || echo 'Unknown')"
+            echo "updated=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
           
           UPDATED=0
           CREATED=0

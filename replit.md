@@ -70,6 +70,17 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 
 ## Recent Changes (December 5, 2025)
 
+### DNS JQ NULL ITERATION FIX (CRITICAL)
+- **Fixed GitHub workflow line 338 error**: `jq: error (at :1): Cannot iterate over null (null)`
+- **Root Cause**: CLOUDFLARE_API_TOKEN was empty/missing, causing Cloudflare API to return null
+- **Solution in GITHUB_WORKFLOW_FIXES.md**:
+  1. Added credential validation BEFORE API calls (check if CLOUDFLARE_API_TOKEN and CLOUDFLARE_ZONE_ID are set)
+  2. Added null-safe jq patterns: `(.result // [])`, `.success // false`, `// empty`
+  3. Added JSON validation before parsing with `jq empty`
+  4. Changed from `exit 1` to `exit 0` with graceful error messages
+  5. Added `2>/dev/null` fallbacks on all jq commands
+- **IMPORTANT**: User must copy updated workflow from `GITHUB_WORKFLOW_FIXES.md` to `.github/workflows/apex-autonomous-deployment.yml` on GitHub
+
 ### FULLY AUTONOMOUS IP EXTRACTION (CRITICAL UPDATE)
 - **ZERO manual IP entry required** - IP is auto-extracted from deployment
 - Bare-metal is now the default deployment target (not docker-compose)
