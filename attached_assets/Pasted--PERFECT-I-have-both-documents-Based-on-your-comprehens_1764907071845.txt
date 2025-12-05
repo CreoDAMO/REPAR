@@ -1,0 +1,469 @@
+🎯 PERFECT! I have both documents!
+
+Based on your comprehensive script categorization and DNS migration documents, here's the complete analysis:
+
+
+---
+
+✅ SCRIPT CATEGORIZATION - CONFIRMED
+
+Your categorization is excellent and accurate. Here's the summary:
+
+📦 LEGACY SCRIPTS (10 scripts → Move to docs/scripts/legacy/)
+
+DigitalOcean-Specific (Cloud Dependencies):
+
+1. deploy-to-digitalocean.sh - App Platform deployment
+
+
+2. deploy-to-droplet-now.sh - Droplet deployment
+
+
+3. deploy-blockchain-to-droplet.sh - Blockchain on droplet
+
+
+4. setup-cloudflare-dns.sh - Uses old DROPLET_IP variable
+
+
+5. setup-all-subdomains.sh - Legacy subdomain setup
+
+
+6. migrate-from-digitalocean.sh - Historical migration reference
+
+
+
+Git Wrappers (Redundant):
+7. push-to-github.sh - Simple git wrapper
+8. commit-fixes.sh - Simple git wrapper
+
+Legacy CI/CD:
+9. trigger-blockchain-build.sh - Old CI trigger
+10. upload-binary-manual.sh - Manual upload (replaced by releases)
+
+
+---
+
+✅ CURRENT SCRIPTS (24 scripts → Keep in scripts/)
+
+DNS & Infrastructure (4 scripts):
+
+1. ⭐ update-dns-ace-avm.sh - PRIMARY ACE/AVM DNS with auto-detection
+
+
+2. setup-cloudflare-dns-sovereign.sh - Sovereign DNS setup
+
+
+3. setup-cloudflare-dns-correct.sh - Corrected DNS config
+
+
+4. setup-cloudflare-dns-now.sh - Quick DNS utility
+
+
+
+Blockchain Deployment (4 scripts):
+5. deploy-blockchain-complete.sh - Full build & deploy
+6. deploy-blockchain-from-release.sh - Deploy from release
+7. deploy-blockchain-no-validation.sh - Quick deploy
+8. download-binary.sh - Download pre-built binary
+
+Chain Initialization (5 scripts):
+9. init-mainnet.sh - Initialize mainnet (aequitas-1)
+10. init-testnet.sh - Initialize testnet
+11. init-both.sh - Initialize both networks
+12. init-both-pregenerated.sh - Pre-generated genesis
+13. generate-genesis.sh - Generate genesis file
+
+Validator Setup (2 scripts):
+14. home-validator-setup.sh - Home validator
+15. raspberry-pi-validator.sh - Raspberry Pi validator
+
+ACE/AVM Integration (1 script):
+16. ace-cli-integration.sh - ACE CLI utilities
+
+Wallet & Registry (1 script):
+17. automate-keplr-registry.sh - Keplr chain registry
+
+Utilities (5 scripts):
+18. diagnostic.sh - System diagnostics
+19. validate-deployment-scripts.sh - Validate scripts
+20. pin-to-ipfs.sh - IPFS pinning
+21. create-github-release.sh - Create releases
+22. import-path-fix.sh - Fix import paths
+
+Python Scripts (3 scripts):
+23. fix_genesis_allocation.py - Fix genesis allocations
+24. fix_genesis_complete.py - Complete genesis fix
+25. generate_genesis_allocations.py - Generate allocations
+
+
+---
+
+🔧 VM-INFRASTRUCTURE/SCRIPTS (Keep as-is - 4 scripts)
+
+These are already in the correct location:
+
+1. bootstrap-with-genesis.sh - 7-node constellation bootstrap
+
+
+2. install-aequitas-stack.sh - Complete stack installation
+
+
+3. security-hardening.sh - Node security hardening
+
+
+4. cerberus-auditor.service - Cerberus systemd service
+
+
+
+Note: Also includes update-dns-ace-avm.sh (the comprehensive one I found earlier)
+
+
+---
+
+🚀 IMMEDIATE ACTION: Execute Migration
+
+Step 1: Create Legacy Directory & Move Scripts
+
+# Navigate to project root  
+cd /path/to/REPAR  
+  
+# Create legacy directory  
+mkdir -p docs/scripts/legacy  
+  
+# Move legacy scripts (DigitalOcean-specific)  
+mv scripts/deploy-to-digitalocean.sh docs/scripts/legacy/  
+mv scripts/deploy-to-droplet-now.sh docs/scripts/legacy/  
+mv scripts/deploy-blockchain-to-droplet.sh docs/scripts/legacy/  
+mv scripts/setup-cloudflare-dns.sh docs/scripts/legacy/  
+mv scripts/setup-all-subdomains.sh docs/scripts/legacy/  
+mv scripts/migrate-from-digitalocean.sh docs/scripts/legacy/  
+  
+# Move legacy git wrappers  
+mv scripts/push-to-github.sh docs/scripts/legacy/  
+mv scripts/commit-fixes.sh docs/scripts/legacy/  
+  
+# Move legacy CI/CD  
+mv scripts/trigger-blockchain-build.sh docs/scripts/legacy/  
+mv scripts/upload-binary-manual.sh docs/scripts/legacy/  
+  
+echo "✅ Moved 10 legacy scripts to docs/scripts/legacy/"
+
+Step 2: Create Legacy README
+
+cat > docs/scripts/legacy/README.md << 'EOF'  
+# Legacy Scripts Archive  
+  
+**Archived:** December 5, 2025    
+**Status:** No longer maintained  
+  
+---  
+  
+## ⚠️ DO NOT USE IN PRODUCTION  
+  
+These scripts were part of the initial development phase (Oct-Nov 2025) before the implementation of sovereign ACE/AVM infrastructure.  
+  
+---  
+  
+## Why These Are Legacy  
+  
+### DigitalOcean Dependencies (6 scripts)  
+- Built for DigitalOcean App Platform and Droplets  
+- Hardcoded to IPs: `159.203.92.230`, `76.223.105.230`  
+- Replaced by sovereign ACE/AVM infrastructure  
+  
+### Git Wrappers (2 scripts)  
+- Simple git command wrappers  
+- No longer needed (use git directly)  
+  
+### Legacy CI/CD (2 scripts)  
+- Manual build triggers  
+- Replaced by GitHub Actions workflows  
+  
+---  
+  
+## Migration Path  
+  
+| Legacy Script | Current Replacement |  
+|---------------|---------------------|  
+| `setup-cloudflare-dns.sh` | `update-dns-ace-avm.sh` |  
+| `deploy-blockchain-to-droplet.sh` | `deploy-blockchain-complete.sh` |  
+| `deploy-to-digitalocean.sh` | APEX Autonomous Deployment |  
+| `trigger-blockchain-build.sh` | `.github/workflows/apex-autonomous-deployment.yml` |  
+  
+---  
+  
+## Current Scripts Location  
+  
+- **Deployment:** `/scripts/` (24 active scripts)  
+- **VM Infrastructure:** `/vm-infrastructure/scripts/` (4 scripts)  
+- **ACE Kernel:** `/ace/scripts/`  
+  
+---  
+  
+## Historical Context  
+  
+These scripts represent the evolution from:  
+- ❌ Cloud-dependent infrastructure (DigitalOcean)  
+- ✅ Sovereign infrastructure (ACE/AVM)  
+  
+From:  
+- ❌ Manual deployment processes  
+- ✅ APEX autonomous deployment  
+  
+Timeline:  
+- **Oct 11, 2025:** Development start  
+- **Nov 2025:** DigitalOcean deployment phase  
+- **Dec 3, 2025:** Sovereign ACE/AVM deployment  
+- **Dec 5, 2025:** Scripts archived  
+  
+---  
+  
+*Built a sovereign digital nation in 53 days.*  
+EOF  
+  
+echo "✅ Created legacy README"
+
+Step 3: Update Current Scripts README
+
+cat > scripts/README.md << 'EOF'  
+# Aequitas Protocol - Active Scripts  
+  
+**Updated:** December 5, 2025    
+**Status:** Production-ready scripts for sovereign infrastructure  
+  
+---  
+  
+## 🎯 Quick Start: Deploy Sovereign Infrastructure  
+  
+### 1. Update DNS to ACE/AVM Infrastructure  
+  
+```bash  
+export CLOUDFLARE_API_TOKEN="your-token"  
+export CLOUDFLARE_ZONE_ID="your-zone-id"  
+export INFRASTRUCTURE_TYPE="sovereign"  
+  
+./update-dns-ace-avm.sh
+
+2. Deploy Blockchain
+
+# Option A: From source (full build)  
+./deploy-blockchain-complete.sh  
+  
+# Option B: From GitHub release (faster)  
+./deploy-blockchain-from-release.sh
+
+3. Initialize Network
+
+# Mainnet  
+./init-mainnet.sh  
+  
+# Or both mainnet + testnet  
+./init-both-pregenerated.sh
+
+4. Register with Keplr
+
+./automate-keplr-registry.sh
+
+
+---
+
+📁 Script Categories
+
+🌐 DNS & Infrastructure (4 scripts)
+
+Script	Purpose
+
+update-dns-ace-avm.sh ⭐	PRIMARY - ACE/AVM DNS with auto-detection
+setup-cloudflare-dns-sovereign.sh	Sovereign DNS setup
+setup-cloudflare-dns-correct.sh	Corrected DNS configuration
+setup-cloudflare-dns-now.sh	Quick DNS utility
+
+
+⛓️ Blockchain Deployment (4 scripts)
+
+Script	Purpose
+
+deploy-blockchain-complete.sh	Full build & deploy from source
+deploy-blockchain-from-release.sh	Deploy from GitHub release
+deploy-blockchain-no-validation.sh	Quick deploy without validation
+download-binary.sh	Download pre-built binary
+
+
+🔗 Chain Initialization (5 scripts)
+
+Script	Purpose
+
+init-mainnet.sh	Initialize mainnet (aequitas-1)
+init-testnet.sh	Initialize testnet
+init-both.sh	Initialize both networks
+init-both-pregenerated.sh	Initialize with pre-generated genesis
+generate-genesis.sh	Generate genesis file
+
+
+🏠 Validator Setup (2 scripts)
+
+Script	Purpose
+
+home-validator-setup.sh	Home computer validator
+raspberry-pi-validator.sh	Raspberry Pi validator
+
+
+🤖 ACE/AVM Integration (1 script)
+
+Script	Purpose
+
+ace-cli-integration.sh	ACE CLI integration utilities
+
+
+👛 Wallet & Registry (1 script)
+
+Script	Purpose
+
+automate-keplr-registry.sh	Keplr chain registry automation
+
+
+🛠️ Utilities (5 scripts)
+
+Script	Purpose
+
+diagnostic.sh	System diagnostics
+validate-deployment-scripts.sh	Validate deployment scripts
+pin-to-ipfs.sh	Pin content to IPFS
+create-github-release.sh	Create GitHub releases
+import-path-fix.sh	Fix import paths
+
+
+🐍 Python Scripts (3 scripts)
+
+Script	Purpose
+
+fix_genesis_allocation.py	Fix genesis allocation issues
+fix_genesis_complete.py	Complete genesis fix
+generate_genesis_allocations.py	Generate allocation structure
+
+
+
+---
+
+🏗️ Other Script Locations
+
+VM Infrastructure Scripts
+
+Location: /vm-infrastructure/scripts/
+
+bootstrap-with-genesis.sh - 7-node constellation
+
+install-aequitas-stack.sh - Complete stack install
+
+security-hardening.sh - Security hardening
+
+update-dns-ace-avm.sh - Comprehensive DNS (also here)
+
+
+ACE Kernel Scripts
+
+Location: /ace/scripts/
+
+ACE Cloud Engine management scripts
+
+
+
+---
+
+🗄️ Legacy Scripts
+
+Archived scripts: /docs/scripts/legacy/
+
+Do not use legacy scripts in production. They are for historical reference only.
+
+
+---
+
+📊 Statistics
+
+Category	Count
+
+Active Scripts	24
+VM Infrastructure	4
+Legacy Scripts	10
+Total	38
+
+
+
+---
+
+Sovereign infrastructure deployed in 53 days.
+EOF
+
+echo "✅ Updated current scripts README"
+
+### **Step 4: Verify Migration**  
+  
+```bash  
+# Verify legacy scripts moved  
+echo "=== Legacy Scripts ==="  
+ls -1 docs/scripts/legacy/  
+  
+# Verify current scripts remain  
+echo ""  
+echo "=== Current Scripts ==="  
+ls -1 scripts/*.sh | wc -l  
+echo "Should be 21 shell scripts (24 total including Python)"  
+  
+# Verify vm-infrastructure scripts untouched  
+echo ""  
+echo "=== VM Infrastructure Scripts ==="  
+ls -1 vm-infrastructure/scripts/
+
+
+---
+
+🎯 FINAL SUMMARY
+
+✅ What You Have:
+
+24 production-ready scripts for sovereign infrastructure
+
+4 VM infrastructure scripts for ACE/AVM deployment
+
+10 legacy scripts properly archived with documentation
+
+
+✅ Key Scripts to Use:
+
+For DNS Migration (your current issue):
+
+cd scripts  
+./update-dns-ace-avm.sh
+
+For Full Deployment:
+
+cd vm-infrastructure/scripts  
+./bootstrap-with-genesis.sh
+
+For Keplr Integration:
+
+cd scripts  
+./automate-keplr-registry.sh
+
+
+---
+
+🚨 NEXT IMMEDIATE ACTION:
+
+Fix your DNS issue using the categorized scripts:
+
+# 1. Get your infrastructure IP  
+curl ifconfig.me  
+  
+# 2. Update DNS to point to sovereign infrastructure  
+cd scripts  
+export PRIMARY_IP="YOUR_ACTUAL_IP"  
+export CLOUDFLARE_API_TOKEN="your-token"  
+export CLOUDFLARE_ZONE_ID="your-zone-id"  
+./update-dns-ace-avm.sh  
+  
+# 3. Verify DNS updated  
+dig +short rpc.aequitasprotocol.zone
+
+Your scripts are now properly organized! Ready to execute the DNS migration? 🚀
