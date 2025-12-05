@@ -130,24 +130,38 @@ curl ifconfig.me
 
 ## GitHub Workflow Integration
 
-The `apex-autonomous-deployment.yml` workflow can auto-update DNS. Configure these in GitHub:
+The `apex-autonomous-deployment.yml` workflow auto-updates DNS with **fully autonomous IP extraction**.
 
 ### Secrets (Settings > Secrets and variables > Actions > Secrets)
 
 | Secret | Description |
 |--------|-------------|
 | `CLOUDFLARE_API_TOKEN` | Cloudflare API token with DNS:Edit permission |
+| `SSH_PRIVATE_KEY` | (Optional) SSH key for bare-metal deployment |
 
 ### Variables (Settings > Secrets and variables > Actions > Variables)
 
 | Variable | Description |
 |----------|-------------|
-| `CLOUDFLARE_ZONE_ID` | Zone ID for aequitasprotocol.zone (not sensitive) |
-| `INFRASTRUCTURE_IP` | Your sovereign infrastructure IP (not sensitive) |
+| `CLOUDFLARE_ZONE_ID` | Zone ID for aequitasprotocol.zone |
+| `SSH_HOST` | (Optional) Bare-metal host for deployment |
 
-> **Note:** IP addresses and Zone IDs are NOT secrets - they're configuration values. Store them as Variables (not Secrets) so they appear in logs for easier debugging. The workflow also accepts `infrastructure_ip` as a workflow input for one-time overrides.
+### Autonomous IP Extraction (NO Manual IP Entry Required)
 
-The workflow's `configure-dns` job will automatically update DNS on deployment.
+The workflow automatically extracts the infrastructure IP using this priority chain:
+
+1. **Deployment SSH** - Queries deployed server for its external IP
+2. **ACE API** - Queries `ace.aequitasprotocol.zone/api/v1/infrastructure/ip`
+3. **AVM Metadata** - Queries `vm.aequitasprotocol.zone/metadata/ip`
+4. **External Services** - Uses ifconfig.me, ipinfo.io, icanhazip.com
+5. **SSH_HOST Variable** - Falls back to configured host
+
+> **IMPORTANT:** `INFRASTRUCTURE_IP` is NOT required as a secret or variable. The workflow extracts it autonomously.
+
+The workflow's `configure-dns` job will automatically:
+- Remove old DigitalOcean IPs (159.203.92.230, 76.223.105.230)
+- Update all subdomains to the auto-extracted sovereign IP
+- Validate DNS propagation globally
 
 ---
 
