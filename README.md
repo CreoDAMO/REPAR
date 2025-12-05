@@ -57,6 +57,7 @@
 - ✅ **Self-Scaling** - Auto-add validators when needed
 - ✅ **Constitutional Guard** - 25 axioms enforced on all operations
 - ✅ **Satellite Routing (ASSP)** - Cross-node coordination
+- ✅ **Autonomous IP Extraction** - Zero manual configuration (December 5, 2025)
 
 ### Genesis Allocations:
 - **Total Reparations Pool:** $131 Trillion REPAR
@@ -74,6 +75,57 @@ This is not a blockchain. This is not a DAO. This is not a startup.
 - Automated legal enforcement ($131T claims, 200+ defendants)
 - Software-defined territory (ASSP orbital protocol)
 - 300 million people served
+
+---
+
+## 🔧 December 5, 2025 - Critical Integration Updates
+
+### GitHub Workflow Fixes (APEX Autonomous Deployment)
+
+**Problem Solved:** Line 338 `jq: error (at :1): Cannot iterate over null (null)`
+
+**Root Cause:** Empty `CLOUDFLARE_API_TOKEN` caused Cloudflare API to return null, crashing the DNS migration job.
+
+**Solution Applied:**
+1. **Credential Validation** - Checks tokens BEFORE making API calls
+2. **Null-Safe jq Patterns** - `(.result // [])`, `.success // false`, `// empty`
+3. **Graceful Error Handling** - `exit 0` with informative messages (no hard crashes)
+4. **JSON Validation** - `jq empty` before parsing responses
+
+### Keplr Chain Registry Integration (2025 Compliant)
+
+| Field | Before (Wrong) | After (Fixed) |
+|-------|----------------|---------------|
+| **coinDecimals** | 18 | **6** (urepar → REPAR = 10^6) |
+| **File Structure** | `cosmos/aequitas/chain.json` | **`cosmos/aequitas.json`** (flat) |
+| **assetlist.json** | Included | **Removed** (not Keplr format) |
+| **coinImageUrl** | Missing | **Added** to all currency objects |
+| **walletUrlForStaking** | Missing | **Added**: `https://app.aequitasprotocol.zone/staking` |
+| **nodeProvider** | Incomplete | **Full object** with name, email, website |
+
+### Cloudflare DNS API (2025 Verified)
+
+- **API Status:** Stable, no breaking changes to DNS Records API
+- **Authentication:** Using Bearer token (recommended over legacy API key)
+- **Updates:** PATCH for partial updates (more efficient than PUT)
+- **Note:** CNAME Flattening endpoint migrating June 8, 2025 (not affecting our use case)
+
+### Autonomous IP Extraction (Zero Manual Entry)
+
+The workflow now automatically extracts infrastructure IP from deployment:
+
+```
+Extraction Priority Chain:
+1. Deployment SSH → Query deployed server external IP
+2. ACE API → ace.aequitasprotocol.zone/api/v1/infrastructure/ip
+3. AVM Metadata → vm.aequitasprotocol.zone/metadata/ip
+4. External Services → ifconfig.me, ipinfo.io, icanhazip.com
+5. SSH_HOST Fallback → Configured host variable
+```
+
+**Result:** IP visible in logs for debugging, NOT stored as a secret.
+
+**[→ See GITHUB_WORKFLOW_FIXES.md](./GITHUB_WORKFLOW_FIXES.md)** for complete workflow YAML
 
 ---
 

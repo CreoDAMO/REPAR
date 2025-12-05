@@ -101,7 +101,77 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
   - Using Bearer token authentication (not legacy API key)
   - Using PATCH for partial updates (more efficient than PUT)
   - Added error handling for all API responses
+- **New metadata fields available** (optional): `comment` and `tags` for DNS record organization
 - **Note**: CNAME Flattening endpoint migrating June 8, 2025 (not affecting our use case)
+
+### KEPLR CHAIN.JSON FINAL FORMAT (2025 Compliant)
+```json
+{
+  "chainId": "aequitas-1",
+  "chainName": "Aequitas Protocol",
+  "chainSymbolImageUrl": "https://raw.githubusercontent.com/.../images/aequitas/chain.png",
+  "rpc": "https://rpc.aequitasprotocol.zone",
+  "rest": "https://api.aequitasprotocol.zone",
+  "nodeProvider": {
+    "name": "Aequitas Foundation",
+    "email": "validators@aequitasprotocol.zone",
+    "website": "https://aequitasprotocol.zone"
+  },
+  "bip44": { "coinType": 118 },
+  "bech32Config": {
+    "bech32PrefixAccAddr": "repar",
+    "bech32PrefixAccPub": "reparpub",
+    "bech32PrefixValAddr": "reparvaloper",
+    "bech32PrefixValPub": "reparvaloperpub",
+    "bech32PrefixConsAddr": "reparvalcons",
+    "bech32PrefixConsPub": "reparvalconspub"
+  },
+  "currencies": [{
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/.../images/aequitas/chain.png"
+  }],
+  "feeCurrencies": [{
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/.../images/aequitas/chain.png",
+    "gasPriceStep": { "low": 0.01, "average": 0.025, "high": 0.04 }
+  }],
+  "stakeCurrency": {
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/.../images/aequitas/chain.png"
+  },
+  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",
+  "features": ["ibc-transfer", "ibc-go"]
+}
+```
+
+### ACTION ITEMS FOR GITHUB SYNC
+The following files were updated in Replit and need to be synced to GitHub:
+
+| File | Action | Priority |
+|------|--------|----------|
+| `GITHUB_WORKFLOW_FIXES.md` | Copy YAML to `.github/workflows/apex-autonomous-deployment.yml` | **CRITICAL** |
+| `README.md` | Push to GitHub (December 5 updates) | High |
+| `replit.md` | Push to GitHub (project memory) | High |
+| `images/aequitas/chain.png` | Create 256x256 PNG logo for Keplr PR | Medium |
+
+### GITHUB SECRETS REQUIRED
+| Secret | Purpose | Status |
+|--------|---------|--------|
+| `CLOUDFLARE_API_TOKEN` | DNS API with Zone:DNS:Edit permission | Required |
+| `GH_PAT` | GitHub PAT with repo scope for Keplr PR | Required |
+| `SSH_PRIVATE_KEY` | (Optional) For bare-metal deployment | Optional |
+
+### GITHUB VARIABLES REQUIRED
+| Variable | Purpose | Status |
+|----------|---------|--------|
+| `CLOUDFLARE_ZONE_ID` | Zone ID for aequitasprotocol.zone | Required |
+| `SSH_HOST` | (Optional) Bare-metal deployment host | Optional |
 
 ### FULLY AUTONOMOUS IP EXTRACTION (CRITICAL UPDATE)
 - **ZERO manual IP entry required** - IP is auto-extracted from deployment
