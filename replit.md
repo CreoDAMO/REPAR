@@ -70,50 +70,50 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 
 ## Recent Changes (December 5, 2025)
 
+### FULLY AUTONOMOUS IP EXTRACTION (CRITICAL UPDATE)
+- **ZERO manual IP entry required** - IP is auto-extracted from deployment
+- Bare-metal is now the default deployment target (not docker-compose)
+- Multi-layer IP extraction fallback chain:
+  1. **Deployment SSH** - Queries deployed server for its external IP
+  2. **ACE API** - `ace.aequitasprotocol.zone/api/v1/infrastructure/ip`
+  3. **AVM Metadata** - `vm.aequitasprotocol.zone/metadata/ip`
+  4. **External Services** - ifconfig.me, ipinfo.io, icanhazip.com, ipify.org
+  5. **SSH_HOST Variable** - Falls back to configured host
+- All jq commands use null-safe patterns (`// empty`, `// []`) to prevent crashes
+- IP is visible in logs for debugging (NOT stored as a secret)
+
+### Secrets vs Variables (CORRECTED)
+- **Secrets (sensitive)**: CLOUDFLARE_API_TOKEN, GH_PAT, SSH_PRIVATE_KEY (optional)
+- **Variables (configuration)**: CLOUDFLARE_ZONE_ID, SSH_HOST (optional)
+- **NOT REQUIRED**: INFRASTRUCTURE_IP - extracted autonomously
+
 ### Script Organization Complete
 - Moved 10 legacy DigitalOcean scripts to `docs/scripts/legacy/`
 - Created comprehensive legacy README documenting migration path
 - Created `scripts/README.md` with all 25 active scripts categorized
 - Legacy scripts include: deploy-to-digitalocean.sh, setup-cloudflare-dns.sh, etc.
 
-### Automated GitHub Workflow Updated
-- GITHUB_WORKFLOW_FIXES.md now contains fully automated workflow for:
-  - **DNS Migration**: Removes old DigitalOcean IPs (159.203.92.230, 76.223.105.230)
-  - **DNS Update**: Creates/updates all subdomains to sovereign infrastructure IP
-  - **Keplr Registry PR**: Automatically forks, pushes chain.json/assetlist.json, creates PR
-- Workflow properly handles root domain "@" queries
-- Uses PATCH for existing records, POST for new records
-- Keplr job: Fork → Commit → Push → Create PR (with proper GH_TOKEN auth)
+### GitHub Actions Workflow Phases (11 Total)
+1. **Build** - Compiles aequitasd binary with version info
+2. **Validate APEX** - Verifies autonomous systems (25 constitutional axioms)
+3. **Deploy Founder Node** - Genesis validator with autonomous IP extraction
+4. **Deploy Constellation** - 6 additional validator nodes (parallel)
+5. **Verify Constellation** - Health checks, APEX activation
+6. **Configure DNS** - Uses auto-extracted IP, removes old DigitalOcean records
+7. **Validate DNS Health** - Global propagation checks (Cloudflare, Google, Quad9)
+8. **Keplr Registry PR** - Automated PR to chainapsis/keplr-chain-registry
+9. **Keplr Backflow Monitor** - Tracks PR status
+10. **Sovereign Seal** - SHA-256 cryptographic seal of deployment
+11. **Deploy-Everywhere** - Global propagation verification
 
-### NEW: 4 Advanced Automation Enhancements
-1. **DNS Health Validation** - No more guessing outcomes
-   - DNS resolution check via `dig` for all endpoints
-   - HTTP health check via `curl` for HTTPS connectivity
-   - RPC node status query for Tendermint health
-   - Aggregate status: healthy (>70%) / degraded (50-70%) / unhealthy (<50%)
-
-2. **Keplr PR Confirmation Backflow** - Know instantly when wallet support is live
-   - Monitors PR status in chainapsis/keplr-chain-registry
-   - Detects PR merge automatically
-   - Outputs: pr_number, pr_state, pr_merged
-
-3. **Sovereign Infrastructure Seal** - Cryptographic proof of operational status
-   - Collects status from all deployment jobs
-   - Generates SHA-256 seal hash
-   - Creates JSON seal document with constitutional properties
-   - Uploads as artifact (365-day retention)
-
-4. **Deploy-Everywhere Trigger** - Automatic global propagation
-   - Checks eligibility based on DNS + Seal status
-   - Syncs to ACE/AVM mirrors (ace, vm, sovereign)
-   - Publishes version stamp with seal hash
-   - Notifies chain registries (Cosmos, Keplr, IBC)
-
-### Required GitHub Secrets for Automation
+### Required GitHub Configuration
+**Secrets:**
 - `CLOUDFLARE_API_TOKEN` - Cloudflare API token with DNS:Edit
-- `CLOUDFLARE_ZONE_ID` - Zone ID for aequitasprotocol.zone
-- `INFRASTRUCTURE_IP` - Sovereign ACE/AVM infrastructure IP
 - `GH_PAT` - GitHub Personal Access Token with repo scope
+
+**Variables:**
+- `CLOUDFLARE_ZONE_ID` - Zone ID for aequitasprotocol.zone
+- `SSH_HOST` - (Optional) Bare-metal deployment host
 
 ---
 
