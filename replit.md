@@ -85,6 +85,30 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - Uses PATCH for existing records, POST for new records
 - Keplr job: Fork → Commit → Push → Create PR (with proper GH_TOKEN auth)
 
+### NEW: 4 Advanced Automation Enhancements
+1. **DNS Health Validation** - No more guessing outcomes
+   - DNS resolution check via `dig` for all endpoints
+   - HTTP health check via `curl` for HTTPS connectivity
+   - RPC node status query for Tendermint health
+   - Aggregate status: healthy (>70%) / degraded (50-70%) / unhealthy (<50%)
+
+2. **Keplr PR Confirmation Backflow** - Know instantly when wallet support is live
+   - Monitors PR status in chainapsis/keplr-chain-registry
+   - Detects PR merge automatically
+   - Outputs: pr_number, pr_state, pr_merged
+
+3. **Sovereign Infrastructure Seal** - Cryptographic proof of operational status
+   - Collects status from all deployment jobs
+   - Generates SHA-256 seal hash
+   - Creates JSON seal document with constitutional properties
+   - Uploads as artifact (365-day retention)
+
+4. **Deploy-Everywhere Trigger** - Automatic global propagation
+   - Checks eligibility based on DNS + Seal status
+   - Syncs to ACE/AVM mirrors (ace, vm, sovereign)
+   - Publishes version stamp with seal hash
+   - Notifies chain registries (Cosmos, Keplr, IBC)
+
 ### Required GitHub Secrets for Automation
 - `CLOUDFLARE_API_TOKEN` - Cloudflare API token with DNS:Edit
 - `CLOUDFLARE_ZONE_ID` - Zone ID for aequitasprotocol.zone
