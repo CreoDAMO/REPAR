@@ -1136,7 +1136,7 @@ jobs:
           
           # Create chain.json with CORRECTED structure per Keplr 2025 requirements
           # CRITICAL FIX: coinDecimals is 6 (urepar -> repar = 10^6), NOT 18
-          cat > cosmos/aequitas.json << 'EOF'
+          cat > cosmos/aequitas.json << EOF
 {
   "chainId": "aequitas-1",
   "chainName": "Aequitas Protocol",
@@ -1391,7 +1391,7 @@ Aequitas Protocol is a sovereign Layer-1 blockchain focused on historical justic
   "protocol": "Aequitas Protocol",
   "version": "${{ needs.build-aequitasd.outputs.version || 'v1.0.0' }}",
   "chain_id": "${{ env.CHAIN_ID }}",
-          "network": "${{ github.event.inputs.network || 'mainnet' }}",
+  "network": "${{ github.event.inputs.network || 'mainnet' }}",
   "deployment_target": "${{ github.event.inputs.deployment_target || 'bare-metal' }}",
   "infrastructure_ip": "${{ needs.deploy-founder-node.outputs.infrastructure_ip }}",
   "ip_source": "${{ needs.deploy-founder-node.outputs.ip_source }}",
