@@ -7,14 +7,27 @@
 
 ## SYNTAX FIXES APPLIED (December 6, 2025)
 
-### Issue #1: Quoted Heredoc (Line 1139)
-- **Problem:** `cat > cosmos/aequitas.json << 'EOF'`
-- **Fix:** Changed to `cat > cosmos/aequitas.json << EOF`
-- **Reason:** Single quotes around EOF cause YAML parsing errors
+**All fixes validated - YAML syntax is now VALID**
 
-### Issue #2: JSON Indentation (Line 1394)
-- **Problem:** Extra indentation on `"network"` line
-- **Fix:** Aligned indentation to match surrounding lines
+### Issue #1: Heredoc with JSON Content (Keplr chain.json)
+- **Problem:** `cat > cosmos/aequitas.json << EOF` followed by JSON - YAML parser misinterprets `{` as mapping start
+- **Fix:** Replaced heredoc with `printf '%s\n' ... > file` approach
+- **Reason:** Heredocs containing JSON cause GitHub YAML parser errors because `{` at line start is interpreted as YAML
+
+### Issue #2: Seal Manifest Heredoc (seal_manifest.json)
+- **Problem:** Similar heredoc issue with seal_manifest.json
+- **Fix:** Replaced with printf and shell variables for GitHub expressions
+- **Reason:** Same YAML parsing issue with JSON content in heredocs
+
+### Issue #3: Git Commit Message with List Items
+- **Problem:** Multi-line git commit message with lines starting with `-` were misinterpreted as YAML list items
+- **Fix:** Write commit message to temp file with printf, then use `git commit -F /tmp/commit_message.txt`
+- **Reason:** Lines starting with `-` in multi-line strings confuse YAML parser
+
+### Issue #4: GitHub PR Body with Markdown Lists
+- **Problem:** `gh pr create --body` with markdown containing `-` and `|` characters
+- **Fix:** Write PR body to temp file with printf, then use `gh pr create --body-file /tmp/pr_body.txt`
+- **Reason:** Same YAML parsing issue with list-like content
 
 ---
 
@@ -1183,60 +1196,59 @@ jobs:
           
           # Create chain.json with CORRECTED structure per Keplr 2025 requirements
           # CRITICAL FIX: coinDecimals is 6 (urepar -> repar = 10^6), NOT 18
-          cat > cosmos/aequitas.json << EOF
-{
-  "chainId": "aequitas-1",
-  "chainName": "Aequitas Protocol",
-  "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
-  "rpc": "https://rpc.aequitasprotocol.zone",
-  "rest": "https://api.aequitasprotocol.zone",
-  "nodeProvider": {
-    "name": "Aequitas Foundation",
-    "email": "validators@aequitasprotocol.zone",
-    "website": "https://aequitasprotocol.zone"
-  },
-  "bip44": {
-    "coinType": 118
-  },
-  "bech32Config": {
-    "bech32PrefixAccAddr": "repar",
-    "bech32PrefixAccPub": "reparpub",
-    "bech32PrefixValAddr": "reparvaloper",
-    "bech32PrefixValPub": "reparvaloperpub",
-    "bech32PrefixConsAddr": "reparvalcons",
-    "bech32PrefixConsPub": "reparvalconspub"
-  },
-  "currencies": [
-    {
-      "coinDenom": "REPAR",
-      "coinMinimalDenom": "urepar",
-      "coinDecimals": 6,
-      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
-    }
-  ],
-  "feeCurrencies": [
-    {
-      "coinDenom": "REPAR",
-      "coinMinimalDenom": "urepar",
-      "coinDecimals": 6,
-      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
-      "gasPriceStep": {
-        "low": 0.01,
-        "average": 0.025,
-        "high": 0.04
-      }
-    }
-  ],
-  "stakeCurrency": {
-    "coinDenom": "REPAR",
-    "coinMinimalDenom": "urepar",
-    "coinDecimals": 6,
-    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
-  },
-  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",
-  "features": ["ibc-transfer", "ibc-go"]
-}
-EOF
+          # Using printf to avoid YAML heredoc parsing issues
+          printf '%s\n' '{' \
+            '  "chainId": "aequitas-1",' \
+            '  "chainName": "Aequitas Protocol",' \
+            '  "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+            '  "rpc": "https://rpc.aequitasprotocol.zone",' \
+            '  "rest": "https://api.aequitasprotocol.zone",' \
+            '  "nodeProvider": {' \
+            '    "name": "Aequitas Foundation",' \
+            '    "email": "validators@aequitasprotocol.zone",' \
+            '    "website": "https://aequitasprotocol.zone"' \
+            '  },' \
+            '  "bip44": {' \
+            '    "coinType": 118' \
+            '  },' \
+            '  "bech32Config": {' \
+            '    "bech32PrefixAccAddr": "repar",' \
+            '    "bech32PrefixAccPub": "reparpub",' \
+            '    "bech32PrefixValAddr": "reparvaloper",' \
+            '    "bech32PrefixValPub": "reparvaloperpub",' \
+            '    "bech32PrefixConsAddr": "reparvalcons",' \
+            '    "bech32PrefixConsPub": "reparvalconspub"' \
+            '  },' \
+            '  "currencies": [' \
+            '    {' \
+            '      "coinDenom": "REPAR",' \
+            '      "coinMinimalDenom": "urepar",' \
+            '      "coinDecimals": 6,' \
+            '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+            '    }' \
+            '  ],' \
+            '  "feeCurrencies": [' \
+            '    {' \
+            '      "coinDenom": "REPAR",' \
+            '      "coinMinimalDenom": "urepar",' \
+            '      "coinDecimals": 6,' \
+            '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+            '      "gasPriceStep": {' \
+            '        "low": 0.01,' \
+            '        "average": 0.025,' \
+            '        "high": 0.04' \
+            '      }' \
+            '    }' \
+            '  ],' \
+            '  "stakeCurrency": {' \
+            '    "coinDenom": "REPAR",' \
+            '    "coinMinimalDenom": "urepar",' \
+            '    "coinDecimals": 6,' \
+            '    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+            '  },' \
+            '  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",' \
+            '  "features": ["ibc-transfer", "ibc-go"]' \
+            '}' > cosmos/aequitas.json
           
           # NOTE: assetlist.json is NOT a Keplr format - it's for cosmos/chain-registry
           # Keplr only needs chain.json + image
@@ -1288,70 +1300,80 @@ EOF
           git add cosmos/aequitas.json
           git add images/aequitas/ 2>/dev/null || echo "No images to add"
           
-          git commit -m "feat: Add Aequitas Protocol (aequitas-1)
-
-- Chain ID: aequitas-1
-- Native coin: REPAR (6 decimals, urepar base)
-- Bech32 prefix: repar
-- Features: IBC transfers, IBC-Go
-- Node provider: Aequitas Foundation
-- Staking URL: https://app.aequitasprotocol.zone/staking
-
-Deployed via APEX Autonomous System
-
-Signed-off-by: Aequitas Protocol Bot <bot@aequitasprotocol.zone>" || echo "Nothing to commit"
+          # Write commit message to file to avoid YAML parsing issues with dashes
+          printf '%s\n' \
+            'feat: Add Aequitas Protocol (aequitas-1)' \
+            '' \
+            '- Chain ID: aequitas-1' \
+            '- Native coin: REPAR (6 decimals, urepar base)' \
+            '- Bech32 prefix: repar' \
+            '- Features: IBC transfers, IBC-Go' \
+            '- Node provider: Aequitas Foundation' \
+            '- Staking URL: https://app.aequitasprotocol.zone/staking' \
+            '' \
+            'Deployed via APEX Autonomous System' \
+            '' \
+            'Signed-off-by: Aequitas Protocol Bot <bot@aequitasprotocol.zone>' \
+            > /tmp/commit_message.txt
+          
+          git commit -F /tmp/commit_message.txt || echo "Nothing to commit"
           
           git push origin "$BRANCH" || echo "Push failed"
+          
+          # Write PR body to file to avoid YAML parsing issues
+          printf '%s\n' \
+            '## Aequitas Protocol Integration' \
+            '' \
+            'This PR adds Aequitas Protocol to the Keplr wallet registry.' \
+            '' \
+            '### Chain Details' \
+            '| Field | Value |' \
+            '|-------|-------|' \
+            '| **Chain ID** | aequitas-1 |' \
+            '| **Chain Name** | Aequitas Protocol |' \
+            '| **Native Coin** | REPAR |' \
+            '| **Coin Decimals** | 6 (urepar to REPAR) |' \
+            '| **Bech32 Prefix** | repar |' \
+            '| **BIP44 CoinType** | 118 |' \
+            '' \
+            '### Endpoints' \
+            '| Endpoint | URL |' \
+            '|----------|-----|' \
+            '| **RPC** | https://rpc.aequitasprotocol.zone |' \
+            '| **REST** | https://api.aequitasprotocol.zone |' \
+            '| **Staking UI** | https://app.aequitasprotocol.zone/staking |' \
+            '' \
+            '### Node Provider' \
+            '  - **Name:** Aequitas Foundation' \
+            '  - **Email:** validators@aequitasprotocol.zone' \
+            '  - **Website:** https://aequitasprotocol.zone' \
+            '' \
+            '### Features' \
+            '  - ibc-transfer - IBC token transfers' \
+            '  - ibc-go - IBC-Go protocol support' \
+            '' \
+            '### Gas Price Steps' \
+            '| Level | Price |' \
+            '|-------|-------|' \
+            '| Low | 0.01 |' \
+            '| Average | 0.025 |' \
+            '| High | 0.04 |' \
+            '' \
+            '### About Aequitas Protocol' \
+            'Aequitas Protocol is a sovereign Layer-1 blockchain focused on historical justice and reparations. Built on Cosmos SDK with APEX autonomous management for self-healing, self-monitoring, and self-scaling infrastructure.' \
+            '' \
+            '### Files Added' \
+            '  - cosmos/aequitas.json - Chain configuration' \
+            '  - images/aequitas/chain.png - Chain logo (256x256 PNG)' \
+            '' \
+            '---' \
+            '*This PR was automatically created by the APEX Autonomous Deployment System*' \
+            > /tmp/pr_body.txt
           
           gh pr create \
             --repo chainapsis/keplr-chain-registry \
             --title "feat: Add Aequitas Protocol (aequitas-1)" \
-            --body "## Aequitas Protocol Integration
-
-This PR adds Aequitas Protocol to the Keplr wallet registry.
-
-### Chain Details
-| Field | Value |
-|-------|-------|
-| **Chain ID** | aequitas-1 |
-| **Chain Name** | Aequitas Protocol |
-| **Native Coin** | REPAR |
-| **Coin Decimals** | 6 (urepar → REPAR) |
-| **Bech32 Prefix** | repar |
-| **BIP44 CoinType** | 118 |
-
-### Endpoints
-| Endpoint | URL |
-|----------|-----|
-| **RPC** | https://rpc.aequitasprotocol.zone |
-| **REST** | https://api.aequitasprotocol.zone |
-| **Staking UI** | https://app.aequitasprotocol.zone/staking |
-
-### Node Provider
-- **Name:** Aequitas Foundation
-- **Email:** validators@aequitasprotocol.zone
-- **Website:** https://aequitasprotocol.zone
-
-### Features
-- \`ibc-transfer\` - IBC token transfers
-- \`ibc-go\` - IBC-Go protocol support
-
-### Gas Price Steps
-| Level | Price |
-|-------|-------|
-| Low | 0.01 |
-| Average | 0.025 |
-| High | 0.04 |
-
-### About Aequitas Protocol
-Aequitas Protocol is a sovereign Layer-1 blockchain focused on historical justice and reparations. Built on Cosmos SDK with APEX autonomous management for self-healing, self-monitoring, and self-scaling infrastructure.
-
-### Files Added
-- \`cosmos/aequitas.json\` - Chain configuration
-- \`images/aequitas/chain.png\` - Chain logo (256x256 PNG)
-
----
-*This PR was automatically created by the APEX Autonomous Deployment System*" \
+            --body-file /tmp/pr_body.txt \
             --head "$BRANCH" || echo "PR creation skipped"
       
       - name: Report
@@ -1433,32 +1455,45 @@ Aequitas Protocol is a sovereign Layer-1 blockchain focused on historical justic
           echo "============================================================"
           
           # Collect all deployment artifacts for sealing
-          cat > /tmp/seal_manifest.json << EOF
-{
-  "protocol": "Aequitas Protocol",
-  "version": "${{ needs.build-aequitasd.outputs.version || 'v1.0.0' }}",
-  "chain_id": "${{ env.CHAIN_ID }}",
-  "network": "${{ github.event.inputs.network || 'mainnet' }}",
-  "deployment_target": "${{ github.event.inputs.deployment_target || 'bare-metal' }}",
-  "infrastructure_ip": "${{ needs.deploy-founder-node.outputs.infrastructure_ip }}",
-  "ip_source": "${{ needs.deploy-founder-node.outputs.ip_source }}",
-  "founder_address": "${{ needs.deploy-founder-node.outputs.founder_address }}",
-  "genesis_hash": "${{ needs.deploy-founder-node.outputs.genesis_hash }}",
-  "binary_hash": "${{ needs.build-aequitasd.outputs.binary_hash }}",
-  "constellation_size": 7,
-  "timestamp": "$TIMESTAMP",
-  "commit": "${{ github.sha }}",
-  "workflow_run": "${{ github.run_id }}",
-  "apex_features": [
-    "self-healing",
-    "self-monitoring",
-    "self-scaling",
-    "constitutional-guard",
-    "satellite-routing"
-  ],
-  "dns_configured": ${{ needs.configure-dns.outputs.dns_updated == 'true' }}
-}
-EOF
+          # Using printf to avoid YAML heredoc parsing issues
+          VERSION="${{ needs.build-aequitasd.outputs.version || 'v1.0.0' }}"
+          CHAIN_ID_VAL="${{ env.CHAIN_ID }}"
+          NETWORK="${{ github.event.inputs.network || 'mainnet' }}"
+          DEPLOY_TARGET="${{ github.event.inputs.deployment_target || 'bare-metal' }}"
+          INFRA_IP="${{ needs.deploy-founder-node.outputs.infrastructure_ip }}"
+          IP_SRC="${{ needs.deploy-founder-node.outputs.ip_source }}"
+          FOUNDER="${{ needs.deploy-founder-node.outputs.founder_address }}"
+          GEN_HASH="${{ needs.deploy-founder-node.outputs.genesis_hash }}"
+          BIN_HASH="${{ needs.build-aequitasd.outputs.binary_hash }}"
+          COMMIT="${{ github.sha }}"
+          RUN_ID="${{ github.run_id }}"
+          DNS_OK="${{ needs.configure-dns.outputs.dns_updated == 'true' }}"
+          
+          printf '%s\n' \
+            '{' \
+            "  \"protocol\": \"Aequitas Protocol\"," \
+            "  \"version\": \"$VERSION\"," \
+            "  \"chain_id\": \"$CHAIN_ID_VAL\"," \
+            "  \"network\": \"$NETWORK\"," \
+            "  \"deployment_target\": \"$DEPLOY_TARGET\"," \
+            "  \"infrastructure_ip\": \"$INFRA_IP\"," \
+            "  \"ip_source\": \"$IP_SRC\"," \
+            "  \"founder_address\": \"$FOUNDER\"," \
+            "  \"genesis_hash\": \"$GEN_HASH\"," \
+            "  \"binary_hash\": \"$BIN_HASH\"," \
+            '  "constellation_size": 7,' \
+            "  \"timestamp\": \"$TIMESTAMP\"," \
+            "  \"commit\": \"$COMMIT\"," \
+            "  \"workflow_run\": \"$RUN_ID\"," \
+            '  "apex_features": [' \
+            '    "self-healing",' \
+            '    "self-monitoring",' \
+            '    "self-scaling",' \
+            '    "constitutional-guard",' \
+            '    "satellite-routing"' \
+            '  ],' \
+            "  \"dns_configured\": $DNS_OK" \
+            '}' > /tmp/seal_manifest.json
           
           # Generate SHA-256 seal
           SEAL_HASH=$(sha256sum /tmp/seal_manifest.json | awk '{print $1}')
