@@ -25,7 +25,7 @@ args = "Block Explorer"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Circle API Backend"
+args = "Backend API"
 
 [[workflows.workflow]]
 name = "Frontend"
@@ -36,7 +36,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd frontend && npm run dev"
+args = "cd frontend && npm install && npm run dev"
 waitForPort = 5000
 
 [[workflows.workflow]]
@@ -48,20 +48,8 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd dexplorer && npm run dev"
+args = "cd dexplorer && npm install && npm run dev"
 waitForPort = 3001
-
-[[workflows.workflow]]
-name = "Circle API Backend"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && npm start"
-waitForPort = 3002
 
 [[workflows.workflow]]
 name = "Build & Deploy"
@@ -80,21 +68,21 @@ args = "cd ../backend && npm install --prefer-offline --no-audit"
 task = "shell.exec"
 args = "cd ../frontend && npm install --prefer-offline --no-audit && npm run dev -- --host 0.0.0.0 --port 5000"
 
+[[workflows.workflow]]
+name = "Backend API"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && npm install && npm start"
+waitForPort = 3002
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[ports]]
 localPort = 3001
 externalPort = 3001
-
-[[ports]]
-localPort = 3002
-externalPort = 3002
-
-[[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 34945
-externalPort = 5000
 
 [[ports]]
 localPort = 35689
