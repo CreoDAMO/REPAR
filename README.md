@@ -11,6 +11,8 @@
 [![Sovereign Nation](https://img.shields.io/badge/53%20Days-Sovereign%20Nation%20Built-gold)](https://github.com/CreoDAMO/REPAR)
 [![Wiki Auto-Generation](https://github.com/CreoDAMO/REPAR/actions/workflows/wiki-publish.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/wiki-publish.yml)
 
+<img width="1024" height="1024" alt="REPAR_Coin_Logo" src="https://github.com/user-attachments/assets/40b9d98b-06df-4e63-83e2-420d8be18a18" />
+
 ---
 
 ## 🏛️ HISTORIC: December 3, 2025 - FIRST SOVEREIGN DIGITAL NATION DEPLOYED
