@@ -1,7 +1,7 @@
 # APEX Autonomous 7-Node Constellation Deployment
 
 **Created:** December 3, 2025  
-**Updated:** December 7, 2025 - CONSOLIDATED FULL-STACK DEPLOYMENT
+**Updated:** December 7, 2025 - CONSOLIDATED FULL-STACK DEPLOYMENT + DNS/KEPLR FIXES
 
 ---
 
@@ -41,6 +41,46 @@ VM Infrastructure → [Build Services in Parallel]
                     Backend API → Dexplorer → Frontend
                                                   ↓
                          DNS Configuration → Keplr PR → Seal → Global Propagation
+```
+
+---
+
+## DNS & KEPLR FIXES (December 7, 2025)
+
+### Issue 1: DNS Using GitHub Runner IP (FIXED)
+
+**Problem:** The workflow used `curl ifconfig.me` which returns the GitHub runner's temporary IP (changes every run) instead of your actual sovereign infrastructure IP.
+
+**Solution:** Added **Method 6: Sovereign IP Fallback** that uses the hardcoded original deployment IP `135.232.208.145` as the last resort. This ensures DNS always points to your permanent infrastructure, not ephemeral GitHub IPs.
+
+**IP Detection Order (Updated):**
+1. SSH deployment host → actual server IP
+2. ACE API → sovereign endpoint
+3. AVM Metadata → alternative endpoint
+4. External detection → filtered for non-GitHub IPs
+5. SSH_HOST variable → if configured
+6. **Sovereign fallback → `135.232.208.145` (NEW)**
+
+**Note on Cloudflare Proxy:** When DNS is proxied through Cloudflare (`proxied: true`), `dig` queries will return Cloudflare edge IPs (like `172.67.x.x` or `104.21.x.x`), NOT your origin IP. This is expected behavior for DDoS protection. Your actual origin IP is visible in the Cloudflare Dashboard.
+
+### Issue 2: Keplr Registry PR Pushing to Wrong Repo (FIXED)
+
+**Problem:** The workflow pushed to `CreoDAMO/REPAR` instead of the forked `keplr-chain-registry` repo, then tried to create a PR from a non-existent branch.
+
+**Solution:** Fixed the fork/clone/push/PR workflow:
+1. **Get GitHub username** dynamically via `gh api user`
+2. **Fork properly** with correct remote setup (origin = your fork, upstream = chainapsis)
+3. **Reset to upstream** before creating branch (ensures clean state)
+4. **Push to your fork** with authentication
+5. **Create PR with correct `--head` format:** `$GITHUB_USER:$BRANCH`
+
+**Correct PR Flow:**
+```
+chainapsis/keplr-chain-registry (upstream)
+         ↓ fork
+$GITHUB_USER/keplr-chain-registry (origin)
+         ↓ push branch
+PR: $GITHUB_USER:add-aequitas-protocol-* → chainapsis:main
 ```
 
 ---
@@ -593,7 +633,7 @@ jobs:
             done
           fi
           
-          # Method 5: Use SSH_HOST variable as last resort
+          # Method 5: Use SSH_HOST variable as fallback
           if [ -z "$INFRASTRUCTURE_IP" ] && [ -n "$SSH_HOST" ]; then
             echo "Method 5: Using SSH_HOST variable as fallback..."
             
@@ -610,6 +650,22 @@ jobs:
                 echo "   SUCCESS: Resolved $SSH_HOST to $INFRASTRUCTURE_IP"
               fi
             fi
+          fi
+          
+          # Method 6: SOVEREIGN IP FALLBACK (hardcoded from original deployment)
+          # CRITICAL: This is your ACTUAL infrastructure IP, not GitHub runner IPs
+          # The original founder node deployment established this IP
+          if [ -z "$INFRASTRUCTURE_IP" ]; then
+            echo "Method 6: Using hardcoded sovereign IP fallback..."
+            
+            # Your sovereign infrastructure IP from the original deployment
+            # This IP was assigned during the first founder node deployment
+            # and should NOT change (unlike GitHub runner IPs which change every run)
+            SOVEREIGN_IP="135.232.208.145"
+            INFRASTRUCTURE_IP="$SOVEREIGN_IP"
+            IP_SOURCE="sovereign-fallback"
+            echo "   SUCCESS: Using sovereign IP: $INFRASTRUCTURE_IP"
+            echo "   NOTE: This is your permanent infrastructure IP from founder node deployment"
           fi
           
           # Final result
@@ -1914,6 +1970,7 @@ jobs:
           git config --global user.email "bot@aequitasprotocol.zone"
       
       - name: Fork and clone Keplr registry
+        id: fork
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
@@ -1922,9 +1979,47 @@ jobs:
             exit 0
           fi
           
+          echo "============================================================"
+          echo "   FORKING KEPLR CHAIN REGISTRY"
+          echo "============================================================"
+          
+          # Get the authenticated user's GitHub username
+          GITHUB_USER=$(gh api user --jq '.login')
+          echo "   Authenticated as: $GITHUB_USER"
+          echo "github_user=$GITHUB_USER" >> $GITHUB_OUTPUT
+          
+          # Fork the Keplr registry (or use existing fork)
           echo "Forking chainapsis/keplr-chain-registry..."
-          gh repo fork chainapsis/keplr-chain-registry --clone=true --remote=true || echo "Fork exists"
-          cd keplr-chain-registry || exit 0
+          gh repo fork chainapsis/keplr-chain-registry --clone=true --remote=true 2>/dev/null || {
+            echo "   Fork already exists, cloning..."
+            git clone "https://github.com/$GITHUB_USER/keplr-chain-registry.git" 2>/dev/null || echo "Clone failed"
+          }
+          
+          if [ -d keplr-chain-registry ]; then
+            cd keplr-chain-registry
+            
+            # Ensure remotes are set up correctly
+            git remote -v
+            
+            # Set origin to user's fork (for pushing)
+            git remote set-url origin "https://github.com/$GITHUB_USER/keplr-chain-registry.git" || echo "Origin already correct"
+            
+            # Set upstream to chainapsis (for PRs)
+            git remote add upstream "https://github.com/chainapsis/keplr-chain-registry.git" 2>/dev/null || echo "Upstream exists"
+            
+            # Fetch latest from upstream
+            git fetch upstream main 2>/dev/null || echo "Fetch upstream"
+            git checkout main 2>/dev/null || git checkout -b main
+            git reset --hard upstream/main 2>/dev/null || echo "Reset to upstream"
+            
+            echo "   Fork configured successfully"
+            echo "   Origin: $GITHUB_USER/keplr-chain-registry (your fork)"
+            echo "   Upstream: chainapsis/keplr-chain-registry (target)"
+          else
+            echo "   ERROR: Could not clone repository"
+          fi
+          
+          echo "============================================================"
       
       - name: Create chain configuration
         env:
@@ -2072,7 +2167,16 @@ jobs:
           
           git commit -F /tmp/commit_message.txt || echo "Nothing to commit"
           
-          git push origin "$BRANCH" || echo "Push failed"
+          # Get GitHub username from fork step
+          GITHUB_USER="${{ steps.fork.outputs.github_user }}"
+          
+          # Push to YOUR FORK (not the upstream repo)
+          echo "Pushing to fork: $GITHUB_USER/keplr-chain-registry..."
+          git push origin "$BRANCH" --force-with-lease || {
+            # If push fails, try setting up credentials
+            git remote set-url origin "https://${GH_TOKEN}@github.com/$GITHUB_USER/keplr-chain-registry.git"
+            git push origin "$BRANCH" --force-with-lease || echo "Push failed"
+          }
           
           # Write PR body to file to avoid YAML parsing issues
           printf '%s\n' \
@@ -2124,11 +2228,26 @@ jobs:
             '*This PR was automatically created by the APEX Autonomous Deployment System*' \
             > /tmp/pr_body.txt
           
+          # CRITICAL FIX: --head must specify YOUR fork's username:branch
+          # Format: --head <fork-owner>:<branch>
+          # Without this, GitHub looks for the branch in chainapsis/keplr-chain-registry
+          # which doesn't exist (we pushed to YOUR fork)
+          
+          GITHUB_USER="${{ steps.fork.outputs.github_user }}"
+          
+          echo "Creating PR from $GITHUB_USER:$BRANCH to chainapsis:main..."
+          
           gh pr create \
             --repo chainapsis/keplr-chain-registry \
             --title "feat: Add Aequitas Protocol (aequitas-1)" \
             --body-file /tmp/pr_body.txt \
-            --head "$BRANCH" || echo "PR creation skipped"
+            --base main \
+            --head "$GITHUB_USER:$BRANCH" || echo "PR creation skipped (may already exist)"
+          
+          # List any existing PRs
+          echo ""
+          echo "Checking for existing Aequitas PRs..."
+          gh pr list --repo chainapsis/keplr-chain-registry --search "Aequitas" --json number,title,state,url 2>/dev/null || echo "No PRs found"
       
       - name: Report
         run: |

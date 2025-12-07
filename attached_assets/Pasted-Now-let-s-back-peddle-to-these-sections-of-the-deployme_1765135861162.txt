@@ -1,0 +1,106 @@
+Now let's back peddle to these sections of the deployment yml 
+
+## The Core Issue
+
+**You have TWO different problems that look similar but are actually separate:**
+
+### Problem 1: DNS Configuration ✅ FIXED (but confusing)
+
+**What the logs show:**
+```
+Updated to sovereign IP: 4.227.173.117
+```
+
+**But when you check dig:**
+```
+aequitasprotocol.zone -> 172.67.202.232 (Cloudflare proxy IP)
+api.aequitasprotocol.zone -> 104.21.14.113 (Cloudflare proxy IP)
+```
+
+**This is CORRECT behavior because:**
+- Your DNS records ARE updated to `4.227.173.117`
+- But Cloudflare proxy is enabled (`proxied: true`)
+- So DNS queries return **Cloudflare's edge IPs**, not your origin
+- This is **by design** - Cloudflare hides your real IP for DDoS protection
+
+**The confusion:**
+You expected to see your IP (`4.227.173.117`) when running `dig`, but Cloudflare's proxy intentionally masks it with their IPs (`172.67.x.x` or `104.21.x.x`).
+
+**To verify your REAL origin IP is set correctly:**
+Go to Cloudflare Dashboard → DNS → You should see `4.227.173.117` in the A records (even though dig shows Cloudflare IPs)
+
+---
+
+### Problem 2: Keplr Registry PR ❌ NOT FIXED
+
+**What happened:**
+```
+pull request create failed: No commits between main and add-aequitas-protocol-20251207
+```
+
+**The workflow:**
+1. ✅ Created branch `add-aequitas-protocol-20251207`
+2. ✅ Committed files (chain.json, chain.png)
+3. ✅ Pushed to GitHub
+4. ❌ **Failed** to create PR to `chainapsis/keplr-chain-registry`
+
+**Why it failed:**
+The branch was pushed to **YOUR repo** (`CreoDAMO/REPAR`) instead of **Keplr's repo** (`chainapsis/keplr-chain-registry`)
+
+**Correct flow should be:**
+1. Fork `chainapsis/keplr-chain-registry` (if not already forked)
+2. Clone YOUR fork
+3. Create branch in YOUR fork
+4. Commit changes
+5. Push to YOUR fork
+6. Create PR from YOUR fork → Keplr's upstream
+
+**Current flow is:**
+1. Creates branch in `CreoDAMO/REPAR` ❌ (wrong repo)
+2. Tries to PR from non-existent branch in Keplr's repo ❌
+
+---
+
+## The "New IP" Question
+
+**You asked:** "Did I do something wrong by creating a new IP and which IP do I use?"
+
+**Answer:**
+
+**The IPs you're seeing:**
+- `135.232.208.145` - Your **original sovereign IP** (from earlier deployment)
+- `4.227.173.117` - **GitHub Actions runner IP** (changes every workflow run)
+
+**The confusion:**
+Your workflow uses:
+```bash
+PRIMARY_IP=$(curl -s ifconfig.me)
+```
+
+This gets the **GitHub runner's IP**, not your actual server IP. Every time the workflow runs, GitHub assigns a different runner with a different IP.
+
+**What you should do:**
+
+**Option A: Use your original sovereign IP**
+```
+135.232.208.145
+```
+This is your **actual infrastructure IP** from the founder node deployment.
+
+**Option B: Fix the workflow to use the correct IP**
+Instead of auto-detecting with `ifconfig.me`, hard-code your sovereign IP:
+```yaml
+INFRASTRUCTURE_IP: "135.232.208.145"
+```
+
+---
+
+## Summary
+
+1. **DNS is working correctly** - Cloudflare is just hiding your origin IP (this is normal)
+2. **Keplr PR failed** because the workflow pushes to the wrong repo
+3. **Use `135.232.208.145`** as your sovereign IP (not the GitHub runner IPs that keep changing)
+
+**Next steps:**
+1. **Fix the DNS workflow** to use your actual sovereign IP (`135.232.208.145`).
+2. **Fix the Keplr PR workflow** to correctly fork/push to the Keplr registry.
