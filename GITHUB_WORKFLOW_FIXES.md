@@ -2736,12 +2736,28 @@ deploy-services-to-ace:
           -F "service=frontend"
 ```
 
-### Required GitHub Secrets (Add These)
-| Secret | Description |
-|--------|-------------|
-| `ACE_TOKEN` | Authentication token for ACE Workload API |
-| `EXPO_TOKEN` | Expo account token for EAS mobile builds |
-| `PINATA_JWT` | Pinata API key for IPFS uploads |
+### Environment Variables for ACE Deployment
+ACE uses blockchain-based identity, NOT external API tokens.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `BLOCKCHAIN_RPC` | Aequitas blockchain RPC endpoint | `http://localhost:26657` |
+| `CHAIN_ID` | Chain ID | `aequitas-1` |
+| `ACE_PORT` | ACE API port | `8080` |
+| `STORAGE_ENDPOINT` | IPFS gateway (your own) | `http://localhost:5001` |
+| `NVIDIA_NIM_ENDPOINT` | Local NVIDIA NIM (optional) | `http://localhost:8000` |
+
+**ACE Authentication:** Uses DID verification through the Aequitas blockchain (see `ace/internal/identity/identity.go`). No external tokens needed - ACE authenticates via sovereign identity and blockchain transaction signing.
+
+**Deployment:** Use `vm-infrastructure/scripts/bootstrap-with-genesis.sh` which integrates with ACE node registry automatically.
+
+### Optional External Services (if using)
+| Secret | Description | Needed For |
+|--------|-------------|------------|
+| `EXPO_TOKEN` | Only if using Expo cloud builds | Mobile APK via EAS |
+| `PINATA_JWT` | Only if using Pinata for IPFS | External IPFS pinning |
+
+**Note:** You can build APKs locally without Expo cloud, and use your own IPFS nodes instead of Pinata.
 
 ---
 
