@@ -1,0 +1,117 @@
+version: '3.8'
+
+networks:
+  aequitas_net:
+    driver: bridge
+
+services:
+  # --- Nginx Proxy Manager (The Traffic Controller) ---
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80'    # Public HTTP
+      - '443:443'  # Public HTTPS
+      - '81:81'    # Admin UI
+    volumes:
+      - ./nginx-proxy-manager/data:/data
+      - ./nginx-proxy-manager/letsencrypt:/etc/letsencrypt
+    networks:
+      - aequitas_net
+    environment:
+      - DB_SQLITE_FILE=/data/database.sqlite
+      - DISABLE_IPV6=true
+
+  # --- Frontend Application ---
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aequitas-frontend
+    restart: unless-stopped
+    expose:
+      - "5173"
+    networks:
+      - aequitas_net
+    environment:
+      - NODE_ENV=production
+
+  # --- Backend Application ---
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: aequitas-backend
+    restart: unless-stopped
+    expose:
+      - "3000"
+    networks:
+      - aequitas_net
+    environment:
+      - NODE_ENV=production
+
+  # --- Financial Calculator ---
+  calculator:
+    build:
+      context: ./calculator
+      dockerfile: Dockerfile
+    container_name: aequitas-calculator
+    restart: unless-stopped
+    expose:
+      - "3001"
+    networks:
+      - aequitas_net
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${CALCULATOR_DATABASE_URL:-mysql://aequitas:password@db:3306/calculator}
+
+  # --- Block Explorer Application ---
+  explorer:
+    build:
+      context: ./dexplorer
+      dockerfile: Dockerfile
+    container_name: aequitas-explorer
+    restart: unless-stopped
+    expose:
+      - "3002"
+    networks:
+      - aequitas_net
+    environment:
+      - NODE_ENV=production
+
+  # --- Auditor (Cerberus Engine) ---
+  auditor:
+    build:
+      context: ./auditor
+      dockerfile: Dockerfile
+    container_name: aequitas-auditor
+    restart: unless-stopped
+    expose:
+      - "8000"
+    networks:
+      - aequitas_net
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+
+  # --- MySQL Database for Calculator ---
+  db:
+    image: mysql:8.0
+    container_name: aequitas-db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    networks:
+      - aequitas_net
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-rootpassword}
+      - MYSQL_DATABASE=calculator
+      - MYSQL_USER=aequitas
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
