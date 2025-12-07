@@ -1,0 +1,2605 @@
+﻿# SECTION I GITHUB WORKFLOW BUILD LOGS
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+* Code
+* Issues1
+* Pull requests
+* Discussions
+* Actions
+* Projects
+* Wiki
+* Security7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #29
+* * Jobs
+   *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    * * * Run details
+Re-run triggered 1 hour ago
+CreoDAMO
+⁠ 3e70821
+main
+StatusFailure
+Total duration6m 52s
+Artifacts5
+Validate APEX Autonomous Systems summary
+APEX Autonomous Systems Ready
+Capabilities:
+* Self-Healing (auto-restart failed nodes)
+* Self-Monitoring (health checks every 30s)
+* Self-Scaling (auto-add validators)
+* Satellite Routing (cross-node coordination)
+Binary Hash: 1b2c9dd5a6f813a23865c119d08af2887114312ab8d3e385bad5c4c45b7f6c24
+Job summary generated at run-time
+Deploy Founder Node summary
+Founder Node Deployed
+Node Details:
+* Name: aequitas-founder-01
+* Role: Genesis Validator (Founder)
+* Chain ID: aequitas-1
+* Network: mainnet
+* Deployment: bare-metal
+Infrastructure:
+* IP: 135.232.208.145
+* Source: sovereign-fallback
+Genesis Allocations:
+* Founder Vested: 15.72T REPAR (12%)
+* Founder Endowment: 7.86T REPAR (6%, 8-year lock)
+Endpoints:
+* RPC: http://bare-metal-host:26657
+Job summary generated at run-time
+Verify Constellation summary
+Constellation Deployed
+Deployment: bare-metal
+Network: mainnet
+Cluster Size: 7 nodes
+Infrastructure IP: 135.232.208.145
+Node
+	Role
+	Status
+	aequitas-founder-01
+	Founder
+	Deployed
+	aequitas-validator-02
+	Validator
+	Deployed
+	aequitas-validator-03
+	Validator
+	Deployed
+	aequitas-validator-04
+	Validator
+	Deployed
+	aequitas-validator-05
+	Validator
+	Deployed
+	aequitas-validator-06
+	Validator
+	Deployed
+	aequitas-validator-07
+	Validator
+	Deployed
+	Job summary generated at run-time
+Deploy VM Infrastructure (ACE/AVM) summary
+VM Infrastructure Deployed
+ACE Endpoint: https://ace.aequitasprotocol.zone
+AVM Endpoint: https://vm.aequitasprotocol.zone
+Job summary generated at run-time
+Configure DNS (Sovereign Migration) summary
+DNS Migration Complete
+Migration Details:
+* Removed old DigitalOcean IPs: 159.203.92.230, 76.223.105.230
+* Updated to sovereign IP: 135.232.208.145
+* IP Source: sovereign-fallback
+Updated Subdomains:
+Subdomain
+	Purpose
+	Proxied
+	@ (root)
+	Main website
+	Yes
+	www
+	Website alias
+	Yes
+	app
+	Web application
+	Yes
+	rpc
+	Blockchain RPC
+	Yes
+	api
+	REST API
+	Yes
+	explorer
+	Block explorer
+	Yes
+	grpc
+	gRPC endpoint
+	No
+	ace
+	ACE dashboard
+	Yes
+	ace-metrics
+	Prometheus metrics
+	Yes
+	ace-ai
+	AI coordination
+	Yes
+	vm
+	AVM interface
+	Yes
+	sovereign
+	Sovereign endpoint
+	Yes
+	Job summary generated at run-time
+DNS Health Validation summary
+DNS Health Validation
+Status: 0/4 critical domains pointing to sovereign infrastructure
+Expected IP: 135.232.208.145
+Job summary generated at run-time
+Sovereign Infrastructure Seal summary
+Sovereign Infrastructure Seal
+Seal Hash: 7b9b4d23134b2a68ee0e7859bf21fe08f810061cafffa9b194b483c48e126437
+Timestamp: 2025-12-07T20:33:03Z
+This cryptographic seal verifies the integrity of the entire deployment.
+Job summary generated at run-time
+Deploy AI Autonomous Agents summary
+AI Autonomous Agents Deployed
+Components:
+* Threat Orchestrator (Go)
+* Autonomous Agent CLI
+Job summary generated at run-time
+Deploy-Everywhere Global Propagation summary
+Deploy-Everywhere Global Propagation
+Status: Global propagation initiated
+Propagation Targets:
+* DNS: Cloudflare (primary), Google, Quad9, OpenDNS
+* Wallet: Keplr Registry PR submitted
+* Infrastructure: Sovereign ACE/AVM
+Sovereign Seal: 7b9b4d23134b2a68ee0e7859bf21fe08f810061cafffa9b194b483c48e126437
+Job summary generated at run-time
+Deployment Summary summary
+APEX Autonomous Deployment Complete
+Core Infrastructure
+Component
+	Status
+	Binary Build
+	success
+	APEX Validation
+	success
+	Founder Node
+	success
+	Constellation (6 nodes)
+	success
+	Verification
+	success
+	VM Infrastructure (ACE/AVM)
+	success
+	Services Build
+Service
+	Build Status
+	AI Autonomous Agents
+	success
+	Cerberus Security Auditor
+	failure
+	Backend API
+	success
+	Dexplorer (Block Explorer)
+	success
+	Frontend
+	success
+	Services Deployment
+Service
+	Deploy Status
+	Endpoint
+	AI Autonomous
+	success
+	ACE/AVM Internal
+	Cerberus Auditor
+	skipped
+	
+
+	Backend API
+	skipped
+	
+
+	Dexplorer
+	skipped
+	
+
+	Frontend
+	skipped
+	
+
+	FHE Verification
+	skipped
+	Documentation Verified
+	Network & Integration
+Component
+	Status
+	DNS Configuration
+	success
+	DNS Health
+	success
+	Keplr PR
+	failure
+	Sovereign Seal
+	success
+	Global Propagation
+	success
+	Infrastructure
+* Chain ID: aequitas-1
+* Network: mainnet
+* Deployment: bare-metal
+* Infrastructure IP: 135.232.208.145
+* IP Source: sovereign-fallback
+Cryptographic Verification
+* Binary Hash: 1b2c9dd5a6f813a23865c119d08af2887114312ab8d3e385bad5c4c45b7f6c24
+* Genesis Hash: 4d387c42b98092da9e365472fb66a42848c8810f29f5260bbef78998a7844273
+* Sovereign Seal: 7b9b4d23134b2a68ee0e7859bf21fe08f810061cafffa9b194b483c48e126437
+________________
+
+
+Deployed by APEX Autonomous System - 3e70821f22c2e455efd4a90474d19e912e21a9d8
+Job summary generated at run-time
+Annotations
+5 errors and 4 warnings
+Deploy VM Infrastructure (ACE/AVM)
+Terraform exited with code 1.
+	Deploy VM Infrastructure (ACE/AVM)
+Terraform exited with code 1.
+	Create Keplr Registry PR
+Process completed with exit code 1.
+	Build Cerberus Security Auditor (Python)
+Process completed with exit code 1.
+	Deploy AI Autonomous Agents
+Unable to download artifact(s): Artifact not found for name: ai-autonomous-agents
+        Please ensure that your artifact is not expired and the artifact was uploaded using a compatible version of toolkit/upload-artifact.
+        For more information, visit the GitHub Artifacts FAQ: https://github.com/actions/toolkit/blob/main/packages/artifact/docs/faq.md
+	Build Aequitas Blockchain Binary
+Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
+	Sovereign Infrastructure Seal
+Retention days cannot be greater than the maximum allowed retention set within the repository. Using 90 instead.
+	Build AI Autonomous Agents (Go)
+No files were found with the provided path: ai/autonomous/build/
+cmd/autonomous-agent/build/. No artifacts will be uploaded.
+	Build AI Autonomous Agents (Go)
+Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
+	Artifacts
+Produced during runtime
+Name
+	Size
+	Digest
+	
+
+	aequitasd-v1.0.0-3e70821
+	60.8 MB
+	sha256:1646c6d6185b1b85ba46c75d7c03c4ac82462ab211b1253f8455403ac756c321
+	
+
+	backend-api
+	17.3 MB
+	sha256:e89801fce8e15c664db6c3f0bc3174cbddb10a78e7dae46c898ff5c32e6a8f37
+	
+
+	dexplorer-dist
+	1.52 MB
+	sha256:d94feb309ccedf905b83dac65155eba53d3a4e0e9adcf2d5c25be15901f13b0f
+	
+
+	frontend-dist
+	3.22 MB
+	sha256:8bffb0e647389a53d9a3f28d5608fd2a43e22288a2f1762fe6a781ad66a32faa
+	
+
+	sovereign-seal-20009604094
+	595 Bytes
+	sha256:ee8032c5d421c642b203082ac745b57d9408f69a02d7e585fa5b930f4f4e3493
+	
+
+	
+
+___________________________________
+
+
+
+
+
+
+## SECTION II THE ERRORS DEBUGGED:
+
+
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+* Code
+* Issues1
+* Pull requests
+* Discussions
+* Actions
+* Projects
+* Wiki
+* Security7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #29
+* * Jobs
+   *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    * * * Run details
+Annotations
+2 errors
+Deploy VM Infrastructure (ACE/AVM)
+succeeded 2 minutes ago in 11s
+1s
+##[debug]Starting: Set up job
+
+
+Current runner version: '2.329.0'
+
+
+Runner Image Provisioner
+
+
+Operating System
+
+
+Runner Image
+
+
+GITHUB_TOKEN Permissions
+
+
+Secret source: Actions
+
+
+##[debug]Primary repository: CreoDAMO/REPAR
+
+
+Prepare workflow directory
+
+
+##[debug]Creating pipeline directory: '/home/runner/work/REPAR'
+
+
+##[debug]Creating workspace directory: '/home/runner/work/REPAR/REPAR'
+
+
+##[debug]Update context data
+
+
+##[debug]Evaluating job-level environment variables
+
+
+##[debug]Evaluating job container
+
+
+##[debug]Evaluating job service containers
+
+
+##[debug]Evaluating job defaults
+
+
+Prepare all required actions
+
+
+Getting action download info
+
+
+Download action repository 'actions/checkout@v4' (SHA:34e114876b0b11c390a56381ad16ebd13914f8d5)
+
+
+##[debug]Download 'https://api.github.com/repos/actions/checkout/tarball/34e114876b0b11c390a56381ad16ebd13914f8d5' to '/home/runner/work/_actions/_temp_16701ea7-f62c-45f1-a80a-fdb241719250/c35480c7-e72b-46ea-82f1-18602ad28dd2.tar.gz'
+
+
+##[debug]Unwrap 'actions-checkout-34e1148' to '/home/runner/work/_actions/actions/checkout/v4'
+
+
+##[debug]Archive '/home/runner/work/_actions/_temp_16701ea7-f62c-45f1-a80a-fdb241719250/c35480c7-e72b-46ea-82f1-18602ad28dd2.tar.gz' has been unzipped into '/home/runner/work/_actions/actions/checkout/v4'.
+
+
+Download action repository 'hashicorp/setup-terraform@v3' (SHA:b9cd54a3c349d3f38e8881555d616ced269862dd)
+
+
+##[debug]Download 'https://api.github.com/repos/hashicorp/setup-terraform/tarball/b9cd54a3c349d3f38e8881555d616ced269862dd' to '/home/runner/work/_actions/_temp_128a2fda-3389-4074-9128-68e4a4903845/a0ce80c4-e569-4cd8-8d8d-b9ff681bafb8.tar.gz'
+
+
+##[debug]Unwrap 'hashicorp-setup-terraform-b9cd54a' to '/home/runner/work/_actions/hashicorp/setup-terraform/v3'
+
+
+##[debug]Archive '/home/runner/work/_actions/_temp_128a2fda-3389-4074-9128-68e4a4903845/a0ce80c4-e569-4cd8-8d8d-b9ff681bafb8.tar.gz' has been unzipped into '/home/runner/work/_actions/hashicorp/setup-terraform/v3'.
+
+
+##[debug]action.yml for action: '/home/runner/work/_actions/actions/checkout/v4/action.yml'.
+
+
+##[debug]action.yml for action: '/home/runner/work/_actions/hashicorp/setup-terraform/v3/action.yml'.
+
+
+##[debug]Set step '__actions_checkout' display name to: 'Run actions/checkout@v4'
+
+
+##[debug]Set step '__hashicorp_setup-terraform' display name to: 'Setup Terraform'
+
+
+##[debug]Set step '__run' display name to: 'Validate VM Infrastructure'
+
+
+##[debug]Set step 'deploy' display name to: 'Deploy to ACE/AVM'
+
+
+##[debug]Set step '__run_2' display name to: 'Report'
+
+
+Complete job name: Deploy VM Infrastructure (ACE/AVM)
+
+
+##[debug]Collect running processes for tracking orphan processes.
+
+
+##[debug]Finishing: Set up job
+
+
+4s
+/usr/bin/git sparse-checkout disable
+
+
+##[debug]0
+
+
+##[debug]
+
+
+/usr/bin/git config --local --unset-all extensions.worktreeConfig
+
+
+##[debug]0
+
+
+##[debug]
+
+
+::group::Checking out the ref
+
+
+Checking out the ref
+
+
+##[debug]0
+
+
+##[debug]commit 3e70821f22c2e455efd4a90474d19e912e21a9d8
+
+
+##[debug]Author: Jacque Antoine DeGraff/Sovereign Spiral Development Framework (SSDF) <jacquedegraff_creo@outlook.com>
+
+
+##[debug]Date:   Sun Dec 7 15:01:44 2025 -0500
+
+
+##[debug]
+
+
+##[debug]    Update print statement from 'Hello' to 'Goodbye'
+
+
+##[debug]
+
+
+/usr/bin/git log -1 --format=%H
+
+
+3e70821f22c2e455efd4a90474d19e912e21a9d8
+
+
+##[debug]0
+
+
+##[debug]3e70821f22c2e455efd4a90474d19e912e21a9d8
+
+
+##[debug]
+
+
+##[debug]Unsetting HOME override
+
+
+::remove-matcher owner=checkout-git::
+
+
+##[debug]Removed matchers: 'checkout-git'
+
+
+##[debug]Node Action run completed with exit code 0
+
+
+##[debug]Save intra-action state isPost = true
+
+
+##[debug]Save intra-action state setSafeDirectory = true
+
+
+##[debug]Save intra-action state repositoryPath = /home/runner/work/REPAR/REPAR
+
+
+##[debug]Set output commit = 3e70821f22c2e455efd4a90474d19e912e21a9d8
+
+
+##[debug]Set output ref = refs/heads/main
+
+
+##[debug]Finishing: Run actions/checkout@v4
+
+
+1s
+##[debug]Evaluating condition for step: 'Setup Terraform'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Setup Terraform
+
+
+##[debug]Loading inputs
+
+
+##[debug]Loading env
+
+
+Run hashicorp/setup-terraform@v3
+
+
+ with:
+
+
+  terraform_version: 1.6.0
+
+
+  cli_config_credentials_hostname: app.terraform.io
+
+
+  terraform_wrapper: true
+
+
+ env:
+
+
+  CHAIN_ID: aequitas-1
+
+
+  GENESIS_TIME: 2025-12-03T00:00:00Z
+
+
+  TOTAL_REPARATIONS: 131000000000000000000
+
+
+  FOUNDER_VESTED: 15720000000000000000
+
+
+  FOUNDER_ENDOWMENT: 7860000000000000000
+
+
+##[debug]Finding releases for Terraform version 1.6.0
+
+
+##[debug]Getting build for Terraform version 1.6.0: linux amd64
+
+
+##[debug]Downloading Terraform CLI from https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+
+
+##[debug]Downloading https://releases.hashicorp.com/terraform/1.6.0/terraform_1.6.0_linux_amd64.zip
+
+
+##[debug]Destination /home/runner/work/_temp/a5ed9dfb-57cc-4730-ace0-3a9cdd4446f6
+
+
+##[debug]download complete
+
+
+##[debug]Extracting Terraform CLI zip file
+
+
+/usr/bin/unzip -o /home/runner/work/_temp/a5ed9dfb-57cc-4730-ace0-3a9cdd4446f6
+
+
+Archive:  /home/runner/work/_temp/a5ed9dfb-57cc-4730-ace0-3a9cdd4446f6
+
+
+ inflating: terraform              
+
+
+##[debug]Terraform CLI path is /home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345.
+
+
+##[debug]Moving /home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345/terraform to /home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345/terraform-bin.
+
+
+##[debug]Copying /home/runner/work/_actions/hashicorp/setup-terraform/v3/dist/index1.js to /home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345/terraform.
+
+
+##[debug]Node Action run completed with exit code 0
+
+
+##[debug]TERRAFORM_CLI_PATH='/home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345'
+
+
+##[debug]Finishing: Setup Terraform
+
+
+2s
+##[debug]Evaluating condition for step: 'Validate VM Infrastructure'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Validate VM Infrastructure
+
+
+##[debug]Loading inputs
+
+
+##[debug]Loading env
+
+
+Run echo "============================================================"
+
+
+ echo "============================================================"
+
+
+ echo "   VM INFRASTRUCTURE DEPLOYMENT (ACE/AVM)"
+
+
+ echo "============================================================"
+
+
+ 
+
+
+ if [ -f vm-infrastructure/terraform/main.tf ]; then
+
+
+  cd vm-infrastructure/terraform
+
+
+  terraform init -backend=false || echo "Terraform init (validation only)"
+
+
+  terraform validate || echo "Terraform validation complete"
+
+
+ fi
+
+
+ 
+
+
+ if [ -f vm-infrastructure/scripts/bootstrap-with-genesis.sh ]; then
+
+
+  chmod +x vm-infrastructure/scripts/bootstrap-with-genesis.sh
+
+
+  echo "Bootstrap script ready"
+
+
+ fi
+
+
+ shell: /usr/bin/bash -e {0}
+
+
+ env:
+
+
+  CHAIN_ID: aequitas-1
+
+
+  GENESIS_TIME: 2025-12-03T00:00:00Z
+
+
+  TOTAL_REPARATIONS: 131000000000000000000
+
+
+  FOUNDER_VESTED: 15720000000000000000
+
+
+  FOUNDER_ENDOWMENT: 7860000000000000000
+
+
+  TERRAFORM_CLI_PATH: /home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345
+
+
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/856859bd-c068-43bc-9fa6-23f4fe7b4684.sh
+
+
+============================================================
+
+
+  VM INFRASTRUCTURE DEPLOYMENT (ACE/AVM)
+
+
+============================================================
+
+
+Initializing modules...
+
+
+- aequitas_vm_aws in modules/aws
+
+
+- aequitas_vm_digitalocean in modules/digitalocean
+
+
+- aequitas_vm_gcp in modules/gcp
+
+
+- aequitas_vm_proxmox in
+
+
+╷
+
+
+│ Error: Unreadable module directory
+
+
+│ 
+
+
+│ Unable to evaluate directory symlink: lstat modules/proxmox: no such file
+
+
+│ or directory
+
+
+╵
+
+
+
+
+
+
+╷
+
+
+│ Error: Unreadable module directory
+
+
+│ 
+
+
+│ The directory  could not be read for module "aequitas_vm_proxmox" at
+
+
+│ main.tf:89.
+
+
+╵
+
+
+
+
+
+
+╷
+
+
+│ Error: Reserved argument name in provider block
+
+
+│ 
+
+
+│  on main.tf line 63, in provider "proxmox":
+
+
+│  63:   count       = var.provider_type == "proxmox" ? 1 : 0
+
+
+│ 
+
+
+│ The provider argument name "count" is reserved for use by Terraform in a
+
+
+│ future version.
+
+
+╵
+
+
+
+
+
+
+╷
+
+
+│ Error: Reserved argument name in provider block
+
+
+│ 
+
+
+│  on main.tf line 71, in provider "aws":
+
+
+│  71:   count  = var.provider_type == "aws" ? 1 : 0
+
+
+│ 
+
+
+│ The provider argument name "count" is reserved for use by Terraform in a
+
+
+│ future version.
+
+
+╵
+
+
+
+
+
+
+╷
+
+
+│ Error: Reserved argument name in provider block
+
+
+│ 
+
+
+│  on main.tf line 77, in provider "google":
+
+
+│  77:   count   = var.provider_type == "gcp" ? 1 : 0
+
+
+│ 
+
+
+│ The provider argument name "count" is reserved for use by Terraform in a
+
+
+│ future version.
+
+
+╵
+
+
+
+
+
+
+╷
+
+
+│ Error: Reserved argument name in provider block
+
+
+│ 
+
+
+│  on main.tf line 84, in provider "digitalocean":
+
+
+│  84:   count = var.provider_type == "digitalocean" ? 1 : 0
+
+
+│ 
+
+
+│ The provider argument name "count" is reserved for use by Terraform in a
+
+
+│ future version.
+
+
+╵
+
+
+
+
+
+
+Error: Terraform exited with code 1.
+
+
+Terraform init (validation only)
+
+
+╷
+
+
+│ Error: Reserved argument name in provider block
+
+
+│ 
+
+
+0s
+##[debug]Evaluating: secrets.SSH_PRIVATE_KEY
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating secrets:
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'SSH_PRIVATE_KEY'
+
+
+##[debug]=> null
+
+
+##[debug]Result: null
+
+
+##[debug]Evaluating: vars.SSH_HOST
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating vars:
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'SSH_HOST'
+
+
+##[debug]=> null
+
+
+##[debug]Result: null
+
+
+##[debug]Evaluating: vars.SSH_USER
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating vars:
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'SSH_USER'
+
+
+##[debug]=> null
+
+
+##[debug]Result: null
+
+
+##[debug]Evaluating: needs.deploy-founder-node.outputs.infrastructure_ip
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating Index:
+
+
+##[debug]....Evaluating Index:
+
+
+##[debug]......Evaluating needs:
+
+
+##[debug]......=> Object
+
+
+##[debug]......Evaluating String:
+
+
+##[debug]......=> 'deploy-founder-node'
+
+
+##[debug]....=> Object
+
+
+##[debug]....Evaluating String:
+
+
+##[debug]....=> 'outputs'
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'infrastructure_ip'
+
+
+##[debug]=> '135.232.208.145'
+
+
+##[debug]Result: '135.232.208.145'
+
+
+##[debug]Evaluating condition for step: 'Deploy to ACE/AVM'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Deploy to ACE/AVM
+
+
+##[debug]Loading inputs
+
+
+##[debug]Loading env
+
+
+Run echo "Deploying VM infrastructure layer..."
+
+
+ echo "Deploying VM infrastructure layer..."
+
+
+ 
+
+
+ ACE_ENDPOINT="https://ace.aequitasprotocol.zone"
+
+
+ AVM_ENDPOINT="https://vm.aequitasprotocol.zone"
+
+
+ 
+
+
+ if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
+
+
+  mkdir -p ~/.ssh
+
+
+  echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+
+
+  chmod 600 ~/.ssh/deploy_key
+
+
+  SSH_USER="${SSH_USER:-root}"
+
+
+  
+
+
+  # Deploy orchestrator
+
+
+  if [ -f vm-infrastructure/orchestrator.py ]; then
+
+
+    scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+
+
+      vm-infrastructure/orchestrator.py $SSH_USER@$SSH_HOST:/opt/aequitas/ || echo "Orchestrator transfer"
+
+
+  fi
+
+
+  
+
+
+  echo "VM Infrastructure deployed to $SSH_HOST"
+
+
+ else
+
+
+  echo "SSH credentials not configured - ACE/AVM endpoints set to defaults"
+
+
+ fi
+
+
+ 
+
+
+ echo "ace_endpoint=$ACE_ENDPOINT" >> $GITHUB_OUTPUT
+
+
+ echo "avm_endpoint=$AVM_ENDPOINT" >> $GITHUB_OUTPUT
+
+
+ shell: /usr/bin/bash -e {0}
+
+
+ env:
+
+
+  CHAIN_ID: aequitas-1
+
+
+  GENESIS_TIME: 2025-12-03T00:00:00Z
+
+
+  TOTAL_REPARATIONS: 131000000000000000000
+
+
+  FOUNDER_VESTED: 15720000000000000000
+
+
+  FOUNDER_ENDOWMENT: 7860000000000000000
+
+
+  TERRAFORM_CLI_PATH: /home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345
+
+
+  SSH_PRIVATE_KEY:
+
+
+  SSH_HOST:
+
+
+  SSH_USER:
+
+
+  INFRASTRUCTURE_IP: 135.232.208.145
+
+
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/7949a0e7-8e11-4ed7-b49c-48b0691564de.sh
+
+
+Deploying VM infrastructure layer...
+
+
+SSH credentials not configured - ACE/AVM endpoints set to defaults
+
+
+##[debug]Set output ace_endpoint = https://ace.aequitasprotocol.zone
+
+
+##[debug]Set output avm_endpoint = https://vm.aequitasprotocol.zone
+
+
+##[debug]Finishing: Deploy to ACE/AVM
+
+
+0s
+##[debug]Evaluating condition for step: 'Report'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Report
+
+
+##[debug]Loading inputs
+
+
+##[debug]Evaluating: format('echo "### VM Infrastructure Deployed" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**ACE Endpoint:** \`{0}\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**AVM Endpoint:** \`{1}\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]', steps.deploy.outputs.ace_endpoint, steps.deploy.outputs.avm_endpoint)
+
+
+##[debug]Evaluating format:
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'echo "### VM Infrastructure Deployed" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**ACE Endpoint:** \`{0}\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**AVM Endpoint:** \`{1}\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]'
+
+
+##[debug]..Evaluating Index:
+
+
+##[debug]....Evaluating Index:
+
+
+##[debug]......Evaluating Index:
+
+
+##[debug]........Evaluating steps:
+
+
+##[debug]........=> Object
+
+
+##[debug]........Evaluating String:
+
+
+##[debug]........=> 'deploy'
+
+
+##[debug]......=> Object
+
+
+##[debug]......Evaluating String:
+
+
+##[debug]......=> 'outputs'
+
+
+##[debug]....=> Object
+
+
+##[debug]....Evaluating String:
+
+
+##[debug]....=> 'ace_endpoint'
+
+
+##[debug]..=> 'https://ace.aequitasprotocol.zone'
+
+
+##[debug]..Evaluating Index:
+
+
+##[debug]....Evaluating Index:
+
+
+##[debug]......Evaluating Index:
+
+
+##[debug]........Evaluating steps:
+
+
+##[debug]........=> Object
+
+
+##[debug]........Evaluating String:
+
+
+##[debug]........=> 'deploy'
+
+
+##[debug]......=> Object
+
+
+##[debug]......Evaluating String:
+
+
+##[debug]......=> 'outputs'
+
+
+##[debug]....=> Object
+
+
+##[debug]....Evaluating String:
+
+
+##[debug]....=> 'avm_endpoint'
+
+
+##[debug]..=> 'https://vm.aequitasprotocol.zone'
+
+
+##[debug]=> 'echo "### VM Infrastructure Deployed" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**ACE Endpoint:** \`https://ace.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**AVM Endpoint:** \`https://vm.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]'
+
+
+##[debug]Result: 'echo "### VM Infrastructure Deployed" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**ACE Endpoint:** \`https://ace.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]echo "**AVM Endpoint:** \`https://vm.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
+
+
+##[debug]'
+
+
+##[debug]Loading env
+
+
+Run echo "### VM Infrastructure Deployed" >> $GITHUB_STEP_SUMMARY
+
+
+ echo "### VM Infrastructure Deployed" >> $GITHUB_STEP_SUMMARY
+
+
+ echo "" >> $GITHUB_STEP_SUMMARY
+
+
+ echo "**ACE Endpoint:** \`https://ace.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
+
+
+ echo "**AVM Endpoint:** \`https://vm.aequitasprotocol.zone\`" >> $GITHUB_STEP_SUMMARY
+
+
+ shell: /usr/bin/bash -e {0}
+
+
+ env:
+
+
+  CHAIN_ID: aequitas-1
+
+
+  GENESIS_TIME: 2025-12-03T00:00:00Z
+
+
+  TOTAL_REPARATIONS: 131000000000000000000
+
+
+  FOUNDER_VESTED: 15720000000000000000
+
+
+  FOUNDER_ENDOWMENT: 7860000000000000000
+
+
+  TERRAFORM_CLI_PATH: /home/runner/work/_temp/87e62822-309f-41db-8b58-99511bc48345
+
+
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/940bf4ba-6587-4307-8474-f728aaaea72f.sh
+
+
+##[debug]Finishing: Report
+
+
+0s
+##[debug]Evaluating condition for step: 'Post Run actions/checkout@v4'
+
+
+##[debug]Evaluating: always()
+
+
+##[debug]Evaluating always:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Post Run actions/checkout@v4
+
+
+##[debug]Loading inputs
+
+
+##[debug]Evaluating: github.repository
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating github:
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'repository'
+
+
+##[debug]=> 'CreoDAMO/REPAR'
+
+
+##[debug]Result: 'CreoDAMO/REPAR'
+
+
+##[debug]Evaluating: github.token
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating github:
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'token'
+
+
+##[debug]=> '***'
+
+
+##[debug]Result: '***'
+
+
+##[debug]Loading env
+
+
+Post job cleanup.
+
+
+##[debug]Getting git version
+
+
+/usr/bin/git version
+
+
+git version 2.52.0
+
+
+##[debug]0
+
+
+##[debug]git version 2.52.0
+
+
+##[debug]
+
+
+##[debug]Set git useragent to: git/2.52.0 (github-actions-checkout)
+
+
+::add-mask::***
+
+
+Temporarily overriding HOME='/home/runner/work/_temp/308001ff-d636-45d0-a6ea-c65d47a7b908' before making global git config changes
+
+
+Adding repository directory to the temporary git global config as a safe directory
+
+
+/usr/bin/git config --global --add safe.directory /home/runner/work/REPAR/REPAR
+
+
+##[debug]0
+
+
+##[debug]
+
+
+/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+
+
+##[debug]1
+
+
+##[debug]
+
+
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+
+
+##[debug]0
+
+
+##[debug]
+
+
+/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+
+
+http.https://github.com/.extraheader
+
+
+##[debug]0
+
+
+##[debug]http.https://github.com/.extraheader
+
+
+##[debug]
+
+
+/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+
+
+##[debug]0
+
+
+##[debug]
+
+
+/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+
+
+##[debug]0
+
+
+##[debug]
+
+
+/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+
+
+##[debug]1
+
+
+##[debug]
+
+
+/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+
+
+##[debug]0
+
+
+##[debug]
+
+
+##[debug]Unsetting HOME override
+
+
+##[debug]Node Action run completed with exit code 0
+
+
+##[debug]Finishing: Post Run actions/checkout@v4
+
+
+0s
+##[debug]Starting: Complete job
+
+
+Evaluate and set job outputs
+
+
+##[debug]Evaluating: steps.deploy.outputs.ace_endpoint
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating Index:
+
+
+##[debug]....Evaluating Index:
+
+
+##[debug]......Evaluating steps:
+
+
+##[debug]......=> Object
+
+
+##[debug]......Evaluating String:
+
+
+##[debug]......=> 'deploy'
+
+
+##[debug]....=> Object
+
+
+##[debug]....Evaluating String:
+
+
+##[debug]....=> 'outputs'
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'ace_endpoint'
+
+
+##[debug]=> 'https://ace.aequitasprotocol.zone'
+
+
+##[debug]Result: 'https://ace.aequitasprotocol.zone'
+
+
+##[debug]Evaluating: steps.deploy.outputs.avm_endpoint
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating Index:
+
+
+##[debug]....Evaluating Index:
+
+
+##[debug]......Evaluating steps:
+
+
+##[debug]......=> Object
+
+
+##[debug]......Evaluating String:
+
+
+##[debug]......=> 'deploy'
+
+
+##[debug]....=> Object
+
+
+##[debug]....Evaluating String:
+
+
+##[debug]....=> 'outputs'
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'avm_endpoint'
+
+
+##[debug]=> 'https://vm.aequitasprotocol.zone'
+
+
+##[debug]Result: 'https://vm.aequitasprotocol.zone'
+
+
+Set output 'ace_endpoint'
+
+
+Set output 'avm_endpoint'
+
+
+Uploading runner diagnostic logs
+
+
+##[debug]Starting diagnostic file upload.
+
+
+##[debug]Setting up diagnostic log folders.
+
+
+##[debug]Creating diagnostic log files folder.
+
+
+##[debug]Copying 1 worker diagnostic logs.
+
+
+##[debug]Copying 1 runner diagnostic logs.
+
+
+##[debug]Zipping diagnostic files.
+
+
+##[debug]Uploading diagnostic metadata file.
+
+
+##[debug]Diagnostic file upload complete.
+
+
+Completed runner diagnostic log upload
+
+
+Cleaning up orphan processes
+
+
+##[debug]Finishing: Complete job
+
+
+
+
+0
+
+
+_______________________________
+
+
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+* Code
+* Issues1
+* Pull requests
+* Discussions
+* Actions
+* Projects
+* Wiki
+* Security7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #29
+* * Jobs
+   *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    * * * Run details
+Annotations
+1 error
+Create Keplr Registry PR
+failed 6 minutes ago in 18s
+1s
+4s
+0s
+9s
+##[debug]Evaluating: secrets.GH_PAT
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating secrets:
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'GH_PAT'
+
+
+##[debug]=> '***'
+
+
+##[debug]Result: '***'
+
+
+##[debug]Evaluating condition for step: 'Fork and clone Keplr registry'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Fork and clone Keplr registry
+
+
+##[debug]Loading inputs
+
+
+##[debug]Loading env
+
+
+Run if [ -z "$GH_TOKEN" ]; then
+
+
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/ff15c8f6-32e0-490e-9872-9af340a0dcf7.sh
+
+
+============================================================
+
+
+  FORKING KEPLR CHAIN REGISTRY
+
+
+============================================================
+
+
+  Authenticated as: CreoDAMO
+
+
+Forking chainapsis/keplr-chain-registry...
+
+
+  Fork already exists, cloning...
+
+
+Clone failed
+
+
+origin        https://github.com/CreoDAMO/REPAR (fetch)
+
+
+origin        https://github.com/CreoDAMO/REPAR (push)
+
+
+Your branch is up to date with 'origin/main'.
+
+
+HEAD is now at 162ef50 Merge pull request #1343 from chainapsis/add-missing-isTestnet2
+
+
+  Fork configured successfully
+
+
+  Origin: CreoDAMO/keplr-chain-registry (your fork)
+
+
+  Upstream: chainapsis/keplr-chain-registry (target)
+
+
+============================================================
+
+
+##[debug]Set output github_user = CreoDAMO
+
+
+##[debug]Finishing: Fork and clone Keplr registry
+
+
+0s
+##[debug]Evaluating: needs.deploy-founder-node.outputs.infrastructure_ip
+
+
+##[debug]Evaluating Index:
+
+
+##[debug]..Evaluating Index:
+
+
+##[debug]....Evaluating Index:
+
+
+##[debug]......Evaluating needs:
+
+
+##[debug]......=> Object
+
+
+##[debug]......Evaluating String:
+
+
+##[debug]......=> 'deploy-founder-node'
+
+
+##[debug]....=> Object
+
+
+##[debug]....Evaluating String:
+
+
+##[debug]....=> 'outputs'
+
+
+##[debug]..=> Object
+
+
+##[debug]..Evaluating String:
+
+
+##[debug]..=> 'infrastructure_ip'
+
+
+##[debug]=> '135.232.208.145'
+
+
+##[debug]Result: '135.232.208.145'
+
+
+##[debug]Evaluating condition for step: 'Create chain configuration'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Create chain configuration
+
+
+##[debug]Loading inputs
+
+
+##[debug]Loading env
+
+
+Run if [ ! -d keplr-chain-registry ]; then
+
+
+ if [ ! -d keplr-chain-registry ]; then
+
+
+  echo "Registry not cloned - skipping"
+
+
+  exit 0
+
+
+ fi
+
+
+ 
+
+
+ cd keplr-chain-registry
+
+
+ 
+
+
+ # CRITICAL: Keplr uses flat file structure: cosmos/{chain-identifier}.json
+
+
+ # NOT cosmos/{chain-identifier}/chain.json
+
+
+ # Chain identifier = chainId without version: aequitas-1 -> aequitas
+
+
+ 
+
+
+ mkdir -p cosmos
+
+
+ mkdir -p images/aequitas
+
+
+ 
+
+
+ # Create chain.json with CORRECTED structure per Keplr 2025 requirements
+
+
+ # CRITICAL FIX: coinDecimals is 6 (urepar -> repar = 10^6), NOT 18
+
+
+ # Using printf to avoid YAML heredoc parsing issues
+
+
+ printf '%s\n' '{' \
+
+
+  '  "chainId": "aequitas-1",' \
+
+
+  '  "chainName": "Aequitas Protocol",' \
+
+
+  '  "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+
+
+  '  "rpc": "https://rpc.aequitasprotocol.zone",' \
+
+
+  '  "rest": "https://api.aequitasprotocol.zone",' \
+
+
+  '  "nodeProvider": {' \
+
+
+  '    "name": "Aequitas Foundation",' \
+
+
+  '    "email": "validators@aequitasprotocol.zone",' \
+
+
+  '    "website": "https://aequitasprotocol.zone"' \
+
+
+  '  },' \
+
+
+  '  "bip44": {' \
+
+
+  '    "coinType": 118' \
+
+
+  '  },' \
+
+
+  '  "bech32Config": {' \
+
+
+  '    "bech32PrefixAccAddr": "repar",' \
+
+
+  '    "bech32PrefixAccPub": "reparpub",' \
+
+
+  '    "bech32PrefixValAddr": "reparvaloper",' \
+
+
+  '    "bech32PrefixValPub": "reparvaloperpub",' \
+
+
+  '    "bech32PrefixConsAddr": "reparvalcons",' \
+
+
+  '    "bech32PrefixConsPub": "reparvalconspub"' \
+
+
+  '  },' \
+
+
+  '  "currencies": [' \
+
+
+  '    {' \
+
+
+  '      "coinDenom": "REPAR",' \
+
+
+  '      "coinMinimalDenom": "urepar",' \
+
+
+  '      "coinDecimals": 6,' \
+
+
+  '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+
+
+  '    }' \
+
+
+  '  ],' \
+
+
+  '  "feeCurrencies": [' \
+
+
+  '    {' \
+
+
+  '      "coinDenom": "REPAR",' \
+
+
+  '      "coinMinimalDenom": "urepar",' \
+
+
+  '      "coinDecimals": 6,' \
+
+
+  '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+
+
+  '      "gasPriceStep": {' \
+
+
+  '        "low": 0.01,' \
+
+
+  '        "average": 0.025,' \
+
+
+  '        "high": 0.04' \
+
+
+  '      }' \
+
+
+  '    }' \
+
+
+  '  ],' \
+
+
+  '  "stakeCurrency": {' \
+
+
+  '    "coinDenom": "REPAR",' \
+
+
+  '    "coinMinimalDenom": "urepar",' \
+
+
+  '    "coinDecimals": 6,' \
+
+
+  '    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+
+
+  '  },' \
+
+
+  '  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",' \
+
+
+  '  "features": ["ibc-transfer", "ibc-go"]' \
+
+
+  '}' > cosmos/aequitas.json
+
+
+ 
+
+
+ # NOTE: assetlist.json is NOT a Keplr format - it's for cosmos/chain-registry
+
+
+ # Keplr only needs chain.json + image
+
+
+ 
+
+
+ # Copy chain logo (256x256 PNG required by Keplr)
+
+
+ # Logo exists at docs/REPAR_Coin_Logo.png in the repository
+
+
+ if [ -f ../docs/REPAR_Coin_Logo.png ]; then
+
+
+  cp ../docs/REPAR_Coin_Logo.png images/aequitas/chain.png
+
+
+  echo "   Logo copied from docs/REPAR_Coin_Logo.png"
+
+
+ elif [ -f ../frontend/public/assets/repar-logo.svg ]; then
+
+
+  # SVG fallback - note: Keplr requires PNG, may need conversion
+
+
+  echo "WARNING: Only SVG logo found at frontend/public/assets/repar-logo.svg"
+
+
+  echo "         Keplr requires 256x256 PNG - manual conversion may be needed"
+
+
+ else
+
+
+  echo "ERROR: No logo found - check docs/REPAR_Coin_Logo.png exists"
+
+
+  exit 1
+
+
+ fi
+
+
+ 
+
+
+ echo ""
+
+
+ echo "============================================================"
+
+
+ echo "   KEPLR CHAIN CONFIGURATION CREATED"
+
+
+ echo "============================================================"
+
+
+ echo "   File: cosmos/aequitas.json"
+
+
+ echo "   Chain ID: aequitas-1"
+
+
+ echo "   Decimals: 6 (urepar -> REPAR)"
+
+
+ echo "   Features: ibc-transfer, ibc-go"
+
+
+ echo "============================================================"
+
+
+ echo ""
+
+
+ 
+
+
+ # Validate JSON
+
+
+ if command -v jq &> /dev/null; then
+
+
+  echo "Validating JSON..."
+
+
+  jq empty cosmos/aequitas.json && echo "   JSON valid" || echo "   JSON validation failed"
+
+
+ fi
+
+
+ 
+
+
+ echo "Chain configuration created"
+
+
+ shell: /usr/bin/bash -e {0}
+
+
+ env:
+
+
+  CHAIN_ID: aequitas-1
+
+
+  GENESIS_TIME: 2025-12-03T00:00:00Z
+
+
+  TOTAL_REPARATIONS: 131000000000000000000
+
+
+  FOUNDER_VESTED: 15720000000000000000
+
+
+  FOUNDER_ENDOWMENT: 7860000000000000000
+
+
+  INFRASTRUCTURE_IP: 135.232.208.145
+
+
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/4f22efff-c1b9-4c9e-bef9-cb0fec23bcb7.sh
+
+
+ERROR: No logo found - check docs/REPAR_Coin_Logo.png exists
+
+
+Error: Process completed with exit code 1.
+
+
+##[debug]Finishing: Create chain configuration
+
+
+0s
+0s
+##[debug]Evaluating condition for step: 'Report'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> false
+
+
+##[debug]Result: false
+
+
+0s
+0s
+
+
+
+
+__________________________________
+
+
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+* Code
+* Issues1
+* Pull requests
+* Discussions
+* Actions
+* Projects
+* Wiki
+* Security7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #29
+* * Jobs
+   *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    *    * * * Run details
+Annotations
+1 error
+Build Cerberus Security Auditor (Python)
+failed 8 minutes ago in 17s
+1s
+4s
+2s
+6s
+1s
+##[debug]Evaluating condition for step: 'Validate Cerberus Auditor'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> true
+
+
+##[debug]Result: true
+
+
+##[debug]Starting: Validate Cerberus Auditor
+
+
+##[debug]Loading inputs
+
+
+##[debug]Loading env
+
+
+Run echo "Validating Cerberus Security Auditor..."
+
+
+ echo "Validating Cerberus Security Auditor..."
+
+
+ cd auditor
+
+
+ 
+
+
+ python -c "
+
+
+ import sys
+
+
+ try:
+
+
+    from main import app
+
+
+    print('   main.py: OK')
+
+
+ except ImportError as e:
+
+
+    print(f'   main.py: Import check (deps may be needed)')
+
+
+ 
+
+
+ try:
+
+
+    from orchestrator import ThreatOrchestrator
+
+
+    print('   orchestrator.py: OK')
+
+
+ except ImportError:
+
+
+    print('   orchestrator.py: Import check')
+
+
+ 
+
+
+ print('Cerberus Auditor validation complete')
+
+
+ "
+
+
+ 
+
+
+ HASH=$(find . -name "*.py" -exec sha256sum {} \; | sha256sum | awk '{print $1}')
+
+
+ echo "hash=$HASH" >> $GITHUB_OUTPUT
+
+
+ echo "Cerberus Auditor hash: $HASH"
+
+
+ shell: /usr/bin/bash -e {0}
+
+
+ env:
+
+
+  CHAIN_ID: aequitas-1
+
+
+  GENESIS_TIME: 2025-12-03T00:00:00Z
+
+
+  TOTAL_REPARATIONS: 131000000000000000000
+
+
+  FOUNDER_VESTED: 15720000000000000000
+
+
+  FOUNDER_ENDOWMENT: 7860000000000000000
+
+
+  pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+
+
+  PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+
+
+  Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+
+
+  Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+
+
+  Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+
+
+  LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+
+
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/4b812966-6ce6-4002-a90e-e1e6140f0998.sh
+
+
+Validating Cerberus Security Auditor...
+
+
+2025-12-07 20:32:42,120 - ASSP-COORDINATOR - WARNING - liboqs-python not installed. Using simulation mode.
+
+
+2025-12-07 20:32:42,120 - ASSP-COORDINATOR - WARNING -    Install: pip install liboqs-python
+
+
+2025-12-07 20:32:42,127 - ASSP-COORDINATOR - WARNING - ⚠️  transformers not available - install: pip install transformers torch
+
+
+  main.py: Import check (deps may be needed)
+
+
+❌ CRITICAL: APEX System required but not available: cannot import name 'RealCRS' from 'real_crs' (/home/runner/work/REPAR/REPAR/apex/real_crs.py)
+
+
+Error: Process completed with exit code 1.
+
+
+##[debug]Finishing: Validate Cerberus Auditor
+
+
+0s
+0s
+0s
+##[debug]Evaluating condition for step: 'Post Setup Python'
+
+
+##[debug]Evaluating: success()
+
+
+##[debug]Evaluating success:
+
+
+##[debug]=> false
+
+
+##[debug]Result: false
+
+
+0s
+0s
+
+
+________________________________
+
+
+## SECTION III Solution for the logo file path error
+I created a dedicated logo folder and added the logo there and removed it from the docs, here's the updated file path:
+logo/REPAR_Coin_Logo.png
+
+
+## The Terraform error
+I'm a little confused as to why we are using Terraform in the first place, so I need to know if it is necessary and why. And if it isn't then it should be replaced with Sovereign features, if not then we need to fully understand its purpose.
+
+
+# Cerberus Security Auditor if Flagging RealCRS wording in the APEX, I'm not sure why… let's see if it's an APEX error or Cerberus error
+
+
+# AI Autonomous Agents doesn't seem to be fully implemented or it was implemented elsewhere either way we need to:
+
+
+Locate it if it's implemented to prevent duplication.
+
+
+Or
+
+
+Build it properly, these autonomous Agents are needed. They are like micro Apex's and can be deployed to do separate tasks when needed, and can deploy more nodes when needing to scale. 
+
+
+NO JOB GETS SKIPPED WITHOUT FULLY UNDERSTANDING WHY IT'S BEING SKIPPED. NO JOB SHOULD BE SKIPPED IF IT AFFECTS THE FULL THIS NATION.
+
+
+IF CERBERUS SECURITY AUDITOR ISN'T AUDITING THEN APEX CAN'T TRULY KNOW WHAT NEEDS TO BE CHECKED, THEY ARE SEPARATE IN DUTIES BUT TOGETHER BY DESIGN.
+
+
+IF TEFFAFORM CREATE A DEPENDENCY THEN WE NEED SOVEREIGN REPLACEMENTS OUR USE WHAT WE'VE ALREADY BUILT.
