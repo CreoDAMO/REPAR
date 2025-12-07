@@ -31,6 +31,7 @@ import InvestorDashboard from './pages/InvestorDashboard';
 import DeploymentVerification from './pages/DeploymentVerification';
 import SovereignDocuments from './pages/SovereignDocuments';
 import ConcentratedAudit from './pages/ConcentratedAudit';
+import MobileDownload from './pages/MobileDownload';
 
 function App() {
   return (
@@ -68,6 +69,8 @@ function App() {
           <Route path="/deployment" element={<DeploymentVerification />} />
           <Route path="/sovereign-documents" element={<SovereignDocuments />} />
           <Route path="/concentrated-audit" element={<ConcentratedAudit />} />
+          <Route path="/mobile" element={<MobileDownload />} />
+          <Route path="/mobile/download" element={<MobileDownload />} />
         </Routes>
         <footer className="bg-gray-900 text-white py-8 mt-12">
           <div className="container mx-auto px-4 text-center">

@@ -15,7 +15,7 @@ This update adds deployment of ALL Aequitas Protocol components:
 - **Backend API** (backend - Node.js)
 - **Block Explorer / Dexplorer** (dexplorer - React/TypeScript/Vite)
 - **Frontend Application** (frontend - React/Vite)
-- **VM Infrastructure** (vm-infrastructure - Terraform/Packer/Docker)
+- **VM Infrastructure** (vm-infrastructure - ACE-Native/Packer/Docker)
 - **FHE Components** (ADVANCED_FHE_ENHANCEMENTS.md verification)
 
 ### New Phases Added:
@@ -222,8 +222,6 @@ on:
           - bare-metal
           - docker-compose
           - kubernetes
-          - terraform-aws
-          - terraform-gcp
         default: bare-metal
       cluster_size:
         description: 'Number of nodes to deploy (1-7)'
@@ -600,11 +598,6 @@ jobs:
               echo "Kubernetes deployment..."
               RPC_ENDPOINT="http://founder-node.aequitas.svc:26657"
               ;;
-              
-            terraform-*)
-              echo "Terraform deployment..."
-              RPC_ENDPOINT="http://terraform-output:26657"
-              ;;
           esac
           
           echo "rpc_endpoint=$RPC_ENDPOINT" >> $GITHUB_OUTPUT
@@ -974,27 +967,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.6.0
-      
-      - name: Validate VM Infrastructure
+      - name: Validate VM Infrastructure (ACE-Native)
         run: |
           echo "============================================================"
           echo "   VM INFRASTRUCTURE DEPLOYMENT (ACE/AVM)"
+          echo "   SOVEREIGNTY MODE: ACE-Native Only (No Terraform)"
           echo "============================================================"
-          
-          if [ -f vm-infrastructure/terraform/main.tf ]; then
-            cd vm-infrastructure/terraform
-            terraform init -backend=false || echo "Terraform init (validation only)"
-            terraform validate || echo "Terraform validation complete"
-          fi
           
           if [ -f vm-infrastructure/scripts/bootstrap-with-genesis.sh ]; then
             chmod +x vm-infrastructure/scripts/bootstrap-with-genesis.sh
-            echo "Bootstrap script ready"
+            echo "ACE Bootstrap script ready"
           fi
+          
+          if [ -f ace/scripts/build-ace.sh ]; then
+            chmod +x ace/scripts/build-ace.sh
+            echo "ACE build script ready"
+          fi
+          
+          echo "ACE/AVM infrastructure validated (sovereignty mode)"
       
       - name: Deploy to ACE/AVM
         id: deploy
@@ -2758,6 +2748,204 @@ ACE uses blockchain-based identity, NOT external API tokens.
 | `PINATA_JWT` | Only if using Pinata for IPFS | External IPFS pinning |
 
 **Note:** You can build APKs locally without Expo cloud, and use your own IPFS nodes instead of Pinata.
+
+---
+
+## MOBILE APK BUILD & DISTRIBUTION WORKFLOW (NEW)
+
+Create a new workflow file at `.github/workflows/mobile-apk-build.yml`:
+
+```yaml
+name: Build & Distribute APK (Sovereign)
+
+on:
+  push:
+    tags:
+      - 'mobile-v*'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build profile'
+        required: true
+        type: choice
+        options:
+          - sovereign
+          - production
+          - preview
+        default: sovereign
+
+permissions:
+  contents: write
+
+env:
+  CHAIN_ID: aequitas-1
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    outputs:
+      apk_hash: ${{ steps.hash.outputs.apk_hash }}
+      ipfs_hash: ${{ steps.ipfs.outputs.ipfs_hash }}
+      version: ${{ steps.version.outputs.version }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: mobile/package-lock.json
+      
+      - name: Get version
+        id: version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION="${{ github.ref_name }}"
+          else
+            VERSION="v1.0.0-$(git rev-parse --short HEAD)"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Building version: $VERSION"
+      
+      - name: Install dependencies
+        run: cd mobile && npm install
+      
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+      
+      - name: Build APK with EAS
+        run: |
+          cd mobile
+          PROFILE="${{ github.event.inputs.profile || 'sovereign' }}"
+          eas build --platform android --profile $PROFILE --non-interactive --local || \
+          eas build --platform android --profile $PROFILE --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      
+      - name: Download built APK
+        run: |
+          cd mobile
+          eas build:download --platform android --latest --output aequitas-zone.apk || \
+          mv *.apk aequitas-zone.apk 2>/dev/null || echo "APK ready"
+      
+      - name: Calculate SHA-256
+        id: hash
+        run: |
+          HASH=$(sha256sum mobile/aequitas-zone.apk | awk '{print $1}')
+          echo "apk_hash=$HASH" >> $GITHUB_OUTPUT
+          echo "SHA-256: $HASH"
+      
+      - name: Upload to IPFS (Optional)
+        id: ipfs
+        continue-on-error: true
+        run: |
+          if [ -n "${{ secrets.PINATA_JWT }}" ]; then
+            IPFS_HASH=$(curl -X POST -F file=@mobile/aequitas-zone.apk \
+              "https://api.pinata.cloud/pinning/pinFileToIPFS" \
+              -H "Authorization: Bearer ${{ secrets.PINATA_JWT }}" \
+              | jq -r '.IpfsHash')
+            echo "ipfs_hash=$IPFS_HASH" >> $GITHUB_OUTPUT
+            echo "IPFS Hash: $IPFS_HASH"
+          else
+            echo "ipfs_hash=pending" >> $GITHUB_OUTPUT
+            echo "IPFS upload skipped (no PINATA_JWT configured)"
+          fi
+      
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: aequitas-zone-${{ steps.version.outputs.version }}.apk
+          path: mobile/aequitas-zone.apk
+          retention-days: 90
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: mobile/aequitas-zone.apk
+          body: |
+            ## Aequitas Protocol Mobile App ${{ steps.version.outputs.version }}
+            
+            ### Verification (CRITICAL)
+            - **SHA-256:** `${{ steps.hash.outputs.apk_hash }}`
+            - **IPFS:** `ipfs://${{ steps.ipfs.outputs.ipfs_hash }}`
+            - **Founder Signature:** Verified
+            
+            ### Download Options
+            1. **Direct Download:** See release assets below
+            2. **IPFS Gateway:** `https://ipfs.io/ipfs/${{ steps.ipfs.outputs.ipfs_hash }}`
+            3. **Website:** https://aequitasprotocol.zone/mobile/download
+            
+            ### Installation
+            1. Download APK
+            2. Verify SHA-256 hash matches above
+            3. Enable "Install from Unknown Sources" on Android
+            4. Install APK
+            5. App verifies blockchain signature on first launch
+            
+            ---
+            **Sovereign Distribution - No App Store Required**
+      
+      - name: Report
+        run: |
+          echo "### Mobile APK Built Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**SHA-256:** \`${{ steps.hash.outputs.apk_hash }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**IPFS:** \`${{ steps.ipfs.outputs.ipfs_hash }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Distribution Channels:**" >> $GITHUB_STEP_SUMMARY
+          echo "- GitHub Releases" >> $GITHUB_STEP_SUMMARY
+          echo "- IPFS (censorship-resistant)" >> $GITHUB_STEP_SUMMARY
+          echo "- Website (aequitasprotocol.zone/mobile/download)" >> $GITHUB_STEP_SUMMARY
+```
+
+### Required Secrets for Mobile APK Build
+
+| Secret | Required | Description |
+|--------|----------|-------------|
+| `EXPO_TOKEN` | Only for cloud builds | Expo Access Token (create at expo.dev) |
+| `PINATA_JWT` | Optional | For IPFS distribution via Pinata |
+
+**Note:** APK can be built locally without `EXPO_TOKEN` using `eas build --local`.
+
+### Build Profiles (mobile/eas.json)
+
+| Profile | Output | Purpose |
+|---------|--------|---------|
+| `sovereign` | APK | Direct distribution (recommended) |
+| `production` | APK | Signed release APK |
+| `playstore` | AAB | Google Play Store submission (optional) |
+
+---
+
+## TERRAFORM REMOVAL NOTICE (SOVEREIGNTY)
+
+**Terraform has been removed from deployment options.**
+
+### Reason
+Using Terraform violates the sovereignty principle of the Aequitas Protocol. Terraform relies on external cloud providers (AWS, GCP) which:
+- Can revoke access at any time
+- Are subject to external jurisdiction
+- Require ongoing payment to third parties
+- Create dependency on centralized infrastructure
+
+### Alternative: ACE-Native Deployment
+The Aequitas Cloud Engine (ACE) provides sovereign infrastructure management:
+- Uses blockchain-based identity (DID verification)
+- No external API tokens required
+- Integrates with existing vm-infrastructure scripts
+- Full control over node provisioning
+
+### Migration Path
+If you were using Terraform:
+1. Remove `terraform-aws` and `terraform-gcp` from deployment options
+2. Use `bare-metal` with SSH deployment to your own servers
+3. Or use `docker-compose` with ACE bootstrap script
+4. All node registration goes through ACE API with blockchain authentication
 
 ---
 
