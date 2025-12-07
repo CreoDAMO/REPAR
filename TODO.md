@@ -178,8 +178,8 @@
 - **Changes:** Replace "DigitalOcean" with "ACE/AVM Constellation", update critical/recommended/optional API categories
 - **Completed:** December 1, 2025
 
-### Task 24 - Run Infrastructure Configuration Scripts (PENDING)
-- **Status:** ⏳ PENDING
+### Task 24 - Run Infrastructure Configuration Scripts (COMPLETED)
+- **Status:** ✅ COMPLETED
 - **Description:** Execute all critical infrastructure setup scripts for domain, subdomain, and registry configuration
 - **Scripts to Execute:**
   1. `scripts/setup-cloudflare-dns.sh` - Configure main Cloudflare DNS records
@@ -192,7 +192,70 @@
   - Keplr registry access configured
   - Domain: aequitasprotocol.zone
   - Post-execution verification needed
-- **Started:** December 1, 2025
+- **Completed:** December 7, 2025
+
+### Task 25 - Fix DNS Workflow Cloudflare Integration (PENDING)
+- **Status:** ⏳ PENDING
+- **Priority:** HIGH - DNS not updating despite workflow passing
+- **Description:** Fix GitHub Actions DNS workflow to actually update Cloudflare records instead of silently failing
+- **Root Causes Identified:**
+  1. Workflow uses GitHub runner IP (`ifconfig.me`) instead of actual sovereign infrastructure IP (135.232.208.145)
+  2. Null-safe jq handling masks API failures (`.success // false` returns "May exist" on error)
+  3. Cloudflare API token may lack required permissions (needs DNS:Edit, Zone:Read, Zone:Edit)
+- **File:** `.github/workflows/apex-autonomous-deployment.yml`
+- **Changes Required:**
+  - Replace dynamic IP detection with hardcoded sovereign IP: `135.232.208.145`
+  - Add validation that Cloudflare API response is successful before proceeding
+  - Fail workflow if DNS update is rejected (remove null-safe masking)
+  - Ensure all subdomains sync properly
+  - Purge old DigitalOcean IPs permanently
+- **Affected Subdomains:**
+  - @ (root), www, rpc, api, explorer, app, grpc, ace, ace-metrics
+- **References:** GITHUB_WORKFLOW_FIXES.md
+- **Started:** December 7, 2025
+
+### Task 26 - Verify and Update Keplr Registry PR (PENDING)
+- **Status:** ⏳ PENDING
+- **Priority:** MEDIUM - PR already exists but may need updates
+- **Description:** Verify Keplr chain registry PR status and update workflow to force-push changes when needed
+- **Current Behavior:**
+  - Workflow skips PR creation if fork already exists
+  - PR may be stale or require updates
+  - Logo path correction may not be applied
+- **Action Items:**
+  1. Check Keplr PR status: https://github.com/chainapsis/keplr-chain-registry/pulls
+  2. Verify chain.json validates correctly
+  3. Update workflow to force-push changes even when fork exists
+  4. Ensure logo path is correct: `keplr-chain-registry/images/aequitas.png`
+- **File:** `.github/workflows/apex-autonomous-deployment.yml`
+- **References:** GITHUB_WORKFLOW_FIXES.md
+- **Started:** December 7, 2025
+
+### Task 27 - Manual DNS Verification and Update (PENDING)
+- **Status:** ⏳ PENDING
+- **Priority:** CRITICAL - Required for production deployment
+- **Description:** Manually verify and update Cloudflare DNS A records to point to sovereign infrastructure IP
+- **Sovereign Infrastructure IP:** `135.232.208.145`
+- **Old DigitalOcean IP to Remove:** `159.203.92.230`
+- **A Records to Update in Cloudflare:**
+  | Name | Value |
+  |------|-------|
+  | @ | 135.232.208.145 |
+  | www | 135.232.208.145 |
+  | rpc | 135.232.208.145 |
+  | api | 135.232.208.145 |
+  | explorer | 135.232.208.145 |
+  | app | 135.232.208.145 |
+  | grpc | 135.232.208.145 |
+  | ace | 135.232.208.145 |
+  | ace-metrics | 135.232.208.145 |
+- **Verification Steps:**
+  1. Go to Cloudflare → DNS → A Records
+  2. Update all records listed above
+  3. Verify old DigitalOcean IP is completely removed
+  4. Test DNS propagation: `dig aequitasprotocol.zone`
+- **References:** GITHUB_WORKFLOW_FIXES.md
+- **Started:** December 7, 2025
 
 ---
 
@@ -206,15 +269,16 @@
 | Documentation | 1 | 0 | 0 | 1 |
 | Deployment Scripts | 6 | 0 | 0 | 6 |
 | Frontend Dashboard Updates | 4 | 0 | 0 | 4 |
-| Infrastructure Config | 0 | 0 | 1 | 1 |
-| **TOTAL** | **26** | **0** | **2** | **28** |
+| Infrastructure Config | 1 | 0 | 0 | 1 |
+| DNS & Registry Integration | 0 | 0 | 3 | 3 |
+| **TOTAL** | **27** | **0** | **4** | **31** |
 
 ---
 
 ## 🎉 COMPLETION STATUS
 
-### ✅ PHASE 1 COMPLETE (Tasks 1-23: 23/23 DONE)
-### ⏳ PHASE 2 IN PROGRESS (Task 24: Infrastructure Configuration Scripts)
+### ✅ PHASE 1 COMPLETE (Tasks 1-24: 24/24 DONE)
+### ⏳ PHASE 2 IN PROGRESS (Tasks 25-27: DNS & Registry Integration)
 
 **Core System:** OPERATIONAL AND PLATFORM-AGNOSTIC
 - ✅ Satellite Protocol: ASSP fully integrated with all subsystems
