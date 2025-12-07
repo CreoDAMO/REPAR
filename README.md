@@ -11,7 +11,8 @@
 [![Sovereign Nation](https://img.shields.io/badge/53%20Days-Sovereign%20Nation%20Built-gold)](https://github.com/CreoDAMO/REPAR)
 [![Wiki Auto-Generation](https://github.com/CreoDAMO/REPAR/actions/workflows/wiki-publish.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/wiki-publish.yml)
 
-<img width="1024" height="1024" alt="REPAR_Coin_Logo" src="https://github.com/user-attachments/assets/40b9d98b-06df-4e63-83e2-420d8be18a18" />
+<img width="500" height="500" alt="REPAR_Coin_Logo-removebg-preview" src="https://github.com/user-attachments/assets/0e3f4da1-d4aa-45a8-99d0-eff29697eb85" />
+
 
 ---
 
