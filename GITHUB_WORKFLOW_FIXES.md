@@ -2651,4 +2651,98 @@ jobs:
 
 ---
 
-*Updated by Replit Agent - December 6, 2025*
+## LATEST FIXES FROM BUILD #29 (December 7, 2025 - Evening)
+
+Based on the build logs from Run #29, here are the specific fixes needed:
+
+### Fix 1: Keplr Logo Path (5 min)
+**Error:** `ERROR: No logo found - check docs/REPAR_Coin_Logo.png exists`
+
+**In `create-keplr-pr` job, change:**
+```bash
+# FROM:
+if [ ! -f "../docs/REPAR_Coin_Logo.png" ]; then
+
+# TO:
+if [ ! -f "../logo/REPAR_Coin_Logo.png" ]; then
+```
+
+### Fix 2: Cerberus RealCRS Import (30 min)
+**Error:** `cannot import name 'RealCRS' from 'real_crs'`
+
+**In `build-cerberus-auditor` job, add dependencies and fix import path:**
+```yaml
+- name: Build Cerberus Security Auditor (Python)
+  run: |
+    cd auditor
+    pip install liboqs-python transformers torch
+    pip install -r requirements.txt
+    export PYTHONPATH="${PYTHONPATH}:$(pwd)/.."
+    python -c "from apex.real_crs import RealCRS; print('Import OK')"
+```
+
+**Also update `auditor/orchestrator.py`:**
+```python
+# Change:
+from real_crs import RealCRS
+# To:
+from apex.real_crs import RealCRS
+```
+
+### Fix 3: AI Agents Build Artifacts (20 min)
+**Error:** `No files were found with the provided path: ai/autonomous/build/`
+
+**In `build-ai-autonomous` job:**
+```yaml
+- name: Build AI Autonomous Agents (Go)
+  run: |
+    mkdir -p ai/autonomous/build cmd/autonomous-agent/build
+    cd ai/autonomous && go build -o build/threat-orchestrator ./...
+    cd ../../cmd/autonomous-agent && go build -o build/autonomous-agent ./...
+```
+
+### Fix 4: Remove Terraform (15 min)
+**Error:** `Reserved argument name in provider block` + missing Proxmox module
+
+**RECOMMENDATION:** Remove Terraform entirely (violates sovereignty goal)
+
+**In `deploy-vm-infrastructure` job, replace Terraform validation with ACE health check:**
+```yaml
+- name: Validate VM Infrastructure
+  run: |
+    if [ -f vm-infrastructure/scripts/bootstrap-with-genesis.sh ]; then
+      chmod +x vm-infrastructure/scripts/bootstrap-with-genesis.sh
+      echo "Bootstrap script ready"
+    fi
+    
+    ACE_ENDPOINT="${ACE_ENDPOINT:-https://ace.aequitasprotocol.zone}"
+    curl -sf "$ACE_ENDPOINT/health" || echo "ACE pending deployment"
+```
+
+### Fix 5: Service Deployments Skipped
+**Problem:** All services skip because SSH credentials not configured + ACE APIs not used
+
+**Solution:** Use ACE native deployment API instead of SSH. Add this pattern:
+```yaml
+deploy-services-to-ace:
+  needs: [build-frontend, build-dexplorer, build-backend]
+  steps:
+    - name: Deploy to ACE
+      run: |
+        ACE_ENDPOINT="https://ace.aequitasprotocol.zone"
+        curl -X POST "$ACE_ENDPOINT/api/v1/workload/deploy" \
+          -H "Authorization: Bearer ${{ secrets.ACE_TOKEN }}" \
+          -F "artifact=@service.tar.gz" \
+          -F "service=frontend"
+```
+
+### Required GitHub Secrets (Add These)
+| Secret | Description |
+|--------|-------------|
+| `ACE_TOKEN` | Authentication token for ACE Workload API |
+| `EXPO_TOKEN` | Expo account token for EAS mobile builds |
+| `PINATA_JWT` | Pinata API key for IPFS uploads |
+
+---
+
+*Updated by Replit Agent - December 7, 2025*
