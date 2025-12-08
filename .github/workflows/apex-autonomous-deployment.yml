@@ -1491,8 +1491,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
-          cache-dependency-path: mobile/package-lock.json
+          # Note: npm cache disabled - mobile project may not have package-lock.json
       
       - name: Get version
         id: version
@@ -2329,16 +2328,19 @@ jobs:
           # Keplr only needs chain.json + image
           
           # Copy chain logo (256x256 PNG required by Keplr)
-          # Logo exists at docs/REPAR_Coin_Logo.png in the repository
-          if [ -f ../docs/REPAR_Coin_Logo.png ]; then
-            cp ../docs/REPAR_Coin_Logo.png images/aequitas/chain.png
-            echo "   Logo copied from docs/REPAR_Coin_Logo.png"
+          # Logo exists at logo/REPAR_Coin_Logo.png in the repository root
+          if [ -f ../logo/REPAR_Coin_Logo.png ]; then
+            cp ../logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+            echo "   Logo copied from logo/REPAR_Coin_Logo.png"
+          elif [ -f ../frontend/src/assets/REPAR_Coin_Logo.png ]; then
+            cp ../frontend/src/assets/REPAR_Coin_Logo.png images/aequitas/chain.png
+            echo "   Logo copied from frontend/src/assets/REPAR_Coin_Logo.png"
           elif [ -f ../frontend/public/assets/repar-logo.svg ]; then
             # SVG fallback - note: Keplr requires PNG, may need conversion
             echo "WARNING: Only SVG logo found at frontend/public/assets/repar-logo.svg"
             echo "         Keplr requires 256x256 PNG - manual conversion may be needed"
           else
-            echo "ERROR: No logo found - check docs/REPAR_Coin_Logo.png exists"
+            echo "ERROR: No logo found - check logo/REPAR_Coin_Logo.png exists"
             exit 1
           fi
           
