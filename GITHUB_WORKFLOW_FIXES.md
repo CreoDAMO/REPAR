@@ -50,10 +50,9 @@ keplr-registry-pr:
         lfs: true
     
     # FIX: Add explicit LFS checkout (converts pointers to actual files)
+    # Note: git lfs install is not needed when lfs: true is set
     - name: Checkout LFS files
-      run: |
-        git lfs install --force
-        git lfs checkout
+      run: git lfs checkout
     
     # OPTIONAL: Verify LFS files are properly checked out
     - name: Verify LFS files
@@ -113,6 +112,8 @@ No files were found with the provided path: ai/autonomous/build/ cmd/autonomous-
 
 **Solution - Fix the AI Agents build job:**
 
+> **ARCHITECT REVIEW:** The original fix used `go build -o build/autonomous-agent ./...` which fails because it tries to compile multiple packages with a single output binary. Must target a specific executable package.
+
 ```yaml
 build-ai-autonomous:
   name: Build AI Autonomous Agents (Go)
@@ -134,23 +135,38 @@ build-ai-autonomous:
         # Create build directory
         mkdir -p ai/autonomous/build
         
-        # Check if Go module exists
-        if [ -f ai/autonomous/go.mod ]; then
+        # IMPORTANT: Target the specific executable package, not ./...
+        # Adjust the path based on your actual project structure
+        if [ -d ai/autonomous/cmd/autonomous-agent ]; then
           cd ai/autonomous
           go mod download
-          go build -v -o build/autonomous-agent ./...
+          go build -v -o build/autonomous-agent ./cmd/autonomous-agent
           chmod +x build/autonomous-agent
           ls -lh build/
-        elif [ -f ai/go.mod ]; then
+        elif [ -d ai/cmd/autonomous-agent ]; then
           cd ai
           go mod download
-          go build -v -o autonomous/build/autonomous-agent ./autonomous/...
+          go build -v -o autonomous/build/autonomous-agent ./cmd/autonomous-agent
           chmod +x autonomous/build/autonomous-agent
           ls -lh autonomous/build/
+        elif [ -f ai/autonomous/main.go ]; then
+          # Fallback: single main.go at root
+          cd ai/autonomous
+          go mod download
+          go build -v -o build/autonomous-agent .
+          chmod +x build/autonomous-agent
+          ls -lh build/
         else
-          echo "WARNING: No Go module found in ai/ directory"
-          echo "Creating placeholder for workflow continuation..."
-          echo "AI Autonomous Agent - Build Pending" > ai/autonomous/build/README.txt
+          echo "ERROR: No executable package found in ai/ directory"
+          echo "Expected structure: ai/autonomous/cmd/autonomous-agent/main.go"
+          echo "Or: ai/autonomous/main.go"
+          exit 1
+        fi
+        
+        # Verify binary was created
+        if [ ! -f ai/autonomous/build/autonomous-agent ]; then
+          echo "ERROR: Binary was not created"
+          exit 1
         fi
         
         echo "============================================================"
@@ -161,11 +177,12 @@ build-ai-autonomous:
       uses: actions/upload-artifact@v4
       with:
         name: ai-autonomous-agents
-        path: |
-          ai/autonomous/build/
-        if-no-files-found: warn  # Changed from error to warn
+        path: ai/autonomous/build/
+        if-no-files-found: error  # Keep as error to surface build failures
         retention-days: 90
 ```
+
+**Key Fix:** Changed `./...` to `./cmd/autonomous-agent` (or `.` for single main.go) to target a specific executable package. Kept `if-no-files-found: error` to properly surface build failures.
 
 ---
 
@@ -182,6 +199,8 @@ No files were found with the provided path: mobile/build/aequitas-zone.apk mobil
 **Root Cause:** The mobile build step is not producing an APK file.
 
 **Solution - Fix the Mobile APK build job:**
+
+> **ARCHITECT REVIEW:** The original fix used `npx expo export:embed` which is NOT an APK build command. Must use proper Gradle `assembleRelease` or EAS local build. Keep `if-no-files-found: error` to surface failures.
 
 ```yaml
 build-mobile-apk:
@@ -213,8 +232,7 @@ build-mobile-apk:
     
     - name: Install dependencies
       working-directory: ./mobile
-      run: |
-        npm ci || npm install
+      run: npm ci || npm install
     
     - name: Build APK
       id: build
@@ -224,69 +242,97 @@ build-mobile-apk:
         echo "   BUILDING MOBILE APK (SOVEREIGN DISTRIBUTION)"
         echo "============================================================"
         
-        # Create build directory
         mkdir -p build
         
-        # Check if this is an Expo project
-        if [ -f app.json ]; then
-          echo "Detected Expo project..."
-          
-          # Install EAS CLI
-          npm install -g eas-cli expo-cli
-          
-          # Build locally (no Expo cloud)
-          npx expo export:embed --platform android --dev false || {
-            echo "Expo build failed, creating placeholder..."
-            echo "APK Build Pending - Expo configuration required" > build/aequitas-zone-placeholder.txt
-          }
-          
-          # If we have an APK, move it
-          if [ -f android/app/build/outputs/apk/release/*.apk ]; then
-            cp android/app/build/outputs/apk/release/*.apk build/aequitas-zone.apk
-          fi
-        elif [ -f android/gradlew ]; then
-          echo "Detected React Native project..."
+        # Option 1: React Native with pre-built android folder (Gradle)
+        if [ -f android/gradlew ]; then
+          echo "Building with Gradle (React Native)..."
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease || {
-            echo "Gradle build failed, creating placeholder..."
-            echo "APK Build Pending - Android build configuration required" > ../build/aequitas-zone-placeholder.txt
-          }
+          ./gradlew assembleRelease
           
-          # Copy APK if built
-          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
-            cp app/build/outputs/apk/release/app-release.apk ../build/aequitas-zone.apk
+          # Find and copy APK
+          APK_PATH=$(find . -name "*.apk" -path "*release*" | head -1)
+          if [ -n "$APK_PATH" ]; then
+            cp "$APK_PATH" ../build/aequitas-zone.apk
+            echo "APK built successfully: $APK_PATH"
+          else
+            echo "ERROR: APK not found after Gradle build"
+            exit 1
           fi
+        
+        # Option 2: Expo with EAS local build
+        elif [ -f app.json ] && grep -q "expo" package.json; then
+          echo "Building with EAS (Expo)..."
+          npm install -g eas-cli
+          
+          # EAS local build (no cloud required)
+          npx eas build --platform android --local --output build/aequitas-zone.apk
+          
+          if [ ! -f build/aequitas-zone.apk ]; then
+            echo "ERROR: EAS build did not produce APK"
+            exit 1
+          fi
+        
+        # Option 3: Expo with prebuild + Gradle
+        elif [ -f app.json ]; then
+          echo "Building with Expo prebuild + Gradle..."
+          npx expo prebuild --platform android --clean
+          
+          if [ -f android/gradlew ]; then
+            cd android
+            chmod +x gradlew
+            ./gradlew assembleRelease
+            
+            APK_PATH=$(find . -name "*.apk" -path "*release*" | head -1)
+            if [ -n "$APK_PATH" ]; then
+              cp "$APK_PATH" ../build/aequitas-zone.apk
+            else
+              echo "ERROR: APK not found after prebuild + Gradle"
+              exit 1
+            fi
+          else
+            echo "ERROR: Expo prebuild did not create android folder"
+            exit 1
+          fi
+        
         else
-          echo "WARNING: No recognized mobile project structure"
-          echo "APK Build Pending - Mobile project setup required" > build/aequitas-zone-placeholder.txt
+          echo "ERROR: No recognized mobile project structure"
+          echo "Expected: android/gradlew (React Native) or app.json (Expo)"
+          exit 1
         fi
         
-        # Calculate hash if APK exists
+        # Verify APK exists and calculate hash
         if [ -f build/aequitas-zone.apk ]; then
           APK_HASH=$(sha256sum build/aequitas-zone.apk | awk '{print $1}')
+          APK_SIZE=$(stat -c%s build/aequitas-zone.apk)
           echo "apk_hash=$APK_HASH" >> $GITHUB_OUTPUT
           echo "apk_signed=true" >> $GITHUB_OUTPUT
-          echo "APK Hash: $APK_HASH"
+          echo "============================================================"
+          echo "   APK BUILD SUCCESS"
+          echo "   Hash: $APK_HASH"
+          echo "   Size: $APK_SIZE bytes"
+          echo "============================================================"
         else
-          echo "apk_hash=not-built" >> $GITHUB_OUTPUT
-          echo "apk_signed=false" >> $GITHUB_OUTPUT
-          echo "WARNING: APK was not built"
+          echo "ERROR: APK was not created"
+          exit 1
         fi
-        
-        ls -lah build/
-        echo "============================================================"
     
     - name: Upload Mobile APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: mobile-apk-${{ needs.build-aequitasd.outputs.version || 'v1.0.0' }}
-        path: |
-          mobile/build/aequitas-zone.apk
-          mobile/build/aequitas-zone-placeholder.txt
-        if-no-files-found: warn  # Changed from error to warn
+        path: mobile/build/aequitas-zone.apk
+        if-no-files-found: error  # Keep as error to surface build failures
         retention-days: 90
 ```
+
+**Key Fixes:**
+1. Removed incorrect `npx expo export:embed` command
+2. Added proper EAS local build: `npx eas build --platform android --local`
+3. Added Expo prebuild fallback: `npx expo prebuild` + Gradle
+4. Kept `if-no-files-found: error` to properly surface failures
+5. Added explicit error exits instead of silently creating placeholders
 
 ---
 
@@ -299,16 +345,19 @@ build-mobile-apk:
 Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
 ```
 
-**Root Cause:** Corrupted or incompatible cache from previous runs.
+**Root Cause:** Likely corrupted or incompatible cache from previous runs.
+
+> **ARCHITECT REVIEW:** This safeguard is harmless but not tied to a proven root cause. The primary fix (removing duplicate `actions/cache@v4`) was already applied in the GO CACHE FIX section.
 
 **Solution:** Already fixed in GO CACHE FIX section (remove duplicate `actions/cache@v4` step).
 
-**Additional safeguard - Add cache clearing step:**
+**Optional safeguard - Add cache clearing step (use sparingly):**
 
 ```yaml
 - name: Clear corrupted cache (if needed)
   run: |
     # Only run if previous build had cache issues
+    # NOTE: This is a safeguard, not a permanent fix
     if [ -d ~/.cache/go-build ]; then
       echo "Clearing Go build cache..."
       rm -rf ~/.cache/go-build
@@ -316,15 +365,22 @@ Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' 
   continue-on-error: true
 ```
 
+**Recommendation:** Only add this step if cache issues persist after removing the duplicate cache action.
+
 ---
 
 ### Complete Workflow Patch Summary
 
+> **ARCHITECT REVIEWED:** All fixes verified for correctness. Key changes from original draft based on review.
+
 Apply these changes to `.github/workflows/apex-autonomous-deployment.yml`:
 
-1. **Line ~X (keplr-registry-pr job):** Add `git lfs install --force && git lfs checkout` after checkout
-2. **Line ~Y (build-ai-autonomous job):** Fix build paths and add `if-no-files-found: warn`
-3. **Line ~Z (build-mobile-apk job):** Fix APK build logic and add `if-no-files-found: warn`
+| Job | Change | Notes |
+|-----|--------|-------|
+| `keplr-registry-pr` | Add `git lfs checkout` after checkout | Removed redundant `git lfs install` |
+| `build-ai-autonomous` | Target specific package: `./cmd/autonomous-agent` | NOT `./...` |
+| `build-mobile-apk` | Use Gradle or EAS local build | NOT `expo export:embed` |
+| All artifact uploads | Keep `if-no-files-found: error` | Surfaces failures properly |
 
 ---
 
@@ -332,10 +388,11 @@ Apply these changes to `.github/workflows/apex-autonomous-deployment.yml`:
 
 - [ ] Git LFS checkout step added to keplr-registry-pr job
 - [ ] LFS verification step confirms logo is >1KB (actual PNG, not pointer)
-- [ ] AI Autonomous Agents build creates files in `ai/autonomous/build/`
-- [ ] Mobile APK build creates files in `mobile/build/`
-- [ ] All `upload-artifact` steps use `if-no-files-found: warn` instead of `error`
+- [ ] AI Autonomous Agents build targets specific executable package (not `./...`)
+- [ ] Mobile APK build uses Gradle `assembleRelease` or EAS local build
+- [ ] All `upload-artifact` steps keep `if-no-files-found: error` (don't mask failures)
 - [ ] No duplicate `actions/cache@v4` steps (Go cache fix applied)
+- [ ] Binary verification step confirms files exist before upload
 
 ---
 
