@@ -422,3 +422,7 @@ class RealCyberReasoningSystem:
             "darpa_baseline": 68.0,
             "improvement": patch_success_rate - 68.0
         }
+
+
+# Alias for backward compatibility
+RealCRS = RealCyberReasoningSystem
