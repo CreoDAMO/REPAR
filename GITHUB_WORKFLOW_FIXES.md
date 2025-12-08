@@ -1635,6 +1635,7 @@ jobs:
   # ============================================================
   # PHASE 5.6: BUILD ALL SERVICES (PARALLEL)
   # ============================================================
+  # ARCHITECT REVIEWED (December 8, 2025): Fixed Go build to target specific executable package
   build-ai-autonomous:
     name: Build AI Autonomous Agents (Go)
     runs-on: ubuntu-latest
@@ -1653,38 +1654,63 @@ jobs:
       - name: Build AI Autonomous Agent
         id: build
         run: |
-          echo "Building AI Autonomous Agent..."
-          cd ai/autonomous
+          echo "============================================================"
+          echo "   BUILDING AI AUTONOMOUS AGENTS"
+          echo "============================================================"
           
-          go mod init aequitas/ai/autonomous 2>/dev/null || echo "Module exists"
-          go mod tidy 2>/dev/null || echo "Dependencies ready"
+          mkdir -p ai/autonomous/build
           
-          go build -v -o ./build/autonomous-orchestrator ./orchestrator.go 2>/dev/null || echo "Build complete (may need additional deps)"
-          
-          if [ -f ./build/autonomous-orchestrator ]; then
-            HASH=$(sha256sum ./build/autonomous-orchestrator | awk '{print $1}')
+          # IMPORTANT: Target specific executable package, NOT ./...
+          # ./... tries to compile multiple packages with single output = FAIL
+          if [ -d ai/autonomous/cmd/autonomous-agent ]; then
+            echo "Building from ai/autonomous/cmd/autonomous-agent..."
+            cd ai/autonomous
+            go mod download || go mod init aequitas/ai/autonomous
+            go mod tidy
+            go build -v -o build/autonomous-agent ./cmd/autonomous-agent
+            chmod +x build/autonomous-agent
+          elif [ -f ai/autonomous/main.go ]; then
+            echo "Building from ai/autonomous/main.go..."
+            cd ai/autonomous
+            go mod download || go mod init aequitas/ai/autonomous
+            go mod tidy
+            go build -v -o build/autonomous-agent .
+            chmod +x build/autonomous-agent
+          elif [ -f ai/autonomous/orchestrator.go ]; then
+            echo "Building from ai/autonomous/orchestrator.go..."
+            cd ai/autonomous
+            go mod download || go mod init aequitas/ai/autonomous
+            go mod tidy
+            go build -v -o build/autonomous-agent ./orchestrator.go
+            chmod +x build/autonomous-agent
           else
-            HASH="pending-$(date +%s)"
+            echo "ERROR: No executable Go package found"
+            echo "Expected: ai/autonomous/cmd/autonomous-agent/main.go"
+            echo "      Or: ai/autonomous/main.go"
+            exit 1
           fi
-          echo "hash=$HASH" >> $GITHUB_OUTPUT
-          echo "AI Autonomous Agent build: $HASH"
-      
-      - name: Build Autonomous Agent CLI
-        run: |
-          echo "Building Autonomous Agent CLI..."
-          cd cmd/autonomous-agent
           
-          go mod init aequitas/cmd/autonomous-agent 2>/dev/null || echo "Module exists"
-          go build -v -o ./build/autonomous-agent-cli ./main.go 2>/dev/null || echo "CLI build complete"
+          # Verify binary was created
+          if [ ! -f ai/autonomous/build/autonomous-agent ]; then
+            echo "ERROR: Binary was not created"
+            exit 1
+          fi
+          
+          HASH=$(sha256sum ai/autonomous/build/autonomous-agent | awk '{print $1}')
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+          
+          echo "============================================================"
+          echo "   BUILD SUCCESS"
+          echo "   Hash: $HASH"
+          echo "============================================================"
+          ls -lh ai/autonomous/build/
       
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
-        continue-on-error: true
         with:
           name: ai-autonomous-agents
-          path: |
-            ai/autonomous/build/
-            cmd/autonomous-agent/build/
+          path: ai/autonomous/build/
+          if-no-files-found: error
           retention-days: 30
 
   build-cerberus-auditor:
@@ -2323,50 +2349,69 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
       
+      # ARCHITECT REVIEWED (December 8, 2025): Updated to properly fail on build errors
       - name: Build APK locally (No Expo Cloud - Full Sovereignty)
         id: build
         run: |
           cd mobile
           
           echo "Building APK locally (sovereign - no cloud dependencies)..."
+          mkdir -p build
           
-          # Prebuild for Android
-          npx expo prebuild --platform android --clean 2>/dev/null || {
-            echo "Expo prebuild - checking for existing android directory..."
-          }
-          
-          # Check if android directory exists
-          if [ -d android ]; then
+          # Option 1: React Native with existing android folder (Gradle)
+          if [ -f android/gradlew ]; then
+            echo "Building with Gradle (pre-existing android folder)..."
             cd android
+            chmod +x gradlew
+            ./gradlew assembleRelease --no-daemon
             
-            # Make gradlew executable
-            chmod +x gradlew 2>/dev/null || true
-            
-            # Build release APK
-            ./gradlew assembleRelease --no-daemon || {
-              echo "Gradle build - trying alternative..."
-              ./gradlew assembleDebug --no-daemon || echo "Debug build fallback"
-            }
-            
-            # Find and move APK
-            APK_PATH=$(find . -name "*.apk" -type f | head -1)
+            APK_PATH=$(find . -name "*.apk" -path "*release*" | head -1)
             if [ -n "$APK_PATH" ]; then
-              mkdir -p ../build
               cp "$APK_PATH" ../build/aequitas-zone.apk
               echo "APK built successfully: $APK_PATH"
-              echo "apk_built=true" >> $GITHUB_OUTPUT
             else
-              echo "APK not found after build"
-              echo "apk_built=false" >> $GITHUB_OUTPUT
+              echo "ERROR: APK not found after Gradle build"
+              exit 1
             fi
-            
             cd ..
+          
+          # Option 2: Expo project - prebuild + Gradle
+          elif [ -f app.json ]; then
+            echo "Building with Expo prebuild + Gradle..."
+            npx expo prebuild --platform android --clean
+            
+            if [ -d android ] && [ -f android/gradlew ]; then
+              cd android
+              chmod +x gradlew
+              ./gradlew assembleRelease --no-daemon
+              
+              APK_PATH=$(find . -name "*.apk" -path "*release*" | head -1)
+              if [ -n "$APK_PATH" ]; then
+                cp "$APK_PATH" ../build/aequitas-zone.apk
+                echo "APK built successfully: $APK_PATH"
+              else
+                echo "ERROR: APK not found after prebuild + Gradle"
+                exit 1
+              fi
+              cd ..
+            else
+              echo "ERROR: Expo prebuild did not create android folder"
+              exit 1
+            fi
+          
           else
-            echo "Android directory not created - creating minimal APK artifact"
-            mkdir -p build
-            echo "Aequitas Zone Mobile v${{ steps.version.outputs.version }}" > build/aequitas-zone-placeholder.txt
-            echo "apk_built=false" >> $GITHUB_OUTPUT
+            echo "ERROR: No recognized mobile project structure"
+            echo "Expected: android/gradlew (React Native) or app.json (Expo)"
+            exit 1
           fi
+          
+          # Verify APK was created
+          if [ ! -f build/aequitas-zone.apk ]; then
+            echo "ERROR: APK was not created"
+            exit 1
+          fi
+          
+          echo "apk_built=true" >> $GITHUB_OUTPUT
       
       - name: Sign APK
         id: sign
@@ -2456,15 +2501,14 @@ jobs:
             echo "ipfs_hash=no-apk" >> $GITHUB_OUTPUT
           fi
       
+      # ARCHITECT REVIEWED: Keep if-no-files-found: error to surface build failures
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: mobile-apk-${{ steps.version.outputs.version }}
-          path: |
-            mobile/build/aequitas-zone.apk
-            mobile/build/aequitas-zone-placeholder.txt
+          path: mobile/build/aequitas-zone.apk
           retention-days: 365
-          if-no-files-found: warn
+          if-no-files-found: error
       
       - name: Report
         run: |
@@ -2986,6 +3030,7 @@ jobs:
   # ============================================================
   # PHASE 8: KEPLR REGISTRY PR (Automated)
   # ============================================================
+  # ARCHITECT REVIEWED (December 8, 2025): Added explicit git lfs checkout to convert LFS pointers
   keplr-registry-pr:
     name: Create Keplr Registry PR
     runs-on: ubuntu-latest
@@ -3000,6 +3045,27 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+      
+      # FIX: Explicit LFS checkout (converts 133-byte pointers to actual files)
+      # Required because lfs: true only fetches metadata, not actual file content
+      - name: Checkout LFS files
+        run: git lfs checkout
+      
+      # Verify LFS files are real files, not pointers
+      - name: Verify LFS files
+        run: |
+          echo "Verifying LFS files are properly checked out..."
+          if [ -f logo/REPAR_Coin_Logo.png ]; then
+            SIZE=$(stat -c%s logo/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z logo/REPAR_Coin_Logo.png)
+            if [ "$SIZE" -lt 200 ]; then
+              echo "ERROR: logo/REPAR_Coin_Logo.png is still an LFS pointer ($SIZE bytes)"
+              echo "Content:"
+              cat logo/REPAR_Coin_Logo.png
+              exit 1
+            else
+              echo "OK: logo/REPAR_Coin_Logo.png is $SIZE bytes (real file)"
+            fi
+          fi
       
       - name: Debug logo presence
         run: |
