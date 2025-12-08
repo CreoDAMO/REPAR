@@ -26,6 +26,164 @@ From the protocol's mission: "Your Phone Is Your Nation" with 10,000+ mobile val
 
 ---
 
+## MANUAL TASK: Keplr Chain Registry Submission
+
+**Status:** Pending - Automated workflow failing due to Git LFS/path issues  
+**Priority:** High - Required for wallet integration  
+**Estimated Time:** 15-30 minutes
+
+### Why Manual Submission is Recommended
+
+The automated GitHub workflow for Keplr Registry PR submission has persistent issues with detecting the PNG logo file on the runner. While fixes have been attempted (LFS checkout, path corrections, SVG conversion fallback), manual submission is the most reliable approach.
+
+### Keplr Logo Requirements
+
+| Requirement | Value |
+|-------------|-------|
+| **Format** | PNG |
+| **Dimensions** | Exactly 256x256 pixels |
+| **File Name** | `chain.png` |
+| **Location** | `images/aequitas/chain.png` (in keplr-chain-registry) |
+
+### Manual Submission Steps
+
+#### Step 1: Fork the Keplr Repository
+1. Go to https://github.com/chainapsis/keplr-chain-registry
+2. Click "Fork" in the top right
+3. Clone your fork locally:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/keplr-chain-registry.git
+   cd keplr-chain-registry
+   ```
+
+#### Step 2: Create Chain Directory Structure
+```bash
+mkdir -p images/aequitas
+```
+
+#### Step 3: Add the Logo
+Copy your 256x256 PNG logo to the correct location:
+```bash
+# From your REPAR project directory
+cp logo/REPAR_Coin_Logo.png /path/to/keplr-chain-registry/images/aequitas/chain.png
+```
+
+Verify dimensions:
+```bash
+file images/aequitas/chain.png
+# Should show: PNG image data, 256 x 256, ...
+```
+
+#### Step 4: Create Chain Configuration
+Create `cosmos/aequitas.json` with the following content:
+
+```json
+{
+  "chainId": "aequitas-1",
+  "chainName": "Aequitas Protocol",
+  "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
+  "rpc": "https://rpc.aequitasprotocol.zone",
+  "rest": "https://api.aequitasprotocol.zone",
+  "nodeProvider": {
+    "name": "Aequitas Foundation",
+    "email": "validators@aequitasprotocol.zone",
+    "website": "https://aequitasprotocol.zone"
+  },
+  "bip44": {
+    "coinType": 118
+  },
+  "bech32Config": {
+    "bech32PrefixAccAddr": "aequitas",
+    "bech32PrefixAccPub": "aequitaspub",
+    "bech32PrefixValAddr": "aequitasvaloper",
+    "bech32PrefixValPub": "aequitasvaloperpub",
+    "bech32PrefixConsAddr": "aequitasvalcons",
+    "bech32PrefixConsPub": "aequitasvalconspub"
+  },
+  "currencies": [
+    {
+      "coinDenom": "REPAR",
+      "coinMinimalDenom": "urepar",
+      "coinDecimals": 6,
+      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
+    }
+  ],
+  "feeCurrencies": [
+    {
+      "coinDenom": "REPAR",
+      "coinMinimalDenom": "urepar",
+      "coinDecimals": 6,
+      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
+      "gasPriceStep": {
+        "low": 0.01,
+        "average": 0.025,
+        "high": 0.04
+      }
+    }
+  ],
+  "stakeCurrency": {
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
+  },
+  "features": ["cosmwasm", "ibc-transfer", "ibc-go"]
+}
+```
+
+#### Step 5: Commit and Push
+```bash
+git checkout -b add-aequitas-chain
+git add cosmos/aequitas.json images/aequitas/chain.png
+git commit -m "Add Aequitas Protocol (aequitas-1) chain configuration"
+git push origin add-aequitas-chain
+```
+
+#### Step 6: Create Pull Request
+1. Go to https://github.com/chainapsis/keplr-chain-registry
+2. Click "Compare & pull request"
+3. Title: `Add Aequitas Protocol (aequitas-1)`
+4. Description:
+   ```
+   ## Chain Information
+   - **Chain ID:** aequitas-1
+   - **Chain Name:** Aequitas Protocol
+   - **Native Token:** REPAR (urepar)
+   - **Website:** https://aequitasprotocol.zone
+   
+   ## Endpoints
+   - RPC: https://rpc.aequitasprotocol.zone
+   - REST: https://api.aequitasprotocol.zone
+   
+   ## Features
+   - CosmWasm smart contracts
+   - IBC enabled
+   - Mobile validator app support
+   
+   ## About
+   Aequitas Protocol is a sovereign digital nation platform with mobile-first 
+   validator participation. The REPAR token enables governance and staking 
+   across the decentralized network.
+   ```
+5. Submit the PR
+
+### Verification Checklist
+- [ ] Logo is exactly 256x256 PNG
+- [ ] Logo file is named `chain.png`
+- [ ] Logo is in `images/aequitas/` directory
+- [ ] Chain config is at `cosmos/aequitas.json`
+- [ ] `chainSymbolImageUrl` points to correct raw GitHub URL
+- [ ] All currency `coinImageUrl` fields reference the logo
+- [ ] RPC/REST endpoints are accessible
+- [ ] PR submitted to chainapsis/keplr-chain-registry
+
+### Logo File Location in REPAR Project
+The 256x256 PNG logo is available at:
+- `logo/REPAR_Coin_Logo.png` (primary)
+- `frontend/src/assets/REPAR_Coin_Logo.png` (backup)
+
+---
+
 ## MAJOR UPDATE (December 7, 2025)
 
 **Consolidated All Components into Single APEX Deployment Workflow**
