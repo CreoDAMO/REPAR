@@ -2192,6 +2192,23 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+      
+      - name: Debug logo presence
+        run: |
+          echo "Checking logo files in repository..."
+          echo "Current directory: $(pwd)"
+          ls -la logo/ 2>/dev/null || echo "logo/ directory not found"
+          ls -la frontend/src/assets/ 2>/dev/null | grep -i logo || echo "No logo in frontend/src/assets/"
+          ls -la frontend/public/assets/ 2>/dev/null | grep -i logo || echo "No logo in frontend/public/assets/"
+          if [ -f logo/REPAR_Coin_Logo.png ]; then
+            echo "FOUND: logo/REPAR_Coin_Logo.png ($(stat -c%s logo/REPAR_Coin_Logo.png) bytes)"
+            file logo/REPAR_Coin_Logo.png || true
+          else
+            echo "MISSING: logo/REPAR_Coin_Logo.png"
+          fi
       
       - name: Setup Git
         run: |
@@ -2328,20 +2345,49 @@ jobs:
           # Keplr only needs chain.json + image
           
           # Copy chain logo (256x256 PNG required by Keplr)
-          # Logo exists at logo/REPAR_Coin_Logo.png in the repository root
+          # Try multiple locations and convert SVG if needed
+          LOGO_COPIED=false
+          
           if [ -f ../logo/REPAR_Coin_Logo.png ]; then
             cp ../logo/REPAR_Coin_Logo.png images/aequitas/chain.png
             echo "   Logo copied from logo/REPAR_Coin_Logo.png"
+            LOGO_COPIED=true
           elif [ -f ../frontend/src/assets/REPAR_Coin_Logo.png ]; then
             cp ../frontend/src/assets/REPAR_Coin_Logo.png images/aequitas/chain.png
             echo "   Logo copied from frontend/src/assets/REPAR_Coin_Logo.png"
-          elif [ -f ../frontend/public/assets/repar-logo.svg ]; then
-            # SVG fallback - note: Keplr requires PNG, may need conversion
-            echo "WARNING: Only SVG logo found at frontend/public/assets/repar-logo.svg"
-            echo "         Keplr requires 256x256 PNG - manual conversion may be needed"
-          else
-            echo "ERROR: No logo found - check logo/REPAR_Coin_Logo.png exists"
+            LOGO_COPIED=true
+          fi
+          
+          # If no PNG found, try to convert SVG to PNG
+          if [ "$LOGO_COPIED" = "false" ]; then
+            if [ -f ../frontend/public/assets/repar-logo.svg ]; then
+              echo "   Converting SVG to PNG (256x256)..."
+              # Try rsvg-convert first, then ImageMagick
+              if command -v rsvg-convert >/dev/null 2>&1; then
+                rsvg-convert -w 256 -h 256 ../frontend/public/assets/repar-logo.svg -o images/aequitas/chain.png
+                echo "   Logo converted using rsvg-convert"
+                LOGO_COPIED=true
+              elif command -v convert >/dev/null 2>&1; then
+                convert -resize 256x256 -background none ../frontend/public/assets/repar-logo.svg images/aequitas/chain.png
+                echo "   Logo converted using ImageMagick"
+                LOGO_COPIED=true
+              else
+                echo "   WARNING: No SVG converter available (install librsvg or imagemagick)"
+              fi
+            fi
+          fi
+          
+          if [ "$LOGO_COPIED" = "false" ]; then
+            echo "ERROR: No logo found and no SVG converter available"
+            echo "   Checked: logo/REPAR_Coin_Logo.png"
+            echo "   Checked: frontend/src/assets/REPAR_Coin_Logo.png"
+            echo "   Checked: frontend/public/assets/repar-logo.svg"
             exit 1
+          fi
+          
+          # Verify the logo was copied/created
+          if [ -f images/aequitas/chain.png ]; then
+            echo "   Logo ready: images/aequitas/chain.png ($(stat -c%s images/aequitas/chain.png) bytes)"
           fi
           
           echo ""
