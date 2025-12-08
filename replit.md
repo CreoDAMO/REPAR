@@ -42,6 +42,12 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
     - **Multi-Layer Redundant Communications**: Mesh, Satellite, LoRa, Cellular 5G, and Offline Queue.
 - **Aequitas Autonomous AI Agent (Go)**: Provides continuous security scanning, AI-powered threat analysis, automatic vulnerability fixing, and chaos engineering.
 - **Aequitas Satellite Protocol (ASSP)**: Software-defined satellite layer for multi-layer routing, geo-redundancy, and autonomous constellation management.
+- **Mobile APK Sovereign Distribution**: Signed APK builds integrated into APEX deployment workflow
+  - Automated build & signing via GitHub Actions (Phase 5.13-5.14)
+  - APK hash included in sovereign seal for integrity verification
+  - IPFS pinning for censorship-resistant distribution
+  - Supports 10,000+ mobile validators for network sovereignty
+  - See `docs/ANDROID_KEYSTORE_GUIDE.md` for signing credential setup
 
 ### System Design Choices
 

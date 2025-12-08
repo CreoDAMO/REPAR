@@ -177,9 +177,15 @@ For centuries, we've been deliberately divided across:
   - LoRa mesh networking for local resilience
   - Real-time monitoring dashboard
 - **⚡ Production-ready:** 4,500+ lines, 35+ files, architect-approved, TestFlight-ready
+- **📦 APK Sovereign Distribution:** Signed APK builds integrated into APEX deployment workflow
+  - Automated build & signing via GitHub Actions (Phase 5.13-5.14)
+  - APK hash included in sovereign seal for integrity verification
+  - IPFS pinning for censorship-resistant distribution
+  - Supports 10,000+ mobile validators for network sovereignty
 
 **[→ See Mobile App Documentation](./mobile/README.md)**  
-**[→ See Satellite/Mobile Research](./docs/satellite-mobile-research.md)**
+**[→ See Satellite/Mobile Research](./docs/satellite-mobile-research.md)**  
+**[→ See Android Keystore Guide](./docs/ANDROID_KEYSTORE_GUIDE.md)** - APK signing credential setup
 
 ### ✅ **BLOCKCHAIN DEPLOYED** - Mainnet Ready
 - **Native Coin:** $REPAR (131T total supply, NOT a token)
@@ -282,10 +288,10 @@ All remaining gaps between development and full sovereign deployment have been *
 - ✅ Vulnerability detection + auto-patching enabled
 
 **Documentation:**
-- **[→ Full Production Gaps Report](./PRODUCTION_GAPS_IMPLEMENTATION.md)** - Complete reference
+- **[→ Full Production Gaps Report](./docs/root-md-files/PRODUCTION_GAPS_IMPLEMENTATION.md)** - Complete reference
 - **[→ Integration Architecture](./replit.md)** - System design & integration points
-- **[→ Testing Recommendations](./PRODUCTION_GAPS_IMPLEMENTATION.md#testing-recommendations)** - Validation strategy
-- **[→ Deployment Checklist](./PRODUCTION_GAPS_IMPLEMENTATION.md#deployment-checklist)** - Launch readiness
+- **[→ Testing Recommendations](./docs/root-md-files/PRODUCTION_GAPS_IMPLEMENTATION.md#testing-recommendations)** - Validation strategy
+- **[→ Deployment Checklist](./docs/root-md-files/PRODUCTION_GAPS_IMPLEMENTATION.md#deployment-checklist)** - Launch readiness
 
 **Impact:** System is now **production-deployable with zero known architectural gaps**. All 11,000+ node deployment scenarios covered.
 
@@ -339,7 +345,7 @@ QuantumSatellite(SatelliteSubstrate)         # Future
 
 - **Implementation**: [`apex/satellite_protocol.py`](./apex/satellite_protocol.py) - 250 lines, fully functional
 - **Integration**: `ace/internal/network/network.go` + `apex/consensus/distributed_apex.py`
-- **Architecture**: [`AEQUITAS_PROTOCOL_SUBSTRATE_LAYER.md`](./AEQUITAS_PROTOCOL_SUBSTRATE_LAYER.md)
+- **Architecture**: [`AEQUITAS_PROTOCOL_SUBSTRATE_LAYER.md`](./docs/root-md-files/AEQUITAS_PROTOCOL_SUBSTRATE_LAYER.md)
 
 **Why this matters:**
 - ✅ No hardware dependencies (runs TODAY)
@@ -486,9 +492,9 @@ Demonstrates APEX prosecution functionality with surgical precision:
 - ACE integration: +$30-50T (self-sovereign cloud)
 - **Current trajectory: $420-550T valuation**
 
-**[→ See ENCRYPTION FEATURES (NEW)](./ENCRYPTION_FEATURES.md)**  
+**[→ See ENCRYPTION FEATURES (NEW)](./docs/root-md-files/ENCRYPTION_FEATURES.md)**  
 **[→ See APEX Documentation](./apex/README.md)**  
-**[→ See Sovereignty Economics](./SOVEREIGNTY_ECONOMICS.md)**
+**[→ See Sovereignty Economics](./docs/root-md-files/SOVEREIGNTY_ECONOMICS.md)**
 
 ---
 
