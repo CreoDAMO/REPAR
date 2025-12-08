@@ -1998,18 +1998,69 @@ jobs:
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
   <title>Aequitas Zone - Mobile App</title>
   <style>
-    body { font-family: system-ui, sans-serif; background: #0a0a0f; color: #fff; margin: 0; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; text-align: center; padding: 40px 20px; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 40px 20px;
+    }
     h1 { color: #00d4ff; margin-bottom: 10px; }
     .tagline { color: #888; margin-bottom: 40px; }
-    .download-btn { display: inline-block; background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%); color: #fff; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-size: 18px; font-weight: bold; margin: 20px 0; transition: transform 0.2s; }
+    .download-btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #00d4ff 0%, #0066ff 100%);
+      color: #fff;
+      padding: 16px 40px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 20px 0;
+      transition: transform 0.2s;
+    }
     .download-btn:hover { transform: scale(1.05); }
-    .hash-box { background: #1a1a2e; border: 1px solid #333; border-radius: 8px; padding: 20px; margin: 30px 0; text-align: left; }
-    .hash-label { color: #00d4ff; font-size: 12px; text-transform: uppercase; margin-bottom: 8px; }
-    .hash-value { font-family: monospace; font-size: 11px; word-break: break-all; color: #aaa; }
-    .warning { background: #2a1a0a; border: 1px solid #ff9900; border-radius: 8px; padding: 15px; margin: 20px 0; }
+    .hash-box {
+      background: #1a1a2e;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 30px 0;
+      text-align: left;
+    }
+    .hash-label {
+      color: #00d4ff;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .hash-value {
+      font-family: monospace;
+      font-size: 11px;
+      word-break: break-all;
+      color: #aaa;
+    }
+    .warning {
+      background: #2a1a0a;
+      border: 1px solid #ff9900;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px 0;
+    }
     .warning-title { color: #ff9900; font-weight: bold; }
-    .instructions { text-align: left; background: #1a1a2e; border-radius: 8px; padding: 20px; margin: 30px 0; }
+    .instructions {
+      text-align: left;
+      background: #1a1a2e;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 30px 0;
+    }
     .instructions h3 { color: #00d4ff; margin-top: 0; }
     .instructions ol { color: #ccc; line-height: 1.8; }
     .sovereignty { color: #00ff88; margin-top: 40px; font-size: 14px; }
