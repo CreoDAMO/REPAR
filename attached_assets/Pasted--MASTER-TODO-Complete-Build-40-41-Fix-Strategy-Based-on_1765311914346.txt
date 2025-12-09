@@ -1,0 +1,476 @@
+# 🎯 MASTER TODO: Complete Build #40/#41 Fix Strategy
+
+Based on your latest build logs, I can see the current state clearly. Let me create the definitive TODO list.
+
+---
+
+## 📊 BUILD STATUS ANALYSIS
+
+### Build #40 Results:
+| Component | Status | Issue |
+|-----------|--------|-------|
+| Mobile APK | ✅ **FIXED** | expo-barcode-scanner removal worked |
+| AI Autonomous Agents | ❌ **FAILED** | Go build fails - binary not created |
+| Keplr Registry PR | ❌ **FAILED** | Repository clone works, but logo copy fails |
+
+### Build #41 (Current):
+- Same 2 failures continue
+- Mobile APK remains fixed ✅
+
+---
+
+## 🎯 ROOT CAUSE ANALYSIS
+
+### **Issue #1: AI Autonomous Agents Build Failure**
+
+**What the logs show:**
+```
+github.com/aequitas-protocol/ai-autonomous
+github.com/aequitas-protocol/ai-autonomous/cmd/autonomous-agent
+ERROR: Binary was not created
+```
+
+**Root Cause:** The Go module path is **wrong**. The workflow uses:
+- `github.com/aequitas-protocol/ai-autonomous`
+
+But your actual module should be:
+- `github.com/CreoDAMO/REPAR` (based on your GitHub repo)
+
+**The Fix Required:**
+1. Update `ai/autonomous/go.mod` with correct module path
+2. Update import paths in all Go files
+3. Fix workflow build commands
+
+---
+
+### **Issue #2: Keplr Logo Path Failure**
+
+**What the logs show:**
+```yaml
+if [ -f $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png ]; then
+  cp $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+```
+
+**The Problem:** Missing quotes around `$GITHUB_WORKSPACE` causes path expansion issues.
+
+**You confirmed the logo exists at:**
+- `https://github.com/CreoDAMO/REPAR/blob/main/logo/REPAR_Coin_Logo.png` ✅
+- Also available at: `frontend/public/assets/REPAR_Coin_Logo.png` ✅
+
+**The Fix Required:** Add quotes to prevent path issues.
+
+---
+
+## 📋 COMPLETE TODO LIST FOR REPLIT AGENT
+
+### ⚠️ CRITICAL CONSTRAINTS
+
+```
+❌ DO NOT MODIFY .github/workflows/ files in Replit
+❌ DO NOT touch workflow files - they must be updated on GitHub.com
+✅ ONLY fix source code and documentation in Replit
+✅ Push source code fixes to GitHub
+✅ Provide complete copy-paste ready workflow YAML
+```
+
+---
+
+### **TASK 1: Fix AI Autonomous Agents Go Module**
+
+**Status:** 🔲 Not Started
+
+**Problem:** Module path is incorrect, causing build failures.
+
+**Files to Modify:**
+
+1. **`ai/autonomous/go.mod`**
+   ```go
+   // CURRENT (WRONG):
+   module github.com/aequitas-protocol/ai-autonomous
+   
+   // CHANGE TO:
+   module github.com/CreoDAMO/REPAR/ai/autonomous
+   ```
+
+2. **`cmd/autonomous-agent/go.mod`** (if exists)
+   ```go
+   // CHANGE TO:
+   module github.com/CreoDAMO/REPAR/cmd/autonomous-agent
+   
+   // ADD require:
+   require github.com/CreoDAMO/REPAR/ai/autonomous v0.0.0
+   replace github.com/CreoDAMO/REPAR/ai/autonomous => ../../ai/autonomous
+   ```
+
+3. **`ai/autonomous/orchestrator.go`** and other Go files:
+   - Search for: `github.com/aequitas-protocol/ai-autonomous`
+   - Replace with: `github.com/CreoDAMO/REPAR/ai/autonomous`
+
+**Verification:**
+```bash
+cd ai/autonomous
+go mod tidy
+go build .
+
+# Should output: No errors, binary created
+```
+
+**Success Criteria:**
+- [ ] `go.mod` has correct module path
+- [ ] All imports updated
+- [ ] `go mod tidy` runs without errors
+- [ ] Local build succeeds
+
+---
+
+### **TASK 2: Update GITHUB_WORKFLOW_FIXES.md**
+
+**Status:** 🔲 Not Started
+
+**Action:** Update the document with:
+
+1. **Add Build #40/#41 section at the top**
+2. **Include complete corrected workflow YAML**
+3. **Highlight the two specific fixes**
+
+**Template to add:**
+
+```markdown
+## BUILD #40 & #41 FIXES (December 9, 2025)
+
+**Build Status:** Failed (2 of 3 jobs failing)
+**Successful:** Mobile APK ✅ (expo-barcode-scanner removal worked)
+**Failing:** AI Agents Build, Keplr Registry PR
+
+---
+
+### Issue #1: AI Autonomous Agents Go Build - Module Path Error
+
+**Error Message:**
+```
+github.com/aequitas-protocol/ai-autonomous
+ERROR: Binary was not created
+Exit code: 1
+```
+
+**Root Cause:** Incorrect Go module path in `go.mod` files.
+
+**Source Code Fix (Applied in Replit):**
+
+1. **File:** `ai/autonomous/go.mod`
+   ```diff
+   - module github.com/aequitas-protocol/ai-autonomous
+   + module github.com/CreoDAMO/REPAR/ai/autonomous
+   ```
+
+2. **File:** `cmd/autonomous-agent/go.mod`
+   ```go
+   module github.com/CreoDAMO/REPAR/cmd/autonomous-agent
+   
+   require github.com/CreoDAMO/REPAR/ai/autonomous v0.0.0
+   replace github.com/CreoDAMO/REPAR/ai/autonomous => ../../ai/autonomous
+   ```
+
+3. **All Go files:** Updated import paths from `github.com/aequitas-protocol/*` to `github.com/CreoDAMO/REPAR/*`
+
+**Workflow Fix Required:**
+None - source code fix resolves this.
+
+---
+
+### Issue #2: Keplr Registry PR - Logo Path Variable Expansion
+
+**Error Context:**
+```bash
+if [ -f $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png ]; then
+  cp $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+```
+
+**Root Cause:** Missing quotes around `$GITHUB_WORKSPACE` can cause path expansion issues in some shells.
+
+**Workflow Fix Required:** Add quotes and improve fallback logic.
+
+**Location in Workflow:** 
+- Job: `keplr-registry-pr`
+- Step: `Create chain configuration`
+- Lines: ~2340-2380
+
+**Find:**
+```yaml
+if [ -f $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png ]; then
+  cp $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+```
+
+**Replace with:**
+```yaml
+# Logo exists at multiple locations, try all with proper quoting
+LOGO_FOUND=false
+
+# Location 1: Primary logo directory
+if [ -f "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" ]; then
+  cp "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
+  echo "✅ Logo copied from logo/REPAR_Coin_Logo.png"
+  LOGO_FOUND=true
+# Location 2: Frontend assets
+elif [ -f "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" ]; then
+  cp "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+  echo "✅ Logo copied from frontend/public/assets/REPAR_Coin_Logo.png"
+  LOGO_FOUND=true
+# Location 3: SVG fallback (convert to PNG)
+elif [ -f "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" ]; then
+  echo "⚠️ PNG not found, converting SVG..."
+  # Install ImageMagick if needed
+  if ! command -v convert &> /dev/null; then
+    sudo apt-get update && sudo apt-get install -y imagemagick
+  fi
+  convert -resize 256x256 -background none \
+    "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" \
+    images/aequitas/chain.png
+  echo "✅ Logo converted from SVG"
+  LOGO_FOUND=true
+fi
+
+# Verify logo was found
+if [ "$LOGO_FOUND" = false ]; then
+  echo "❌ ERROR: Logo not found in any location"
+  echo "Searched locations:"
+  echo "  - $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png"
+  echo "  - $GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png"
+  echo "  - $GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg"
+  ls -la "$GITHUB_WORKSPACE/logo/" || echo "  logo/ directory not found"
+  exit 1
+fi
+
+# Verify copied file size
+LOGO_SIZE=$(wc -c < images/aequitas/chain.png | tr -d ' ')
+echo "Logo size: $LOGO_SIZE bytes"
+if [ "$LOGO_SIZE" -lt 1000 ]; then
+  echo "❌ ERROR: Logo file too small ($LOGO_SIZE bytes)"
+  exit 1
+fi
+```
+
+---
+
+### COMPLETE CORRECTED WORKFLOW
+
+**File:** `docs/CORRECTED_apex-autonomous-deployment.yml`
+
+**Instructions:**
+1. After pushing source code fixes to GitHub
+2. Go to: https://github.com/CreoDAMO/REPAR/blob/main/.github/workflows/apex-autonomous-deployment.yml
+3. Click "Edit this file" (pencil icon)
+4. Replace entire contents with the workflow below
+5. Commit message: "fix: Build #40/#41 - AI module path + Keplr logo quotes"
+
+**Changes Applied:**
+- ✅ Keplr logo path with quotes and fallbacks (lines ~2345)
+- ✅ All other components remain unchanged
+
+[COMPLETE WORKFLOW YAML FOLLOWS - 2900+ lines]
+```
+
+---
+
+### **TASK 3: Generate Complete Workflow YAML**
+
+**Status:** 🔲 Not Started
+
+**Action:** Create `docs/CORRECTED_apex-autonomous-deployment.yml` with these specific fixes:
+
+**Change #1: Keplr Logo Path (Line ~2345)**
+
+Find the section:
+```yaml
+# Copy chain logo (256x256 PNG required by Keplr)
+```
+
+Replace the entire logo copy logic with the corrected version from Task 2 above.
+
+**Success Criteria:**
+- [ ] File created at `docs/CORRECTED_apex-autonomous-deployment.yml`
+- [ ] Logo path has quotes: `"$GITHUB_WORKSPACE/logo/..."`
+- [ ] Fallback to frontend assets included
+- [ ] SVG conversion fallback included
+- [ ] File is exactly 2900-2930 lines (full workflow)
+
+---
+
+### **TASK 4: Commit Source Code Fixes**
+
+**Status:** 🔲 Not Started
+
+**Files to Stage:**
+```bash
+git add ai/autonomous/go.mod
+git add ai/autonomous/go.sum
+git add ai/autonomous/*.go  # All Go files with updated imports
+git add cmd/autonomous-agent/go.mod  # If exists
+git add cmd/autonomous-agent/*.go  # If exists
+git add docs/CORRECTED_apex-autonomous-deployment.yml
+git add GITHUB_WORKFLOW_FIXES.md
+```
+
+**Commit Message:**
+```
+fix(build-40-41): Fix AI agents Go module path and update workflow
+
+- AI Agents: Change module from aequitas-protocol to CreoDAMO/REPAR
+- AI Agents: Update all import paths to match repo structure
+- AI Agents: Fix go.mod and regenerate go.sum
+- Workflow: Add corrected YAML with quoted logo paths
+- Docs: Add Build #40/#41 fixes to GITHUB_WORKFLOW_FIXES.md
+
+Related: Build #40, Build #41 failures
+Fixes: AI agents Go build, Keplr logo path expansion
+```
+
+**Success Criteria:**
+- [ ] Only source code and docs staged (NO workflow files)
+- [ ] Commit message is descriptive
+- [ ] Ready to push to GitHub
+
+---
+
+### **TASK 5: Push to GitHub**
+
+**Status:** 🔲 Not Started
+
+```bash
+git push origin main
+```
+
+**Success Criteria:**
+- [ ] Push completes successfully
+- [ ] Source code fixes visible on GitHub
+- [ ] `docs/CORRECTED_apex-autonomous-deployment.yml` available on GitHub
+
+---
+
+### **TASK 6: Generate Human Instructions**
+
+**Status:** 🔲 Not Started
+
+**Action:** Create a final summary document showing:
+
+```markdown
+## Build #40/#41 Fixes - Ready to Apply
+
+### ✅ Completed in Replit (Pushed to GitHub)
+
+1. **AI Autonomous Agents - Go Module Path**
+   - Fixed: `ai/autonomous/go.mod` (module path corrected)
+   - Fixed: All import paths updated
+   - Status: ✅ Pushed to GitHub
+
+2. **Documentation**
+   - Updated: `GITHUB_WORKFLOW_FIXES.md`
+   - Created: `docs/CORRECTED_apex-autonomous-deployment.yml`
+   - Status: ✅ Pushed to GitHub
+
+---
+
+### 🔧 Manual Action Required on GitHub
+
+**You must manually update the workflow file on GitHub.com:**
+
+1. **Navigate to:**
+   https://github.com/CreoDAMO/REPAR/blob/main/.github/workflows/apex-autonomous-deployment.yml
+
+2. **Click:** "Edit this file" (pencil icon at top right)
+
+3. **Replace entire file contents with:**
+   Copy from: https://github.com/CreoDAMO/REPAR/blob/main/docs/CORRECTED_apex-autonomous-deployment.yml
+
+4. **Commit message:**
+   ```
+   fix: Build #40/#41 workflow - add quotes to Keplr logo paths
+   ```
+
+5. **Commit directly to main**
+
+6. **Trigger Build #42:**
+   - Go to Actions tab
+   - Click "APEX Autonomous Constellation Deployment"
+   - Click "Run workflow"
+   - Select branch: main
+   - Click "Run workflow"
+
+---
+
+### 📊 Expected Build #42 Results
+
+| Job | Build #40 | Build #41 | Expected #42 |
+|-----|-----------|-----------|--------------|
+| Mobile APK | ✅ Fixed | ✅ Fixed | ✅ Should pass |
+| AI Agents | ❌ Failed | ❌ Failed | ✅ Should pass |
+| Keplr PR | ❌ Failed | ❌ Failed | ✅ Should pass |
+
+**All 3 jobs should pass** after applying the workflow fix.
+
+---
+
+### 🎯 What Was Fixed
+
+**Issue #1: AI Autonomous Agents**
+- **Problem:** Wrong Go module path (`aequitas-protocol` instead of `CreoDAMO/REPAR`)
+- **Solution:** Updated `go.mod` and all import statements
+- **Result:** Build will succeed once pushed
+
+**Issue #2: Keplr Registry PR**
+- **Problem:** Unquoted `$GITHUB_WORKSPACE` causing path expansion issues
+- **Solution:** Added quotes, multiple fallback locations, proper error handling
+- **Result:** Logo will be found and copied successfully
+
+---
+
+### ⏱️ Time Estimate
+
+- Review this document: 5 min
+- Apply workflow changes on GitHub: 5 min
+- Trigger Build #42: 2 min
+- Monitor build: 25 min
+- **Total: ~35-40 minutes**
+
+---
+
+All fixes are ready. Push the source code changes, then manually update the workflow on GitHub.
+```
+
+**Success Criteria:**
+- [ ] Instructions are crystal clear
+- [ ] Distinguishes between completed and manual tasks
+- [ ] Provides GitHub URLs for easy navigation
+- [ ] Includes time estimates
+
+---
+
+## 🎯 FINAL VERIFICATION CHECKLIST
+
+Before marking complete:
+
+- [ ] AI Go module paths corrected in all files
+- [ ] Complete workflow YAML generated
+- [ ] GITHUB_WORKFLOW_FIXES.md updated
+- [ ] Source code committed (NOT workflow)
+- [ ] Pushed to GitHub
+- [ ] Human instructions generated
+- [ ] NO workflow files modified in Replit
+
+---
+
+## 📝 KEY SUCCESS METRICS
+
+**This agent succeeds if:**
+
+1. ✅ Human can copy-paste workflow from docs folder
+2. ✅ Go module paths are correct (CreoDAMO/REPAR)
+3. ✅ Logo paths have quotes in workflow
+4. ✅ Build #42 passes all 3 jobs
+5. ✅ Zero manual debugging required
+
+---
+
+**End of Master TODO**
+
+This is the complete, authoritative guide for fixing Build #40/#41 failures.

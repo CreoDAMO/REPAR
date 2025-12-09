@@ -1,0 +1,1202 @@
+﻿# GITHUB WORKFLOW BUILD SUMMARY & ERRORS
+
+
+Navigation Menu
+
+
+CreoDAMOREPAR
+
+
+Code
+
+
+Issues1
+
+
+Pull requests
+
+
+Discussions
+
+
+Actions
+
+
+Projects
+
+
+Wiki
+
+
+Security7
+
+
+APEX Autonomous Constellation Deployment
+
+
+APEX Autonomous Constellation Deployment #40
+
+
+Jobs
+
+
+Run details
+
+
+Manually triggered 3 hours ago
+
+
+￼CreoDAMO
+
+
+⁠ b86583e
+
+
+main
+
+
+StatusFailure
+
+
+Total duration23m 46s
+
+
+Artifacts7
+
+
+Validate APEX Autonomous Systems summary
+
+
+APEX Autonomous Systems Ready
+
+
+Capabilities:
+
+
+Self-Healing (auto-restart failed nodes)
+
+
+Self-Monitoring (health checks every 30s)
+
+
+Self-Scaling (auto-add validators)
+
+
+Satellite Routing (cross-node coordination)
+
+
+Binary Hash: 2ca60424606b2765369cb40834ffcf8d02c920e5e040f86bbc8e83bf72cf4a00
+
+
+Job summary generated at run-time
+
+
+Deploy Founder Node summary
+
+
+Founder Node Deployed
+
+
+Node Details:
+
+
+Name: aequitas-founder-01
+
+
+Role: Genesis Validator (Founder)
+
+
+Chain ID: aequitas-1
+
+
+Network: mainnet
+
+
+Deployment: bare-metal
+
+
+Infrastructure:
+
+
+IP: 135.232.208.145
+
+
+Source: sovereign-fallback
+
+
+Genesis Allocations:
+
+
+Founder Vested: 15.72T REPAR (12%)
+
+
+Founder Endowment: 7.86T REPAR (6%, 8-year lock)
+
+
+Endpoints:
+
+
+RPC: http://bare-metal-host:26657
+
+
+Job summary generated at run-time
+
+
+Verify Constellation summary
+
+
+Constellation Deployed
+
+
+Deployment: bare-metal
+Network: mainnet
+Cluster Size: 7 nodes
+Infrastructure IP: 135.232.208.145
+
+
+NodeRoleStatusaequitas-founder-01FounderDeployedaequitas-validator-02ValidatorDeployedaequitas-validator-03ValidatorDeployedaequitas-validator-04ValidatorDeployedaequitas-validator-05ValidatorDeployedaequitas-validator-06ValidatorDeployedaequitas-validator-07ValidatorDeployed
+
+
+Job summary generated at run-time
+
+
+Deploy VM Infrastructure (ACE/AVM) summary
+
+
+VM Infrastructure Deployed
+
+
+ACE Endpoint: https://ace.aequitasprotocol.zone
+AVM Endpoint: https://vm.aequitasprotocol.zone
+
+
+Job summary generated at run-time
+
+
+Configure DNS (Sovereign Migration) summary
+
+
+DNS Migration Complete
+
+
+Migration Details:
+
+
+Removed old DigitalOcean IPs: 159.203.92.230, 76.223.105.230
+
+
+Updated to sovereign IP: 135.232.208.145
+
+
+IP Source: sovereign-fallback
+
+
+Updated Subdomains:
+
+
+SubdomainPurposeProxied@ (root)Main websiteYeswwwWebsite aliasYesappWeb applicationYesrpcBlockchain RPCYesapiREST APIYesexplorerBlock explorerYesgrpcgRPC endpointNoaceACE dashboardYesace-metricsPrometheus metricsYesace-aiAI coordinationYesvmAVM interfaceYessovereignSovereign endpointYes
+
+
+Job summary generated at run-time
+
+
+Build Mobile APK (Sovereign Distribution) summary
+
+
+Mobile APK Built (Sovereign Distribution)
+
+
+Version: v1.0.0-b86583e
+SHA-256: 58d027cd07c627b2199b4710679d785ee13dc1535469c018bd59282286332dfa
+Signed: true
+IPFS: ipfs-not-installed
+
+
+Distribution Strategy:
+
+
+Primary: Direct APK download from https://aequitasprotocol.zone/mobile/download
+
+
+Secondary: IPFS decentralized distribution
+
+
+Optional: App stores (Google Play, etc.) as convenience, not requirement
+
+
+Sovereignty Principle: No app store gatekeepers required. Citizens can download directly.
+
+
+Job summary generated at run-time
+
+
+DNS Health Validation summary
+
+
+DNS Health Validation
+
+
+Status: 0/4 critical domains pointing to sovereign infrastructure
+
+
+Expected IP: 135.232.208.145
+
+
+Job summary generated at run-time
+
+
+Sovereign Infrastructure Seal summary
+
+
+Sovereign Infrastructure Seal
+
+
+Seal Hash: aa272f284a0c47a982adc681d31e7b2b86d0a2c5b26ff6236ffeb26a6b9daa2c
+Timestamp: 2025-12-09T15:05:59Z
+
+
+This cryptographic seal verifies the integrity of the entire deployment.
+
+
+Job summary generated at run-time
+
+
+Deploy-Everywhere Global Propagation summary
+
+
+Deploy-Everywhere Global Propagation
+
+
+Status: Global propagation initiated
+
+
+Propagation Targets:
+
+
+DNS: Cloudflare (primary), Google, Quad9, OpenDNS
+
+
+Wallet: Keplr Registry PR submitted
+
+
+Infrastructure: Sovereign ACE/AVM
+
+
+Sovereign Seal: aa272f284a0c47a982adc681d31e7b2b86d0a2c5b26ff6236ffeb26a6b9daa2c
+
+
+Job summary generated at run-time
+
+
+Deployment Summary summary
+
+
+APEX Autonomous Deployment Complete
+
+
+Core Infrastructure
+
+
+ComponentStatusBinary BuildsuccessAPEX ValidationsuccessFounder NodesuccessConstellation (6 nodes)successVerificationsuccessVM Infrastructure (ACE/AVM)success
+
+
+Services Build
+
+
+ServiceBuild StatusAI Autonomous AgentsfailureCerberus Security AuditorsuccessBackend APIsuccessDexplorer (Block Explorer)successFrontendsuccess
+
+
+Services Deployment
+
+
+ServiceDeploy StatusEndpointAI AutonomousskippedACE/AVM InternalCerberus AuditorskippedBackend APIskippedDexplorerskippedFrontendskippedFHE VerificationskippedDocumentation Verified
+
+
+Network & Integration
+
+
+ComponentStatusDNS ConfigurationsuccessDNS HealthsuccessKeplr PRfailureSovereign SealsuccessGlobal Propagationsuccess
+
+
+Infrastructure
+
+
+Chain ID: aequitas-1
+
+
+Network: mainnet
+
+
+Deployment: bare-metal
+
+
+Infrastructure IP: 135.232.208.145
+
+
+IP Source: sovereign-fallback
+
+
+Cryptographic Verification
+
+
+Binary Hash: 2ca60424606b2765369cb40834ffcf8d02c920e5e040f86bbc8e83bf72cf4a00
+
+
+Genesis Hash: 7ef15813a009565f0632876af3248b2c8dbad032503b38a8e05cb5b8d1f63083
+
+
+Sovereign Seal: aa272f284a0c47a982adc681d31e7b2b86d0a2c5b26ff6236ffeb26a6b9daa2c
+
+
+Deployed by APEX Autonomous System - b86583effd0d54f7a20f80deba3bdc1e18780327
+
+
+Job summary generated at run-time
+
+
+Annotations
+
+
+2 errors and 4 warnings
+
+
+Create Keplr Registry PR
+
+
+Process completed with exit code 1.
+
+
+Build AI Autonomous Agents (Go)
+
+
+Process completed with exit code 1.
+
+
+Build Aequitas Blockchain Binary
+
+
+Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
+
+
+Build AI Autonomous Agents (Go)
+
+
+Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
+
+
+Build Mobile APK (Sovereign Distribution)
+
+
+Retention days cannot be greater than the maximum allowed retention set within the repository. Using 90 instead.
+
+
+Sovereign Infrastructure Seal
+
+
+Retention days cannot be greater than the maximum allowed retention set within the repository. Using 90 instead.
+
+
+Artifacts
+
+
+Produced during runtime
+
+
+NameSizeDigest
+
+
+aequitasd-v1.0.0-b86583e
+
+
+60.8 MB
+
+
+sha256:9f8b9fc76114e5b44adcaf1837ad2466d3580b9d30f07c1520bfd1d6067fb646
+
+
+backend-api
+
+
+17.4 MB
+
+
+sha256:de2d5a7396956d3483abfcb9d54ba45507548b509e58530da44ed023dfa1aa05
+
+
+cerberus-auditor
+
+
+114 KB
+
+
+sha256:dadfd17330012b7f225f9e89e377d28cc475367d3f8aa6134b81014986a4f71a
+
+
+dexplorer-dist
+
+
+1.52 MB
+
+
+sha256:42cb486812dce5195796b92964b7318dbdfb0c3acff7c8d6558360aed3606b27
+
+
+frontend-dist
+
+
+3.22 MB
+
+
+sha256:777dbcc07dc41a11256ee79467592ff1109d582aed01cce1478d9706992de009
+
+
+mobile-apk-v1.0.0-b86583e
+
+
+40.6 MB
+
+
+sha256:264c67b3dcd39ed92c6c863bb0c9af2a300d2c05a7be681d2abe561cf028b320
+
+
+sovereign-seal-20067418326
+
+
+682 Bytes
+
+
+sha256:b68eba40b8c922d2e7ad742261758332ded477729849d073b95eedd4f150d4ad
+
+
+_________________________________
+
+
+
+
+# THE ERRORS
+
+
+Navigation Menu
+CreoDAMO
+REPAR
+* Code
+* Issues1
+* Pull requests
+* Discussions
+* Actions
+* Projects
+* Wiki
+* Security7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #41
+* * Jobs
+* * Run details
+Create Keplr Registry PR
+failed 1 minute ago in 25s
+1s
+8s
+0s
+0s
+0s
+0s
+13s
+Run if [ -z "$GH_TOKEN" ]; then
+
+
+============================================================
+
+
+  FORKING KEPLR CHAIN REGISTRY
+
+
+============================================================
+
+
+  Authenticated as: CreoDAMO
+
+
+Forking chainapsis/keplr-chain-registry...
+
+
+  Fork already exists, cloning...
+
+
+Clone failed
+
+
+origin        https://github.com/CreoDAMO/REPAR (fetch)
+
+
+origin        https://github.com/CreoDAMO/REPAR (push)
+
+
+Your branch is up to date with 'origin/main'.
+
+
+HEAD is now at 383ff98c Merge pull request #1352 from Divine-Ray-Coin/divine-testnet
+
+
+  Fork configured successfully
+
+
+  Origin: CreoDAMO/keplr-chain-registry (your fork)
+
+
+  Upstream: chainapsis/keplr-chain-registry (target)
+
+
+============================================================
+0s
+Run if [ ! -d keplr-chain-registry ]; then
+
+
+ if [ ! -d keplr-chain-registry ]; then
+
+
+  echo "Registry not cloned - skipping"
+
+
+  exit 0
+
+
+ fi
+
+
+ 
+
+
+ cd keplr-chain-registry
+
+
+ 
+
+
+ # CRITICAL: Keplr uses flat file structure: cosmos/{chain-identifier}.json
+
+
+ # NOT cosmos/{chain-identifier}/chain.json
+
+
+ # Chain identifier = chainId without version: aequitas-1 -> aequitas
+
+
+ 
+
+
+ mkdir -p cosmos
+
+
+ mkdir -p images/aequitas
+
+
+ 
+
+
+ # Create chain.json with CORRECTED structure per Keplr 2025 requirements
+
+
+ # CRITICAL FIX: coinDecimals is 6 (urepar -> repar = 10^6), NOT 18
+
+
+ # Using printf to avoid YAML heredoc parsing issues
+
+
+ printf '%s\n' '{' \
+
+
+  '  "chainId": "aequitas-1",' \
+
+
+  '  "chainName": "Aequitas Protocol",' \
+
+
+  '  "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+
+
+  '  "rpc": "https://rpc.aequitasprotocol.zone",' \
+
+
+  '  "rest": "https://api.aequitasprotocol.zone",' \
+
+
+  '  "nodeProvider": {' \
+
+
+  '    "name": "Aequitas Foundation",' \
+
+
+  '    "email": "validators@aequitasprotocol.zone",' \
+
+
+  '    "website": "https://aequitasprotocol.zone"' \
+
+
+  '  },' \
+
+
+  '  "bip44": {' \
+
+
+  '    "coinType": 118' \
+
+
+  '  },' \
+
+
+  '  "bech32Config": {' \
+
+
+  '    "bech32PrefixAccAddr": "repar",' \
+
+
+  '    "bech32PrefixAccPub": "reparpub",' \
+
+
+  '    "bech32PrefixValAddr": "reparvaloper",' \
+
+
+  '    "bech32PrefixValPub": "reparvaloperpub",' \
+
+
+  '    "bech32PrefixConsAddr": "reparvalcons",' \
+
+
+  '    "bech32PrefixConsPub": "reparvalconspub"' \
+
+
+  '  },' \
+
+
+  '  "currencies": [' \
+
+
+  '    {' \
+
+
+  '      "coinDenom": "REPAR",' \
+
+
+  '      "coinMinimalDenom": "urepar",' \
+
+
+  '      "coinDecimals": 6,' \
+
+
+  '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+
+
+  '    }' \
+
+
+  '  ],' \
+
+
+  '  "feeCurrencies": [' \
+
+
+  '    {' \
+
+
+  '      "coinDenom": "REPAR",' \
+
+
+  '      "coinMinimalDenom": "urepar",' \
+
+
+  '      "coinDecimals": 6,' \
+
+
+  '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+
+
+  '      "gasPriceStep": {' \
+
+
+  '        "low": 0.01,' \
+
+
+  '        "average": 0.025,' \
+
+
+  '        "high": 0.04' \
+
+
+  '      }' \
+
+
+  '    }' \
+
+
+  '  ],' \
+
+
+  '  "stakeCurrency": {' \
+
+
+  '    "coinDenom": "REPAR",' \
+
+
+  '    "coinMinimalDenom": "urepar",' \
+
+
+  '    "coinDecimals": 6,' \
+
+
+  '    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+
+
+  '  },' \
+
+
+  '  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",' \
+
+
+  '  "features": ["ibc-transfer", "ibc-go"]' \
+
+
+  '}' > cosmos/aequitas.json
+
+
+ 
+
+
+ # NOTE: assetlist.json is NOT a Keplr format - it's for cosmos/chain-registry
+
+
+ # Keplr only needs chain.json + image
+
+
+ 
+
+
+ # Copy chain logo (256x256 PNG required by Keplr)
+
+
+ # Try multiple locations and convert SVG if needed
+
+
+ LOGO_COPIED=false
+
+
+ 
+
+
+ if [ -f $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png ]; then
+
+
+  cp $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+
+
+  echo "   Logo copied from logo/REPAR_Coin_Logo.png"
+
+
+  LOGO_COPIED=true
+
+
+ elif [ -f $GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png ]; then
+
+
+  cp $GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png images/aequitas/chain.png
+
+
+  echo "   Logo copied from frontend/src/assets/REPAR_Coin_Logo.png"
+
+
+  LOGO_COPIED=true
+
+
+ fi
+
+
+ 
+
+
+ # If no PNG found, try to convert SVG to PNG
+
+
+ if [ "$LOGO_COPIED" = "false" ]; then
+
+
+  if [ -f $GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg ]; then
+
+
+    echo "   Converting SVG to PNG (256x256)..."
+
+
+    # Try rsvg-convert first, then ImageMagick
+
+
+    if command -v rsvg-convert >/dev/null 2>&1; then
+
+
+      rsvg-convert -w 256 -h 256 $GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg -o images/aequitas/chain.png
+
+
+      echo "   Logo converted using rsvg-convert"
+
+
+      LOGO_COPIED=true
+
+
+    elif command -v convert >/dev/null 2>&1; then
+
+
+      convert -resize 256x256 -background none $GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg images/aequitas/chain.png
+
+
+      echo "   Logo converted using ImageMagick"
+
+
+
+
+_________________________________
+
+
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+* Code
+* Issues1
+* Pull requests
+* Discussions
+* Actions
+* Projects
+* Wiki
+* Security7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #41
+* * Jobs
+* * Run details
+Annotations
+1 error and 1 warning
+Build AI Autonomous Agents (Go)
+failed 4 minutes ago in 32s
+2s
+4s
+9s
+14s
+internal/nettrace
+
+
+github.com/lib/pq/oid
+
+
+log/internal
+
+
+iter
+
+
+internal/weak
+
+
+sync
+
+
+internal/reflectlite
+
+
+slices
+
+
+internal/bisect
+
+
+internal/testlog
+
+
+internal/singleflight
+
+
+errors
+
+
+sort
+
+
+internal/godebug
+
+
+internal/oserror
+
+
+syscall
+
+
+io
+
+
+strconv
+
+
+bytes
+
+
+runtime/cgo
+
+
+path
+
+
+reflect
+
+
+math/rand/v2
+
+
+time
+
+
+internal/syscall/unix
+
+
+internal/syscall/execenv
+
+
+strings
+
+
+bufio
+
+
+hash
+
+
+crypto
+
+
+context
+
+
+io/fs
+
+
+internal/poll
+
+
+internal/filepathlite
+
+
+crypto/md5
+
+
+crypto/cipher
+
+
+crypto/internal/boring
+
+
+crypto/sha256
+
+
+os
+
+
+internal/fmtsort
+
+
+crypto/aes
+
+
+encoding/binary
+
+
+crypto/des
+
+
+crypto/internal/edwards25519/field
+
+
+encoding/base64
+
+
+crypto/internal/nistec/fiat
+
+
+fmt
+
+
+embed
+
+
+crypto/internal/randutil
+
+
+math/rand
+
+
+crypto/sha512
+
+
+crypto/internal/edwards25519
+
+
+crypto/hmac
+
+
+vendor/golang.org/x/crypto/chacha20
+
+
+database/sql/driver
+
+
+encoding/json
+
+
+math/big
+
+
+database/sql
+
+
+crypto/internal/nistec
+
+
+crypto/ecdh
+
+
+vendor/golang.org/x/crypto/internal/poly1305
+
+
+vendor/golang.org/x/sys/cpu
+
+
+vendor/golang.org/x/crypto/chacha20poly1305
+
+
+vendor/golang.org/x/crypto/hkdf
+
+
+vendor/golang.org/x/crypto/sha3
+
+
+crypto/rc4
+
+
+crypto/sha1
+
+
+encoding/hex
+
+
+encoding/pem
+
+
+vendor/golang.org/x/net/dns/dnsmessage
+
+
+crypto/elliptic
+
+
+crypto/internal/bigmod
+
+
+crypto/internal/boring/bbig
+
+
+encoding/asn1
+
+
+crypto/rand
+
+
+crypto/dsa
+
+
+crypto/ed25519
+
+
+crypto/internal/hpke
+
+
+crypto/internal/mlkem768
+
+
+crypto/rsa
+
+
+internal/concurrent
+
+
+crypto/x509/pkix
+
+
+vendor/golang.org/x/crypto/cryptobyte
+
+
+unique
+
+
+net/url
+
+
+path/filepath
+
+
+net/netip
+
+
+crypto/ecdsa
+
+
+github.com/lib/pq/scram
+
+
+io/ioutil
+
+
+os/user
+
+
+regexp/syntax
+
+
+log
+
+
+net
+
+
+os/signal
+
+
+regexp
+
+
+crypto/x509
+
+
+crypto/tls
+
+
+github.com/lib/pq
+
+
+github.com/aequitas-protocol/ai-autonomous
+
+
+github.com/aequitas-protocol/ai-autonomous/cmd/autonomous-agent
+
+
+ERROR: Binary was not created
+
+
+Error: Process completed with exit code 1.
+
+
+
+
+__________________________________
+
+
+# ALL LOGO GITHUB URL’S & PATHS
+
+
+https://github.com/CreoDAMO/REPAR/blob/main/frontend/public/assets/REPAR_Coin_Logo.png
+
+
+https://github.com/CreoDAMO/REPAR/blob/main/frontend/public/assets/repar-logo.svg
+
+
+https://github.com/CreoDAMO/REPAR/blob/main/logo/REPAR_Coin_Logo.png

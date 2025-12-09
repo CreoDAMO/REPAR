@@ -1,4 +1,4 @@
-module github.com/aequitas-protocol/ai-autonomous
+module github.com/CreoDAMO/REPAR/ai/autonomous
 
 go 1.21
 

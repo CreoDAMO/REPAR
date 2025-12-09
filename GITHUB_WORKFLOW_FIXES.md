@@ -1,7 +1,129 @@
 # APEX Autonomous 7-Node Constellation Deployment
 
 **Created:** December 3, 2025  
-**Updated:** December 9, 2025 - BUILD #38 FIXES (Source Code Bugs + Workflow Path Fix)
+**Updated:** December 9, 2025 - BUILD #40/#41 FIXES (Go Module Path + Keplr Logo Quoted Paths)
+
+---
+
+## BUILD #40 & #41 FIXES (December 9, 2025)
+
+**Build Status:** 2 of 3 jobs failing  
+**Successful:** Mobile APK ✅ (expo-barcode-scanner removal worked)  
+**Failing:** AI Autonomous Agents (Go), Keplr Registry PR
+
+### Summary of Build #40/#41 Issues
+
+| Issue | Error | Root Cause | Fix Applied |
+|-------|-------|------------|-------------|
+| AI Autonomous Agents | `Binary was not created` + exit code 1 | Wrong Go module path `github.com/aequitas-protocol/ai-autonomous` | ✅ Changed to `github.com/CreoDAMO/REPAR/ai/autonomous` |
+| Keplr Registry PR | Exit code 1 (logo copy fails) | Unquoted `$GITHUB_WORKSPACE` causing path expansion issues | ✅ Added quotes to all paths |
+| Mobile APK | ✅ FIXED | expo-barcode-scanner removed in Build #38 | Already working |
+
+---
+
+### FIX #1: AI Autonomous Agents - Go Module Path ✅ APPLIED
+
+**Problem:** The Go module path in `go.mod` was `github.com/aequitas-protocol/ai-autonomous` which doesn't match the actual GitHub repository structure `github.com/CreoDAMO/REPAR/ai/autonomous`.
+
+**Error from Build Log:**
+```
+github.com/aequitas-protocol/ai-autonomous
+github.com/aequitas-protocol/ai-autonomous/cmd/autonomous-agent
+ERROR: Binary was not created
+Exit code: 1
+```
+
+**Files Changed:**
+
+1. **`ai/autonomous/go.mod`**
+   ```diff
+   - module github.com/aequitas-protocol/ai-autonomous
+   + module github.com/CreoDAMO/REPAR/ai/autonomous
+   ```
+
+2. **`ai/autonomous/cmd/autonomous-agent/main.go`**
+   ```diff
+   - "github.com/aequitas-protocol/ai-autonomous"
+   + autonomous "github.com/CreoDAMO/REPAR/ai/autonomous"
+   ```
+
+3. **`cmd/autonomous-agent/main.go`**
+   ```diff
+   - "github.com/REPAR/aequitas/ai/autonomous"
+   + "github.com/CreoDAMO/REPAR/ai/autonomous"
+   ```
+
+---
+
+### FIX #2: Keplr Registry PR - Quoted Logo Paths ✅ APPLIED
+
+**Problem:** The `$GITHUB_WORKSPACE` variable was not quoted in the logo copy commands, causing potential path expansion issues in shell scripts.
+
+**Error Context:**
+```bash
+# BEFORE (unquoted - problematic):
+if [ -f $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png ]; then
+  cp $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+```
+
+**Solution:** Added double quotes around all `$GITHUB_WORKSPACE` path references and added an additional fallback path.
+
+**Location in Workflow:** 
+- Job: `keplr-registry-pr`  
+- Step: `Create chain configuration`
+- Lines: ~2416-2452
+
+**Changes Applied in `docs/CORRECTED_apex-autonomous-deployment.yml`:**
+
+```bash
+# AFTER (properly quoted + extra fallback):
+if [ -f "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" ]; then
+  cp "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
+  echo "   Logo copied from logo/REPAR_Coin_Logo.png"
+  LOGO_COPIED=true
+elif [ -f "$GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png" ]; then
+  cp "$GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+  echo "   Logo copied from frontend/src/assets/REPAR_Coin_Logo.png"
+  LOGO_COPIED=true
+elif [ -f "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" ]; then
+  cp "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+  echo "   Logo copied from frontend/public/assets/REPAR_Coin_Logo.png"
+  LOGO_COPIED=true
+fi
+```
+
+---
+
+### HOW TO APPLY FIXES
+
+#### Step 1: Source Code (Already Applied in Replit)
+Push these changes to GitHub:
+- `ai/autonomous/go.mod` - Module path corrected
+- `ai/autonomous/cmd/autonomous-agent/main.go` - Import path corrected
+- `cmd/autonomous-agent/main.go` - Import path corrected
+- `docs/CORRECTED_apex-autonomous-deployment.yml` - Quoted paths + extra fallback
+
+#### Step 2: Workflow (Manual Update Required on GitHub)
+
+1. Navigate to: https://github.com/CreoDAMO/REPAR/blob/main/.github/workflows/apex-autonomous-deployment.yml
+
+2. Click "Edit this file" (pencil icon)
+
+3. Replace entire contents with: `docs/CORRECTED_apex-autonomous-deployment.yml`
+
+4. Commit message: `fix: Build #40/#41 - Go module path + quoted Keplr logo paths`
+
+5. Trigger Build #42 from Actions tab
+
+---
+
+### Expected Build #42 Results
+
+| Job | Build #40 | Build #41 | Expected #42 |
+|-----|-----------|-----------|--------------|
+| Mobile APK | ✅ Fixed | ✅ Fixed | ✅ Should pass |
+| AI Agents | ❌ Failed | ❌ Failed | ✅ Should pass |
+| Keplr PR | ❌ Failed | ❌ Failed | ✅ Should pass |
 
 ---
 
