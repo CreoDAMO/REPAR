@@ -1,7 +1,133 @@
 # APEX Autonomous 7-Node Constellation Deployment
 
 **Created:** December 3, 2025  
-**Updated:** December 9, 2025 - BUILD #40/#41 FIXES (Go Module Path + Keplr Logo Quoted Paths)
+**Updated:** December 9, 2025 - BUILD #43 FIX (Keplr Logo Path Resolution)
+
+---
+
+## BUILD #43 FIX (December 9, 2025)
+
+**Build Status:** Keplr Registry PR job failing  
+**Error:** `ERROR: No logo found and no SVG converter available`
+
+### Root Cause Analysis
+
+The workflow checks out the REPAR repo, then clones `keplr-chain-registry` as a subdirectory. When it runs `cd keplr-chain-registry/`, the `$GITHUB_WORKSPACE` paths fail to resolve correctly.
+
+**Error from Build Log:**
+```
+Checking /home/runner/work/REPAR/REPAR/logo/:
+  logo/ directory not found
+Checking /home/runner/work/REPAR/REPAR/frontend/public/assets/:
+  No logo files found
+ERROR: No logo found and no SVG converter available
+```
+
+**The logos ARE on GitHub** at these paths (verified):
+- `logo/REPAR_Coin_Logo.png`
+- `frontend/public/assets/REPAR_Coin_Logo.png`
+- `frontend/public/assets/repar-logo.svg`
+
+**The problem:** The `actions/checkout@v4` step in the `keplr-registry-pr` job is not properly making files accessible when running from inside `keplr-chain-registry/` directory.
+
+### Solution: Explicit Checkout with Named Subdirectory
+
+**Key Changes:**
+
+1. **Checkout REPAR repo to a named subdirectory** (`repar-repo/`) to avoid conflicts with keplr-chain-registry
+2. **Add verification step** to confirm logo files exist after checkout
+3. **Use relative paths** from keplr-chain-registry: `../repar-repo/logo/...`
+
+### FIX Applied in `docs/CORRECTED_apex-autonomous-deployment.yml`
+
+**Location:** Job `keplr-registry-pr`, lines ~2237-2470
+
+**Step 1: Update checkout to use named path:**
+```yaml
+- name: Checkout REPAR repository
+  uses: actions/checkout@v4
+  with:
+    path: repar-repo
+    fetch-depth: 0
+    lfs: true
+```
+
+**Step 2: Add verification step:**
+```yaml
+- name: Verify logo files
+  run: |
+    echo "============================================================"
+    echo "   VERIFYING LOGO FILES IN CHECKOUT"
+    echo "============================================================"
+    echo "Working directory: $(pwd)"
+    echo ""
+    
+    echo "Checking logo locations:"
+    if [ -f repar-repo/logo/REPAR_Coin_Logo.png ]; then
+      echo "  Found: repar-repo/logo/REPAR_Coin_Logo.png ($(stat -c%s repar-repo/logo/REPAR_Coin_Logo.png) bytes)"
+    else
+      echo "  Not found: repar-repo/logo/REPAR_Coin_Logo.png"
+    fi
+    
+    if [ -f repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ]; then
+      echo "  Found: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
+    else
+      echo "  Not found: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
+    fi
+    echo "============================================================"
+```
+
+**Step 3: Update logo copy logic to use relative paths:**
+```bash
+# From inside keplr-chain-registry/, access logo via relative path
+LOGO_COPIED=false
+
+if [ -f ../repar-repo/logo/REPAR_Coin_Logo.png ]; then
+  cp ../repar-repo/logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+  echo "   Logo copied from repar-repo/logo/"
+  LOGO_COPIED=true
+
+elif [ -f ../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ]; then
+  cp ../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png images/aequitas/chain.png
+  echo "   Logo copied from repar-repo/frontend/public/assets/"
+  LOGO_COPIED=true
+
+elif [ -f ../repar-repo/frontend/public/assets/repar-logo.svg ]; then
+  echo "Converting SVG to PNG..."
+  if ! command -v convert >/dev/null 2>&1; then
+    sudo apt-get update -qq && sudo apt-get install -qq -y imagemagick
+  fi
+  convert -resize 256x256 -background none \
+    ../repar-repo/frontend/public/assets/repar-logo.svg \
+    images/aequitas/chain.png
+  echo "   Logo converted from SVG"
+  LOGO_COPIED=true
+fi
+```
+
+---
+
+### HOW TO APPLY BUILD #43 FIX
+
+1. Navigate to: https://github.com/CreoDAMO/REPAR/blob/main/.github/workflows/apex-autonomous-deployment.yml
+
+2. Click "Edit this file" (pencil icon)
+
+3. Replace entire contents with: `docs/CORRECTED_apex-autonomous-deployment.yml`
+
+4. Commit message: `fix: Build #43 - Keplr logo path resolution with explicit checkout`
+
+5. Trigger Build #44 from Actions tab
+
+---
+
+### Expected Build #44 Results
+
+| Job | Build #43 | Expected #44 |
+|-----|-----------|--------------|
+| Mobile APK | ✅ Passed | ✅ Should pass |
+| AI Agents | ✅ Passed | ✅ Should pass |
+| Keplr PR | ❌ Failed | ✅ Should pass |
 
 ---
 
