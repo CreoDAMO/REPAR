@@ -853,45 +853,44 @@ jobs:
           echo "   BUILDING AI AUTONOMOUS AGENTS"
           echo "============================================================"
           
-          mkdir -p ai/autonomous/build
-          
           # IMPORTANT: Target specific executable package, NOT ./...
           # ./... tries to compile multiple packages with single output = FAIL
+          # CRITICAL: Use absolute paths to avoid cd path confusion
+          mkdir -p "$GITHUB_WORKSPACE/ai/autonomous/build"
+          
           if [ -d ai/autonomous/cmd/autonomous-agent ]; then
             echo "Building from ai/autonomous/cmd/autonomous-agent..."
             cd ai/autonomous
-            go mod download || go mod init aequitas/ai/autonomous
-            go mod tidy
-            go build -v -o build/autonomous-agent ./cmd/autonomous-agent
-            chmod +x build/autonomous-agent
+            go mod download || echo "Module download skipped"
+            go mod tidy || echo "Mod tidy skipped"
+            go build -v -o "$GITHUB_WORKSPACE/ai/autonomous/build/autonomous-agent" ./cmd/autonomous-agent
+            chmod +x "$GITHUB_WORKSPACE/ai/autonomous/build/autonomous-agent"
+            cd "$GITHUB_WORKSPACE"
           elif [ -f ai/autonomous/main.go ]; then
             echo "Building from ai/autonomous/main.go..."
             cd ai/autonomous
-            go mod download || go mod init aequitas/ai/autonomous
-            go mod tidy
-            go build -v -o build/autonomous-agent .
-            chmod +x build/autonomous-agent
-          elif [ -f ai/autonomous/orchestrator.go ]; then
-            echo "Building from ai/autonomous/orchestrator.go..."
-            cd ai/autonomous
-            go mod download || go mod init aequitas/ai/autonomous
-            go mod tidy
-            go build -v -o build/autonomous-agent ./orchestrator.go
-            chmod +x build/autonomous-agent
+            go mod download || echo "Module download skipped"
+            go mod tidy || echo "Mod tidy skipped"
+            go build -v -o "$GITHUB_WORKSPACE/ai/autonomous/build/autonomous-agent" .
+            chmod +x "$GITHUB_WORKSPACE/ai/autonomous/build/autonomous-agent"
+            cd "$GITHUB_WORKSPACE"
           else
             echo "ERROR: No executable Go package found"
             echo "Expected: ai/autonomous/cmd/autonomous-agent/main.go"
             echo "      Or: ai/autonomous/main.go"
+            ls -la ai/autonomous/
             exit 1
           fi
           
-          # Verify binary was created
-          if [ ! -f ai/autonomous/build/autonomous-agent ]; then
+          # Verify binary was created (using absolute path)
+          if [ ! -f "$GITHUB_WORKSPACE/ai/autonomous/build/autonomous-agent" ]; then
             echo "ERROR: Binary was not created"
+            echo "Checking build directory:"
+            ls -la "$GITHUB_WORKSPACE/ai/autonomous/build/" || echo "Build directory not found"
             exit 1
           fi
           
-          HASH=$(sha256sum ai/autonomous/build/autonomous-agent | awk '{print $1}')
+          HASH=$(sha256sum "$GITHUB_WORKSPACE/ai/autonomous/build/autonomous-agent" | awk '{print $1}')
           echo "hash=$HASH" >> $GITHUB_OUTPUT
           
           echo "============================================================"
@@ -2411,6 +2410,15 @@ jobs:
           # Keplr only needs chain.json + image
           
           # Copy chain logo (256x256 PNG required by Keplr)
+          # Debug: List available logo files
+          echo "   DEBUG: Searching for logo files..."
+          echo "   Checking $GITHUB_WORKSPACE/logo/:"
+          ls -la "$GITHUB_WORKSPACE/logo/" 2>/dev/null || echo "     logo/ directory not found"
+          echo "   Checking $GITHUB_WORKSPACE/frontend/public/assets/:"
+          ls -la "$GITHUB_WORKSPACE/frontend/public/assets/" 2>/dev/null | grep -i logo || echo "     No logo files found"
+          echo "   Checking $GITHUB_WORKSPACE/frontend/src/assets/:"
+          ls -la "$GITHUB_WORKSPACE/frontend/src/assets/" 2>/dev/null | grep -i logo || echo "     No logo files found"
+          
           # Try multiple locations and convert SVG if needed
           # CRITICAL FIX: All $GITHUB_WORKSPACE paths must be quoted
           LOGO_COPIED=false
@@ -2433,6 +2441,11 @@ jobs:
           if [ "$LOGO_COPIED" = "false" ]; then
             if [ -f "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" ]; then
               echo "   Converting SVG to PNG (256x256)..."
+              # Install ImageMagick if not available
+              if ! command -v convert >/dev/null 2>&1; then
+                echo "   Installing ImageMagick..."
+                sudo apt-get update -qq && sudo apt-get install -qq -y imagemagick
+              fi
               # Try rsvg-convert first, then ImageMagick
               if command -v rsvg-convert >/dev/null 2>&1; then
                 rsvg-convert -w 256 -h 256 "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" -o images/aequitas/chain.png
@@ -2443,7 +2456,7 @@ jobs:
                 echo "   Logo converted using ImageMagick"
                 LOGO_COPIED=true
               else
-                echo "   WARNING: No SVG converter available (install librsvg or imagemagick)"
+                echo "   WARNING: No SVG converter available"
               fi
             fi
           fi
