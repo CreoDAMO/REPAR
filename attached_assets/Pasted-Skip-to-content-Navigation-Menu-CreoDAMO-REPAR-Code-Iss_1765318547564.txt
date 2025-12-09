@@ -1,0 +1,218 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+1
+Pull requests
+Discussions
+Actions
+Projects
+Wiki
+Security
+7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #42
+Jobs
+Run details
+Annotations
+1 error
+Create Keplr Registry PR
+failed 1 minute ago in 17s
+Search logs
+1s
+4s
+0s
+0s
+0s
+0s
+9s
+0s
+##[debug]Evaluating: needs.deploy-founder-node.outputs.infrastructure_ip
+##[debug]Evaluating Index:
+##[debug]..Evaluating Index:
+##[debug]....Evaluating Index:
+##[debug]......Evaluating needs:
+##[debug]......=> Object
+##[debug]......Evaluating String:
+##[debug]......=> 'deploy-founder-node'
+##[debug]....=> Object
+##[debug]....Evaluating String:
+##[debug]....=> 'outputs'
+##[debug]..=> Object
+##[debug]..Evaluating String:
+##[debug]..=> 'infrastructure_ip'
+##[debug]=> '135.232.208.145'
+##[debug]Result: '135.232.208.145'
+##[debug]Evaluating condition for step: 'Create chain configuration'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Create chain configuration
+##[debug]Loading inputs
+##[debug]Loading env
+Run if [ ! -d keplr-chain-registry ]; then
+  if [ ! -d keplr-chain-registry ]; then
+    echo "Registry not cloned - skipping"
+    exit 0
+  fi
+  
+  cd keplr-chain-registry
+  
+  # CRITICAL: Keplr uses flat file structure: cosmos/{chain-identifier}.json
+  # NOT cosmos/{chain-identifier}/chain.json
+  # Chain identifier = chainId without version: aequitas-1 -> aequitas
+  
+  mkdir -p cosmos
+  mkdir -p images/aequitas
+  
+  # Create chain.json with CORRECTED structure per Keplr 2025 requirements
+  # CRITICAL FIX: coinDecimals is 6 (urepar -> repar = 10^6), NOT 18
+  # Using printf to avoid YAML heredoc parsing issues
+  printf '%s\n' '{' \
+    '  "chainId": "aequitas-1",' \
+    '  "chainName": "Aequitas Protocol",' \
+    '  "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+    '  "rpc": "https://rpc.aequitasprotocol.zone",' \
+    '  "rest": "https://api.aequitasprotocol.zone",' \
+    '  "nodeProvider": {' \
+    '    "name": "Aequitas Foundation",' \
+    '    "email": "validators@aequitasprotocol.zone",' \
+    '    "website": "https://aequitasprotocol.zone"' \
+    '  },' \
+    '  "bip44": {' \
+    '    "coinType": 118' \
+    '  },' \
+    '  "bech32Config": {' \
+    '    "bech32PrefixAccAddr": "repar",' \
+    '    "bech32PrefixAccPub": "reparpub",' \
+    '    "bech32PrefixValAddr": "reparvaloper",' \
+    '    "bech32PrefixValPub": "reparvaloperpub",' \
+    '    "bech32PrefixConsAddr": "reparvalcons",' \
+    '    "bech32PrefixConsPub": "reparvalconspub"' \
+    '  },' \
+    '  "currencies": [' \
+    '    {' \
+    '      "coinDenom": "REPAR",' \
+    '      "coinMinimalDenom": "urepar",' \
+    '      "coinDecimals": 6,' \
+    '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+    '    }' \
+    '  ],' \
+    '  "feeCurrencies": [' \
+    '    {' \
+    '      "coinDenom": "REPAR",' \
+    '      "coinMinimalDenom": "urepar",' \
+    '      "coinDecimals": 6,' \
+    '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",' \
+    '      "gasPriceStep": {' \
+    '        "low": 0.01,' \
+    '        "average": 0.025,' \
+    '        "high": 0.04' \
+    '      }' \
+    '    }' \
+    '  ],' \
+    '  "stakeCurrency": {' \
+    '    "coinDenom": "REPAR",' \
+    '    "coinMinimalDenom": "urepar",' \
+    '    "coinDecimals": 6,' \
+    '    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+    '  },' \
+    '  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",' \
+    '  "features": ["ibc-transfer", "ibc-go"]' \
+    '}' > cosmos/aequitas.json
+  
+  # NOTE: assetlist.json is NOT a Keplr format - it's for cosmos/chain-registry
+  # Keplr only needs chain.json + image
+  
+  # Copy chain logo (256x256 PNG required by Keplr)
+  # Try multiple locations and convert SVG if needed
+  # CRITICAL FIX: All $GITHUB_WORKSPACE paths must be quoted
+  LOGO_COPIED=false
+  
+  if [ -f "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" ]; then
+    cp "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
+    echo "   Logo copied from logo/REPAR_Coin_Logo.png"
+    LOGO_COPIED=true
+  elif [ -f "$GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png" ]; then
+    cp "$GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+    echo "   Logo copied from frontend/src/assets/REPAR_Coin_Logo.png"
+    LOGO_COPIED=true
+  elif [ -f "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" ]; then
+    cp "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+    echo "   Logo copied from frontend/public/assets/REPAR_Coin_Logo.png"
+    LOGO_COPIED=true
+  fi
+  
+  # If no PNG found, try to convert SVG to PNG
+  if [ "$LOGO_COPIED" = "false" ]; then
+    if [ -f "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" ]; then
+      echo "   Converting SVG to PNG (256x256)..."
+      # Try rsvg-convert first, then ImageMagick
+      if command -v rsvg-convert >/dev/null 2>&1; then
+        rsvg-convert -w 256 -h 256 "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" -o images/aequitas/chain.png
+        echo "   Logo converted using rsvg-convert"
+        LOGO_COPIED=true
+      elif command -v convert >/dev/null 2>&1; then
+        convert -resize 256x256 -background none "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" images/aequitas/chain.png
+        echo "   Logo converted using ImageMagick"
+        LOGO_COPIED=true
+      else
+        echo "   WARNING: No SVG converter available (install librsvg or imagemagick)"
+      fi
+    fi
+  fi
+  
+  if [ "$LOGO_COPIED" = "false" ]; then
+    echo "ERROR: No logo found and no SVG converter available"
+    echo "   Checked: logo/REPAR_Coin_Logo.png"
+    echo "   Checked: frontend/src/assets/REPAR_Coin_Logo.png"
+    echo "   Checked: frontend/public/assets/repar-logo.svg"
+    exit 1
+  fi
+  
+  # Verify the logo was copied/created
+  if [ -f images/aequitas/chain.png ]; then
+    echo "   Logo ready: images/aequitas/chain.png ($(stat -c%s images/aequitas/chain.png) bytes)"
+  fi
+  
+  echo ""
+  echo "============================================================"
+  echo "   KEPLR CHAIN CONFIGURATION CREATED"
+  echo "============================================================"
+  echo "   File: cosmos/aequitas.json"
+  echo "   Chain ID: aequitas-1"
+  echo "   Decimals: 6 (urepar -> REPAR)"
+  echo "   Features: ibc-transfer, ibc-go"
+  echo "============================================================"
+  echo ""
+  
+  # Validate JSON
+  if command -v jq &> /dev/null; then
+    echo "Validating JSON..."
+    jq empty cosmos/aequitas.json && echo "   JSON valid" || echo "   JSON validation failed"
+  fi
+  
+  echo "Chain configuration created"
+  shell: /usr/bin/bash -e {0}
+  env:
+    CHAIN_ID: aequitas-1
+    GENESIS_TIME: 2025-12-03T00:00:00Z
+    TOTAL_REPARATIONS: 131000000000000000000
+    FOUNDER_VESTED: 15720000000000000000
+    FOUNDER_ENDOWMENT: 7860000000000000000
+    INFRASTRUCTURE_IP: 135.232.208.145
+##[debug]/usr/bin/bash -e /home/runner/work/_temp/aad81b61-54b8-48b8-a725-928a57de4284.sh
+ERROR: No logo found and no SVG converter available
+   Checked: logo/REPAR_Coin_Logo.png
+   Checked: frontend/src/assets/REPAR_Coin_Logo.png
+   Checked: frontend/public/assets/repar-logo.svg
+Error: Process completed with exit code 1.
+##[debug]Finishing: Create chain configuration
+0s
+0s
+1s
+0s
