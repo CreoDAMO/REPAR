@@ -2414,27 +2414,27 @@ jobs:
           # Try multiple locations and convert SVG if needed
           LOGO_COPIED=false
           
-          if [ -f ../logo/REPAR_Coin_Logo.png ]; then
-            cp ../logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+          if [ -f $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png ]; then
+            cp $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png images/aequitas/chain.png
             echo "   Logo copied from logo/REPAR_Coin_Logo.png"
             LOGO_COPIED=true
-          elif [ -f ../frontend/src/assets/REPAR_Coin_Logo.png ]; then
-            cp ../frontend/src/assets/REPAR_Coin_Logo.png images/aequitas/chain.png
+          elif [ -f $GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png ]; then
+            cp $GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png images/aequitas/chain.png
             echo "   Logo copied from frontend/src/assets/REPAR_Coin_Logo.png"
             LOGO_COPIED=true
           fi
           
           # If no PNG found, try to convert SVG to PNG
           if [ "$LOGO_COPIED" = "false" ]; then
-            if [ -f ../frontend/public/assets/repar-logo.svg ]; then
+            if [ -f $GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg ]; then
               echo "   Converting SVG to PNG (256x256)..."
               # Try rsvg-convert first, then ImageMagick
               if command -v rsvg-convert >/dev/null 2>&1; then
-                rsvg-convert -w 256 -h 256 ../frontend/public/assets/repar-logo.svg -o images/aequitas/chain.png
+                rsvg-convert -w 256 -h 256 $GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg -o images/aequitas/chain.png
                 echo "   Logo converted using rsvg-convert"
                 LOGO_COPIED=true
               elif command -v convert >/dev/null 2>&1; then
-                convert -resize 256x256 -background none ../frontend/public/assets/repar-logo.svg images/aequitas/chain.png
+                convert -resize 256x256 -background none $GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg images/aequitas/chain.png
                 echo "   Logo converted using ImageMagick"
                 LOGO_COPIED=true
               else
