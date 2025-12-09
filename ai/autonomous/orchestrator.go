@@ -7,7 +7,6 @@ package autonomous
 
 import (
         "context"
-        "encoding/json"
         "fmt"
         "log"
         "time"

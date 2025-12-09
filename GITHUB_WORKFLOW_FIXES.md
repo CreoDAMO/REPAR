@@ -1,7 +1,99 @@
 # APEX Autonomous 7-Node Constellation Deployment
 
 **Created:** December 3, 2025  
-**Updated:** December 8, 2025 - BUILD #37 FIXES (Git LFS, AI Agents, Mobile APK)
+**Updated:** December 9, 2025 - BUILD #38 FIXES (Source Code Bugs + Workflow Path Fix)
+
+---
+
+## BUILD #38 FIXES (December 9, 2025)
+
+**Build Status:** Failed  
+**Root Cause:** Source code bugs in Go and Mobile projects, plus workflow path issues
+
+### Summary of Build #38 Issues
+
+| Issue | Error | Root Cause | Fix Applied |
+|-------|-------|------------|-------------|
+| AI Agents Go Build | `undefined: pq` at lines 127, 180 | `pq` imported as `_` but used directly | ✅ Changed to direct import |
+| AI Agents Go Build | `"encoding/json" imported and not used` | Unused import in orchestrator.go | ✅ Removed unused import |
+| Mobile APK Build | `expo-barcode-scanner:compileReleaseKotlin` failed | Deprecated package incompatible with Expo SDK 54 | ✅ Removed unused package |
+| Keplr Registry PR | `ERROR: No logo found` | Relative path `../logo/` resolved incorrectly in CI | ✅ Use `$GITHUB_WORKSPACE` absolute path |
+
+---
+
+### FIX #1: AI Agents Go Build (Source Code Fix) ✅ APPLIED
+
+**Files Changed:**
+- `ai/autonomous/threat_database.go` - Line 14: Changed `_ "github.com/lib/pq"` to `"github.com/lib/pq"`
+- `ai/autonomous/orchestrator.go` - Removed unused `"encoding/json"` import
+- `ai/autonomous/go.mod` - Added `require github.com/lib/pq v1.10.9`
+
+**Before:**
+```go
+import (
+    _ "github.com/lib/pq"  // Blank import can't be used directly
+)
+// Later in code:
+pq.Array(threat.AxiomsAffected)  // ERROR: undefined: pq
+```
+
+**After:**
+```go
+import (
+    "github.com/lib/pq"  // Direct import allows pq.Array() usage
+)
+```
+
+---
+
+### FIX #2: Mobile APK Build (Remove Deprecated Package) ✅ APPLIED
+
+**Problem:** `expo-barcode-scanner` v13.0.1 has Kotlin compilation errors with Expo SDK 54 and React Native 0.81.
+
+**Solution:** Removed the package since it's not actually used in the codebase (no imports found).
+
+**Files Changed:**
+- `mobile/package.json` - Removed `"expo-barcode-scanner": "^13.0.1"`
+- `mobile/app.json` - Removed `"expo-barcode-scanner"` from plugins array
+
+**Note:** `expo-camera` (already installed) provides barcode scanning via `useCameraPermissions` and `BarcodeScanner` component.
+
+---
+
+### FIX #3: Keplr Registry PR Logo Path (Workflow Fix) ⚠️ APPLY MANUALLY
+
+**Problem:** The workflow used relative paths (`../logo/REPAR_Coin_Logo.png`) which resolve incorrectly when running from inside the cloned `keplr-chain-registry` directory.
+
+**Evidence:**
+- Logo exists: `logo/REPAR_Coin_Logo.png` (44,626 bytes, real PNG - verified with PNG header signature)
+- Not LFS tracked: No `.gitattributes` file in repo
+- Workflow error: "ERROR: No logo found" due to relative path resolution
+
+**Root Cause:** When the workflow does `cd keplr-chain-registry`, the relative path `../logo/` should work but can fail in certain CI environments.
+
+**Solution - Use absolute `$GITHUB_WORKSPACE` path in `.github/workflows/apex-autonomous-deployment.yml`:**
+
+Find all occurrences of:
+```bash
+../logo/REPAR_Coin_Logo.png
+```
+
+Replace with:
+```bash
+$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png
+```
+
+**Specific lines to update (around lines 2417-2448):**
+
+```yaml
+# BEFORE (relative path - unreliable):
+if [ -f ../logo/REPAR_Coin_Logo.png ]; then
+  cp ../logo/REPAR_Coin_Logo.png images/aequitas/chain.png
+
+# AFTER (absolute path - reliable):
+if [ -f "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" ]; then
+  cp "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
+```
 
 ---
 
