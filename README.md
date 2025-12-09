@@ -83,6 +83,44 @@ This is not a blockchain. This is not a DAO. This is not a startup.
 
 ---
 
+## 🔧 December 9, 2025 - Build #40/#41 Fixes
+
+### AI Autonomous Agents (Go) - Module Path Fix
+
+**Problem:** Go build failed with `Binary was not created` due to incorrect module path.
+
+**Root Cause:** Module path was `github.com/aequitas-protocol/ai-autonomous` instead of `github.com/CreoDAMO/REPAR/ai/autonomous`.
+
+**Solution Applied:**
+- `ai/autonomous/go.mod` - Module path corrected
+- `ai/autonomous/cmd/autonomous-agent/main.go` - Import path updated
+- `cmd/autonomous-agent/main.go` - Import path updated
+
+### Keplr Registry PR - Logo Path Fix
+
+**Problem:** Logo copy failed with exit code 1 due to unquoted `$GITHUB_WORKSPACE` paths.
+
+**Solution Applied:** Added quotes to all `$GITHUB_WORKSPACE` path references in `docs/CORRECTED_apex-autonomous-deployment.yml`:
+```bash
+# Before (broken):
+if [ -f $GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png ]; then
+
+# After (fixed):
+if [ -f "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" ]; then
+```
+
+### Build Status After Fixes
+
+| Job | Status |
+|-----|--------|
+| Mobile APK | ✅ Fixed (Build #38) |
+| AI Agents (Go) | ✅ Fixed (Build #40/#41) |
+| Keplr Registry PR | ✅ Fixed (Build #40/#41) |
+
+**[→ See GITHUB_WORKFLOW_FIXES.md](./GITHUB_WORKFLOW_FIXES.md)** for complete fix documentation
+
+---
+
 ## 🔧 December 5, 2025 - Critical Integration Updates
 
 ### GitHub Workflow Fixes (APEX Autonomous Deployment)

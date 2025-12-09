@@ -41,6 +41,8 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
     - **Fully Homomorphic Encryption (FHE)**: APEX-FHE v3.0 Frontier for advanced encrypted autonomy.
     - **Multi-Layer Redundant Communications**: Mesh, Satellite, LoRa, Cellular 5G, and Offline Queue.
 - **Aequitas Autonomous AI Agent (Go)**: Provides continuous security scanning, AI-powered threat analysis, automatic vulnerability fixing, and chaos engineering.
+  - **Module Path:** `github.com/CreoDAMO/REPAR/ai/autonomous` (fixed in Build #40/#41)
+  - **Executables:** `ai/autonomous/cmd/autonomous-agent/` and `cmd/autonomous-agent/`
 - **Aequitas Satellite Protocol (ASSP)**: Software-defined satellite layer for multi-layer routing, geo-redundancy, and autonomous constellation management.
 - **Mobile APK Sovereign Distribution**: Signed APK builds integrated into APEX deployment workflow
   - Automated build & signing via GitHub Actions (Phase 5.13-5.14)
