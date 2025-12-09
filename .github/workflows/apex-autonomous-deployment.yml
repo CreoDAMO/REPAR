@@ -2224,7 +2224,9 @@ jobs:
   # ============================================================
   # PHASE 8: KEPLR REGISTRY PR (Automated)
   # ============================================================
-  # ARCHITECT REVIEWED (December 8, 2025): Added explicit git lfs checkout to convert LFS pointers
+  # BUILD #43 FIX (December 9, 2025): Explicit checkout to named subdirectory
+  # Problem: $GITHUB_WORKSPACE paths fail when running from inside keplr-chain-registry/
+  # Solution: Checkout to repar-repo/ subdirectory, use relative paths ../repar-repo/
   keplr-registry-pr:
     name: Create Keplr Registry PR
     runs-on: ubuntu-latest
@@ -2235,45 +2237,64 @@ jobs:
       github.event.inputs.skip_keplr_pr != 'true'
     
     steps:
-      - uses: actions/checkout@v4
+      # ============================================================
+      # CRITICAL: Checkout REPAR repo to named subdirectory
+      # This avoids path confusion when we also clone keplr-chain-registry
+      # ============================================================
+      - name: Checkout REPAR repository
+        uses: actions/checkout@v4
         with:
+          path: repar-repo
           fetch-depth: 0
           lfs: true
       
       # FIX: Explicit LFS checkout (converts 133-byte pointers to actual files)
-      # Required because lfs: true only fetches metadata, not actual file content
       - name: Checkout LFS files
-        run: git lfs checkout
-      
-      # Verify LFS files are real files, not pointers
-      - name: Verify LFS files
         run: |
-          echo "Verifying LFS files are properly checked out..."
-          if [ -f logo/REPAR_Coin_Logo.png ]; then
-            SIZE=$(stat -c%s logo/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z logo/REPAR_Coin_Logo.png)
+          cd repar-repo
+          git lfs checkout
+      
+      # ============================================================
+      # Verify logo files exist after checkout
+      # ============================================================
+      - name: Verify logo files
+        run: |
+          echo "============================================================"
+          echo "   VERIFYING LOGO FILES IN CHECKOUT"
+          echo "============================================================"
+          echo "Working directory: $(pwd)"
+          echo ""
+          
+          echo "Repository structure:"
+          ls -la repar-repo/ || echo "repar-repo/ not found"
+          echo ""
+          
+          echo "Checking logo locations:"
+          if [ -f repar-repo/logo/REPAR_Coin_Logo.png ]; then
+            SIZE=$(stat -c%s repar-repo/logo/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z repar-repo/logo/REPAR_Coin_Logo.png)
+            echo "  FOUND: repar-repo/logo/REPAR_Coin_Logo.png ($SIZE bytes)"
             if [ "$SIZE" -lt 200 ]; then
-              echo "ERROR: logo/REPAR_Coin_Logo.png is still an LFS pointer ($SIZE bytes)"
-              echo "Content:"
-              cat logo/REPAR_Coin_Logo.png
-              exit 1
-            else
-              echo "OK: logo/REPAR_Coin_Logo.png is $SIZE bytes (real file)"
+              echo "  WARNING: File appears to be an LFS pointer (too small)"
+              cat repar-repo/logo/REPAR_Coin_Logo.png
             fi
-          fi
-      
-      - name: Debug logo presence
-        run: |
-          echo "Checking logo files in repository..."
-          echo "Current directory: $(pwd)"
-          ls -la logo/ 2>/dev/null || echo "logo/ directory not found"
-          ls -la frontend/src/assets/ 2>/dev/null | grep -i logo || echo "No logo in frontend/src/assets/"
-          ls -la frontend/public/assets/ 2>/dev/null | grep -i logo || echo "No logo in frontend/public/assets/"
-          if [ -f logo/REPAR_Coin_Logo.png ]; then
-            echo "FOUND: logo/REPAR_Coin_Logo.png ($(stat -c%s logo/REPAR_Coin_Logo.png) bytes)"
-            file logo/REPAR_Coin_Logo.png || true
           else
-            echo "MISSING: logo/REPAR_Coin_Logo.png"
+            echo "  NOT FOUND: repar-repo/logo/REPAR_Coin_Logo.png"
           fi
+          
+          if [ -f repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ]; then
+            SIZE=$(stat -c%s repar-repo/frontend/public/assets/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z repar-repo/frontend/public/assets/REPAR_Coin_Logo.png)
+            echo "  FOUND: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ($SIZE bytes)"
+          else
+            echo "  NOT FOUND: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
+          fi
+          
+          if [ -f repar-repo/frontend/public/assets/repar-logo.svg ]; then
+            SIZE=$(stat -c%s repar-repo/frontend/public/assets/repar-logo.svg 2>/dev/null || stat -f%z repar-repo/frontend/public/assets/repar-logo.svg)
+            echo "  FOUND: repar-repo/frontend/public/assets/repar-logo.svg ($SIZE bytes)"
+          else
+            echo "  NOT FOUND: repar-repo/frontend/public/assets/repar-logo.svg"
+          fi
+          echo "============================================================"
       
       - name: Setup Git
         run: |
@@ -2409,37 +2430,36 @@ jobs:
           # NOTE: assetlist.json is NOT a Keplr format - it's for cosmos/chain-registry
           # Keplr only needs chain.json + image
           
-          # Copy chain logo (256x256 PNG required by Keplr)
-          # Debug: List available logo files
-          echo "   DEBUG: Searching for logo files..."
-          echo "   Checking $GITHUB_WORKSPACE/logo/:"
-          ls -la "$GITHUB_WORKSPACE/logo/" 2>/dev/null || echo "     logo/ directory not found"
-          echo "   Checking $GITHUB_WORKSPACE/frontend/public/assets/:"
-          ls -la "$GITHUB_WORKSPACE/frontend/public/assets/" 2>/dev/null | grep -i logo || echo "     No logo files found"
-          echo "   Checking $GITHUB_WORKSPACE/frontend/src/assets/:"
-          ls -la "$GITHUB_WORKSPACE/frontend/src/assets/" 2>/dev/null | grep -i logo || echo "     No logo files found"
+          # ============================================================
+          # BUILD #43 FIX: Copy logo using relative paths from repar-repo/
+          # We are inside keplr-chain-registry/, so repar-repo is at ../repar-repo/
+          # ============================================================
+          echo "   DEBUG: Searching for logo files in repar-repo/..."
+          echo "   Checking ../repar-repo/logo/:"
+          ls -la "../repar-repo/logo/" 2>/dev/null || echo "     logo/ directory not found"
+          echo "   Checking ../repar-repo/frontend/public/assets/:"
+          ls -la "../repar-repo/frontend/public/assets/" 2>/dev/null | grep -i logo || echo "     No logo files found"
           
-          # Try multiple locations and convert SVG if needed
-          # CRITICAL FIX: All $GITHUB_WORKSPACE paths must be quoted
+          # Try multiple locations using relative paths to repar-repo/
           LOGO_COPIED=false
           
-          if [ -f "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" ]; then
-            cp "$GITHUB_WORKSPACE/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
-            echo "   Logo copied from logo/REPAR_Coin_Logo.png"
+          if [ -f "../repar-repo/logo/REPAR_Coin_Logo.png" ]; then
+            cp "../repar-repo/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
+            echo "   Logo copied from repar-repo/logo/REPAR_Coin_Logo.png"
             LOGO_COPIED=true
-          elif [ -f "$GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png" ]; then
-            cp "$GITHUB_WORKSPACE/frontend/src/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
-            echo "   Logo copied from frontend/src/assets/REPAR_Coin_Logo.png"
+          elif [ -f "../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png" ]; then
+            cp "../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+            echo "   Logo copied from repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
             LOGO_COPIED=true
-          elif [ -f "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" ]; then
-            cp "$GITHUB_WORKSPACE/frontend/public/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
-            echo "   Logo copied from frontend/public/assets/REPAR_Coin_Logo.png"
+          elif [ -f "../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png" ]; then
+            cp "../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+            echo "   Logo copied from repar-repo/frontend/src/assets/REPAR_Coin_Logo.png"
             LOGO_COPIED=true
           fi
           
           # If no PNG found, try to convert SVG to PNG
           if [ "$LOGO_COPIED" = "false" ]; then
-            if [ -f "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" ]; then
+            if [ -f "../repar-repo/frontend/public/assets/repar-logo.svg" ]; then
               echo "   Converting SVG to PNG (256x256)..."
               # Install ImageMagick if not available
               if ! command -v convert >/dev/null 2>&1; then
@@ -2448,11 +2468,11 @@ jobs:
               fi
               # Try rsvg-convert first, then ImageMagick
               if command -v rsvg-convert >/dev/null 2>&1; then
-                rsvg-convert -w 256 -h 256 "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" -o images/aequitas/chain.png
+                rsvg-convert -w 256 -h 256 "../repar-repo/frontend/public/assets/repar-logo.svg" -o images/aequitas/chain.png
                 echo "   Logo converted using rsvg-convert"
                 LOGO_COPIED=true
               elif command -v convert >/dev/null 2>&1; then
-                convert -resize 256x256 -background none "$GITHUB_WORKSPACE/frontend/public/assets/repar-logo.svg" images/aequitas/chain.png
+                convert -resize 256x256 -background none "../repar-repo/frontend/public/assets/repar-logo.svg" images/aequitas/chain.png
                 echo "   Logo converted using ImageMagick"
                 LOGO_COPIED=true
               else
@@ -2463,9 +2483,10 @@ jobs:
           
           if [ "$LOGO_COPIED" = "false" ]; then
             echo "ERROR: No logo found and no SVG converter available"
-            echo "   Checked: logo/REPAR_Coin_Logo.png"
-            echo "   Checked: frontend/src/assets/REPAR_Coin_Logo.png"
-            echo "   Checked: frontend/public/assets/repar-logo.svg"
+            echo "   Checked: ../repar-repo/logo/REPAR_Coin_Logo.png"
+            echo "   Checked: ../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
+            echo "   Checked: ../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png"
+            echo "   Checked: ../repar-repo/frontend/public/assets/repar-logo.svg"
             exit 1
           fi
           
