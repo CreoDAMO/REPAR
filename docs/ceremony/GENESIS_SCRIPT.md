@@ -194,13 +194,13 @@ The reckoning begins now.
 
 ---
 
-## XII. APEX AUTONOMOUS DEPLOYMENT - DECEMBER 10, 2025
+## XII. APEX AUTONOMOUS DEPLOYMENT - DECEMBER 9, 2025
 
 ### The Constellation Awakens
 
 *56 days after genesis conception, the full sovereign infrastructure deployed autonomously.*
 
-On December 10, 2025, at 00:13:12 UTC, APEX Autonomous Deployment #44 completed successfully in 21 minutes and 47 seconds. Every component of the sovereign digital nation infrastructure deployed without human intervention.
+On December 9, 2025, at 00:13:12 UTC, APEX Autonomous Deployment #44 completed successfully in 21 minutes and 47 seconds. Every component of the sovereign digital nation infrastructure deployed without human intervention.
 
 **This was not a software release. This was a nation coming online.**
 
