@@ -1,0 +1,328 @@
+Skip to content
+Cloudflare
+Jacque Antoine DeGraff
+
+
+
+Overview
+
+Recents
+
+Records
+aequitasprotocol.zone
+DNS
+
+
+aequitasprotocol.zone
+Domains
+
+
+Analytics
+aequitasprotocol.zone
+DNS
+
+
+Settings
+aequitasprotocol.zone
+DNS
+
+Domains
+
+AI Crawl Control
+
+Log Explorer
+
+Analytics & logs
+
+DNS
+Records
+Analytics
+Settings
+
+Email
+
+SSL/TLS
+
+Security
+Access
+
+Speed
+
+Caching
+Workers Routes
+
+Rules
+Error Pages
+New
+Network
+
+Traffic
+Scrape Shield
+Web3
+aequitasprotocol.zone
+Active
+
+Starred
+Free plan
+DNS
+
+Records
+Configure DNS records and review proxy status of your hostnames.
+
+
+Recommended steps to complete zone set-up
+Hide
+Some of your DNS-only records are exposing IP addresses that are proxied through Cloudflare. Make sure to proxy all A, AAAA, and CNAME records pointing to proxied records to ensure your origin server is fully protected.
+
+DNS management for aequitasprotocol.zone
+Review, add, and edit DNS records. Edits will go into effect once saved.
+DNS Setup: Full
+
+
+Import and Export
+
+
+Dashboard Display Settings
+Search DNS Records
+Your search yielded 29 results
+
+Type
+Name
+Content
+Proxy status
+TTL
+Actions
+
+A
+ace
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+ace-ai
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+ace-metrics
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+aequitasprotocol.zone
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+api
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+app
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+explorer
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+
+
+A
+grpc
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+rpc
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+sovereign
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+testnet-rpc
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+vm
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+A
+www
+4.246.135.3
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+CNAME
+autodiscover
+autodiscover.outlook.com
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+CNAME
+_domainconnect
+_domainconnect.gd.domaincontrol.com
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+CNAME
+email
+email.secureserver.net
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+CNAME
+lyncdiscover
+webdir.online.lync.com
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+CNAME
+msoid
+clientconfig.microsoftonline-p.net
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+CNAME
+pay
+paylinks.commerce.godaddy.com
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+CNAME
+sip
+sipdir.online.lync.com
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+MX
+aequitasprotocol.zone
+aequitasprotocol-zone.mail.protection.outlook.com
+0
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+NS
+aequitasprotocol.zone
+ns64.domaincontrol.com
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+NS
+aequitasprotocol.zone
+ns63.domaincontrol.com
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+SRV
+_sipfederationtls._tcp
+100 1 5061 sipfed.online.lync.com
+
+100
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+
+
+SRV
+_sip._tls
+100 1 443 sipdir.online.lync.com
+
+100
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+TXT
+aequitasprotocol.zone
+"v=spf1 include:secureserver.net -all"
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+TXT
+aequitasprotocol.zone
+"NETORGFT19824584.onmicrosoft.com"
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+TXT
+_dmarc
+"v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:dmarc_rua@onsecureserver.net;"
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+
+TXT
+_github-pages-challenge-creodamo
+"8f22a9b4e0b7997648eea1b793f6f6"
+DNS only
+
+Auto
+EditWhen toggled open, an additional table row will be added below this row to enable editing DNS records.
+Cloudflare Nameservers
+Every DNS zone on Cloudflare is assigned a set of Cloudflare-branded nameservers.
+Type	Value
+NS	kallie.ns.cloudflare.com
+NS	tadeo.ns.cloudflare.com
+Support
+System status
+Careers
+Terms of Use
+Report Security Issues
+Privacy Policy
+A blue and white pill with a checkmark and an x, representing privacy choicesYour Privacy Choices
+© 2025 Cloudflare, Inc.
