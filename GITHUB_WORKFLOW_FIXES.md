@@ -4365,4 +4365,367 @@ If you were using Terraform:
 
 ---
 
-*Updated by Replit Agent - December 7, 2025*
+---
+
+## BUILD #45+ FIX: CROSS-CHAIN ENABLEMENT (December 10, 2025)
+
+**Build Status:** Keplr Registry PR failing with IBC feature validation error  
+**Error:** `Only non recognizable feature should be provided: ibc-transfer`
+
+### Root Cause Analysis
+
+The chain.json declares `"features": ["ibc-transfer"]` but the Aequitas chain does not yet have:
+- Active IBC channels in `STATE_OPEN`
+- Live IBC connections to other chains
+- Running relayer infrastructure (Hermes/rly)
+
+Keplr validates that declared features actually exist on-chain before accepting the PR.
+
+---
+
+### FIX #1: Conditional IBC Features in chain.json Generator
+
+**Location:** Job `keplr-registry-pr` 
+
+**Add step before chain.json generation:**
+
+```yaml
+- name: Check IBC Channel Status
+  id: ibc-check
+  run: |
+    # Query IBC channels from the RPC endpoint
+    IBC_CHANNELS=$(curl -s "https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels" 2>/dev/null || echo "{}")
+    CHANNEL_COUNT=$(echo "$IBC_CHANNELS" | jq '.channels | length // 0' 2>/dev/null || echo "0")
+    
+    if [ "$CHANNEL_COUNT" -gt 0 ]; then
+      OPEN_CHANNELS=$(echo "$IBC_CHANNELS" | jq '[.channels[] | select(.state == "STATE_OPEN")] | length')
+      if [ "$OPEN_CHANNELS" -gt 0 ]; then
+        echo "ibc_enabled=true" >> $GITHUB_OUTPUT
+        echo "IBC channels found: $OPEN_CHANNELS active"
+      else
+        echo "ibc_enabled=false" >> $GITHUB_OUTPUT
+        echo "No active IBC channels yet"
+      fi
+    else
+      echo "ibc_enabled=false" >> $GITHUB_OUTPUT
+      echo "No IBC channels configured"
+    fi
+```
+
+**Update chain.json generation to use conditional features:**
+
+```yaml
+- name: Generate chain.json
+  run: |
+    if [ "${{ steps.ibc-check.outputs.ibc_enabled }}" == "true" ]; then
+      FEATURES='["ibc-transfer", "ibc-go"]'
+    else
+      FEATURES='[]'
+    fi
+    
+    cat > chain.json << EOF
+    {
+      "chainId": "aequitas-1",
+      "chainName": "Aequitas Protocol",
+      "rpc": "https://rpc.aequitasprotocol.zone",
+      "rest": "https://api.aequitasprotocol.zone",
+      "features": $FEATURES
+      ...
+    }
+    EOF
+```
+
+---
+
+### FIX #2: Add Phase 6 - Cross-Chain Enablement
+
+**Add this new workflow input to `workflow_dispatch.inputs`:**
+
+```yaml
+      enable_cross_chain:
+        description: 'Enable cross-chain features (IBC channels + relayers)'
+        required: false
+        type: boolean
+        default: false
+```
+
+**Add new job after `deployment-summary`:**
+
+```yaml
+  # ============================================================
+  # PHASE 6: CROSS-CHAIN ENABLEMENT (IBC + CCTP)
+  # ============================================================
+  
+  enable-cross-chain:
+    name: Enable Cross-Chain Features
+    runs-on: ubuntu-latest
+    needs: [deployment-summary, deploy-founder-node]
+    if: github.event.inputs.enable_cross_chain == 'true'
+    
+    outputs:
+      ibc_enabled: ${{ steps.ibc-setup.outputs.enabled }}
+      channels_created: ${{ steps.channel-creation.outputs.channels }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Relayer Environment
+        id: relayer-setup
+        run: |
+          echo "============================================================"
+          echo "   CROSS-CHAIN RELAYER SETUP"
+          echo "============================================================"
+          
+          # Install Hermes relayer
+          wget -q https://github.com/informalsystems/hermes/releases/download/v1.10.0/hermes-v1.10.0-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf hermes-v1.10.0-x86_64-unknown-linux-gnu.tar.gz
+          chmod +x hermes
+          sudo mv hermes /usr/local/bin/
+          
+          echo "Hermes relayer installed: $(hermes version)"
+          echo "relayer_ready=true" >> $GITHUB_OUTPUT
+      
+      - name: Configure Hermes
+        env:
+          RELAYER_MNEMONIC: ${{ secrets.RELAYER_MNEMONIC }}
+        run: |
+          mkdir -p ~/.hermes
+          
+          # Create Hermes config with Aequitas, Cosmos Hub, and Osmosis
+          cat > ~/.hermes/config.toml << 'EOF'
+          [global]
+          log_level = 'info'
+          
+          [mode.clients]
+          enabled = true
+          refresh = true
+          
+          [mode.connections]
+          enabled = true
+          
+          [mode.channels]
+          enabled = true
+          
+          [mode.packets]
+          enabled = true
+          clear_interval = 100
+          tx_confirmation = true
+          
+          # Aequitas Chain
+          [[chains]]
+          id = 'aequitas-1'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://rpc.aequitasprotocol.zone'
+          grpc_addr = 'https://grpc.aequitasprotocol.zone'
+          account_prefix = 'repar'
+          key_name = 'relayer'
+          store_prefix = 'ibc'
+          default_gas = 1000000
+          max_gas = 10000000
+          gas_multiplier = 1.2
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'urepar'
+          
+          [chains.trust_threshold]
+          numerator = '1'
+          denominator = '3'
+          
+          # Cosmos Hub
+          [[chains]]
+          id = 'cosmoshub-4'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://cosmos-rpc.polkachu.com'
+          grpc_addr = 'https://cosmos-grpc.polkachu.com:14290'
+          account_prefix = 'cosmos'
+          key_name = 'relayer'
+          store_prefix = 'ibc'
+          default_gas = 200000
+          max_gas = 3000000
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'uatom'
+          
+          # Osmosis
+          [[chains]]
+          id = 'osmosis-1'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://osmosis-rpc.polkachu.com'
+          grpc_addr = 'https://osmosis-grpc.polkachu.com:12590'
+          account_prefix = 'osmo'
+          key_name = 'relayer'
+          store_prefix = 'ibc'
+          default_gas = 500000
+          max_gas = 20000000
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'uosmo'
+          EOF
+          
+          echo "Hermes configuration created"
+      
+      - name: Import Relayer Keys
+        env:
+          RELAYER_MNEMONIC: ${{ secrets.RELAYER_MNEMONIC }}
+        run: |
+          if [ -n "$RELAYER_MNEMONIC" ]; then
+            echo "$RELAYER_MNEMONIC" | hermes keys add --chain aequitas-1 --mnemonic-file /dev/stdin
+            echo "Relayer keys imported for aequitas-1"
+          else
+            echo "No relayer mnemonic provided - skipping key import"
+            echo "NOTE: Set RELAYER_MNEMONIC secret to enable cross-chain operations"
+          fi
+      
+      - name: Create IBC Clients
+        id: ibc-clients
+        continue-on-error: true
+        run: |
+          echo "Creating IBC light clients..."
+          hermes create client --host-chain aequitas-1 --reference-chain cosmoshub-4 || echo "Client creation pending"
+          hermes create client --host-chain cosmoshub-4 --reference-chain aequitas-1 || echo "Client creation pending"
+          echo "clients_created=true" >> $GITHUB_OUTPUT
+      
+      - name: Create IBC Connections
+        id: ibc-connections
+        continue-on-error: true
+        run: |
+          echo "Creating IBC connections..."
+          hermes create connection --a-chain aequitas-1 --b-chain cosmoshub-4 || echo "Connection creation pending"
+          echo "connections_created=true" >> $GITHUB_OUTPUT
+      
+      - name: Create IBC Channels
+        id: channel-creation
+        continue-on-error: true
+        run: |
+          echo "Creating IBC transfer channels..."
+          hermes create channel --a-chain aequitas-1 --a-port transfer --b-port transfer --a-connection connection-0 --channel-version ics20-1 || true
+          
+          CHANNELS=$(curl -s "https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels" | jq -r '.channels[].channel_id // empty' | tr '\n' ',' | sed 's/,$//')
+          
+          if [ -n "$CHANNELS" ]; then
+            echo "channels=$CHANNELS" >> $GITHUB_OUTPUT
+          else
+            echo "channels=none" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Validate IBC Setup
+        id: ibc-setup
+        run: |
+          hermes health-check || true
+          
+          CHANNEL_STATUS=$(curl -s "https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels" 2>/dev/null || echo "{}")
+          OPEN_COUNT=$(echo "$CHANNEL_STATUS" | jq '[.channels[] | select(.state == "STATE_OPEN")] | length' 2>/dev/null || echo "0")
+          
+          if [ "$OPEN_COUNT" -gt 0 ]; then
+            echo "enabled=true" >> $GITHUB_OUTPUT
+            echo "IBC enabled with $OPEN_COUNT open channels"
+          else
+            echo "enabled=false" >> $GITHUB_OUTPUT
+            echo "IBC not yet fully enabled"
+          fi
+      
+      - name: Report Cross-Chain Status
+        run: |
+          echo "### Cross-Chain Enablement Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**IBC Status:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Relayer: Hermes v1.10.0" >> $GITHUB_STEP_SUMMARY
+          echo "- Channels: ${{ steps.channel-creation.outputs.channels }}" >> $GITHUB_STEP_SUMMARY
+          echo "- IBC Enabled: ${{ steps.ibc-setup.outputs.enabled }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Target Chains:**" >> $GITHUB_STEP_SUMMARY
+          echo "- Cosmos Hub (cosmoshub-4)" >> $GITHUB_STEP_SUMMARY
+          echo "- Osmosis (osmosis-1)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Circle CCTP:** Integrated via Backend API" >> $GITHUB_STEP_SUMMARY
+```
+
+---
+
+### FIX #3: Required Secrets for Cross-Chain
+
+Add these secrets to GitHub Repository Settings:
+
+| Secret Name | Description | Required |
+|-------------|-------------|----------|
+| `RELAYER_MNEMONIC` | 24-word mnemonic for relayer wallet | Yes for IBC |
+
+**How to Generate Relayer Wallet:**
+```bash
+# Using aequitasd
+aequitasd keys add relayer --keyring-backend test
+
+# Fund the relayer on all target chains:
+# - aequitas-1: urepar
+# - cosmoshub-4: uatom
+# - osmosis-1: uosmo
+```
+
+---
+
+### FIX #4: IBC Channel Target Strategy
+
+**Priority IBC Connections (in order):**
+
+| Chain | Chain ID | Purpose | Priority |
+|-------|----------|---------|----------|
+| Cosmos Hub | cosmoshub-4 | ATOM liquidity, IBC hub | 1 |
+| Osmosis | osmosis-1 | DEX liquidity, OSMO pairs | 2 |
+| Axelar | axelar-dojo-1 | EVM bridge (Ethereum, BSC) | 3 |
+| Noble | noble-1 | Native USDC (CCTP) | 4 |
+
+---
+
+### Rollback Procedure
+
+If cross-chain enablement causes issues:
+
+1. **Remove IBC features from Keplr chain.json:**
+   ```json
+   "features": []
+   ```
+
+2. **Stop Hermes relayer on infrastructure:**
+   ```bash
+   systemctl stop hermes
+   ```
+
+3. **Close the Keplr PR and regenerate without IBC features**
+
+---
+
+### Monitoring Cross-Chain Health
+
+After enablement, monitor:
+
+```bash
+# Relayer health
+hermes health-check
+
+# Pending packets
+hermes query packet pending --chain aequitas-1
+
+# Channel status
+curl https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels
+```
+
+---
+
+### Summary Checklist for Cross-Chain
+
+- [ ] Add `enable_cross_chain` input to workflow
+- [ ] Add IBC status check before Keplr chain.json generation
+- [ ] Add Phase 6 Cross-Chain Enablement job
+- [ ] Add `RELAYER_MNEMONIC` secret to GitHub
+- [ ] Fund relayer wallet on target chains
+- [ ] Run workflow with `enable_cross_chain: true`
+- [ ] Verify IBC channels are `STATE_OPEN`
+- [ ] Re-run Keplr PR job (should pass with IBC features)
+- [ ] Configure Hermes on sovereign infrastructure for persistent operation
+
+---
+
+*Updated by Replit Agent - December 10, 2025*

@@ -123,6 +123,39 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - **AI/ML**: Llama 3.1 8B, Mistral 7B, Phi-3 Mini, DeepSeek Coder (all local, offline, sovereign)
 - **Wallet Integration**: Keplr
 - **Fully Homomorphic Encryption**: TenSEAL (CKKS/BFV schemes) + APEX-FHE v3.0 frontier components
+- **Cross-Chain**: IBC (Inter-Blockchain Communication), Circle CCTP (Cross-Chain Transfer Protocol)
+- **IBC Relayer**: Hermes v1.10.0 (target chains: Cosmos Hub, Osmosis, Axelar, Noble)
+
+## Cross-Chain Features (December 10, 2025)
+
+### IBC Infrastructure
+The Aequitas blockchain has full IBC support built into the chain via:
+- `x/ibc` - Core IBC module
+- `x/ibc-transfer` - Token transfers
+- `x/ica` - Interchain Accounts (controller + host)
+- `x/ibc-fee` - Fee middleware
+
+### Cross-Chain Workflow
+To enable cross-chain features:
+1. Add `RELAYER_MNEMONIC` secret to GitHub
+2. Run APEX deployment with `enable_cross_chain: true`
+3. Hermes relayer will create IBC clients, connections, and channels
+4. After channels are `STATE_OPEN`, Keplr PR will pass with `ibc-transfer` feature
+
+### Target Chains (Priority Order)
+| Chain | Chain ID | Purpose |
+|-------|----------|---------|
+| Cosmos Hub | cosmoshub-4 | ATOM liquidity, IBC hub |
+| Osmosis | osmosis-1 | DEX liquidity, OSMO pairs |
+| Axelar | axelar-dojo-1 | EVM bridge (Ethereum, BSC) |
+| Noble | noble-1 | Native USDC (CCTP) |
+
+### Documentation
+- **GITHUB_WORKFLOW_FIXES.md** - All manual workflow changes for cross-chain
+- **docs/CORRECTED_apex-autonomous-deployment.yml** - Complete corrected workflow with Phase 6
+
+## Additional Dependencies
+
 - **Cryptography**: ML-DSA (Dilithium-3), ML-KEM (Kyber-768), SHA-256
 - **Payment Processing**: Circle USDCKit SDK
 - **Wolfram Documentation**: Strategic playbooks for defendant collection, deterrence economics, mathematical engines
