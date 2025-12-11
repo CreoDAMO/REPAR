@@ -5039,4 +5039,4 @@ jobs:
 
         ```
 
-      ## The problem, these two workflows need to be combined as one, this way we do not lose any deployment phases need for this to work.
+      ## The problem, these two workflows need to be combined as one, this way we do not lose any deployment phases need for this to work. and convert this md into a yml file once it is fixed.
