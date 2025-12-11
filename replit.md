@@ -49,6 +49,42 @@
 - **Auditor:** https://auditor.aequitasprotocol.zone
 - **ACE:** https://ace.aequitasprotocol.zone
 - **AVM:** https://vm.aequitasprotocol.zone
+- **ADNS:** https://adns.aequitasprotocol.zone
+
+---
+
+## ADNS (Aequitas DNS System) - December 11, 2025
+
+### Overview
+ADNS is a sovereign DNS system with 5-layer architecture, designed to eliminate dependency on centralized DNS providers like GoDaddy and ICANN.
+
+### Architecture Layers
+1. **Layer 1 - Redis Cache**: <1ms latency, 99% hit rate, TTL-aware
+2. **Layer 2 - Blockchain Authority**: Cosmos SDK x/adns module, ML-DSA signed records
+3. **Layer 3 - BIND9 Root Zone**: Traditional DNS compatibility, auto-generated zones
+4. **Layer 4 - BGP Anycast**: Geographic distribution, <10ms globally
+5. **Layer 5 - 9-Protocol Fallback**: DNS, HNS, ENS, IPFS, Nostr, Tor, LibP2P, LoRa
+
+### Sovereign TLDs
+- `.aequitas` - Primary protocol TLD
+- `.repar` - Reparations and claims domain space
+- `.sovereign` - Nation infrastructure
+
+### Features
+- Post-quantum signatures (ML-DSA-87)
+- Constitutional axiom enforcement (5 axioms)
+- Domain NFT ownership
+- Domain freezing for constitutional enforcement
+- Genesis domains for core infrastructure
+
+### API Endpoints
+- `GET /api/adns/status` - System status and statistics
+- `GET /api/adns/resolve?domain=<domain>` - DNS resolution
+- `POST /api/adns/register` - Register new domain
+- `GET /api/adns/domains` - List all domains
+- `PUT /api/adns/domain/:domain` - Update domain record
+- `POST /api/adns/domain/:domain/transfer` - Transfer domain ownership
+- `POST /api/adns/domain/:domain/freeze` - Freeze domain (validators only)
 
 ---
 
