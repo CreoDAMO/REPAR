@@ -35,6 +35,7 @@ export default function Navigation() {
     { to: '/validator-subsidy', icon: Server, label: 'Validators' },
     { to: '/founder-endowment', icon: Lock, label: 'Founder\'s Endowment' },
     { to: '/deployment', icon: Settings, label: 'Deployment' },
+    { to: '/adns', icon: Globe, label: 'ADNS' },
   ];
 
   return (

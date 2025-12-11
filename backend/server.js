@@ -14,6 +14,7 @@ import circleRoutes from './routes/circle.js';
 import auditorRoutes from './routes/auditor.js';
 import agentkitRoutes from './routes/agentkit.js';
 import nvidiaRoutes from './routes/nvidia.js';
+import adnsRoutes from './routes/adns.js';
 import { createSession } from './middleware/auth.js';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
@@ -153,6 +154,7 @@ app.use('/api/circle', circleRoutes);
 app.use('/api/auditor', auditorRoutes);
 app.use('/api/agentkit', agentkitRoutes);
 app.use('/api/nvidia', nvidiaRoutes);
+app.use('/api/adns', adnsRoutes);
 
 // 404 handler
 app.use((req, res) => {
@@ -204,6 +206,7 @@ const server = app.listen(config.port, '0.0.0.0', () => {
   console.log(`  Auditor: http://localhost:${config.port}/api/auditor/*`);
   console.log(`  AgentKit: http://localhost:${config.port}/api/agentkit/*`);
   console.log(`  NVIDIA AI: http://localhost:${config.port}/api/nvidia/*`);
+  console.log(`  ADNS: http://localhost:${config.port}/api/adns/*`);
   console.log('');
   console.log('Security:');
   console.log(`  ✅ CORS enabled for: ${config.cors.origins.join(', ')}`);
