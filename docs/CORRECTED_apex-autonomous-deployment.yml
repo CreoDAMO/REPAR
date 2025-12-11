@@ -964,8 +964,116 @@ jobs:
           registry        IN      A       ${SOVEREIGN_IP}
           EOF
           
+          # .sovereign TLD zone
+          cat > adns-config/zones/db.sovereign << EOF
+          ; .sovereign TLD Zone File
+          ; Sovereign TLD for Nation Infrastructure
+          
+          \$TTL 3600
+          @       IN      SOA     ns1.sovereign. admin.aequitasprotocol.zone. (
+                                  $(date +%Y%m%d)01 ; Serial
+                                  3600       ; Refresh
+                                  1800       ; Retry
+                                  604800     ; Expire
+                                  3600 )     ; Minimum TTL
+          
+          @       IN      NS      ns1.sovereign.
+          @       IN      NS      ns2.sovereign.
+          ns1     IN      A       ${SOVEREIGN_IP}
+          ns2     IN      A       ${SOVEREIGN_IP}
+          
+          ; Nation infrastructure
+          nation          IN      A       ${SOVEREIGN_IP}
+          citizens        IN      A       ${SOVEREIGN_IP}
+          governance      IN      A       ${SOVEREIGN_IP}
+          constitution    IN      A       ${SOVEREIGN_IP}
+          treasury        IN      A       ${SOVEREIGN_IP}
+          passport        IN      A       ${SOVEREIGN_IP}
+          embassy         IN      A       ${SOVEREIGN_IP}
+          EOF
+          
           echo "BIND9 zone files created in adns-config/zones/"
           ls -la adns-config/zones/
+      
+      - name: Create Unbound Public Recursive Resolver
+        run: |
+          echo "============================================================"
+          echo "   CREATING UNBOUND PUBLIC RECURSIVE RESOLVER CONFIG"
+          echo "============================================================"
+          
+          mkdir -p adns-config/unbound
+          
+          SOVEREIGN_IP="${{ needs.deploy-founder-node.outputs.infrastructure_ip }}"
+          
+          cat > adns-config/unbound/unbound.conf << EOF
+          # Unbound Public Recursive Resolver for Aequitas Sovereign DNS
+          # resolver.aequitasprotocol.zone - Global opt-in adoption
+          
+          server:
+              # Network settings
+              interface: 0.0.0.0
+              port: 53
+              do-ip4: yes
+              do-ip6: yes
+              do-udp: yes
+              do-tcp: yes
+              
+              # Access control - public resolver
+              access-control: 0.0.0.0/0 allow
+              access-control: ::/0 allow
+              
+              # Performance tuning
+              num-threads: 4
+              msg-cache-size: 128m
+              rrset-cache-size: 256m
+              cache-max-ttl: 86400
+              cache-min-ttl: 300
+              
+              # Privacy settings
+              hide-identity: yes
+              hide-version: yes
+              qname-minimisation: yes
+              
+              # DNSSEC (disabled for sovereign TLDs until quantum-safe)
+              val-permissive-mode: yes
+              
+              # Logging
+              verbosity: 1
+              log-queries: no
+              log-replies: no
+              
+              # Sovereign TLDs - use our alternate root
+              local-zone: "aequitas." nodefault
+              local-zone: "repar." nodefault
+              local-zone: "sovereign." nodefault
+          
+          # Stub zone for .aequitas TLD (authoritative on our servers)
+          stub-zone:
+              name: "aequitas."
+              stub-addr: ${SOVEREIGN_IP}@5353
+              stub-prime: yes
+          
+          # Stub zone for .repar TLD
+          stub-zone:
+              name: "repar."
+              stub-addr: ${SOVEREIGN_IP}@5353
+              stub-prime: yes
+          
+          # Stub zone for .sovereign TLD
+          stub-zone:
+              name: "sovereign."
+              stub-addr: ${SOVEREIGN_IP}@5353
+              stub-prime: yes
+          
+          # Forward non-sovereign TLDs to ICANN root (fallback)
+          forward-zone:
+              name: "."
+              forward-addr: 1.1.1.1
+              forward-addr: 8.8.8.8
+              forward-addr: 9.9.9.9
+          EOF
+          
+          echo "Unbound public recursive resolver config created"
       
       - name: Create BGP Anycast Configuration
         run: |
@@ -1125,17 +1233,44 @@ jobs:
             scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
               -r adns-config/* $SSH_USER@$SSH_HOST:/opt/aequitas/adns/
             
-            # Install and configure BIND9
+            # Install and configure BIND9 + Unbound
             ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash << 'REMOTE_SCRIPT'
-              # Install BIND9 if not present
-              if ! command -v named &> /dev/null; then
+              # Install BIND9 (authoritative) and Unbound (recursive) if not present
+              if ! command -v named &> /dev/null || ! command -v unbound &> /dev/null; then
                 apt-get update -qq
-                apt-get install -qq -y bind9 bind9utils
+                apt-get install -qq -y bind9 bind9utils unbound
               fi
               
-              # Configure BIND9 for alternate root
+              # Configure BIND9 for alternate root (authoritative on port 5353)
+              cat > /etc/bind/named.conf.options << 'NAMED_OPTIONS'
+          options {
+              directory "/var/cache/bind";
+              
+              // Listen on port 5353 (Unbound handles public 53)
+              listen-on port 5353 { any; };
+              listen-on-v6 port 5353 { any; };
+              
+              // Allow queries from anywhere
+              allow-query { any; };
+              
+              // Disable recursion (authoritative only)
+              recursion no;
+              
+              // DNSSEC disabled until quantum-safe
+              dnssec-validation no;
+          };
+          NAMED_OPTIONS
+              
+              # Configure BIND9 zones including alternate ROOT
               cat > /etc/bind/named.conf.local << 'NAMED_CONF'
           // Aequitas Sovereign DNS Configuration
+          // Alternate ROOT + Sovereign TLDs
+          
+          // Alternate ROOT zone (delegates to TLDs)
+          zone "." {
+              type master;
+              file "/opt/aequitas/adns/zones/db.root.aequitas";
+          };
           
           zone "aequitas" {
               type master;
@@ -1153,10 +1288,27 @@ jobs:
           };
           NAMED_CONF
               
-              # Restart BIND9
+              # Copy Unbound config for public recursive resolver
+              if [ -f /opt/aequitas/adns/unbound/unbound.conf ]; then
+                cp /opt/aequitas/adns/unbound/unbound.conf /etc/unbound/unbound.conf.d/aequitas.conf
+              fi
+              
+              # Restart BIND9 (authoritative server on 5353)
               systemctl restart bind9 || systemctl restart named || echo "BIND9 restart pending"
               
-              echo "ADNS infrastructure deployed"
+              # Restart Unbound (public recursive resolver on 53)
+              systemctl enable unbound
+              systemctl restart unbound || echo "Unbound restart pending"
+              
+              echo "============================================================"
+              echo "   ADNS SOVEREIGN DNS INFRASTRUCTURE DEPLOYED"
+              echo "============================================================"
+              echo "   BIND9 (Authoritative): port 5353"
+              echo "   Unbound (Recursive):   port 53 (public)"
+              echo "   Alternate ROOT:        db.root.aequitas"
+              echo "   Sovereign TLDs:        .aequitas, .repar, .sovereign"
+              echo "   Root Nameservers:      A-ROOT.AEQUITAS, B-ROOT.AEQUITAS"
+              echo "============================================================"
           REMOTE_SCRIPT
             
             echo "deployed=true" >> $GITHUB_OUTPUT

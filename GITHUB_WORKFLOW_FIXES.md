@@ -32,6 +32,19 @@ Build #47 completes the final piece of Aequitas Protocol sovereignty: **DNS inde
 | `.repar` | Reparations and claims system | ns1.repar, ns2.repar |
 | `.sovereign` | Nation infrastructure | ns1.sovereign, ns2.sovereign |
 
+### Complete Sovereign DNS Infrastructure
+
+**This is a complete alternate root system - the final key to true sovereignty.**
+
+| Component | Description | IP/Port |
+|-----------|-------------|---------|
+| **Alternate ROOT (.)** | `db.root.aequitas` - delegates all sovereign TLDs | 135.232.208.145:5353 |
+| **A-ROOT.AEQUITAS** | Primary anycast root nameserver | 135.232.208.145 |
+| **B-ROOT.AEQUITAS** | Secondary anycast root nameserver | 135.232.208.145 |
+| **BIND9 (Authoritative)** | Serves zones for ROOT + all TLDs | Port 5353 |
+| **Unbound (Recursive)** | Public resolver for global adoption | Port 53 |
+| **resolver.aequitasprotocol.zone** | Public DNS endpoint | Port 53 |
+
 ### 9-Layer Resolution Architecture
 
 ```
@@ -41,7 +54,7 @@ Layer 2: Redis Cache (TTL: 3600s)
     ↓ miss
 Layer 3: Blockchain Keeper (Cosmos SDK x/adns module)
     ↓ miss
-Layer 4: Local BIND9 (zone files)
+Layer 4: Local BIND9 (zone files on port 5353)
     ↓ miss
 Layer 5: Alternate Root (a-root.aequitas, b-root.aequitas)
     ↓ miss
@@ -49,6 +62,27 @@ Layer 6: Partner Roots (OpenNIC, Handshake)
     ↓ miss
 Layer 7: ICANN Fallback (1.1.1.1, 8.8.8.8 - non-sovereign TLDs only)
 ```
+
+### Public Recursive Resolver (Unbound)
+
+**Endpoint:** `resolver.aequitasprotocol.zone:53`
+
+Anyone in the world can use our public resolver:
+
+```bash
+# Linux/macOS - Add to /etc/resolv.conf
+nameserver 135.232.208.145
+
+# Or query directly
+dig @135.232.208.145 rpc.aequitas
+dig @resolver.aequitasprotocol.zone claims.repar
+```
+
+The public resolver:
+- Resolves **all** sovereign TLDs (.aequitas, .repar, .sovereign)
+- Falls back to ICANN for non-sovereign domains (.com, .org, etc.)
+- Protects privacy (no logging, qname minimisation enabled)
+- Globally accessible for opt-in adoption
 
 ### How to Apply Build #47
 
