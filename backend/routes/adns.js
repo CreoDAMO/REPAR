@@ -14,7 +14,9 @@ import {
   getDomainNFT,
   getStatus,
   getCacheStats,
-  clearCache
+  clearCache,
+  getFHEStatus,
+  encryptData
 } from '../controllers/adnsController.js';
 
 const router = express.Router();
@@ -38,5 +40,9 @@ router.get('/domain/:domain/nft', getDomainNFT);
 router.get('/cache/stats', getCacheStats);
 
 router.post('/cache/clear', clearCache);
+
+router.get('/fhe/status', getFHEStatus);
+
+router.post('/fhe/encrypt', encryptData);
 
 export default router;

@@ -244,9 +244,9 @@ export default function ADNSDashboard() {
           <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
               <Shield className="w-5 h-5 text-green-400" />
-              Security Features
+              Security & FHE Protection
             </h2>
-            <div className="space-y-4">
+            <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-purple-600/20 rounded-lg flex items-center justify-center">
@@ -258,32 +258,51 @@ export default function ADNSDashboard() {
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
                 <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-cyan-600/20 rounded-lg flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <span>APEX-FHE v3.0</span>
+                </div>
+                <span className="text-cyan-400 font-mono text-sm">{status?.fhe?.enabled ? 'Active' : 'Inactive'}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
+                <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-green-600/20 rounded-lg flex items-center justify-center">
                     <Shield className="w-4 h-4 text-green-400" />
                   </div>
                   <span>Constitutional Axioms</span>
                 </div>
-                <span className="text-green-400 font-mono text-sm">{status?.security?.axiomEnforcement || 5} enforced</span>
+                <span className="text-green-400 font-mono text-sm">{status?.fhe?.axiomCount || 25} enforced</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                    <Server className="w-4 h-4 text-blue-400" />
+                    <Zap className="w-4 h-4 text-blue-400" />
                   </div>
-                  <span>Signature Verification</span>
+                  <span>Bootstrap Time</span>
                 </div>
-                <span className="text-blue-400 font-mono text-sm">Active</span>
+                <span className="text-blue-400 font-mono text-sm">{status?.fhe?.bootstrapTime || '<30ms'}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-gray-900 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-amber-600/20 rounded-lg flex items-center justify-center">
                     <Radio className="w-4 h-4 text-amber-400" />
                   </div>
-                  <span>Fallback Resolvers</span>
+                  <span>Fallback Protocols</span>
                 </div>
-                <span className="text-amber-400 font-mono text-sm">8 protocols</span>
+                <span className="text-amber-400 font-mono text-sm">9 layers</span>
               </div>
             </div>
+            {status?.fhe?.features && (
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <p className="text-xs text-gray-400 mb-2">FHE Capabilities:</p>
+                <div className="flex flex-wrap gap-1">
+                  {status.fhe.features.map((f, i) => (
+                    <span key={i} className="px-2 py-1 bg-cyan-900/30 text-cyan-400 rounded text-xs">{f}</span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
