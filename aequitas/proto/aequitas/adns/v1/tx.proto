@@ -1,0 +1,90 @@
+syntax = "proto3";
+package aequitas.adns.v1;
+
+import "gogoproto/gogo.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "aequitas/adns/v1/dns_record.proto";
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/adns/types";
+
+// Msg defines the ADNS Msg service
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  rpc RegisterDomain(MsgRegisterDomain) returns (MsgRegisterDomainResponse);
+  rpc UpdateRecord(MsgUpdateRecord) returns (MsgUpdateRecordResponse);
+  rpc TransferDomain(MsgTransferDomain) returns (MsgTransferDomainResponse);
+  rpc FreezeDomain(MsgFreezeDomain) returns (MsgFreezeDomainResponse);
+}
+
+// MsgRegisterDomain registers a new domain
+message MsgRegisterDomain {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string domain = 2;
+  string record_type = 3;
+  repeated string values = 4;
+  uint32 ttl = 5;
+  string category = 6;
+}
+
+// MsgRegisterDomainResponse is the response for RegisterDomain
+message MsgRegisterDomainResponse {
+  string domain = 1;
+  uint64 token_id = 2;
+  bytes signature = 3;
+}
+
+// MsgUpdateRecord updates an existing domain record
+message MsgUpdateRecord {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string domain = 2;
+  repeated string values = 3;
+  uint32 ttl = 4;
+}
+
+// MsgUpdateRecordResponse is the response for UpdateRecord
+message MsgUpdateRecordResponse {
+  bytes new_signature = 1;
+}
+
+// MsgTransferDomain transfers domain ownership
+message MsgTransferDomain {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string domain = 2;
+  string new_owner = 3 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+// MsgTransferDomainResponse is the response for TransferDomain
+message MsgTransferDomainResponse {
+  uint64 new_token_id = 1;
+}
+
+// MsgFreezeDomain freezes a domain for constitutional protection
+message MsgFreezeDomain {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (gogoproto.equal) = false;
+  option (gogoproto.goproto_getters) = false;
+
+  string creator = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string domain = 2;
+  string reason = 3;
+  uint32 axiom_reference = 4;
+}
+
+// MsgFreezeDomainResponse is the response for FreezeDomain
+message MsgFreezeDomainResponse {
+  bool frozen = 1;
+}

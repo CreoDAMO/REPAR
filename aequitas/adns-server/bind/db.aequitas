@@ -1,0 +1,151 @@
+; Aequitas TLD Zone File
+; All 94+ sovereign subdomains
+
+$ORIGIN aequitas.
+$TTL 300
+
+; SOA Record
+@ IN SOA ns1.aequitasprotocol.zone. hostmaster.aequitas. (
+    2025121101  ; Serial
+    3600        ; Refresh
+    1800        ; Retry
+    604800      ; Expire
+    300         ; Minimum TTL
+)
+
+; Name Servers
+@           IN NS ns1.aequitasprotocol.zone.
+@           IN NS ns2.aequitasprotocol.zone.
+
+; Core Infrastructure
+rpc         IN A 135.232.208.145
+api         IN A 135.232.208.145
+explorer    IN A 135.232.208.145
+grpc        IN A 135.232.208.145
+rest        IN A 135.232.208.145
+faucet      IN A 135.232.208.145
+
+; Monitoring
+monitor     IN A 135.232.208.145
+metrics     IN A 135.232.208.145
+grafana     IN A 135.232.208.145
+prometheus  IN A 135.232.208.145
+status      IN A 135.232.208.145
+health      IN A 135.232.208.145
+logs        IN A 135.232.208.145
+traces      IN A 135.232.208.145
+debug       IN A 135.232.208.145
+
+; Compute
+ace         IN A 135.232.208.145
+avm         IN A 135.232.208.145
+apex        IN A 135.232.208.145
+
+; Mobile
+mobile      IN A 135.232.208.145
+android     IN A 135.232.208.145
+ios         IN A 135.232.208.145
+app         IN A 135.232.208.145
+desktop     IN A 135.232.208.145
+web3        IN A 135.232.208.145
+
+; Validators
+validator   IN A 135.232.208.145
+ns1         IN A 135.232.208.145
+ns2         IN A 135.232.208.145
+ns3         IN A 135.232.208.145
+ns4         IN A 135.232.208.145
+ns5         IN A 135.232.208.145
+
+; Communication
+mail        IN A 135.232.208.145
+smtp        IN A 135.232.208.145
+imap        IN A 135.232.208.145
+
+; Identity
+auth        IN A 135.232.208.145
+oauth       IN A 135.232.208.145
+identity    IN A 135.232.208.145
+kyc         IN A 135.232.208.145
+dna         IN A 135.232.208.145
+
+; Justice
+claims      IN A 135.232.208.145
+justice     IN A 135.232.208.145
+defendant   IN A 135.232.208.145
+evidence    IN A 135.232.208.145
+arbitration IN A 135.232.208.145
+enforcement IN A 135.232.208.145
+lien        IN A 135.232.208.145
+
+; Treasury
+treasury    IN A 135.232.208.145
+endowment   IN A 135.232.208.145
+founder     IN A 135.232.208.145
+subsidy     IN A 135.232.208.145
+distribution IN A 135.232.208.145
+
+; DeFi
+dex         IN A 135.232.208.145
+swap        IN A 135.232.208.145
+liquidity   IN A 135.232.208.145
+staking     IN A 135.232.208.145
+governance  IN A 135.232.208.145
+vote        IN A 135.232.208.145
+
+; NFT
+nft         IN A 135.232.208.145
+marketplace IN A 135.232.208.145
+
+; Storage
+ipfs        IN A 135.232.208.145
+storage     IN A 135.232.208.145
+backup      IN A 135.232.208.145
+archive     IN A 135.232.208.145
+
+; Content
+docs        IN A 135.232.208.145
+wiki        IN A 135.232.208.145
+blog        IN A 135.232.208.145
+news        IN A 135.232.208.145
+media       IN A 135.232.208.145
+assets      IN A 135.232.208.145
+cdn         IN A 135.232.208.145
+
+; Interchain
+ibc         IN A 135.232.208.145
+bridge      IN A 135.232.208.145
+relayer     IN A 135.232.208.145
+interchain  IN A 135.232.208.145
+cosmos      IN A 135.232.208.145
+osmosis     IN A 135.232.208.145
+wallet      IN A 135.232.208.145
+
+; Environments
+testnet     IN A 135.232.208.145
+devnet      IN A 135.232.208.145
+staging     IN A 135.232.208.145
+production  IN A 135.232.208.145
+mainnet     IN A 135.232.208.145
+
+; Admin
+admin       IN A 135.232.208.145
+security    IN A 135.232.208.145
+audit       IN A 135.232.208.145
+compliance  IN A 135.232.208.145
+legal       IN A 135.232.208.145
+constitution IN A 135.232.208.145
+
+; DNS Infrastructure
+root        IN A 135.232.208.145
+a.root      IN A 135.232.208.145
+b.root      IN A 135.232.208.145
+c.root      IN A 135.232.208.145
+resolver    IN A 135.232.208.145
+dns         IN A 135.232.208.145
+
+; TXT Records for verification
+@           IN TXT "ADNS Sovereign TLD"
+@           IN TXT "v=APEX-FHE-v3.0"
+@           IN TXT "mldsa=Dilithium87"
+@           IN TXT "axioms=25"

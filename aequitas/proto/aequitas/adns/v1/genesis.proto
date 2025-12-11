@@ -1,0 +1,29 @@
+syntax = "proto3";
+package aequitas.adns.v1;
+
+import "gogoproto/gogo.proto";
+import "aequitas/adns/v1/dns_record.proto";
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/adns/types";
+
+// GenesisState defines the ADNS module's genesis state
+message GenesisState {
+  repeated DNSRecord records = 1 [(gogoproto.nullable) = false];
+  repeated DomainNFT nfts = 2 [(gogoproto.nullable) = false];
+  Params params = 3 [(gogoproto.nullable) = false];
+  FHEStatus fhe_status = 4;
+  MLDSAStatus mldsa_status = 5;
+}
+
+// Params defines the module parameters
+message Params {
+  option (gogoproto.equal) = true;
+  option (gogoproto.goproto_stringer) = false;
+
+  uint32 default_ttl = 1;
+  bool fhe_enabled = 2;
+  bool mldsa_enabled = 3;
+  string mldsa_mode = 4;
+  repeated string sovereign_tlds = 5;
+  uint32 max_axiom_violations = 6;
+}

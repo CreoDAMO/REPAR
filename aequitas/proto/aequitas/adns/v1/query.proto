@@ -1,0 +1,113 @@
+syntax = "proto3";
+package aequitas.adns.v1;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "aequitas/adns/v1/dns_record.proto";
+import "aequitas/adns/v1/genesis.proto";
+
+option go_package = "github.com/CreoDAMO/REPAR/aequitas/x/adns/types";
+
+// Query defines the ADNS gRPC query service
+service Query {
+  rpc Resolve(QueryResolveRequest) returns (QueryResolveResponse) {
+    option (google.api.http).get = "/aequitas/adns/v1/resolve/{domain}";
+  }
+
+  rpc GetRecord(QueryGetRecordRequest) returns (QueryGetRecordResponse) {
+    option (google.api.http).get = "/aequitas/adns/v1/record/{domain}";
+  }
+
+  rpc ListDomains(QueryListDomainsRequest) returns (QueryListDomainsResponse) {
+    option (google.api.http).get = "/aequitas/adns/v1/domains";
+  }
+
+  rpc FHEStatus(QueryFHEStatusRequest) returns (QueryFHEStatusResponse) {
+    option (google.api.http).get = "/aequitas/adns/v1/fhe/status";
+  }
+
+  rpc MLDSAStatus(QueryMLDSAStatusRequest) returns (QueryMLDSAStatusResponse) {
+    option (google.api.http).get = "/aequitas/adns/v1/mldsa/status";
+  }
+
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/aequitas/adns/v1/params";
+  }
+
+  rpc ValidateAxioms(QueryValidateAxiomsRequest) returns (QueryValidateAxiomsResponse) {
+    option (google.api.http).get = "/aequitas/adns/v1/axioms/validate/{domain}";
+  }
+}
+
+// QueryResolveRequest is the request for DNS resolution
+message QueryResolveRequest {
+  string domain = 1;
+  string record_type = 2;
+}
+
+// QueryResolveResponse is the response for DNS resolution
+message QueryResolveResponse {
+  DNSRecord record = 1;
+  int64 cached_until = 2;
+  string resolution_layer = 3;
+}
+
+// QueryGetRecordRequest is the request to get a single record
+message QueryGetRecordRequest {
+  string domain = 1;
+}
+
+// QueryGetRecordResponse is the response for getting a record
+message QueryGetRecordResponse {
+  DNSRecord record = 1;
+  DomainNFT nft = 2;
+}
+
+// QueryListDomainsRequest is the request to list all domains
+message QueryListDomainsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  string category = 2;
+  bool frozen_only = 3;
+}
+
+// QueryListDomainsResponse is the response for listing domains
+message QueryListDomainsResponse {
+  repeated DNSRecord records = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryFHEStatusRequest is the request for FHE status
+message QueryFHEStatusRequest {}
+
+// QueryFHEStatusResponse is the response for FHE status
+message QueryFHEStatusResponse {
+  FHEStatus status = 1;
+}
+
+// QueryMLDSAStatusRequest is the request for ML-DSA status
+message QueryMLDSAStatusRequest {}
+
+// QueryMLDSAStatusResponse is the response for ML-DSA status
+message QueryMLDSAStatusResponse {
+  MLDSAStatus status = 1;
+}
+
+// QueryParamsRequest is the request for module params
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response for module params
+message QueryParamsResponse {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryValidateAxiomsRequest validates domain against constitutional axioms
+message QueryValidateAxiomsRequest {
+  string domain = 1;
+}
+
+// QueryValidateAxiomsResponse returns axiom validation results
+message QueryValidateAxiomsResponse {
+  bool valid = 1;
+  repeated AxiomValidation validations = 2 [(gogoproto.nullable) = false];
+}

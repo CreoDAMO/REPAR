@@ -1,0 +1,45 @@
+; Aequitas Sovereign Root Zone File
+; This file defines the alternate root zone for ADNS
+; No ICANN dependency - pure sovereignty
+
+$ORIGIN .
+$TTL 86400
+
+; SOA Record - Start of Authority
+. IN SOA a.root.aequitas. hostmaster.aequitas. (
+    2025121101  ; Serial (YYYYMMDDNN)
+    3600        ; Refresh
+    1800        ; Retry
+    604800      ; Expire
+    86400       ; Minimum TTL
+)
+
+; Root Name Servers
+. IN NS a.root.aequitas.
+. IN NS b.root.aequitas.
+. IN NS c.root.aequitas.
+
+; Root Server A Records (Anycast)
+a.root.aequitas. IN A 135.232.208.145
+b.root.aequitas. IN A 135.232.208.145
+c.root.aequitas. IN A 135.232.208.145
+
+; Sovereign TLD Delegations
+aequitas.    IN NS ns1.aequitasprotocol.zone.
+aequitas.    IN NS ns2.aequitasprotocol.zone.
+
+repar.       IN NS ns1.aequitasprotocol.zone.
+repar.       IN NS ns2.aequitasprotocol.zone.
+
+sovereign.   IN NS ns1.aequitasprotocol.zone.
+sovereign.   IN NS ns2.aequitasprotocol.zone.
+
+nation.      IN NS ns1.aequitasprotocol.zone.
+nation.      IN NS ns2.aequitasprotocol.zone.
+
+justice.     IN NS ns1.aequitasprotocol.zone.
+justice.     IN NS ns2.aequitasprotocol.zone.
+
+; Glue Records for NS
+ns1.aequitasprotocol.zone. IN A 135.232.208.145
+ns2.aequitasprotocol.zone. IN A 135.232.208.145
