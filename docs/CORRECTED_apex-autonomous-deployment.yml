@@ -1,4 +1,6 @@
 # Previous Github Workflow
+
+```yml
 # apex-autonomous-deployment.yml
 # APEX Autonomous 7-Node Constellation Deployment
 # Fully autonomous IP extraction - ZERO manual IP entry required
@@ -3321,12 +3323,14 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "The chain.json now correctly reflects IBC capabilities." >> $GITHUB_STEP_SUMMARY
           echo "Re-submit Keplr Registry PR with updated metadata." >> $GITHUB_STEP_SUMMARY
+```
 
 ____________________________________________________________________________________________________
-
-
+____________________________________________________________________________________________________
 
 # Current Github workflow
+
+```yml
 # apex-autonomous-deployment.yml
 # APEX Autonomous 7-Node Constellation Deployment
 # Fully autonomous IP extraction - ZERO manual IP entry required
@@ -5032,3 +5036,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*Build completed: $(date -u +"%Y-%m-%d %H:%M:%S UTC")*" >> $GITHUB_STEP_SUMMARY
+
+        ```
+
+      ## The problem, these two workflows need to be combined as one, this way we do not lose any deployment phases need for this to work.
