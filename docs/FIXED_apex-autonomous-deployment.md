@@ -246,13 +246,28 @@ jobs:
       
       - name: Verify ACE
         run: |
+          # ACE Kernel is optional at this stage - will be built on constellation nodes
+          # We check if it exists and warn if it doesn't work, but don't fail the build
           if [ -f ace/bin/ace-kernel ]; then
             chmod +x ace/bin/ace-kernel
-            ./ace/bin/ace-kernel --version || echo "ACE Kernel version check"
-            ./ace/bin/ace-kernel health || echo "ACE Kernel health check pending"
+            
+            # Version check - informational only
+            if ./ace/bin/ace-kernel --version; then
+              echo "::notice::ACE Kernel version verified"
+            else
+              echo "::warning::ACE Kernel version check failed - may need rebuild on target"
+            fi
+            
+            # Health check - informational only
+            if ./ace/bin/ace-kernel health; then
+              echo "::notice::ACE Kernel health check passed"
+            else
+              echo "::warning::ACE Kernel health check failed - will initialize on deployment"
+            fi
+            
             echo "ACE Kernel binary ready"
           else
-            echo "ACE Kernel will be built on constellation nodes"
+            echo "::notice::ACE Kernel not present - will be built on constellation nodes"
           fi
       
       - name: Report status
@@ -284,31 +299,55 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      # FIXED: Try artifact first, fall back to release download
       - name: Download binary
+        id: download-binary
         uses: actions/download-artifact@v4
-        continue-on-error: true
+        continue-on-error: true  # Intentional: allows fallback to release download
         with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
       
-      - name: Ensure binary available
+      - name: Ensure binary available (with fallback)
         run: |
+          set -e  # Fail on errors
+          
           if [ ! -f ./bin/aequitasd ]; then
-            echo "::warning::Artifact not found, downloading from release..."
+            echo "::notice::Artifact not found, downloading from release..."
             mkdir -p ./bin
-            wget -q https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/aequitasd-linux-amd64.tar.gz -O ./bin/aequitasd.tar.gz
-            tar -xzf ./bin/aequitasd.tar.gz -C ./bin
-            rm ./bin/aequitasd.tar.gz
+            
+            # Download from release - MUST succeed
+            if ! wget -q https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/aequitasd-linux-amd64.tar.gz -O ./bin/aequitasd.tar.gz; then
+              echo "::error::Failed to download aequitasd from GitHub releases"
+              exit 1
+            fi
+            
+            if ! tar -xzf ./bin/aequitasd.tar.gz -C ./bin; then
+              echo "::error::Failed to extract aequitasd archive"
+              exit 1
+            fi
+            
+            rm -f ./bin/aequitasd.tar.gz
             echo "Downloaded aequitasd from release"
+          fi
+          
+          # CRITICAL: Binary MUST exist at this point
+          if [ ! -f ./bin/aequitasd ]; then
+            echo "::error::CRITICAL - aequitasd binary not available after download attempts"
+            exit 1
           fi
           
           chmod +x ./bin/aequitasd
           echo "$PWD/bin" >> $GITHUB_PATH
           export PATH="$PWD/bin:$PATH"
           
-          which aequitasd || echo "Binary at: $PWD/bin/aequitasd"
-          ./bin/aequitasd version || echo "Version check complete"
-          echo "aequitasd binary ready"
+          # Version check - must succeed for critical infrastructure
+          if ./bin/aequitasd version; then
+            echo "aequitasd binary ready and verified"
+          else
+            echo "::error::aequitasd version check failed - binary may be corrupted"
+            exit 1
+          fi
       
       - name: Configure founder
         run: |
@@ -335,15 +374,28 @@ jobs:
         run: |
           echo "Initializing genesis for Founder Node..."
           
-          ./bin/aequitasd init "aequitas-founder-01" --chain-id ${{ env.CHAIN_ID }} --home ./founder-node || echo "Init step"
+          # Initialize founder node - may already exist
+          if ! ./bin/aequitasd init "aequitas-founder-01" --chain-id ${{ env.CHAIN_ID }} --home ./founder-node; then
+            echo "::warning::Init returned non-zero - node may already be initialized"
+          fi
           
-          ./bin/aequitasd keys add founder --keyring-backend test --home ./founder-node 2>&1 | tee founder_keys.txt || echo "Key generation"
+          # Generate founder keys - must succeed or use fallback
+          if ! ./bin/aequitasd keys add founder --keyring-backend test --home ./founder-node 2>&1 | tee founder_keys.txt; then
+            echo "::warning::Key generation returned non-zero - key may already exist"
+          fi
           
-          FOUNDER_ADDRESS=$(./bin/aequitasd keys show founder -a --keyring-backend test --home ./founder-node 2>/dev/null || echo "repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun")
+          # Get founder address with explicit fallback
+          FOUNDER_ADDRESS=$(./bin/aequitasd keys show founder -a --keyring-backend test --home ./founder-node 2>/dev/null)
+          if [ -z "$FOUNDER_ADDRESS" ]; then
+            echo "::warning::Could not retrieve founder address - using default"
+            FOUNDER_ADDRESS="repar1m230vduqyd4p07lwnqd78a6r5uyuvs74tu5eun"
+          fi
           echo "founder_address=$FOUNDER_ADDRESS" >> $GITHUB_OUTPUT
           
           if [ -f ./bin/aequitasd ]; then
-            ./bin/aequitasd genesis add-genesis-account $FOUNDER_ADDRESS ${{ env.FOUNDER_VESTED }}urepar --home ./founder-node || echo "Genesis allocation pending"
+            if ! ./bin/aequitasd genesis add-genesis-account $FOUNDER_ADDRESS ${{ env.FOUNDER_VESTED }}urepar --home ./founder-node; then
+              echo "::warning::Genesis account allocation returned non-zero - may already exist"
+            fi
             
             if [ -f ./founder-node/config/genesis.json ]; then
               GENESIS_HASH=$(sha256sum ./founder-node/config/genesis.json | awk '{print $1}')
@@ -361,6 +413,8 @@ jobs:
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
         run: |
+          set -e  # FIXED: Fail on any error
+          
           DEPLOYMENT_TARGET="${{ github.event.inputs.deployment_target || 'bare-metal' }}"
           
           echo "============================================================"
@@ -379,11 +433,17 @@ jobs:
                 SSH_USER="${SSH_USER:-root}"
                 
                 echo "Deploying to $SSH_USER@$SSH_HOST..."
-                scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ./bin/aequitasd $SSH_USER@$SSH_HOST:/usr/local/bin/ || {
-                  echo "::warning::Binary transfer failed"
-                }
                 
-                ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
+                # FIXED: Binary transfer MUST succeed
+                if ! scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ./bin/aequitasd $SSH_USER@$SSH_HOST:/usr/local/bin/; then
+                  echo "::error::CRITICAL - Failed to transfer aequitasd binary to $SSH_HOST"
+                  exit 1
+                fi
+                echo "Binary transferred successfully"
+                
+                # FIXED: SSH setup MUST succeed
+                if ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
+                  set -e
                   systemctl stop aequitasd 2>/dev/null || true
                   chmod +x /usr/local/bin/aequitasd
                   
@@ -411,14 +471,26 @@ jobs:
                   systemctl enable aequitasd
                   systemctl start aequitasd
                   
+                  # Verify node started
+                  sleep 2
+                  if ! systemctl is-active --quiet aequitasd; then
+                    echo "ERROR: aequitasd service failed to start"
+                    exit 1
+                  fi
+                  
                   echo "Aequitas node started on bare-metal"
-                '
+                '; then
+                  echo "::error::CRITICAL - Failed to configure/start aequitasd on $SSH_HOST"
+                  exit 1
+                fi
                 
                 RPC_ENDPOINT="http://$SSH_HOST:26657"
                 echo "ssh_deployed=true" >> $GITHUB_OUTPUT
                 echo "deploy_host=$SSH_HOST" >> $GITHUB_OUTPUT
+                echo "Founder node deployed and running on $SSH_HOST"
               else
-                echo "::notice::No SSH credentials - bare-metal deployment simulated"
+                echo "::warning::No SSH credentials configured - bare-metal deployment cannot proceed"
+                echo "Configure SSH_PRIVATE_KEY secret and SSH_HOST variable to deploy to bare-metal"
                 RPC_ENDPOINT="http://bare-metal-host:26657"
                 echo "ssh_deployed=false" >> $GITHUB_OUTPUT
               fi
@@ -427,10 +499,13 @@ jobs:
             docker-compose)
               if [ -f vm-infrastructure/scripts/bootstrap-with-genesis.sh ]; then
                 chmod +x vm-infrastructure/scripts/bootstrap-with-genesis.sh
-                CLUSTER_SIZE=1 CHAIN_ID=${{ env.CHAIN_ID }} bash vm-infrastructure/scripts/bootstrap-with-genesis.sh || {
+                if ! CLUSTER_SIZE=1 CHAIN_ID=${{ env.CHAIN_ID }} bash vm-infrastructure/scripts/bootstrap-with-genesis.sh; then
                   echo "::error::Docker deployment failed"
                   exit 1
-                }
+                fi
+              else
+                echo "::error::Docker bootstrap script not found"
+                exit 1
               fi
               RPC_ENDPOINT="http://localhost:26657"
               ;;
@@ -442,7 +517,7 @@ jobs:
           esac
           
           echo "rpc_endpoint=$RPC_ENDPOINT" >> $GITHUB_OUTPUT
-          echo "Founder Node deployment initiated"
+          echo "Founder Node deployment completed"
       
       - name: Extract Infrastructure IP (Autonomous)
         id: extract-ip
@@ -584,12 +659,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      # FIXED: Try artifact first, fall back gracefully for satellites
       - name: Download binary
+        id: download-satellite-binary
         uses: actions/download-artifact@v4
-        continue-on-error: true
+        continue-on-error: true  # Intentional: satellites may use remote binaries
         with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
+      
+      - name: Verify binary for satellites
+        run: |
+          # For satellite deployment, binary is optional locally (may be on remote servers)
+          if [ -f ./bin/aequitasd ]; then
+            echo "Binary available for satellite deployment"
+            chmod +x ./bin/aequitasd
+          else
+            echo "::notice::Binary not available locally - satellites will use pre-deployed binaries on remote servers"
+          fi
       
       - name: Deploy Satellite Nodes
         id: deploy
@@ -854,7 +941,7 @@ jobs:
           echo "apk_built=true" >> $GITHUB_OUTPUT
           echo "APK build completed successfully"
       
-      # FIXED: Sign APK step restored
+      # FIXED: Sign APK step restored with proper error handling
       - name: Sign APK
         id: sign
         env:
@@ -865,38 +952,53 @@ jobs:
         run: |
           cd mobile
           
-          if [ -f build/aequitas-zone.apk ] && [ -n "$ANDROID_KEYSTORE" ]; then
+          # CRITICAL: APK must exist
+          if [ ! -f build/aequitas-zone.apk ]; then
+            echo "::error::CRITICAL - Cannot sign APK - file does not exist"
+            echo "signed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          # Check if signing secrets are configured
+          if [ -n "$ANDROID_KEYSTORE" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ]; then
             echo "Signing APK with release key..."
             
             # Decode keystore
-            echo "$ANDROID_KEYSTORE" | base64 -d > release.keystore
+            if ! echo "$ANDROID_KEYSTORE" | base64 -d > release.keystore; then
+              echo "::error::Failed to decode Android keystore"
+              echo "signed=false" >> $GITHUB_OUTPUT
+              exit 1
+            fi
             
-            # Sign with jarsigner
-            jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+            # Sign with jarsigner - MUST succeed if secrets are configured
+            if ! jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
               -keystore release.keystore \
               -storepass "$KEYSTORE_PASSWORD" \
-              -keypass "$KEY_PASSWORD" \
-              build/aequitas-zone.apk "$KEY_ALIAS" 2>/dev/null || {
-                echo "::warning::jarsigner failed - trying apksigner..."
-              }
+              -keypass "${KEY_PASSWORD:-$KEYSTORE_PASSWORD}" \
+              build/aequitas-zone.apk "$KEY_ALIAS"; then
+              echo "::error::APK signing with jarsigner failed"
+              rm -f release.keystore
+              echo "signed=false" >> $GITHUB_OUTPUT
+              exit 1
+            fi
             
             # Verify signature
-            if jarsigner -verify build/aequitas-zone.apk 2>/dev/null; then
+            if jarsigner -verify build/aequitas-zone.apk; then
               echo "APK signed and verified successfully"
               echo "signed=true" >> $GITHUB_OUTPUT
             else
-              echo "::warning::APK signature verification failed"
+              echo "::error::APK signature verification failed after signing"
+              rm -f release.keystore
               echo "signed=false" >> $GITHUB_OUTPUT
+              exit 1
             fi
             
             # Clean up keystore
             rm -f release.keystore
           else
-            if [ ! -f build/aequitas-zone.apk ]; then
-              echo "::error::Cannot sign APK - file does not exist"
-              exit 1
-            fi
-            echo "::notice::APK unsigned (Android signing secrets not configured)"
+            # Signing secrets not configured - this is acceptable for dev builds
+            echo "::warning::APK will be unsigned (Android signing secrets not configured)"
+            echo "Configure ANDROID_KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS secrets for signed builds"
             echo "signed=false" >> $GITHUB_OUTPUT
           fi
       
@@ -925,31 +1027,36 @@ jobs:
           fi
       
       # FIXED: Upload to IPFS step restored
+      # NOTE: IPFS is optional - step will succeed but set ipfs_hash to indicate status
       - name: Upload to IPFS (Optional - Decentralized Distribution)
         id: ipfs
-        continue-on-error: true
         run: |
           cd mobile
           
-          if [ -f build/aequitas-zone.apk ]; then
-            # Check if ipfs is available
-            if command -v ipfs &> /dev/null; then
-              IPFS_HASH=$(ipfs add -Q build/aequitas-zone.apk 2>/dev/null || echo "")
-              if [ -n "$IPFS_HASH" ]; then
-                echo "ipfs_hash=$IPFS_HASH" >> $GITHUB_OUTPUT
-                echo "IPFS Hash: $IPFS_HASH"
-                echo "IPFS Gateway: https://ipfs.io/ipfs/$IPFS_HASH"
-              else
-                echo "ipfs_hash=upload-failed" >> $GITHUB_OUTPUT
-                echo "::warning::IPFS upload failed"
-              fi
+          # CRITICAL: APK must exist at this point
+          if [ ! -f build/aequitas-zone.apk ]; then
+            echo "::error::CRITICAL - No APK available for IPFS upload - build failed upstream"
+            echo "ipfs_hash=BUILD_FAILED" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+          
+          # Check if ipfs is available
+          if command -v ipfs &> /dev/null; then
+            IPFS_HASH=$(ipfs add -Q build/aequitas-zone.apk 2>/dev/null)
+            if [ -n "$IPFS_HASH" ] && [ "$IPFS_HASH" != "" ]; then
+              echo "ipfs_hash=$IPFS_HASH" >> $GITHUB_OUTPUT
+              echo "IPFS Hash: $IPFS_HASH"
+              echo "IPFS Gateway: https://ipfs.io/ipfs/$IPFS_HASH"
+              echo "::notice::IPFS upload successful"
             else
-              echo "ipfs_hash=ipfs-not-installed" >> $GITHUB_OUTPUT
-              echo "::notice::IPFS upload skipped (ipfs not installed on runner)"
+              echo "ipfs_hash=not-uploaded" >> $GITHUB_OUTPUT
+              echo "::warning::IPFS upload command succeeded but returned empty hash"
             fi
           else
-            echo "ipfs_hash=no-apk" >> $GITHUB_OUTPUT
-            echo "::error::No APK available for IPFS upload"
+            # IPFS not installed is acceptable - set clear status
+            echo "ipfs_hash=not-available" >> $GITHUB_OUTPUT
+            echo "::notice::IPFS upload skipped (ipfs CLI not installed on runner)"
+            echo "APK will be distributed via primary channel (sovereign website)"
           fi
       
       # FIXED: if-no-files-found: error (not ignore)
@@ -990,12 +1097,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      # FIXED: Removed continue-on-error - artifact MUST exist
       - name: Download APK Artifact
+        id: download-apk
         uses: actions/download-artifact@v4
-        continue-on-error: true
         with:
           name: mobile-apk-${{ needs.build-mobile-apk.outputs.version }}
           path: ./mobile-apk
+      
+      - name: Verify APK Artifact Downloaded
+        run: |
+          # CRITICAL: Fail if APK artifact was not downloaded
+          if [ ! -f ./mobile-apk/aequitas-zone.apk ]; then
+            echo "::error::CRITICAL - APK artifact download failed or file missing"
+            echo "Expected: ./mobile-apk/aequitas-zone.apk"
+            ls -la ./mobile-apk/ 2>/dev/null || echo "mobile-apk directory does not exist"
+            exit 1
+          fi
+          echo "APK artifact verified: ./mobile-apk/aequitas-zone.apk"
+          ls -lh ./mobile-apk/aequitas-zone.apk
       
       - name: Deploy to Sovereign Website
         id: deploy
@@ -1018,28 +1138,33 @@ jobs:
             chmod 600 ~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
-            # Create mobile download directory on server
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
+            # Create mobile download directory on server - fail if SSH fails
+            if ! ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
               mkdir -p /var/www/mobile
               mkdir -p /var/www/app/mobile
-            ' || echo "::warning::Directory creation may have failed"
-            
-            # Deploy APK to website
-            if [ -f ./mobile-apk/aequitas-zone.apk ]; then
-              scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
-                ./mobile-apk/aequitas-zone.apk \
-                $SSH_USER@$SSH_HOST:/var/www/mobile/aequitas-zone.apk || {
-                  echo "::error::APK transfer failed"
-                }
-              
-              echo "APK deployed to /var/www/mobile/aequitas-zone.apk"
-            else
-              echo "::warning::APK artifact not found - download page will show placeholder"
+            '; then
+              echo "::error::Failed to create directories on remote server"
+              exit 1
             fi
             
-            echo "Mobile download page deployed"
+            # Deploy APK to website - MUST succeed
+            if [ -f ./mobile-apk/aequitas-zone.apk ]; then
+              if ! scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+                ./mobile-apk/aequitas-zone.apk \
+                $SSH_USER@$SSH_HOST:/var/www/mobile/aequitas-zone.apk; then
+                echo "::error::APK transfer to server failed"
+                exit 1
+              fi
+              echo "APK deployed to /var/www/mobile/aequitas-zone.apk"
+            else
+              echo "::error::APK artifact not found after verification step - this should not happen"
+              exit 1
+            fi
+            
+            echo "Mobile download page deployed successfully"
           else
-            echo "::notice::SSH credentials not configured - mobile deployment simulated"
+            echo "::warning::SSH credentials not configured - mobile deployment skipped"
+            echo "To deploy mobile APK, configure SSH_PRIVATE_KEY and SSH_HOST secrets"
           fi
           
           echo "download_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
