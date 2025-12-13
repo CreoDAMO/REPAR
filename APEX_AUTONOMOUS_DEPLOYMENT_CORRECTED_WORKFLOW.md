@@ -260,14 +260,14 @@ jobs:
           fi
           echo "✅ go.sum: EXISTS ($(wc -l < aequitas/go.sum) dependencies)"
           
-          # Verify Go version
+          # Verify Go version (accept 1.23.x or 1.24.x)
           GO_VERSION=$(go version | awk '{print $3}')
-          if [[ ! "$GO_VERSION" =~ ^go1\.23\. ]]; then
-            echo "❌ FATAL: Go 1.23.x required, found $GO_VERSION"
-            echo "ERROR: Wrong Go version" >> $GITHUB_STEP_SUMMARY
+          if [[ ! "$GO_VERSION" =~ ^go1\.(23|24)\. ]]; then
+            echo "❌ FATAL: Go 1.23.x or 1.24.x required, found $GO_VERSION"
+            echo "ERROR: Go version mismatch" >> $GITHUB_STEP_SUMMARY
             exit 1
           fi
-          echo "✅ Go version: $GO_VERSION"
+          echo "✅ Go version: $GO_VERSION (compatible)"
           
           echo "============================================================"
           echo "   GO ENVIRONMENT VERIFIED"
