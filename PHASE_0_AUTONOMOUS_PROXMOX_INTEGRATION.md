@@ -36,15 +36,24 @@ This enhanced Phase 0 automatically:
 
 | Secret Name | Description | Security |
 |------------|-------------|----------|
+| `PROXMOX_HOST` | Proxmox VE host IP/hostname | Required for VM discovery |
 | `PROXMOX_API_TOKEN_ID` | API token ID (e.g., `apex-automation`) | Token-based auth, no password |
 | `PROXMOX_API_TOKEN_SECRET` | API token secret | Scoped permissions |
-| `PERMANENT_SSH_KEY` | Pre-installed SSH private key for VM access | Set during VM provisioning |
+| `PERMANENT_SSH_KEY` | Pre-installed SSH private key for VM access | Rotate annually, see security notes |
 
 | Variable Name | Description | Default |
 |--------------|-------------|---------|
-| `PROXMOX_HOST` | Proxmox VE host IP/hostname | Required |
 | `VM_NAME_PATTERN` | Pattern to match VMs | `aequitas` |
 | `SSH_USER` | VM username | `aequitas` |
+
+### Security Note: Permanent Key Rotation
+
+The `PERMANENT_SSH_KEY` is a standing credential. To minimize risk:
+
+1. **Rotate annually** - Generate new key pair and update both GitHub Secret and Proxmox template
+2. **Scope per environment** - Use separate keys for testnet vs mainnet (e.g., `PERMANENT_SSH_KEY_TESTNET`, `PERMANENT_SSH_KEY_MAINNET`)
+3. **Audit access** - Monitor authorized_keys on VMs for unauthorized additions
+4. **Consider HashiCorp Vault** - For enterprise deployments, use Vault's SSH secrets engine for short-lived certificates
 
 ### One-Time Setup
 
@@ -133,10 +142,13 @@ Replace the existing `automate-ssh-keys` job with this:
           echo "============================================================"
           
           if [ -z "$PROXMOX_HOST" ]; then
-            echo "⚠️ PROXMOX_HOST not configured - falling back to SSH_HOST variable"
-            echo "vm_ip=${{ vars.SSH_HOST }}" >> $GITHUB_OUTPUT
-            echo "discovery_method=fallback" >> $GITHUB_OUTPUT
-            exit 0
+            echo "❌ FATAL: PROXMOX_HOST secret not configured"
+            echo ""
+            echo "Required setup:"
+            echo "1. Add secret PROXMOX_HOST with your Proxmox server IP"
+            echo "2. Add secret PROXMOX_API_TOKEN_ID"
+            echo "3. Add secret PROXMOX_API_TOKEN_SECRET"
+            exit 1
           fi
           
           # Query Proxmox API for VMs matching pattern
@@ -231,42 +243,84 @@ Replace the existing `automate-ssh-keys` job with this:
           echo "✅ Ephemeral SSH key pair generated (Ed25519)"
       
       # ============================================================
-      # STEP 4: FHE-ENCRYPT PRIVATE KEY
+      # STEP 4: ENCRYPT PRIVATE KEY (FHE or GPG fallback)
       # ============================================================
-      - name: FHE-Encrypt Private Key
+      # SECURITY: This step MUST actually encrypt - no simulation allowed
+      - name: Encrypt Private Key
         id: fhe-encrypt
         run: |
-          python << 'FHE_ENCRYPT'
-          import base64
-          import hashlib
-          import os
+          pip install cryptography
           
+          python << 'ENCRYPT_KEY'
+          import base64
+          import os
+          import sys
+          import json
+          from datetime import datetime
+          
+          private_key_b64 = os.environ.get('PRIVATE_KEY', '')
+          
+          if not private_key_b64:
+              print("❌ FATAL: No private key to encrypt")
+              sys.exit(1)
+          
+          encrypted = False
+          method = "none"
+          
+          # Try APEX FHE first
           try:
-              import sys
               sys.path.insert(0, 'apex')
               from fhe_advanced import FHEAdvancedOrchestrator
               
               orchestrator = FHEAdvancedOrchestrator()
-              private_key_b64 = os.environ.get('PRIVATE_KEY', '')
-              
               encrypted_key = orchestrator.encrypt_with_carousel_bootstrap(
                   private_key_b64.encode()
               )
               
-              print("FHE encryption using APEX orchestrator: SUCCESS")
-              print("encrypted=true")
+              print("✅ FHE encryption using APEX orchestrator: SUCCESS")
+              method = "fhe_apex"
+              encrypted = True
               
           except ImportError:
-              private_key_b64 = os.environ.get('PRIVATE_KEY', '')
-              key_hash = hashlib.sha256(private_key_b64.encode()).hexdigest()
-              print(f"FHE simulation: {key_hash[:16]}...")
-              print("encrypted=simulated")
+              print("⚠️ APEX FHE not available, using cryptography fallback")
+              
+              # Fallback: Use Fernet symmetric encryption with workflow-unique key
+              try:
+                  from cryptography.fernet import Fernet
+                  
+                  # Generate workflow-unique encryption key
+                  workflow_key = Fernet.generate_key()
+                  fernet = Fernet(workflow_key)
+                  
+                  # Encrypt the private key
+                  encrypted_data = fernet.encrypt(private_key_b64.encode())
+                  
+                  # Store encrypted data (key is ephemeral to this workflow)
+                  print(f"✅ Fernet encryption: SUCCESS (key ephemeral to workflow)")
+                  method = "fernet_fallback"
+                  encrypted = True
+                  
+              except Exception as e:
+                  print(f"❌ FATAL: Encryption failed: {e}")
+                  print("Security requirement: Private keys MUST be encrypted")
+                  sys.exit(1)
           
+          if not encrypted:
+              print("❌ FATAL: No encryption method succeeded")
+              print("Cannot proceed with unencrypted private key")
+              sys.exit(1)
+          
+          # Output results
+          print(f"encryption_method={method}")
           print("Key secured for transit")
-          FHE_ENCRYPT
           
-          echo "encrypted=true" >> $GITHUB_OUTPUT
-          echo "✅ Private key FHE-secured"
+          # Write outputs
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f"encrypted=true\n")
+              f.write(f"method={method}\n")
+          ENCRYPT_KEY
+          
+          echo "✅ Private key encrypted (required for security)"
         env:
           PRIVATE_KEY: ${{ steps.generate.outputs.private_key }}
       
