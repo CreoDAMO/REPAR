@@ -280,14 +280,17 @@ jobs:
   # ============================================================
   # Uses APEX FHE (apex/fhe_advanced.py) for encrypted key management
   # Implements: Carousel Bootstrapping, EvalComp, HEAP acceleration
-  # Now depends on Phase 0A for Proxmox API token
+  # Exports API token from Phase 0A for downstream phases to consume
+  # (e.g., deploy-founder-node, build-constellation)
   # ============================================================
   automate-ssh-keys:
     name: Automate SSH Key Generation (FHE-Secured)
     runs-on: ubuntu-latest
+    needs: [bootstrap-proxmox-token]
     outputs:
       ssh_private_key: ${{ steps.generate.outputs.private_key }}
       fhe_encrypted: ${{ steps.fhe-encrypt.outputs.encrypted }}
+      proxmox_token: ${{ needs.bootstrap-proxmox-token.outputs.api_token }}
     
     steps:
       - uses: actions/checkout@v4

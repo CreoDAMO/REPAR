@@ -1,5 +1,24 @@
 # Aequitas Protocol ($REPAR) - The Justice Machine
 
+## Recent Updates
+
+### December 16, 2025 - Phase 0A Proxmox Token Bootstrap (Grok 4.1 Innovation)
+
+Added fully autonomous Proxmox API token creation - a novel community contribution:
+
+- **New Phase 0A job**: `bootstrap-proxmox-token` runs before existing SSH key automation
+- **Self-bootstrapping**: Creates Proxmox API tokens programmatically via `pveum apitoken add`
+- **Self-cleaning**: Removes SSH key from `authorized_keys` after bootstrap (zero SSH vector)
+- **Idempotent**: Checks if token exists before creating
+- **Dual auth support**: Ephemeral SSH key (primary) or root password (fresh installs)
+- **Privilege separation**: Support for least-privilege ACLs
+
+**Files Updated:**
+- `PHASE_0_AUTONOMOUS_PROXMOX_INTEGRATION.md` - Complete Phase 0A documentation
+- `APEX_AUTONOMOUS_DEPLOYMENT_CORRECTED_WORKFLOW.md` - New bootstrap job in workflow YAML
+
+---
+
 ## APEX Autonomous Constellation Deployment #44 - COMPLETE SUCCESS
 
 **Date:** December 9, 2025  

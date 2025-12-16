@@ -69,9 +69,11 @@ This is the **first fully idempotent, secure, self-bootstrapping API token creat
 
 | Secret Name | Description | Required |
 |-------------|-------------|----------|
-| `PROXMOX_HOST` | Proxmox server IP or hostname | Yes |
-| `PROXMOX_EPHEMERAL_SSH_KEY` | FHE-generated ephemeral SSH key (from prior step) | Yes (Option 1) |
-| `PROXMOX_ROOT_PASSWORD` | Root password for fresh installs | Yes (Option 2) |
+| `PROXMOX_HOST` | Proxmox server IP or hostname | Yes (or skip Phase 0A) |
+| `PROXMOX_EPHEMERAL_SSH_KEY` | FHE-generated ephemeral SSH key (from prior step) | Required for Option 1 |
+| `PROXMOX_ROOT_PASSWORD` | Root password for fresh installs | Required for Option 2 |
+
+**Note:** You must provide EITHER `PROXMOX_EPHEMERAL_SSH_KEY` OR `PROXMOX_ROOT_PASSWORD` - not both. If neither is provided and `PROXMOX_HOST` is set, the job will fail. If `PROXMOX_HOST` is not configured, Phase 0A will gracefully skip.
 
 ### Token Configuration Options
 
@@ -298,15 +300,34 @@ proxmox-bootstrap-api-token/
 
 ## Phase 0B: SSH Key Automation (Existing - Updated)
 
-Phase 0B now consumes the API token from Phase 0A for Proxmox API calls:
+Phase 0B now depends on Phase 0A and exports the API token for downstream phases to consume (e.g., deploy jobs that need Proxmox API access):
 
 ```yaml
   automate-ssh-keys:
-    name: Autonomous SSH Key Generation (Proxmox-Integrated)
+    name: Autonomous SSH Key Generation (FHE-Secured)
     runs-on: ubuntu-latest
-    needs: [bootstrap-proxmox-token]  # Depends on Phase 0A
-    # ... rest of existing Phase 0B configuration ...
+    needs: [bootstrap-proxmox-token]  # REQUIRED: Depends on Phase 0A
+    outputs:
+      ssh_private_key: ${{ steps.generate.outputs.private_key }}
+      fhe_encrypted: ${{ steps.fhe-encrypt.outputs.encrypted }}
+      proxmox_token: ${{ needs.bootstrap-proxmox-token.outputs.api_token }}
+      # ssh_host: Available when using enhanced version with proxmox-discover step
 ```
+
+**Note:** The basic Phase 0B uses `vars.SSH_HOST` from GitHub Variables. The enhanced version in this document includes a `proxmox-discover` step that automatically discovers VM IPs via Proxmox API - use that version if you want fully autonomous VM discovery.
+
+### Token Handoff Pattern
+
+When Phase 0B needs to call Proxmox API (e.g., for VM discovery), it can access the token from Phase 0A:
+
+```yaml
+      - name: Discover VMs via Proxmox API
+        env:
+          # Use token from Phase 0A if newly created, otherwise fall back to stored secret
+          PROXMOX_API_TOKEN: ${{ needs.bootstrap-proxmox-token.outputs.api_token != 'reuse-existing-from-secrets' && needs.bootstrap-proxmox-token.outputs.api_token || secrets.PROXMOX_API_TOKEN_SECRET }}
+```
+
+**Important:** If Phase 0A created a new token, you must save the token secret to GitHub Secrets after the first successful run. The token secret is only shown once at creation time.
 
 ---
 
