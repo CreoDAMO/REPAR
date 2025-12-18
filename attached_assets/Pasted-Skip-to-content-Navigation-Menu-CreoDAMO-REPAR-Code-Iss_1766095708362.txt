@@ -1,0 +1,320 @@
+Skip to content
+Navigation Menu
+CreoDAMO
+REPAR
+
+Code
+Issues
+Pull requests
+Discussions
+Actions
+Projects
+Wiki
+Security
+7
+APEX Autonomous Constellation Deployment
+APEX Autonomous Constellation Deployment #46
+Jobs
+Run details
+Manually triggered last week
+@CreoDAMOCreoDAMO
+⁠
+ 6c56d5c
+main
+Status
+Success
+Total duration
+26m 34s
+Artifacts
+8
+
+
+Validate APEX Autonomous Systems summary
+APEX Autonomous Systems Ready
+Capabilities:
+
+Self-Healing (auto-restart failed nodes)
+Self-Monitoring (health checks every 30s)
+Self-Scaling (auto-add validators)
+Satellite Routing (cross-node coordination)
+Binary Hash: c53c948d3ca00471edf31efba703390fcb6777f456e780af1fb2d5d27c14c25c
+
+Job summary generated at run-time
+Deploy Founder Node summary
+Founder Node Deployed
+Node Details:
+
+Name: aequitas-founder-01
+Role: Genesis Validator (Founder)
+Chain ID: aequitas-1
+Network: mainnet
+Deployment: bare-metal
+Infrastructure:
+
+IP: 135.232.208.145
+Source: sovereign-fallback
+Genesis Allocations:
+
+Founder Vested: 15.72T REPAR (12%)
+Founder Endowment: 7.86T REPAR (6%, 8-year lock)
+Endpoints:
+
+RPC: http://bare-metal-host:26657
+Job summary generated at run-time
+Verify Constellation summary
+Constellation Deployed
+Deployment: bare-metal
+Network: mainnet
+Cluster Size: 7 nodes
+Infrastructure IP: 135.232.208.145
+
+Node	Role	Status
+aequitas-founder-01	Founder	Deployed
+aequitas-validator-02	Validator	Deployed
+aequitas-validator-03	Validator	Deployed
+aequitas-validator-04	Validator	Deployed
+aequitas-validator-05	Validator	Deployed
+aequitas-validator-06	Validator	Deployed
+aequitas-validator-07	Validator	Deployed
+Job summary generated at run-time
+Deploy VM Infrastructure (ACE/AVM) summary
+VM Infrastructure Deployed
+ACE Endpoint: https://ace.aequitasprotocol.zone
+AVM Endpoint: https://vm.aequitasprotocol.zone
+
+Job summary generated at run-time
+Configure DNS (Sovereign Migration) summary
+DNS Migration Complete
+Migration Details:
+
+Removed old DigitalOcean IPs: 159.203.92.230, 76.223.105.230
+Updated to sovereign IP: 135.232.208.145
+IP Source: sovereign-fallback
+Updated Subdomains:
+
+Subdomain	Purpose	Proxied
+@ (root)	Main website	Yes
+www	Website alias	Yes
+app	Web application	Yes
+rpc	Blockchain RPC	Yes
+api	REST API	Yes
+explorer	Block explorer	Yes
+grpc	gRPC endpoint	No
+ace	ACE dashboard	Yes
+ace-metrics	Prometheus metrics	Yes
+ace-ai	AI coordination	Yes
+vm	AVM interface	Yes
+sovereign	Sovereign endpoint	Yes
+Job summary generated at run-time
+Create Keplr Registry PR summary
+Keplr Registry PR
+Status: PR created for chainapsis/keplr-chain-registry
+Chain ID: aequitas-1
+Infrastructure IP: 135.232.208.145
+
+Job summary generated at run-time
+Build Mobile APK (Sovereign Distribution) summary
+Mobile APK Built (Sovereign Distribution)
+Version: v1.0.0-6c56d5c
+SHA-256: 90a85a7d52f0712c246d2733c19d3edf3c9d90f2e4cb74616ad68acd042c3fca
+Signed: true
+IPFS: ipfs-not-installed
+
+Distribution Strategy:
+
+Primary: Direct APK download from https://aequitasprotocol.zone/mobile/download
+Secondary: IPFS decentralized distribution
+Optional: App stores (Google Play, etc.) as convenience, not requirement
+Sovereignty Principle: No app store gatekeepers required. Citizens can download directly.
+
+Job summary generated at run-time
+DNS Health Validation summary
+DNS Health Validation
+Status: 0/4 critical domains pointing to sovereign infrastructure
+
+Expected IP: 135.232.208.145
+
+Job summary generated at run-time
+Keplr PR Backflow Monitor summary
+Keplr PR Backflow
+Status: Monitoring active PRs to keplr-chain-registry
+
+Job summary generated at run-time
+Deploy AI Autonomous Agents summary
+AI Autonomous Agents Deployed
+Components:
+
+Threat Orchestrator (Go)
+Autonomous Agent CLI
+Job summary generated at run-time
+Sovereign Infrastructure Seal summary
+Sovereign Infrastructure Seal
+Seal Hash: 5b53dcb946cae9998fa9b67df2d984516f18727f3b25cbdf7a49657fd89f468d
+Timestamp: 2025-12-11T17:49:30Z
+
+This cryptographic seal verifies the integrity of the entire deployment.
+
+Job summary generated at run-time
+Deploy Cerberus Security Auditor summary
+Cerberus Security Auditor Deployed
+Endpoint: https://auditor.aequitasprotocol.zone
+
+Capabilities:
+
+Vulnerability Detection
+Threat Analysis
+AI-Powered Security Scanning
+Job summary generated at run-time
+Deploy-Everywhere Global Propagation summary
+Deploy-Everywhere Global Propagation
+Status: Global propagation initiated
+
+Propagation Targets:
+
+DNS: Cloudflare (primary), Google, Quad9, OpenDNS
+Wallet: Keplr Registry PR submitted
+Infrastructure: Sovereign ACE/AVM
+Sovereign Seal: 5b53dcb946cae9998fa9b67df2d984516f18727f3b25cbdf7a49657fd89f468d
+
+Job summary generated at run-time
+Deploy Backend API summary
+Backend API Deployed
+Endpoint: https://api.aequitasprotocol.zone
+
+Routes:
+
+/api/circle - Circle Payment Integration
+/api/agentkit - AgentKit Integration
+/api/auditor - Security Auditor API
+/api/nvidia - NVIDIA AI Integration
+Job summary generated at run-time
+Deploy Dexplorer (Block Explorer) summary
+Dexplorer (Block Explorer) Deployed
+Endpoint: https://explorer.aequitasprotocol.zone
+
+Features:
+
+Block browsing
+Transaction history
+Account details
+Validator information
+Governance proposals
+Job summary generated at run-time
+Deploy Frontend Application summary
+Frontend Application Deployed
+Endpoint: https://app.aequitasprotocol.zone
+
+Pages:
+
+Dashboard
+AI Analytics
+DEX Interface
+Governance
+Defendants Database
+Concentrated Audit
+Job summary generated at run-time
+Verify FHE Components summary
+FHE Components Verified
+Documentation Hash: ``
+
+Features Documented:
+
+APEX-Level Vectorized FHE
+Sovereign Homomorphic Bootstrapping
+FHE + Constitutional AI Fusion
+Post-Quantum FHE (APEX Entanglement)
+FHE Self-Healing
+Distributed FHE Without Nodes
+Job summary generated at run-time
+Deploy Mobile Download Page summary
+Mobile Download Page Deployed
+Download URL: https://aequitasprotocol.zone/mobile/download
+APK Direct Link: https://aequitasprotocol.zone/mobile/aequitas-zone.apk
+APK Hash: 90a85a7d52f0712c246d2733c19d3edf3c9d90f2e4cb74616ad68acd042c3fca
+IPFS Hash: ipfs-not-installed
+
+Sovereign Distribution Benefits:
+
+Direct download from protocol website
+No app store approval delays
+Cryptographic hash verification
+IPFS backup for censorship resistance
+Job summary generated at run-time
+Deployment Summary summary
+APEX Autonomous Deployment Complete
+Core Infrastructure
+Component	Status
+Binary Build	success
+APEX Validation	success
+Founder Node	success
+Constellation (6 nodes)	success
+Verification	success
+VM Infrastructure (ACE/AVM)	success
+Services Build
+Service	Build Status
+AI Autonomous Agents	success
+Cerberus Security Auditor	success
+Backend API	success
+Dexplorer (Block Explorer)	success
+Frontend	success
+Services Deployment
+Service	Deploy Status	Endpoint
+AI Autonomous	success	ACE/AVM Internal
+Cerberus Auditor	success	https://auditor.aequitasprotocol.zone
+Backend API	success	https://api.aequitasprotocol.zone
+Dexplorer	success	https://explorer.aequitasprotocol.zone
+Frontend	success	https://app.aequitasprotocol.zone
+FHE Verification	success	Documentation Verified
+Network & Integration
+Component	Status
+DNS Configuration	success
+DNS Health	success
+Keplr PR	success
+Sovereign Seal	success
+Global Propagation	success
+Infrastructure
+Chain ID: aequitas-1
+Network: mainnet
+Deployment: bare-metal
+Infrastructure IP: 135.232.208.145
+IP Source: sovereign-fallback
+Cryptographic Verification
+Binary Hash: c53c948d3ca00471edf31efba703390fcb6777f456e780af1fb2d5d27c14c25c
+Genesis Hash: 609f232053c76374a28dc2d4713b98b3623d9b242f50fb100855962ebcbdc486
+Sovereign Seal: 5b53dcb946cae9998fa9b67df2d984516f18727f3b25cbdf7a49657fd89f468d
+Deployed by APEX Autonomous System - 6c56d5c793c4d4d2adc947accf0a9f33e9cf6add
+
+Job summary generated at run-time
+Annotations
+2 warnings
+Build Mobile APK (Sovereign Distribution)
+Retention days cannot be greater than the maximum allowed retention set within the repository. Using 90 instead.
+Sovereign Infrastructure Seal
+Retention days cannot be greater than the maximum allowed retention set within the repository. Using 90 instead.
+Artifacts
+Produced during runtime
+Name	Size	Digest	
+aequitasd-v1.0.0-6c56d5c
+60.8 MB	
+sha256:8ef14f6c99d4d2e503ff7f89297ebf7588c392fb581bdc88e3950f065b0de38e
+ai-autonomous-agents
+4.11 MB	
+sha256:5593686dbbe854778a688e766199ba54ee3131878993b94f852cbf4aa99baf8a
+backend-api
+17.4 MB	
+sha256:5d4afcaef126cd8a573ab784d89cca9e126c6b4d95a228ec0f012ac9e5ceb2f7
+cerberus-auditor
+114 KB	
+sha256:a2bd950329fcc09ead88560d004848b3e6ca1f2ac77d928f61e717412f5f22dc
+dexplorer-dist
+1.52 MB	
+sha256:63853f3ae10f74b26422a63465b542fb71c51bbe4c324ca5d4be1cba1dde5fb4
+frontend-dist
+1.53 MB	
+sha256:3da8d5a31839932b60ee3acb893a9870065c56dfda50da3f4b10ace7d773c996
+mobile-apk-v1.0.0-6c56d5c
+40.6 MB	
+sha256:330f09e5875479b9d5f699741733c58fdb7bb48193b2654832a999f2a1e834bb
+sovereign-seal-20141642540
+677 Bytes	
+sha256:b829ee7bb349cfbf2b38691b65fa038ae955d5c3e61293d41cc0050a80e99ede
