@@ -4,6 +4,26 @@
 
 The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native coin) designed to enforce $131 trillion in reparations for the transatlantic slave trade. It provides complete economic, technical, and governance sovereignty to prevent shutdown or censorship. The protocol is founded on a 205-page forensic audit, establishing historical facts, economic liabilities, and a legal framework based on international law. It aims for universal accountability, integrates a strategic defense system, and seeks to transform reparations enforcement into a mathematical protocol, establishing a sovereign digital jurisdiction under Natural Law and Technological Law. The project envisions a digital sovereign nation for 300 million people, providing mathematically unkillable infrastructure, autonomous constitutional governance, post-quantum security, self-funding economics, automated legal enforcement, and software-defined territory.
 
+## Infrastructure Status
+
+**Bare-Metal Server**: 135.232.208.145 (Proxmox hypervisor)
+- **Proxmox Bootstrap**: Automated via GitHub Actions
+- **Secrets Set**: PROXMOX_HOST, PROXMOX_ROOT_PASSWORD
+- **Next**: Run `apex-autonomous-deployment` workflow to deploy 7-node constellation
+- **Deployment Type**: Bare-metal (no external cloud providers)
+
+**ACE (Aequitas Cloud Engine)**: Production-ready orchestration layer
+- **Location**: /home/runner/workspace/ace
+- **Deployment Script**: DEPLOYMENT_TYPE=bare-metal bash ace/scripts/deploy-production.sh
+- **Status**: Awaiting Proxmox token creation from GitHub Actions
+
+**Architecture**: 
+- Hardware-optional (pure software)
+- Cloudflare-integrated DNS
+- IPFS storage
+- Post-quantum cryptography (ML-DSA, ML-KEM)
+- 10,000+ mobile validators (APK distribution)
+
 ## User Preferences
 
 - **Coding Style**: Clean, functional React components with clear separation of concerns
@@ -17,6 +37,7 @@ The Aequitas Protocol is a sovereign Layer-1 blockchain ($REPAR is the native co
 - **Censorship Resistance**: Mobile validators with satellite/mesh fallback. Cannot be shut down by any single government or corporation.
 - **Licensing**: 14-license framework protects sovereignty at legal, technical, and cultural levels. All implementations are OPERATIONAL (ThreatOracle, Cerberus AI, etc.)
 - **Founder Protection**: Maximum legal shield through 5-layer constitutional protection, Natural Law authority, automated legal defense systems, and offensive counterclaim capabilities. Attack cost: $900K-$6.7M. Founder personal liability: ZERO.
+- **Hardware-Optional Philosophy**: Entire system built from ground up as pure software. Proxmox/bare-metal is ONE optional deployment path. System works on: home computers, Raspberry Pi, mobile phones, cloud, bare-metal, KVM, Docker, Kubernetes.
 
 ## System Architecture
 
@@ -44,11 +65,11 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - **Aequitas Satellite Protocol (ASSP)**: Software-defined satellite layer for multi-layer routing, geo-redundancy, and autonomous constellation management.
 - **Mobile APK Sovereign Distribution**: Automated build & signing, IPFS pinning for censorship-resistant distribution, supporting 10,000+ mobile validators.
 - **ADNS (Aequitas DNS System)**: A sovereign DNS system with complete alternate root independence from ICANN, providing a 9-layer fallback resolution architecture. It includes a Cosmos SDK `x/adns` module and a standalone DNS daemon with Redis caching. Supports ML-DSA-87 and FHE CKKS cryptography.
-- **Proxmox Token Bootstrap**: Autonomous Proxmox API token creation for infrastructure management.
+- **ACE (Aequitas Cloud Engine)**: Production-ready orchestration layer for Proxmox/bare-metal deployment with automated token bootstrap via GitHub Actions.
 
 ### System Design Choices
 
-- **Infrastructure**: Distributed node architecture (Mobile Light, Home/Raspberry Pi, Cloud Core) aiming for over 11,000 nodes, with Sovereign VM infrastructure.
+- **Infrastructure**: Distributed node architecture (Mobile Light, Home/Raspberry Pi, Cloud Core) aiming for over 11,000 nodes, with Sovereign VM infrastructure. Hardware-optional - works on any device.
 - **Legal & Enforcement Framework**: Multi-layered constitutional protection rooted in Natural Law, with automated cease-and-desist countermeasures.
 - **Security - APEX-PRIMARY Architecture**: Employs a sovereign-first model where the APEX System (local, 100% offline LLMs) is primary for security auditing and operation.
 - **Constitutional Foundation**: The Digital Declaration of International Economic Sovereignty is cryptographically bound to the blockchain's genesis block.
@@ -71,3 +92,4 @@ The frontend offers dashboards, data explorers for defendants and evidence, tran
 - **IBC Relayer**: Hermes v1.10.0
 - **Cryptography**: ML-DSA (Dilithium-3), ML-KEM (Kyber-768), SHA-256
 - **Payment Processing**: Circle USDCKit SDK
+- **Infrastructure Orchestration**: Proxmox (optional), Docker (optional), Kubernetes (optional)
