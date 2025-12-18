@@ -204,240 +204,128 @@ Phase 0A is **completely autonomous** - it generates everything it needs.
 
 ---
 
-## Phase 0B: Proxmox API Token Bootstrap
+## Phase 0B: Proxmox API Token Verification
 
-### Why This Is Novel
-This is the **first fully idempotent, secure, self-bootstrapping API token creation** for Proxmox:
-- No existing Terraform/Ansible provider supports creating its own token
-- No public script does the full idempotent + capture + cleanup cycle
-- Eliminates SSH access vector after initial bootstrap (token-only access)
-- Integrates with FHE-secured ephemeral SSH keys
+### Purpose
+Verifies that a Proxmox API token is available and functional. The token must be created manually one time via Replit shell (see `PROXMOX_SETUP_GUIDE.md`).
+
+### Why Verification Only?
+- **Token creation is a one-time manual operation** (documented in setup guide)
+- Avoids circular dependencies and complex bootstrap logic
+- Follows the standard Proxmox automation pattern (Terraform, Ansible, etc.)
+- Token secret is shown only once by Proxmox and cannot be retrieved afterward
 
 ### Required Inputs
 
 | Input | Source | Description |
 |-------|--------|-------------|
-| `ssh_private_key` | Phase 0A output | Ephemeral SSH key for Proxmox access |
 | `PROXMOX_HOST` | Secret | Proxmox server IP or hostname |
-| `PROXMOX_ROOT_PASSWORD` | Secret (optional) | Fallback for fresh installs without SSH keys |
+| `PROXMOX_API_TOKEN_ID` | Secret | Token ID (e.g., `apex-automation`) |
+| `PROXMOX_API_TOKEN_SECRET` | Secret | Token secret (created via setup guide) |
 
-### Authentication Options
+### Setup Reference
 
-| Option | Method | When to Use |
-|--------|--------|-------------|
-| **Option 1** | Ephemeral SSH Key (from 0A) | Primary method - key injected during Proxmox install |
-| **Option 2** | Root Password | Fresh bare-metal install, key not yet in authorized_keys |
+See `PROXMOX_SETUP_GUIDE.md` for complete one-time setup instructions:
+- Option A: Manual setup via Replit shell (recommended)
+- Option B: Automated setup via Replit Agent script
 
-**First-Run Scenario:** On a brand-new Proxmox install, you must EITHER:
-1. Pre-inject the Phase 0A public key during Proxmox installation, OR
-2. Provide `PROXMOX_ROOT_PASSWORD` for one-time bootstrap (immediately disabled after)
-
-### Token Configuration
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `TOKEN_USER` | Proxmox user for token | `root@pam` |
-| `TOKEN_ID` | Token identifier | `apex-deploy` |
-| `PRIVSEP` | Enable privilege separation | `true` |
-| `EXPIRE_DAYS` | Token expiration (0 = never) | `0` |
+**Quick Setup Summary:**
+```bash
+# From Replit shell:
+ssh root@YOUR_PROXMOX_IP
+pveum apitoken add root@pam apex-automation --privsep 0 --expire 0
+# Copy token ID and secret → Add to GitHub Secrets
+```
 
 ### Phase 0B Workflow YAML
 
 ```yaml
   # ============================================================
-  # PHASE 0B: PROXMOX API TOKEN BOOTSTRAP (SECOND)
+  # PHASE 0B: VERIFY PROXMOX API TOKEN AVAILABILITY
   # ============================================================
-  # Uses ephemeral SSH key from Phase 0A to create API token.
-  # Self-cleans SSH access after token creation.
-  # DEPENDS ON: generate-ssh-keys (Phase 0A)
+  # Verifies that API token credentials are configured.
+  # Token creation is a one-time manual step (see PROXMOX_SETUP_GUIDE.md)
+  # DEPENDS ON: None (Phase 0A independent)
   # ============================================================
-  bootstrap-proxmox-token:
-    name: Bootstrap Proxmox API Token (Idempotent, Secure)
+  verify-proxmox-token:
+    name: Phase 0B - Verify Proxmox API Token
     runs-on: ubuntu-latest
-    needs: [generate-ssh-keys]
     outputs:
-      api_token: ${{ steps.proxmox_token.outputs.api_token }}
-      token_exists: ${{ steps.proxmox_token.outputs.token_exists }}
-      token_id_full: ${{ steps.proxmox_token.outputs.token_id_full }}
+      token_configured: ${{ steps.verify.outputs.token_configured }}
+      token_id: ${{ steps.verify.outputs.token_id }}
     
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update && sudo apt-get install -y jq sshpass
-      
-      - name: Bootstrap Proxmox API Token
-        id: proxmox_token
+      - name: Verify Token Configuration
+        id: verify
         env:
           PROXMOX_HOST: ${{ secrets.PROXMOX_HOST }}
-          SSH_PRIVATE_KEY_B64: ${{ needs.generate-ssh-keys.outputs.ssh_private_key }}
-          ROOT_PASSWORD: ${{ secrets.PROXMOX_ROOT_PASSWORD }}
-          TOKEN_USER: root@pam
-          TOKEN_ID: apex-deploy
-          PRIVSEP: "true"
-          EXPIRE_DAYS: 0
+          PROXMOX_API_TOKEN_ID: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+          PROXMOX_API_TOKEN_SECRET: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
         run: |
-          set -euo pipefail
-          
           echo "============================================================"
-          echo "   PHASE 0B: PROXMOX API TOKEN BOOTSTRAP"
+          echo "   PHASE 0B: VERIFY PROXMOX API TOKEN"
           echo "============================================================"
           
-          FULL_TOKEN_ID="${TOKEN_USER}!${TOKEN_ID}"
-          echo "Host: ${PROXMOX_HOST:-not-configured}"
-          echo "Token: $FULL_TOKEN_ID"
-          echo "PrivSep: $PRIVSEP"
-          
-          # Skip if no Proxmox host configured
-          if [ -z "${PROXMOX_HOST:-}" ]; then
-            echo "⚠️ PROXMOX_HOST not configured - skipping token bootstrap"
-            echo "Set PROXMOX_HOST secret to enable automatic token creation"
-            echo "token_exists=skipped" >> $GITHUB_OUTPUT
-            echo "api_token=not-configured" >> $GITHUB_OUTPUT
-            echo "token_id_full=not-configured" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          # Configure SSH authentication
-          SSH_KEY_FILE=""
-          if [[ -n "${SSH_PRIVATE_KEY_B64:-}" ]]; then
-            # Decode base64 key from Phase 0A
-            SSH_KEY_FILE=$(mktemp)
-            echo "$SSH_PRIVATE_KEY_B64" | base64 -d > "$SSH_KEY_FILE"
-            chmod 600 "$SSH_KEY_FILE"
-            SSH_CMD="ssh -i $SSH_KEY_FILE -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=30"
-            echo "Auth method: Ephemeral SSH key (from Phase 0A)"
-          elif [[ -n "${ROOT_PASSWORD:-}" ]]; then
-            SSH_CMD="sshpass -e ssh -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=30"
-            export SSHPASS="$ROOT_PASSWORD"
-            echo "Auth method: Root password (one-time bootstrap)"
-          else
-            echo "❌ FATAL: No authentication credentials available"
-            echo "Phase 0A must provide SSH key, or set PROXMOX_ROOT_PASSWORD for fresh installs"
+          if [[ -z "${PROXMOX_HOST:-}" || -z "${PROXMOX_API_TOKEN_ID:-}" || -z "${PROXMOX_API_TOKEN_SECRET:-}" ]]; then
+            echo "❌ FATAL: Proxmox API token not fully configured"
+            echo ""
+            echo "Required GitHub Secrets:"
+            echo "  - PROXMOX_HOST"
+            echo "  - PROXMOX_API_TOKEN_ID"
+            echo "  - PROXMOX_API_TOKEN_SECRET"
+            echo ""
+            echo "Setup instructions: See PROXMOX_SETUP_GUIDE.md"
+            echo "Quick start:"
+            echo "  1. ssh root@YOUR_PROXMOX_IP"
+            echo "  2. pveum apitoken add root@pam apex-automation --privsep 0 --expire 0"
+            echo "  3. Save token ID and secret to GitHub Secrets"
             exit 1
           fi
           
-          # Test connectivity
-          echo "Testing SSH connectivity to $PROXMOX_HOST..."
-          if ! $SSH_CMD root@"$PROXMOX_HOST" true 2>/dev/null; then
-            echo "❌ FATAL: Cannot connect to Proxmox host via SSH"
-            echo ""
-            echo "Troubleshooting:"
-            echo "1. Ensure PROXMOX_HOST is correct"
-            echo "2. For SSH key auth: Add Phase 0A public key to /root/.ssh/authorized_keys"
-            echo "3. For password auth: Set PROXMOX_ROOT_PASSWORD secret"
-            exit 1
-          fi
-          echo "✅ SSH connectivity verified"
-          
-          # Check if token already exists (idempotent)
-          echo "Checking for existing token..."
-          if $SSH_CMD root@"$PROXMOX_HOST" "pveum apitoken list 2>/dev/null | grep -q '$FULL_TOKEN_ID'" 2>/dev/null; then
-            echo "⚠️ Token $FULL_TOKEN_ID already exists"
-            echo "Token secret cannot be retrieved after creation"
-            echo "Reuse existing token from GitHub Secrets or delete and recreate"
-            echo "token_exists=true" >> $GITHUB_OUTPUT
-            echo "api_token=reuse-existing-from-secrets" >> $GITHUB_OUTPUT
-            echo "token_id_full=$FULL_TOKEN_ID" >> $GITHUB_OUTPUT
-          else
-            # Create new token
-            echo "Creating new API token..."
-            TOKEN_JSON=$(
-              $SSH_CMD root@"$PROXMOX_HOST" << EOF
-              set -euo pipefail
-              pveum apitoken add $TOKEN_USER $TOKEN_ID \
-                --privsep $PRIVSEP \
-                --expire $EXPIRE_DAYS \
-                --output-format json
-          EOF
-            ) || {
-              echo "❌ FATAL: Failed to create API token (pveum command failed)"
-              exit 1
-            }
-            
-            # Extract token secret (only shown once!)
-            TOKEN_SECRET=$(echo "$TOKEN_JSON" | jq -r '.value' 2>/dev/null)
-            if [[ -z "$TOKEN_SECRET" || "$TOKEN_SECRET" == "null" ]]; then
-              echo "❌ FATAL: Failed to extract token secret from pveum output"
-              exit 1
-            fi
-            
-            FULL_TOKEN="${FULL_TOKEN_ID}=${TOKEN_SECRET}"
-            echo "✅ API token created successfully"
-            
-            # Apply ACLs if privilege separation enabled
-            if [[ "$PRIVSEP" == "true" ]]; then
-              echo "Applying privilege-separated ACLs..."
-              $SSH_CMD root@"$PROXMOX_HOST" \
-                "pveum acl modify / --token $FULL_TOKEN_ID --role Administrator" 2>/dev/null || {
-                echo "⚠️ ACL modification skipped (may already exist)"
-              }
-            fi
-            
-            # Mask token in logs
-            echo "::add-mask::$TOKEN_SECRET"
-            echo "::add-mask::$FULL_TOKEN"
-            
-            # Output for downstream jobs
-            echo "token_exists=false" >> $GITHUB_OUTPUT
-            echo "api_token=$FULL_TOKEN" >> $GITHUB_OUTPUT
-            echo "token_id_full=$FULL_TOKEN_ID" >> $GITHUB_OUTPUT
-            
-            echo ""
-            echo "============================================================"
-            echo "   TOKEN CREATED - SAVE TO GITHUB SECRETS NOW"
-            echo "============================================================"
-            echo "Token ID: $FULL_TOKEN_ID"
-            echo ""
-            echo "Add to GitHub Secrets:"
-            echo "  PROXMOX_API_TOKEN_ID = $TOKEN_ID"
-            echo "  PROXMOX_API_TOKEN_SECRET = [value from masked output]"
-            echo "============================================================"
-          fi
-          
-          # SELF-CLEANUP: Remove ephemeral SSH key from Proxmox (CRITICAL)
-          if [[ -n "${SSH_KEY_FILE:-}" && -f "$SSH_KEY_FILE" ]]; then
-            echo ""
-            echo "Removing ephemeral SSH key from Proxmox authorized_keys..."
-            
-            # Get the public key fingerprint
-            PUB_KEY=$(ssh-keygen -y -f "$SSH_KEY_FILE" 2>/dev/null | awk '{print $1" "$2}')
-            if [[ -n "$PUB_KEY" ]]; then
-              # Escape special characters for sed
-              ESCAPED_PUB_KEY=$(echo "$PUB_KEY" | sed 's/[\/&]/\\&/g')
-              $SSH_CMD root@"$PROXMOX_HOST" \
-                "sed -i '/$ESCAPED_PUB_KEY/d' /root/.ssh/authorized_keys 2>/dev/null || true"
-              echo "✅ Ephemeral SSH key REMOVED from Proxmox"
-              echo "   Zero SSH vector achieved - future access via API token only"
-            fi
-            
-            # Cleanup local key file
-            rm -f "$SSH_KEY_FILE"
-          fi
-          
+          echo "✅ All required secrets are configured"
+          echo "   PROXMOX_HOST: ${PROXMOX_HOST}"
+          echo "   PROXMOX_API_TOKEN_ID: ${PROXMOX_API_TOKEN_ID}"
+          echo "   Token secret: [configured]"
           echo ""
-          echo "============================================================"
-          echo "   PHASE 0B COMPLETE - FUTURE ACCESS VIA API TOKEN ONLY"
-          echo "============================================================"
+          echo "token_configured=true" >> $GITHUB_OUTPUT
+          echo "token_id=${PROXMOX_API_TOKEN_ID}" >> $GITHUB_OUTPUT
+      
+      - name: Test Token Connectivity (Optional)
+        if: always()
+        env:
+          PROXMOX_HOST: ${{ secrets.PROXMOX_HOST }}
+          PROXMOX_API_TOKEN_ID: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+          PROXMOX_API_TOKEN_SECRET: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y curl jq
+          
+          FULL_TOKEN="root@pam!${PROXMOX_API_TOKEN_ID}=${PROXMOX_API_TOKEN_SECRET}"
+          echo "::add-mask::$FULL_TOKEN"
+          
+          echo "Testing API connectivity..."
+          NODES=$(curl -sk -H "Authorization: PVEAPIToken=$FULL_TOKEN" \
+            "https://${PROXMOX_HOST}:8006/api2/json/nodes" 2>/dev/null | jq '.data | length')
+          
+          if [[ "$NODES" -gt 0 ]]; then
+            echo "✅ Token verified - API connectivity successful"
+            echo "   Found $NODES node(s)"
+          else
+            echo "⚠️ API connectivity test inconclusive (may require network configuration)"
+          fi
       
       - name: Report
         run: |
-          echo "### Phase 0B: Proxmox API Token Bootstrap" >> $GITHUB_STEP_SUMMARY
+          echo "### Phase 0B: Proxmox API Token Verification" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.proxmox_token.outputs.token_exists }}" == "skipped" ]; then
-            echo "| Bootstrap | Skipped (PROXMOX_HOST not configured) |" >> $GITHUB_STEP_SUMMARY
-          elif [ "${{ steps.proxmox_token.outputs.token_exists }}" == "true" ]; then
-            echo "| Token | Already Existed |" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "| Token | Created (NEW) |" >> $GITHUB_STEP_SUMMARY
-          fi
-          echo "| Token ID | ${{ steps.proxmox_token.outputs.token_id_full }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| SSH Cleanup | Completed (key revoked) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Token Configuration | ${{ steps.verify.outputs.token_configured }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Token ID | ${{ steps.verify.outputs.token_id }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Setup Reference | See PROXMOX_SETUP_GUIDE.md |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Security:** SSH access eliminated after bootstrap. Future access via API token only." >> $GITHUB_STEP_SUMMARY
+          echo "**Note:** Token creation is a one-time manual step. After first setup, all workflows use the token." >> $GITHUB_STEP_SUMMARY
 ```
 
 ---

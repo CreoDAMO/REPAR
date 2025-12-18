@@ -14,12 +14,13 @@
 5. **Fatal Validations Added** - Environment checks exit on failure
 6. **Updated Sovereign Seal** - Includes ADNS module hash
 7. **Expanded Summary** - 30+ phase status table
-8. **CORRECTED: Phase 0 Three-Stage Bootstrap** (Grok 4.1 Innovation):
+8. **SIMPLIFIED: Phase 0 Bootstrap** (Claude Sonnet 4.5 + Grok 4.1 Breakthrough):
    - **Phase 0A**: SSH Key Generation (NO dependencies - runs first)
-   - **Phase 0B**: Proxmox Token Bootstrap (uses 0A key, self-cleans SSH)
+   - **Phase 0B**: Verify Proxmox API Token (one-time setup via Replit shell)
    - **Phase 0C**: VM Discovery & Distribution (uses 0A + 0B outputs)
+   - **Setup**: Token creation is manual one-time operation via `PROXMOX_SETUP_GUIDE.md`
 
-> **Critical Fix:** Original had circular dependency where token bootstrap needed SSH key that didn't exist yet. Now key generation runs first with zero dependencies.
+> **Critical Discovery:** Removed over-engineered bootstrap logic. Token creation is a one-time manual step in Replit shell (standard Proxmox pattern). Phase 0B now just verifies token exists.
 
 ---
 
@@ -204,21 +205,17 @@ jobs:
           echo "**Next:** Phase 0B will use this key to bootstrap Proxmox API token" >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
-  # PHASE 0B: PROXMOX API TOKEN BOOTSTRAP (DEPENDS ON 0A)
+  # PHASE 0B: VERIFY PROXMOX API TOKEN AVAILABILITY
   # ============================================================
-  # Uses ephemeral SSH key from Phase 0A to create API token.
-  # Self-cleans SSH access after token creation.
-  # First-ever fully idempotent, secure bootstrap for Proxmox.
-  # This is a COMMUNITY CONTRIBUTION - novel automation pattern.
+  # Verifies that API token credentials are configured.
+  # Token creation is a one-time manual step (see PROXMOX_SETUP_GUIDE.md)
   # ============================================================
-  bootstrap-proxmox-token:
-    name: Phase 0B - Bootstrap Proxmox API Token
+  verify-proxmox-token:
+    name: Phase 0B - Verify Proxmox API Token
     runs-on: ubuntu-latest
-    needs: [generate-ssh-keys]
     outputs:
-      token_exists: ${{ steps.proxmox_token.outputs.token_exists }}
-      token_id_full: ${{ steps.proxmox_token.outputs.token_id_full }}
-      token_created: ${{ steps.proxmox_token.outputs.token_created }}
+      token_configured: ${{ steps.verify.outputs.token_configured }}
+      token_id: ${{ steps.verify.outputs.token_id }}
     
     steps:
       - uses: actions/checkout@v4
