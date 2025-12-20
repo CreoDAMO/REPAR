@@ -372,13 +372,13 @@ jobs:
   discover-and-distribute:
     name: Phase 0C - VM Discovery & Key Distribution
     runs-on: ubuntu-latest
-    needs: [generate-ssh-keys, bootstrap-proxmox-token]
-    if: needs.bootstrap-proxmox-token.outputs.token_exists != 'skipped'
+    needs: [generate-ssh-keys, verify-proxmox-token]
+    if: needs.verify-proxmox-token.outputs.token_exists != 'skipped'
     outputs:
       vm_count: ${{ steps.discover.outputs.vm_count }}
       vm_ips: ${{ steps.discover.outputs.vm_ips }}
       ssh_private_key: ${{ needs.generate-ssh-keys.outputs.ssh_private_key }}
-      proxmox_token: ${{ needs.bootstrap-proxmox-token.outputs.api_token }}
+      proxmox_token: ${{ needs.verify-proxmox-token.outputs.api_token }}
     
     steps:
       - uses: actions/checkout@v4
@@ -391,7 +391,7 @@ jobs:
         id: discover
         env:
           PROXMOX_HOST: ${{ secrets.PROXMOX_HOST }}
-          TOKEN_CREATED: ${{ needs.bootstrap-proxmox-token.outputs.token_created }}
+          TOKEN_CREATED: ${{ needs.verify-proxmox-token.outputs.token_created }}
           STORED_TOKEN_SECRET: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
           STORED_TOKEN_ID: ${{ secrets.PROXMOX_API_TOKEN_ID }}
           VM_NAME_PATTERN: ${{ vars.VM_NAME_PATTERN || 'aequitas' }}
@@ -554,7 +554,7 @@ jobs:
   automate-ssh-keys:
     name: SSH Key Automation (Legacy Compatibility)
     runs-on: ubuntu-latest
-    needs: [discover-and-distribute, generate-ssh-keys, bootstrap-proxmox-token]
+    needs: [discover-and-distribute, generate-ssh-keys, verify-proxmox-token]
     outputs:
       # Match original output names for backward compatibility
       ssh_private_key: ${{ needs.generate-ssh-keys.outputs.ssh_private_key }}
@@ -562,8 +562,8 @@ jobs:
       public_key: ${{ needs.generate-ssh-keys.outputs.ssh_public_key }}
       fhe_encrypted: ${{ needs.generate-ssh-keys.outputs.fhe_encrypted }}
       # Token info (not the secret - that stays in GitHub Secrets)
-      token_id: ${{ needs.bootstrap-proxmox-token.outputs.token_id_full }}
-      token_exists: ${{ needs.bootstrap-proxmox-token.outputs.token_exists }}
+      token_id: ${{ needs.verify-proxmox-token.outputs.token_id_full }}
+      token_exists: ${{ needs.verify-proxmox-token.outputs.token_exists }}
       # VM discovery results
       ssh_host: ${{ needs.discover-and-distribute.outputs.vm_ips }}
       vm_count: ${{ needs.discover-and-distribute.outputs.vm_count }}
