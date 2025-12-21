@@ -353,7 +353,7 @@ jobs:
     name: Cleanup - Auto-Revoke Temporary Token
     runs-on: ubuntu-latest
     needs: [create-proxmox-token]
-    if: ${{ needs.create-proxmox-token.outputs.token_created == 'true' && secrets.PROXMOX_API_TOKEN_SECRET != '' }}
+    if: ${{ needs.create-proxmox-token.outputs.token_created == 'true' }}
     steps:
       - name: Wait 30 Minutes (Grace Period)
         run: |
@@ -421,7 +421,6 @@ jobs:
     name: Phase 0C - VM Discovery & Key Distribution
     runs-on: ubuntu-latest
     needs: [generate-ssh-keys, create-proxmox-token, cleanup-temporary-token]
-    if: ${{ secrets.PROXMOX_API_TOKEN_SECRET != '' }}
     outputs:
       vm_count: ${{ steps.discover.outputs.vm_count }}
       vm_ips: ${{ steps.discover.outputs.vm_ips }}
