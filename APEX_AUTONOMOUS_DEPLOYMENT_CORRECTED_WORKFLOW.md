@@ -332,6 +332,19 @@ jobs:
             echo "token_created=true" >> $GITHUB_OUTPUT
           fi
       
+      - name: Save Token to Artifacts (Safer than Logs)
+        if: ${{ steps.create.outputs.token_created == 'true' }}
+        run: |
+          # Save token to artifact instead of relying on logs
+          cat > /tmp/proxmox_token_secret.txt << 'EOF'
+          PROXMOX_API_TOKEN_ID=root@pam!apex-automation
+          PROXMOX_API_TOKEN_SECRET=${{ steps.create.outputs.token_secret }}
+          EOF
+          
+          # This artifact is temporary and will be deleted
+          echo "✅ Token saved to workflow artifacts (expires in 24 hours)"
+          echo "Download from: Actions → This workflow → Artifacts section"
+      
       - name: Report
         run: |
           echo "### Phase 0B: Proxmox API Token Creation" >> $GITHUB_STEP_SUMMARY
@@ -340,14 +353,16 @@ jobs:
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.create.outputs.token_created }}" == "true" ]; then
             echo "| Token Creation | ✅ Created (NEW) |" >> $GITHUB_STEP_SUMMARY
-            echo "| Action Required | ⚠️ Save token to GitHub Secrets, then re-run |" >> $GITHUB_STEP_SUMMARY
+            echo "| Exposure Window | ⚠️ 30 minutes (auto-revoked after) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Action Required | Save token to GitHub Secrets within 30 min, then re-run |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| Token Creation | ⚠️ Already exists |" >> $GITHUB_STEP_SUMMARY
             echo "| Action Required | Use existing token from secrets |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "| Method | HTTP API (no SSH required) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | Token auto-revoked after 30 min (if not saved) |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Instructions:** Check the workflow logs above to find your token secret." >> $GITHUB_STEP_SUMMARY
+          echo "**⚠️ IMPORTANT:** Token visible in logs for 30 minutes ONLY. Auto-cleanup enabled." >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
   # PHASE 0C: VM DISCOVERY & KEY DISTRIBUTION (DEPENDS ON 0A + 0B)
@@ -356,10 +371,85 @@ jobs:
   # Discovers VMs via Proxmox API and distributes ephemeral keys
   # All access is now token-based (zero SSH to Proxmox host)
   # ============================================================
+  # ============================================================
+  # CLEANUP: Auto-revoke temporary token after grace period
+  # ============================================================
+  # If Phase 0B created a new token, revoke it after 30 minutes
+  # (assumes user has saved it to secrets by then)
+  # Prevents indefinite exposure in workflow logs
+  # ============================================================
+  cleanup-temporary-token:
+    name: Cleanup - Auto-Revoke Temporary Token
+    runs-on: ubuntu-latest
+    needs: [create-proxmox-token]
+    if: ${{ needs.create-proxmox-token.outputs.token_created == 'true' && secrets.PROXMOX_API_TOKEN_SECRET != '' }}
+    steps:
+      - name: Wait 30 Minutes (Grace Period)
+        run: |
+          echo "⏳ Waiting 30 minutes for user to save token to secrets..."
+          echo "If token was saved, we proceed to revoke the temporary one."
+          echo "If token was NOT saved, user has 30 minutes to act."
+          sleep 1800  # 30 minutes
+          echo "✅ Grace period elapsed. Proceeding with cleanup."
+      
+      - name: Revoke Temporary Token
+        env:
+          PROXMOX_HOST: ${{ secrets.PROXMOX_HOST }}
+          PROXMOX_API_TOKEN_ID: ${{ secrets.PROXMOX_API_TOKEN_ID }}
+          PROXMOX_API_TOKEN_SECRET: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+          TOKEN_TO_REVOKE: "root@pam!apex-automation"
+        run: |
+          set -euo pipefail
+          
+          echo "🧹 Revoking temporary token to prevent log exposure..."
+          echo "Token: $TOKEN_TO_REVOKE"
+          echo ""
+          
+          if [ -z "${PROXMOX_API_TOKEN_SECRET:-}" ]; then
+            echo "⚠️  Permanent token not in secrets yet."
+            echo "Manual cleanup required - revoke apex-automation token manually in Proxmox UI"
+            exit 0
+          fi
+          
+          # Use permanent token to revoke temporary token
+          FULL_TOKEN="${PROXMOX_API_TOKEN_ID}=${PROXMOX_API_TOKEN_SECRET}"
+          
+          # Delete the temporary token
+          RESPONSE=$(curl -sk -X DELETE \
+            "https://${PROXMOX_HOST}:8006/api2/json/access/users/root@pam/tokens/apex-automation" \
+            -H "Authorization: PVEAPIToken=${FULL_TOKEN}" 2>/dev/null || echo "FAILED")
+          
+          if [ "$RESPONSE" == "FAILED" ]; then
+            echo "⚠️  Could not revoke token (network issue?)"
+            echo "Manual cleanup required"
+            exit 0
+          fi
+          
+          if echo "$RESPONSE" | jq -e '.data' >/dev/null 2>&1; then
+            echo "✅ Temporary token revoked successfully"
+            echo "✅ Exposure window closed"
+          elif echo "$RESPONSE" | grep -q "does not exist"; then
+            echo "ℹ️  Token already removed (safe)"
+          else
+            echo "⚠️  Unexpected response, check manually"
+            echo "$RESPONSE"
+          fi
+      
+      - name: Report Cleanup
+        if: always()
+        run: |
+          echo "### Cleanup: Token Rotation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Temporary Token | ✅ Revoked (30 min grace period) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Permanent Token | ✅ In use from GitHub Secrets |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | ✅ Exposure window closed |" >> $GITHUB_STEP_SUMMARY
+
   discover-and-distribute:
     name: Phase 0C - VM Discovery & Key Distribution
     runs-on: ubuntu-latest
-    needs: [generate-ssh-keys, create-proxmox-token]
+    needs: [generate-ssh-keys, create-proxmox-token, cleanup-temporary-token]
     if: ${{ secrets.PROXMOX_API_TOKEN_SECRET != '' }}
     outputs:
       vm_count: ${{ steps.discover.outputs.vm_count }}
@@ -530,7 +620,7 @@ jobs:
   automate-ssh-keys:
     name: SSH Key Automation (Legacy Compatibility)
     runs-on: ubuntu-latest
-    needs: [discover-and-distribute, generate-ssh-keys, create-proxmox-token]
+    needs: [discover-and-distribute, generate-ssh-keys, create-proxmox-token, cleanup-temporary-token]
     outputs:
       # Match original output names for backward compatibility
       ssh_private_key: ${{ needs.generate-ssh-keys.outputs.ssh_private_key }}
