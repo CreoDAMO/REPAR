@@ -205,85 +205,149 @@ jobs:
           echo "**Next:** Phase 0B will use this key to bootstrap Proxmox API token" >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
-  # PHASE 0B: VERIFY PROXMOX API TOKEN (TOKEN-ONLY)
+  # PHASE 0B: CREATE PROXMOX API TOKEN (ONE-TIME SETUP)
   # ============================================================
-  # One-time manual token creation is complete.
-  # This job simply verifies the permanent token works.
-  # No SSH. No passwords. No ephemeral keys to host.
+  # Uses root password to create permanent API token via HTTP API
+  # This is a ONE-TIME setup. After token is saved to GitHub Secrets,
+  # future runs will use the permanent token (skip this step).
+  # Uses HTTP API (not SSH) - works from GitHub Actions runners.
   # ============================================================
-  verify-proxmox-api:
-    name: Phase 0B - Verify Proxmox API Token
+  create-proxmox-token:
+    name: Phase 0B - Create Proxmox API Token
     runs-on: ubuntu-latest
     needs: generate-ssh-keys
     outputs:
-      api_verified: "true"
+      token_id: "apex-automation"
+      token_created: ${{ steps.create.outputs.token_created }}
     
     steps:
-      - name: Test API Token Access
+      - name: Create API Token via HTTP API
+        id: create
         env:
           PROXMOX_HOST: ${{ secrets.PROXMOX_HOST }}
-          TOKEN_ID: ${{ secrets.PROXMOX_API_TOKEN_ID }}
-          TOKEN_SECRET: ${{ secrets.PROXMOX_API_TOKEN_SECRET }}
+          PROXMOX_PASSWORD: ${{ secrets.PROXMOX_ROOT_PASSWORD }}
+          PROXMOX_USER: root@pam
+          TOKEN_NAME: apex-automation
         run: |
           set -euo pipefail
           
           echo "============================================================"
-          echo "   PHASE 0B: VERIFY PROXMOX API TOKEN (TOKEN-ONLY)"
+          echo "   PHASE 0B: CREATE PROXMOX API TOKEN (ONE-TIME)"
           echo "============================================================"
+          echo ""
           
           # Validate required secrets
-          if [ -z "${PROXMOX_HOST:-}" ] || [ -z "${TOKEN_ID:-}" ] || [ -z "${TOKEN_SECRET:-}" ]; then
-            echo "❌ FATAL: PROXMOX_HOST or API token secrets missing"
-            echo "Required secrets:"
-            echo "  - PROXMOX_HOST (Proxmox server hostname/IP)"
-            echo "  - PROXMOX_API_TOKEN_ID (token identifier)"
-            echo "  - PROXMOX_API_TOKEN_SECRET (token secret value)"
-            echo ""
-            echo "See PROXMOX_SETUP_GUIDE.md for one-time setup instructions"
+          if [ -z "${PROXMOX_HOST:-}" ] || [ -z "${PROXMOX_PASSWORD:-}" ]; then
+            echo "❌ FATAL: PROXMOX_HOST or PROXMOX_ROOT_PASSWORD missing"
+            echo "Set these secrets first:"
+            echo "  - PROXMOX_HOST (your Proxmox server IP/hostname)"
+            echo "  - PROXMOX_ROOT_PASSWORD (Proxmox root password)"
             exit 1
           fi
           
-          # Mask token in logs
-          echo "::add-mask::$TOKEN_SECRET"
-          
-          FULL_TOKEN="root@pam!${TOKEN_ID}=${TOKEN_SECRET}"
-          
-          echo "Verifying Proxmox API access via permanent token..."
           echo "Host: $PROXMOX_HOST"
-          echo "Token ID: root@pam!$TOKEN_ID"
+          echo "User: $PROXMOX_USER"
+          echo "Token Name: $TOKEN_NAME"
+          echo ""
           
-          # Test API access with curl
-          RESPONSE=$(curl -sk -H "Authorization: PVEAPIToken=$FULL_TOKEN" \
-            "https://$PROXMOX_HOST:8006/api2/json/version" 2>/dev/null || echo "FAILED")
+          # Step 1: Authenticate with Proxmox API via HTTP
+          echo "Step 1: Authenticating with Proxmox API..."
+          AUTH_RESPONSE=$(curl -sk -X POST \
+            "https://${PROXMOX_HOST}:8006/api2/json/access/ticket" \
+            -d "username=${PROXMOX_USER}&password=${PROXMOX_PASSWORD}" \
+            -H "Content-Type: application/x-www-form-urlencoded" 2>/dev/null || echo "FAILED")
           
-          if [ "$RESPONSE" == "FAILED" ] || [ -z "$RESPONSE" ]; then
-            echo "❌ FATAL: Cannot reach Proxmox API at $PROXMOX_HOST:8006"
-            echo "Check network connectivity and PROXMOX_HOST value"
+          if [ "$AUTH_RESPONSE" == "FAILED" ] || [ -z "$AUTH_RESPONSE" ]; then
+            echo "❌ FATAL: Cannot connect to Proxmox API at $PROXMOX_HOST:8006"
+            echo "Check PROXMOX_HOST value and network connectivity"
             exit 1
           fi
           
-          # Verify response contains expected API data
-          if echo "$RESPONSE" | jq -e '.data' >/dev/null 2>&1; then
-            echo "✅ Proxmox API token verified – full autonomous access confirmed"
-            echo ""
-            echo "API Response (version info):"
-            echo "$RESPONSE" | jq '.data' 2>/dev/null || echo "$RESPONSE"
-          else
-            echo "❌ FATAL: Invalid API response (check token validity)"
+          # Extract authentication credentials
+          TICKET=$(echo "$AUTH_RESPONSE" | grep -o '"ticket":"[^"]*' | cut -d'"' -f4 || echo "")
+          CSRF=$(echo "$AUTH_RESPONSE" | grep -o '"csrftoken":"[^"]*' | cut -d'"' -f4 || echo "")
+          
+          if [ -z "$TICKET" ]; then
+            echo "❌ Authentication failed. Check PROXMOX_ROOT_PASSWORD"
+            echo "Response: $AUTH_RESPONSE"
             exit 1
+          fi
+          
+          echo "✅ Authentication successful"
+          echo ""
+          
+          # Step 2: Create API token
+          echo "Step 2: Creating API token..."
+          TOKEN_RESPONSE=$(curl -sk -X POST \
+            "https://${PROXMOX_HOST}:8006/api2/json/access/users/${PROXMOX_USER}/tokens" \
+            -H "CSRFPreventionToken: ${CSRF}" \
+            -H "Cookie: PVEAuthCookie=${TICKET}" \
+            -d "tokenid=${TOKEN_NAME}&expire=0&privsep=0" 2>/dev/null || echo "FAILED")
+          
+          if [ "$TOKEN_RESPONSE" == "FAILED" ]; then
+            echo "❌ Token creation failed - cannot reach API"
+            exit 1
+          fi
+          
+          # Extract token secret
+          TOKEN_SECRET=$(echo "$TOKEN_RESPONSE" | grep -o '"secret":"[^"]*' | cut -d'"' -f4 || echo "")
+          
+          if [ -z "$TOKEN_SECRET" ]; then
+            # Check if token already exists
+            if echo "$TOKEN_RESPONSE" | grep -q "already exists"; then
+              echo "⚠️  Token already exists (safe to ignore)"
+              echo "Use the existing token from GitHub Secrets"
+              echo "token_created=false" >> $GITHUB_OUTPUT
+            else
+              echo "❌ Token creation failed"
+              echo "Response: $TOKEN_RESPONSE"
+              exit 1
+            fi
+          else
+            echo "✅ Token created successfully!"
+            echo ""
+            echo "============================================================"
+            echo "   SAVE THESE CREDENTIALS TO GITHUB SECRETS NOW"
+            echo "============================================================"
+            echo "Token ID: ${PROXMOX_USER}!${TOKEN_NAME}"
+            echo "Token Secret: $TOKEN_SECRET"
+            echo ""
+            echo "GitHub Repository → Settings → Secrets and variables → Actions"
+            echo ""
+            echo "Add these two secrets:"
+            echo "  Name: PROXMOX_API_TOKEN_ID"
+            echo "  Value: ${PROXMOX_USER}!${TOKEN_NAME}"
+            echo ""
+            echo "  Name: PROXMOX_API_TOKEN_SECRET"
+            echo "  Value: $TOKEN_SECRET"
+            echo ""
+            echo "============================================================"
+            echo ""
+            echo "⚠️  Token secrets are shown only once!"
+            echo "Save them now. After this, re-run the workflow."
+            echo ""
+            
+            # Mask the token secret in logs
+            echo "::add-mask::$TOKEN_SECRET"
+            echo "token_created=true" >> $GITHUB_OUTPUT
           fi
       
       - name: Report
         run: |
-          echo "### Phase 0B: Proxmox API Token Verification" >> $GITHUB_STEP_SUMMARY
+          echo "### Phase 0B: Proxmox API Token Creation" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Token Verification | ✅ Complete |" >> $GITHUB_STEP_SUMMARY
-          echo "| API Connectivity | ✅ Verified |" >> $GITHUB_STEP_SUMMARY
-          echo "| Access Method | Permanent API Token (no SSH) |" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.create.outputs.token_created }}" == "true" ]; then
+            echo "| Token Creation | ✅ Created (NEW) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Action Required | ⚠️ Save token to GitHub Secrets, then re-run |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Token Creation | ⚠️ Already exists |" >> $GITHUB_STEP_SUMMARY
+            echo "| Action Required | Use existing token from secrets |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "| Method | HTTP API (no SSH required) |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Security:** Zero SSH access. All operations via Proxmox API token." >> $GITHUB_STEP_SUMMARY
+          echo "**Instructions:** Check the workflow logs above to find your token secret." >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
   # PHASE 0C: VM DISCOVERY & KEY DISTRIBUTION (DEPENDS ON 0A + 0B)
@@ -295,7 +359,8 @@ jobs:
   discover-and-distribute:
     name: Phase 0C - VM Discovery & Key Distribution
     runs-on: ubuntu-latest
-    needs: [generate-ssh-keys, verify-proxmox-api]
+    needs: [generate-ssh-keys, create-proxmox-token]
+    if: ${{ secrets.PROXMOX_API_TOKEN_SECRET != '' }}
     outputs:
       vm_count: ${{ steps.discover.outputs.vm_count }}
       vm_ips: ${{ steps.discover.outputs.vm_ips }}
@@ -465,7 +530,7 @@ jobs:
   automate-ssh-keys:
     name: SSH Key Automation (Legacy Compatibility)
     runs-on: ubuntu-latest
-    needs: [discover-and-distribute, generate-ssh-keys, verify-proxmox-api]
+    needs: [discover-and-distribute, generate-ssh-keys, create-proxmox-token]
     outputs:
       # Match original output names for backward compatibility
       ssh_private_key: ${{ needs.generate-ssh-keys.outputs.ssh_private_key }}
