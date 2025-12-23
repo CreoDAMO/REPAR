@@ -198,7 +198,7 @@ jobs:
           cd docker-nodes
           
           # Create docker-compose.yml
-          cat > docker-compose.yml << 'COMPOSE'
+          cat > docker-compose.yml << 'EOF'
 version: '3.8'
 
 services:
@@ -228,7 +228,7 @@ services:
 networks:
   aequitas-net:
     driver: bridge
-COMPOSE
+          EOF
           
           echo "✅ Docker Compose configuration created"
           echo "rpc_endpoint=http://localhost:26657" >> $GITHUB_OUTPUT
