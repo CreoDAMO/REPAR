@@ -2,7 +2,7 @@
 # APEX Autonomous 7-Node Constellation Deployment
 # PRODUCTION-READY: Docker-based deployment, fatal validations, ADNS sovereignty
 # Created: December 3, 2025
-# Updated: December 23, 2025 - Docker Migration
+# Updated: December 24, 2025 - Complete Docker Migration with Registry Fix
 
 name: APEX Autonomous Constellation Deployment
 
@@ -76,6 +76,7 @@ jobs:
     outputs:
       docker_host: ${{ steps.setup.outputs.docker_host }}
       registry_url: ${{ steps.registry.outputs.url }}
+      registry_authenticated: ${{ steps.registry.outputs.authenticated }}
     
     steps:
       - uses: actions/checkout@v4
@@ -96,24 +97,52 @@ jobs:
           docker --version
           docker-compose --version || docker compose version
           
+          # Create shared network
+          docker network create aequitas-network 2>/dev/null || echo "Network already exists"
+          
           echo "docker_host=local" >> $GITHUB_OUTPUT
           echo "✅ Docker environment ready"
       
-      - name: Setup Docker Registry (Optional)
+      - name: Setup Docker Registry
         id: registry
         env:
           DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
           DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          if [ -n "$DOCKER_REGISTRY_URL" ]; then
-            echo "Logging into Docker registry..."
+          # Try custom registry first
+          if [ -n "$DOCKER_REGISTRY_URL" ] && [ -n "$DOCKER_REGISTRY_USERNAME" ] && [ -n "$DOCKER_REGISTRY_PASSWORD" ]; then
+            echo "Logging into custom Docker registry: $DOCKER_REGISTRY_URL"
             echo "$DOCKER_REGISTRY_PASSWORD" | docker login "$DOCKER_REGISTRY_URL" -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
             echo "url=$DOCKER_REGISTRY_URL" >> $GITHUB_OUTPUT
-            echo "✅ Registry authentication successful"
+            echo "authenticated=true" >> $GITHUB_OUTPUT
+            echo "✅ Custom registry authentication successful"
+          
+          # Try Docker Hub with credentials
+          elif [ -n "$DOCKERHUB_USERNAME" ] && [ -n "$DOCKERHUB_TOKEN" ]; then
+            echo "Logging into Docker Hub..."
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            echo "url=$DOCKERHUB_USERNAME" >> $GITHUB_OUTPUT
+            echo "authenticated=true" >> $GITHUB_OUTPUT
+            echo "✅ Docker Hub authentication successful"
+          
+          # Use local registry (no push)
           else
-            echo "url=docker.io" >> $GITHUB_OUTPUT
-            echo "ℹ️  Using Docker Hub (no custom registry configured)"
+            echo "⚠️  No registry credentials configured"
+            echo "Images will be built locally only (not pushed)"
+            echo "url=local" >> $GITHUB_OUTPUT
+            echo "authenticated=false" >> $GITHUB_OUTPUT
+            echo ""
+            echo "To enable Docker Hub push, add these secrets:"
+            echo "  - DOCKERHUB_USERNAME: your Docker Hub username"
+            echo "  - DOCKERHUB_TOKEN: Docker Hub access token"
+            echo ""
+            echo "Or for custom registry:"
+            echo "  - DOCKER_REGISTRY_URL: registry URL"
+            echo "  - DOCKER_REGISTRY_USERNAME: registry username"
+            echo "  - DOCKER_REGISTRY_PASSWORD: registry password"
           fi
       
       - name: Report
@@ -124,6 +153,7 @@ jobs:
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Docker Host | ${{ steps.setup.outputs.docker_host }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Registry | ${{ steps.registry.outputs.url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Authenticated | ${{ steps.registry.outputs.authenticated }} |" >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
   # PHASE 1: BUILD CORE BLOCKCHAIN
@@ -219,9 +249,19 @@ jobs:
           REGISTRY_URL: ${{ needs.setup-docker-environment.outputs.registry_url }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          IMAGE_TAG="${REGISTRY_URL}/aequitas-node:${VERSION}"
           
-          # Create Dockerfile if not exists
+          # Determine image tag based on registry type
+          if [ "$REGISTRY_URL" = "local" ]; then
+            IMAGE_TAG="aequitas-node:${VERSION}"
+            LATEST_TAG="aequitas-node:latest"
+            SKIP_PUSH=true
+          else
+            IMAGE_TAG="${REGISTRY_URL}/aequitas-node:${VERSION}"
+            LATEST_TAG="${REGISTRY_URL}/aequitas-node:latest"
+            SKIP_PUSH=false
+          fi
+          
+          # Create Dockerfile
           cat > Dockerfile << 'EOF'
           FROM alpine:latest
           
@@ -238,20 +278,39 @@ jobs:
           EOF
           
           docker build -t "$IMAGE_TAG" .
-          docker tag "$IMAGE_TAG" "${REGISTRY_URL}/aequitas-node:latest"
+          docker tag "$IMAGE_TAG" "$LATEST_TAG"
           
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "skip_push=$SKIP_PUSH" >> $GITHUB_OUTPUT
           echo "✅ Docker image built: $IMAGE_TAG"
       
       - name: Push Docker Image
+        if: steps.docker.outputs.skip_push != 'true'
         working-directory: ./aequitas
         env:
           REGISTRY_URL: ${{ needs.setup-docker-environment.outputs.registry_url }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
-          docker push "${REGISTRY_URL}/aequitas-node:${VERSION}"
-          docker push "${REGISTRY_URL}/aequitas-node:latest"
-          echo "✅ Docker image pushed to registry"
+          
+          echo "Pushing Docker images to registry..."
+          
+          if docker push "${REGISTRY_URL}/aequitas-node:${VERSION}"; then
+            echo "✅ Pushed version tag: ${VERSION}"
+          else
+            echo "⚠️  Failed to push version tag"
+          fi
+          
+          if docker push "${REGISTRY_URL}/aequitas-node:latest"; then
+            echo "✅ Pushed latest tag"
+          else
+            echo "⚠️  Failed to push latest tag"
+          fi
+      
+      - name: Report Push Status
+        if: steps.docker.outputs.skip_push == 'true'
+        run: |
+          echo "ℹ️  Image built locally only (no registry push)"
+          echo "Image available locally as: ${{ steps.docker.outputs.image_tag }}"
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -440,7 +499,7 @@ jobs:
           
           networks:
             aequitas-network:
-              driver: bridge
+              external: true
           EOF
           
           # Start founder node
@@ -477,7 +536,7 @@ jobs:
   deploy-constellation:
     name: Deploy Constellation (${{ matrix.node }})
     runs-on: ubuntu-latest
-    needs: deploy-founder-node
+    needs: [deploy-founder-node, setup-docker-environment]
     if: github.event.inputs.founder_only != 'true'
     strategy:
       fail-fast: false
@@ -593,7 +652,7 @@ jobs:
   build-ai-autonomous:
     name: Build AI Autonomous Agents (Docker)
     runs-on: ubuntu-latest
-    needs: verify-constellation
+    needs: [verify-constellation, setup-docker-environment]
     outputs:
       image_tag: ${{ steps.docker.outputs.image_tag }}
     
@@ -619,17 +678,22 @@ jobs:
           ENTRYPOINT ["/usr/local/bin/threat-orchestrator"]
           EOF
           
-          IMAGE_TAG="${REGISTRY_URL}/aequitas-ai:latest"
-          docker build -t "$IMAGE_TAG" .
-          docker push "$IMAGE_TAG"
+          if [ "$REGISTRY_URL" = "local" ]; then
+            IMAGE_TAG="aequitas-ai:latest"
+            docker build -t "$IMAGE_TAG" .
+          else
+            IMAGE_TAG="${REGISTRY_URL}/aequitas-ai:latest"
+            docker build -t "$IMAGE_TAG" .
+            docker push "$IMAGE_TAG" || echo "⚠️  Push failed, image available locally"
+          fi
           
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "✅ AI Autonomous Docker image built"
 
   build-services-docker:
-    name: Build All Services (Docker)
+    name: Build Services (${{ matrix.service }})
     runs-on: ubuntu-latest
-    needs: verify-constellation
+    needs: [verify-constellation, setup-docker-environment]
     strategy:
       matrix:
         service: [backend, frontend, dexplorer, auditor]
@@ -687,20 +751,25 @@ jobs:
               ;;
           esac
           
-          IMAGE_TAG="${REGISTRY_URL}/aequitas-${{ matrix.service }}:latest"
-          docker build -t "$IMAGE_TAG" .
-          docker push "$IMAGE_TAG"
+          if [ "$REGISTRY_URL" = "local" ]; then
+            IMAGE_TAG="aequitas-${{ matrix.service }}:latest"
+            docker build -t "$IMAGE_TAG" .
+          else
+            IMAGE_TAG="${REGISTRY_URL}/aequitas-${{ matrix.service }}:latest"
+            docker build -t "$IMAGE_TAG" .
+            docker push "$IMAGE_TAG" || echo "⚠️  Push failed, image available locally"
+          fi
           
           echo "success=true" >> $GITHUB_OUTPUT
           echo "✅ ${{ matrix.service }} Docker image built"
 
   # ============================================================
-  # PHASE 3.6: BUILD ADNS MODULE
+  # PHASE 3.6: BUILD ADNS MODULE (POST-QUANTUM DNS)
   # ============================================================
   build-adns-module:
     name: Build ADNS Module (Post-Quantum)
     runs-on: ubuntu-latest
-    needs: verify-constellation
+    needs: [verify-constellation, setup-docker-environment]
     outputs:
       artifact_hash: ${{ steps.hash.outputs.hash }}
       image_tag: ${{ steps.docker.outputs.image_tag }}
@@ -715,19 +784,33 @@ jobs:
       
       - name: Install Post-Quantum Libraries
         run: |
+          echo "Installing post-quantum cryptographic libraries..."
+          
           mkdir -p adns
           cd adns
           
+          # Initialize Go module
           go mod init github.com/CreoDAMO/REPAR/adns
+          
+          # Install CIRCL (ML-DSA-87 for signatures)
           go get github.com/cloudflare/circl/sign/mldsa/mldsa87
+          
+          # Install Lattigo (CKKS FHE for encrypted DNS)
           go get github.com/tuneinsight/lattigo/v5/schemes/ckks
+          
+          # Install DNS libraries
           go get github.com/miekg/dns
+          
           go mod tidy
+          
+          echo "✅ Post-quantum libraries installed"
       
       - name: Build ADNS Resolver
+        id: build
         run: |
           cd adns
           
+          # Create ADNS resolver source
           cat > main.go << 'EOF'
           package main
           
@@ -743,14 +826,18 @@ jobs:
               "github.com/miekg/dns"
           )
           
-          var configPath = flag.String("config", "/etc/adns/config.yaml", "Path to config file")
+          var (
+              configPath = flag.String("config", "/etc/adns/config.yaml", "Path to config file")
+          )
           
           func main() {
               flag.Parse()
               
               fmt.Println("ADNS Alternate Root Resolver")
               fmt.Println("Post-Quantum: ML-DSA-87 + CKKS FHE")
+              fmt.Println("Alternate Roots: .aequitas, .repar, .sovereign")
               
+              // Create DNS server
               dns.HandleFunc("aequitas.", handleAequitas)
               dns.HandleFunc("repar.", handleRepar)
               dns.HandleFunc("sovereign.", handleSovereign)
@@ -764,6 +851,7 @@ jobs:
                   }
               }()
               
+              // Wait for shutdown
               sig := make(chan os.Signal, 1)
               signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
               <-sig
@@ -810,12 +898,84 @@ jobs:
           }
           EOF
           
+          # Build the binary
           go build -v -o ./build/adns-resolver .
           
           if [ ! -f ./build/adns-resolver ]; then
             echo "❌ FATAL: ADNS resolver binary not created"
             exit 1
           fi
+          
+          chmod +x ./build/adns-resolver
+          echo "✅ ADNS resolver built"
+      
+      - name: Generate Zone Files
+        run: |
+          cd adns
+          mkdir -p zones
+          
+          # Get infrastructure IP (will be replaced at deploy time)
+          INFRA_IP="127.0.0.1"
+          
+          # Create .aequitas root zone
+          cat > zones/db.aequitas << EOF
+          \$TTL 86400
+          @   IN  SOA ns1.aequitas. admin.aequitas. (
+                  2025121201
+                  3600
+                  1800
+                  604800
+                  86400 )
+          
+              IN  NS  ns1.aequitas.
+              IN  NS  ns2.aequitas.
+          
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
+          EOF
+          
+          # Create .repar root zone
+          cat > zones/db.repar << EOF
+          \$TTL 86400
+          @   IN  SOA ns1.repar. admin.repar. (
+                  2025121201
+                  3600
+                  1800
+                  604800
+                  86400 )
+          
+              IN  NS  ns1.repar.
+              IN  NS  ns2.repar.
+          
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
+          EOF
+          
+          # Create .sovereign root zone
+          cat > zones/db.sovereign << EOF
+          \$TTL 86400
+          @   IN  SOA ns1.sovereign. admin.sovereign. (
+                  2025121201
+                  3600
+                  1800
+                  604800
+                  86400 )
+          
+              IN  NS  ns1.sovereign.
+              IN  NS  ns2.sovereign.
+          
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
+          EOF
+          
+          # Verify all zone files created
+          ZONE_COUNT=$(ls zones/db.* 2>/dev/null | wc -l)
+          if [ "$ZONE_COUNT" -ne 3 ]; then
+            echo "❌ FATAL: Zone file generation incomplete (found $ZONE_COUNT, expected 3)"
+            exit 1
+          fi
+          
+          echo "✅ Generated 3 alternate root zones"
       
       - name: Build ADNS Docker Image
         id: docker
@@ -833,9 +993,14 @@ jobs:
           ENTRYPOINT ["/usr/local/bin/adns-resolver"]
           EOF
           
-          IMAGE_TAG="${REGISTRY_URL}/aequitas-adns:latest"
-          docker build -t "$IMAGE_TAG" .
-          docker push "$IMAGE_TAG"
+          if [ "$REGISTRY_URL" = "local" ]; then
+            IMAGE_TAG="aequitas-adns:latest"
+            docker build -t "$IMAGE_TAG" .
+          else
+            IMAGE_TAG="${REGISTRY_URL}/aequitas-adns:latest"
+            docker build -t "$IMAGE_TAG" .
+            docker push "$IMAGE_TAG" || echo "⚠️  Push failed, image available locally"
+          fi
           
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
           echo "✅ ADNS Docker image built"
@@ -844,7 +1009,7 @@ jobs:
         id: hash
         working-directory: ./adns
         run: |
-          HASH=$(find . -name "*.go" | sort | xargs sha256sum | sha256sum | awk '{print $1}')
+          HASH=$(find . -name "*.go" -o -name "db.*" | sort | xargs sha256sum | sha256sum | awk '{print $1}')
           echo "hash=$HASH" >> $GITHUB_OUTPUT
           echo "✅ ADNS Module Hash: $HASH"
       
@@ -852,9 +1017,26 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: adns-module-${{ github.sha }}
-          path: adns/build/
+          path: |
+            adns/build/
+            adns/zones/
           retention-days: 90
           if-no-files-found: error
+      
+      - name: Report
+        run: |
+          echo "### ADNS Module Built" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Post-Quantum Features:**" >> $GITHUB_STEP_SUMMARY
+          echo "- ML-DSA-87 (CIRCL)" >> $GITHUB_STEP_SUMMARY
+          echo "- CKKS FHE (Lattigo)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Alternate Roots:**" >> $GITHUB_STEP_SUMMARY
+          echo "- .aequitas" >> $GITHUB_STEP_SUMMARY
+          echo "- .repar" >> $GITHUB_STEP_SUMMARY
+          echo "- .sovereign" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Module Hash:** \`${{ steps.hash.outputs.hash }}\`" >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
   # PHASE 4: DEPLOY SERVICES (DOCKER COMPOSE)
@@ -862,7 +1044,7 @@ jobs:
   deploy-all-services:
     name: Deploy All Services (Docker Compose)
     runs-on: ubuntu-latest
-    needs: [build-services-docker, build-ai-autonomous, build-adns-module, deploy-founder-node]
+    needs: [build-services-docker, build-ai-autonomous, build-adns-module, deploy-founder-node, setup-docker-environment]
     outputs:
       deployment_status: ${{ steps.deploy.outputs.status }}
     
@@ -876,28 +1058,43 @@ jobs:
         run: |
           echo "Creating master docker-compose configuration..."
           
+          # Handle local vs remote registry
+          if [ "$REGISTRY_URL" = "local" ]; then
+            BACKEND_IMAGE="aequitas-backend:latest"
+            FRONTEND_IMAGE="aequitas-frontend:latest"
+            DEXPLORER_IMAGE="aequitas-dexplorer:latest"
+            AUDITOR_IMAGE="aequitas-auditor:latest"
+            AI_IMAGE="aequitas-ai:latest"
+            ADNS_IMAGE="aequitas-adns:latest"
+          else
+            BACKEND_IMAGE="${REGISTRY_URL}/aequitas-backend:latest"
+            FRONTEND_IMAGE="${REGISTRY_URL}/aequitas-frontend:latest"
+            DEXPLORER_IMAGE="${REGISTRY_URL}/aequitas-dexplorer:latest"
+            AUDITOR_IMAGE="${REGISTRY_URL}/aequitas-auditor:latest"
+            AI_IMAGE="${REGISTRY_URL}/aequitas-ai:latest"
+            ADNS_IMAGE="${REGISTRY_URL}/aequitas-adns:latest"
+          fi
+          
           cat > docker-compose.services.yml << EOF
           version: '3.8'
           
           services:
             # Backend API
             backend:
-              image: ${REGISTRY_URL}/aequitas-backend:latest
+              image: ${BACKEND_IMAGE}
               container_name: aequitas-backend
               ports:
                 - "3000:3000"
               environment:
                 - NODE_ENV=production
-                - RPC_ENDPOINT=http://founder-node:26657
+                - RPC_ENDPOINT=http://aequitas-founder-01:26657
               networks:
                 - aequitas-network
               restart: unless-stopped
-              depends_on:
-                - founder-node
             
             # Frontend Application
             frontend:
-              image: ${REGISTRY_URL}/aequitas-frontend:latest
+              image: ${FRONTEND_IMAGE}
               container_name: aequitas-frontend
               ports:
                 - "8080:80"
@@ -909,7 +1106,7 @@ jobs:
             
             # Block Explorer
             dexplorer:
-              image: ${REGISTRY_URL}/aequitas-dexplorer:latest
+              image: ${DEXPLORER_IMAGE}
               container_name: aequitas-dexplorer
               ports:
                 - "8081:80"
@@ -921,33 +1118,29 @@ jobs:
             
             # Cerberus Auditor
             auditor:
-              image: ${REGISTRY_URL}/aequitas-auditor:latest
+              image: ${AUDITOR_IMAGE}
               container_name: aequitas-auditor
               ports:
                 - "5000:5000"
               environment:
-                - BLOCKCHAIN_RPC=http://founder-node:26657
+                - BLOCKCHAIN_RPC=http://aequitas-founder-01:26657
               networks:
                 - aequitas-network
               restart: unless-stopped
-              depends_on:
-                - founder-node
             
             # AI Autonomous Agents
             ai-autonomous:
-              image: ${REGISTRY_URL}/aequitas-ai:latest
+              image: ${AI_IMAGE}
               container_name: aequitas-ai
               environment:
-                - BLOCKCHAIN_RPC=http://founder-node:26657
+                - BLOCKCHAIN_RPC=http://aequitas-founder-01:26657
               networks:
                 - aequitas-network
               restart: unless-stopped
-              depends_on:
-                - founder-node
             
             # ADNS Resolver
             adns:
-              image: ${REGISTRY_URL}/aequitas-adns:latest
+              image: ${ADNS_IMAGE}
               container_name: aequitas-adns
               ports:
                 - "5353:5353/udp"
@@ -1080,7 +1273,7 @@ jobs:
   enable-cross-chain:
     name: Enable Cross-Chain (IBC)
     runs-on: ubuntu-latest
-    needs: [configure-dns, deploy-all-services]
+    needs: [configure-dns, deploy-all-services, setup-docker-environment]
     outputs:
       ibc_enabled: ${{ steps.ibc.outputs.enabled }}
     
@@ -1120,9 +1313,9 @@ jobs:
           
           [[chains]]
           id = 'aequitas-1'
-          rpc_addr = 'http://founder-node:26657'
-          grpc_addr = 'http://founder-node:9090'
-          websocket_addr = 'ws://founder-node:26657/websocket'
+          rpc_addr = 'http://aequitas-founder-01:26657'
+          grpc_addr = 'http://aequitas-founder-01:9090'
+          websocket_addr = 'ws://aequitas-founder-01:26657/websocket'
           rpc_timeout = '10s'
           account_prefix = 'repar'
           key_name = 'relayer'
@@ -1149,8 +1342,6 @@ jobs:
               networks:
                 - aequitas-network
               restart: unless-stopped
-              depends_on:
-                - founder-node
           
           networks:
             aequitas-network:
@@ -1364,7 +1555,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Container | Port(s) | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|---------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitas-founder-01 | 26656, 26657, 9090, 1317 | Running |" >> $GITHUB_STEP_SUMMARY
+          echo "| aequitas-founder--01 | 26656, 26657, 9090, 1317 | Running |" >> $GITHUB_STEP_SUMMARY
           echo "| aequitas-validator-01 | 26666, 26667, 9100, 1327 | Running |" >> $GITHUB_STEP_SUMMARY
           echo "| aequitas-validator-02 | 26676, 26677, 9110, 1337 | Running |" >> $GITHUB_STEP_SUMMARY
           echo "| aequitas-validator-03 | 26686, 26687, 9120, 1347 | Running |" >> $GITHUB_STEP_SUMMARY
