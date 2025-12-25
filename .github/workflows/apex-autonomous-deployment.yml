@@ -202,9 +202,11 @@ jobs:
           
           if [ "$REGISTRY_URL" = "local" ]; then
             IMAGE_TAG="aequitas-node:${VERSION}"
+            LATEST_TAG="aequitas-node:latest"
             SKIP_PUSH=true
           else
             IMAGE_TAG="${REGISTRY_URL}/aequitas-node:${VERSION}"
+            LATEST_TAG="${REGISTRY_URL}/aequitas-node:latest"
             SKIP_PUSH=false
           fi
           
@@ -219,17 +221,32 @@ jobs:
           EOF
           
           docker build -t "$IMAGE_TAG" .
-          docker tag "$IMAGE_TAG" "${IMAGE_TAG%-*}:latest"
+          docker tag "$IMAGE_TAG" "$LATEST_TAG"
           
           echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
           echo "skip_push=$SKIP_PUSH" >> $GITHUB_OUTPUT
       
       - name: Push Docker Image
         if: steps.docker.outputs.skip_push != 'true'
         working-directory: ./aequitas
+        env:
+          IMAGE_TAG: ${{ steps.docker.outputs.image_tag }}
+          LATEST_TAG: ${{ steps.docker.outputs.latest_tag }}
         run: |
-          docker push "${{ steps.docker.outputs.image_tag }}"
-          docker push "${IMAGE_TAG%-*}:latest"
+          echo "Pushing Docker images to registry..."
+          
+          if docker push "$IMAGE_TAG"; then
+            echo "✅ Pushed version tag: $IMAGE_TAG"
+          else
+            echo "⚠️  Failed to push version tag"
+          fi
+          
+          if docker push "$LATEST_TAG"; then
+            echo "✅ Pushed latest tag: $LATEST_TAG"
+          else
+            echo "⚠️  Failed to push latest tag"
+          fi
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
