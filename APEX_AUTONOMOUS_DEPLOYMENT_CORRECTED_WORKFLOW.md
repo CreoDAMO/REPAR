@@ -235,19 +235,28 @@ build-aequitasd:
       working-directory: ./aequitas
       env:
         REGISTRY_URL: ${{ needs.setup-docker-environment.outputs.registry_url }}
+        REGISTRY_AUTH: ${{ needs.setup-docker-environment.outputs.registry_authenticated }}
       run: |
         VERSION="${{ steps.version.outputs.version }}"
+        
+        echo "Debug: REGISTRY_URL=$REGISTRY_URL"
+        echo "Debug: REGISTRY_AUTH=$REGISTRY_AUTH"
         
         # FIX: Properly format image tags (no double colons)
         if [ "$REGISTRY_URL" = "local" ]; then
           IMAGE_TAG="aequitas-node:${VERSION}"
           LATEST_TAG="aequitas-node:latest"
           SKIP_PUSH=true
+          echo "ℹ️  Building for local use (no push)"
         else
           IMAGE_TAG="${REGISTRY_URL}/aequitas-node:${VERSION}"
           LATEST_TAG="${REGISTRY_URL}/aequitas-node:latest"
           SKIP_PUSH=false
+          echo "ℹ️  Building for registry: $REGISTRY_URL"
         fi
+        
+        echo "Image tag: $IMAGE_TAG"
+        echo "Latest tag: $LATEST_TAG"
         
         cat > Dockerfile << 'EOF'
         FROM alpine:latest
@@ -263,6 +272,7 @@ build-aequitasd:
         docker tag "$IMAGE_TAG" "$LATEST_TAG"
         
         echo "image_tag=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
         echo "skip_push=$SKIP_PUSH" >> $GITHUB_OUTPUT
     
     - name: Push Docker Image
@@ -270,9 +280,21 @@ build-aequitasd:
       working-directory: ./aequitas
       env:
         IMAGE_TAG: ${{ steps.docker.outputs.image_tag }}
+        LATEST_TAG: ${{ steps.docker.outputs.latest_tag }}
       run: |
-        docker push "$IMAGE_TAG" || echo "⚠️  Push failed"
-        docker push "${IMAGE_TAG%-*}:latest" || echo "⚠️  Latest tag push failed"
+        echo "Pushing Docker images to registry..."
+        
+        if docker push "$IMAGE_TAG"; then
+          echo "✅ Pushed version tag: $IMAGE_TAG"
+        else
+          echo "⚠️  Failed to push version tag"
+        fi
+        
+        if docker push "$LATEST_TAG"; then
+          echo "✅ Pushed latest tag: $LATEST_TAG"
+        else
+          echo "⚠️  Failed to push latest tag"
+        fi
     
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -511,8 +533,8 @@ DOCKER_REGISTRY_URL          # Custom registry URL
 DOCKER_REGISTRY_USERNAME     # Registry username
 DOCKER_REGISTRY_PASSWORD     # Registry password
 # OR
-DOCKERHUB_USERNAME           # Docker Hub username
-DOCKERHUB_TOKEN              # Docker Hub token
+DOCKERHUB_USERNAME           # Docker Hub username (your Docker Hub username)
+DOCKERHUB_TOKEN              # Docker Hub Personal Access Token (NOT your password!)
 
 # Android APK Signing (optional)
 ANDROID_KEYSTORE_BASE64      # Base64-encoded keystore
@@ -528,13 +550,42 @@ SSH_USER                     # SSH username
 
 ---
 
+## Docker Hub Configuration (CRITICAL!)
+
+If you're using Docker Hub, follow these exact steps:
+
+1. **Create a Personal Access Token:**
+   - Go to https://hub.docker.com/settings/security
+   - Click "New Access Token"
+   - Name it "APEX Deployment"
+   - Select "Read, Write, Delete" permissions
+   - Copy the token (you won't see it again!)
+
+2. **Add GitHub Secrets:**
+   - Go to your GitHub repo → Settings → Secrets and variables → Actions
+   - Create `DOCKERHUB_USERNAME` = your Docker Hub username (e.g., `myusername`)
+   - Create `DOCKERHUB_TOKEN` = the Personal Access Token you just created
+   - Do NOT use your Docker Hub password!
+
+3. **Verify in Workflow Logs:**
+   - When the workflow runs, check Phase 0 logs
+   - Look for: `✅ Docker Hub authenticated`
+   - If you see `⚠️  No registry credentials`, check your secrets were created correctly
+
+**Common Mistake:** Using your Docker Hub password instead of a Personal Access Token → causes "access denied" errors!
+
+---
+
 ## Deployment Checklist
 
 - [x] Docker tag fix applied (no double colons)
 - [x] APK build validation added
 - [x] Go caching duplicate removed
 - [x] Mobile APK signing integrated
-- [x] Docker Compose deployment complete
+- [x] Docker Compose v2 compatibility (docker compose instead of docker-compose)
+- [x] Docker image push logic fixed (proper LATEST_TAG output)
+- [x] Docker Hub authentication guide added
+- [x] Registry URL diagnostic logging added
 - [x] Registry authentication priorities set
 - [x] Fatal validation checks in place
 - [x] Error handling improved
