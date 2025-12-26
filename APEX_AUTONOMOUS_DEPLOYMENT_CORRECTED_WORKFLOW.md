@@ -814,18 +814,27 @@ jobs:
         working-directory: ./aequitas
         env:
           REGISTRY_URL: ${{ needs.setup-docker-environment.outputs.registry_url }}
+          REGISTRY_AUTH: ${{ needs.setup-docker-environment.outputs.registry_authenticated }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
+          
+          echo "Debug: REGISTRY_URL=$REGISTRY_URL"
+          echo "Debug: REGISTRY_AUTH=$REGISTRY_AUTH"
           
           if [ "$REGISTRY_URL" = "local" ]; then
             IMAGE_TAG="aequitas-node:${VERSION}"
             LATEST_TAG="aequitas-node:latest"
             SKIP_PUSH=true
+            echo "ℹ️  Building for local use (no push)"
           else
             IMAGE_TAG="${REGISTRY_URL}/aequitas-node:${VERSION}"
             LATEST_TAG="${REGISTRY_URL}/aequitas-node:latest"
             SKIP_PUSH=false
+            echo "ℹ️  Building for registry: $REGISTRY_URL"
           fi
+          
+          echo "Image tag: $IMAGE_TAG"
+          echo "Latest tag: $LATEST_TAG"
           
           cat > Dockerfile << 'EOF'
           FROM alpine:latest
