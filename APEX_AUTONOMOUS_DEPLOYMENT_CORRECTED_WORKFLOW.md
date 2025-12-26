@@ -141,7 +141,7 @@ setup-docker-environment:
           exit 1
         fi
         docker --version
-        docker-compose --version || docker compose version
+        docker compose --version || docker compose version
         docker network create aequitas-network 2>/dev/null || true
         echo "docker_host=local" >> $GITHUB_OUTPUT
         echo "✅ Docker environment ready"
@@ -489,13 +489,13 @@ deploy-founder-node:
               retries: 3
         EOF
         
-        docker-compose up -d
+        docker compose up -d
         sleep 10
         
         CONTAINER_ID=$(docker ps -q -f name=aequitas-founder-01)
         if [ -z "$CONTAINER_ID" ]; then
           echo "❌ FATAL: Container not running"
-          docker-compose logs
+          docker compose logs
           exit 1
         fi
         echo "rpc_endpoint=http://localhost:26657" >> $GITHUB_OUTPUT
@@ -665,7 +665,7 @@ jobs:
           fi
           
           docker --version
-          docker-compose --version || docker compose version
+          docker compose --version || docker compose version
           
           docker network create aequitas-network 2>/dev/null || echo "Network already exists"
           
@@ -1076,7 +1076,7 @@ jobs:
               external: true
           EOF
           
-          docker-compose -f docker-compose.founder.yml up -d
+          docker compose -f docker-compose.founder.yml up -d
           
           CONTAINER_ID=$(docker ps -q -f name=aequitas-founder-01)
           echo "container_id=$CONTAINER_ID" >> $GITHUB_OUTPUT
@@ -1138,7 +1138,7 @@ jobs:
               external: true
           EOF
           
-          docker-compose -f docker-compose.${{ matrix.node }}.yml up -d
+          docker compose -f docker-compose.${{ matrix.node }}.yml up -d
 
   # ============================================================
   # PHASE 3: BUILD ALL SERVICES
@@ -1349,7 +1349,7 @@ jobs:
               external: true
           EOF
           
-          docker-compose -f docker-compose.services.yml up -d
+          docker compose -f docker-compose.services.yml up -d
 
   # ============================================================
   # PHASE 4.1: DEPLOY MOBILE DOWNLOAD PAGE
@@ -1530,7 +1530,7 @@ jobs:
               external: true
           EOF
           
-          docker-compose -f docker-compose.hermes.yml up -d
+          docker compose -f docker-compose.hermes.yml up -d
           
           echo "enabled=true" >> $GITHUB_OUTPUT
 
