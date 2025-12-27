@@ -2225,7 +2225,7 @@ jobs:
               echo "APK artifact not found - download page will show placeholder"
             fi
             
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash << EOF
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash << 'EOF'
 cat > /var/www/app/mobile/index.html << 'HTML_END'
 <!DOCTYPE html>
 <html lang="en">
