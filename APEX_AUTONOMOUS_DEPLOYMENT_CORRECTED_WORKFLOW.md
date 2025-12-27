@@ -2225,8 +2225,8 @@ jobs:
               echo "APK artifact not found - download page will show placeholder"
             fi
             
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST bash << 'MOBILE_PAGE'
-cat > /var/www/app/mobile/index.html << "EOF"
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash << EOF
+cat > /var/www/app/mobile/index.html << 'HTML_END'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2258,7 +2258,7 @@ cat > /var/www/app/mobile/index.html << "EOF"
     <a href="/mobile/aequitas-zone.apk" class="download-btn">Download APK</a>
     <div class="hash-box">
       <div class="hash-label">SHA-256 Verification Hash</div>
-      <div class="hash-value">${APK_HASH}</div>
+      <div class="hash-value">\${APK_HASH}</div>
     </div>
     <div class="warning">
       <div class="warning-title">Verify Before Installing</div>
@@ -2276,13 +2276,15 @@ cat > /var/www/app/mobile/index.html << "EOF"
       </ol>
     </div>
     <p class="sovereignty">Sovereign Distribution - No App Store Gatekeepers Required</p>
-    <p style="color: #666; font-size: 12px;">Version: ${APK_VERSION}</p>
+    <p style="color: #666; font-size: 12px;">Version: \${APK_VERSION}</p>
   </div>
 </body>
 </html>
-EOF
+HTML_END
+sed -i "s/\${APK_HASH}/${APK_HASH}/g" /var/www/app/mobile/index.html
+sed -i "s/\${APK_VERSION}/${APK_VERSION}/g" /var/www/app/mobile/index.html
 echo 'Mobile download page created'
-MOBILE_PAGE
+EOF
             
             echo "Mobile download page deployed"
           else
