@@ -2226,7 +2226,7 @@ jobs:
             fi
             
             ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST bash << 'MOBILE_PAGE'
-            cat > /var/www/app/mobile/index.html << "EOF"
+cat > /var/www/app/mobile/index.html << "EOF"
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2281,7 +2281,7 @@ jobs:
 </body>
 </html>
 EOF
-            echo 'Mobile download page created'
+echo 'Mobile download page created'
 MOBILE_PAGE
             
             echo "Mobile download page deployed"
