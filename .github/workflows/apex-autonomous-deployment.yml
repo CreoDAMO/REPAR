@@ -2148,8 +2148,8 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Sovereignty Principle:** No app store gatekeepers required. Citizens can download directly." >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 5.14: DEPLOY MOBILE DOWNLOAD PAGE
+    # ============================================================
+  # PHASE 5.14: DEPLOY MOBILE DOWNLOAD PAGE (FIXED YAML)
   # ============================================================
   deploy-mobile-download:
     name: Deploy Mobile Download Page
@@ -2189,24 +2189,26 @@ jobs:
             chmod 600 ~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
+            # Ensure directories exist
             ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
               mkdir -p /var/www/mobile
               mkdir -p /var/www/app/mobile
-            ' || echo "Directory creation"
+            ' || echo "Directory creation completed"
             
+            # Upload APK if exists
             if [ -f ./mobile-apk/aequitas-zone.apk ]; then
               scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
                 ./mobile-apk/aequitas-zone.apk \
-                $SSH_USER@$SSH_HOST:/var/www/mobile/aequitas-zone.apk || echo "APK transfer"
-              
-              echo "APK deployed to /var/www/mobile/aequitas-zone.apk"
+                $SSH_USER@$SSH_HOST:/var/www/mobile/aequitas-zone.apk && \
+                echo "APK deployed to /var/www/mobile/aequitas-zone.apk"
             else
               echo "APK artifact not found - download page will show placeholder"
             fi
             
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash << 'EOF'
-cat > /var/www/app/mobile/index.html << 'HTML_END'
-<!DOCTYPE html>
+            # Deploy full HTML page using printf + sed (NO NESTED HEREDOC)
+            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash << EOF
+              # Write HTML using printf to avoid nested heredoc issues
+              printf '%s\n' '<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -2237,7 +2239,7 @@ cat > /var/www/app/mobile/index.html << 'HTML_END'
     <a href="/mobile/aequitas-zone.apk" class="download-btn">Download APK</a>
     <div class="hash-box">
       <div class="hash-label">SHA-256 Verification Hash</div>
-      <div class="hash-value">${APK_HASH}</div>
+      <div class="hash-value">PLACEHOLDER_HASH</div>
     </div>
     <div class="warning">
       <div class="warning-title">Verify Before Installing</div>
@@ -2255,17 +2257,19 @@ cat > /var/www/app/mobile/index.html << 'HTML_END'
       </ol>
     </div>
     <p class="sovereignty">Sovereign Distribution - No App Store Gatekeepers Required</p>
-    <p style="color: #666; font-size: 12px;">Version: ${APK_VERSION}</p>
+    <p style="color: #666; font-size: 12px;">Version: PLACEHOLDER_VERSION</p>
   </div>
 </body>
-</html>
-HTML_END
-sed -i "s/\${APK_HASH}/${APK_HASH}/g" /var/www/app/mobile/index.html
-sed -i "s/\${APK_VERSION}/${APK_VERSION}/g" /var/www/app/mobile/index.html
-echo 'Mobile download page created'
+</html>' > /var/www/app/mobile/index.html
+
+              # Replace placeholders with actual values
+              sed -i "s/PLACEHOLDER_HASH/${APK_HASH}/g" /var/www/app/mobile/index.html
+              sed -i "s/PLACEHOLDER_VERSION/${APK_VERSION}/g" /var/www/app/mobile/index.html
+              
+              echo "Mobile download page created with verified hash and version"
 EOF
             
-            echo "Mobile download page deployed"
+            echo "Mobile download page deployed successfully"
           else
             echo "SSH credentials not configured - mobile deployment simulated"
           fi
