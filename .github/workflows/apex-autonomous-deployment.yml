@@ -2148,7 +2148,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Sovereignty Principle:** No app store gatekeepers required. Citizens can download directly." >> $GITHUB_STEP_SUMMARY
 
-    # ============================================================
+  # ============================================================
   # PHASE 5.14: DEPLOY MOBILE DOWNLOAD PAGE (FIXED YAML)
   # ============================================================
   deploy-mobile-download:
