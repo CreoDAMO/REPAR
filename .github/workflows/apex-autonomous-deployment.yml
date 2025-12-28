@@ -1494,22 +1494,6 @@ jobs:
           ns2 IN  A   $INFRA_IP
           EOF
           
-          cat > zones/db.aequitas << EOF
-          \$TTL 86400
-          @   IN  SOA ns1.aequitas. admin.aequitas. (
-                  2025121201
-                  3600
-                  1800
-                  604800
-                  86400 )
-          
-              IN  NS  ns1.aequitas.
-              IN  NS  ns2.aequitas.
-          
-          ns1 IN  A   $INFRA_IP
-          ns2 IN  A   $INFRA_IP
-          EOF
-          
           cat > zones/db.repar << EOF
           \$TTL 86400
           @   IN  SOA ns1.repar. admin.repar. (
@@ -2253,7 +2237,7 @@ cat > /var/www/app/mobile/index.html << 'HTML_END'
     <a href="/mobile/aequitas-zone.apk" class="download-btn">Download APK</a>
     <div class="hash-box">
       <div class="hash-label">SHA-256 Verification Hash</div>
-      <div class="hash-value">\${APK_HASH}</div>
+      <div class="hash-value">${APK_HASH}</div>
     </div>
     <div class="warning">
       <div class="warning-title">Verify Before Installing</div>
@@ -2271,7 +2255,7 @@ cat > /var/www/app/mobile/index.html << 'HTML_END'
       </ol>
     </div>
     <p class="sovereignty">Sovereign Distribution - No App Store Gatekeepers Required</p>
-    <p style="color: #666; font-size: 12px;">Version: \${APK_VERSION}</p>
+    <p style="color: #666; font-size: 12px;">Version: ${APK_VERSION}</p>
   </div>
 </body>
 </html>
