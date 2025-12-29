@@ -1,41 +1,4 @@
 # apex-autonomous-deployment.yml
-# APEX Autonomous 7-Node Constellation Deployment
-# FULLY RESTORED: All original features + Docker improvements
-# Created: December 3, 2025
-# Updated: December 26, 2025 - Complete Restoration + Docker Compose v2 Fix
-#
-# COMPREHENSIVE RESTORATION STATUS:
-# ✅ Phase 0: Docker Environment Setup (NEW - enhanced)
-# ✅ Phase 1: Build Aequitasd (RESTORED - with CERBERUS AUDIT comments)
-# ✅ Phase 2: Validate APEX (RESTORED - full verification + ACE check)
-# ✅ Phase 3: Deploy Founder Node (RESTORED - 6-method IP extraction)
-# ✅ Phase 4: Deploy Constellation (RESTORED - 6 validators)
-# ✅ Phase 5: Verify Constellation (RESTORED - detailed health checks)
-# ✅ Phase 5.5: VM Infrastructure (RESTORED - ACE/AVM deployment)
-# ✅ Phase 5.6: Build All Services (RESTORED - individual jobs with ARCHITECT comments)
-# ✅ Phase 5.6.5: Build ADNS (RESTORED - post-quantum DNS)
-# ✅ Phase 5.7-5.11: Deploy Services (RESTORED - SSH deployment for each)
-# ✅ Phase 5.12: Verify FHE Components (RESTORED)
-# ✅ Phase 5.13: Build Mobile APK (RESTORED - sovereignty comments)
-# ✅ Phase 5.14: Deploy Mobile Download (RESTORED - full HTML template)
-# ✅ Phase 6: DNS Configuration (RESTORED - cleanup old IPs + validation)
-# ✅ Phase 7: Keplr Registry PR (RESTORED - BUILD #43 FIX with logo handling)
-# ✅ Phase 8: Sovereign Seal (RESTORED - includes mobile)
-# ✅ Phase 9: Cross-Chain/IBC (RESTORED - detailed Hermes setup)
-# ✅ Phase 10: Deployment Summary (RESTORED - comprehensive report)
-#
-# DOCKER IMPROVEMENTS:
-# - Docker Compose v2 support (docker compose vs docker-compose)
-# - Registry authentication (Docker Hub + custom registries)
-# - Network isolation with aequitas-network
-# - Health checks for all containers
-# - Proper volume management
-#
-# MISSING FROM ORIGINAL (INTENTIONALLY):
-# - Deploy-Everywhere Global Propagation (merged into DNS + Summary)
-# - Keplr Backflow Monitor (simplified into Keplr PR)
-# - Validate DNS Health (merged into DNS Configuration)
-# - Update Keplr Metadata (merged into Keplr PR)
 
 name: APEX Autonomous Constellation Deployment
 
