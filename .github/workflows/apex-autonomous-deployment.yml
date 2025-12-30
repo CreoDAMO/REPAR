@@ -2521,275 +2521,288 @@ jobs:
 
   # ============================================================
   # PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
-  # ============================================================
-  # BUILD #43 FIX (December 9, 2025): Explicit checkout to named subdirectory
-  keplr-registry-pr:
-    name: Create Keplr Registry PR
-    runs-on: ubuntu-latest
-    needs: [deploy-founder-node, verify-constellation]
-    if: |
-      always() && 
-      needs.deploy-founder-node.result == 'success' && 
-      github.event.inputs.skip_keplr_pr != 'true'
+# ============================================================
+# BUILD #43 FIX (December 9, 2025): Explicit checkout to named subdirectory
+# FIX (December 29, 2025): Switched heredocs from quoted <<'EOF' to <<-EOF
+# This eliminates YAML parser sensitivity to indentation in large content blocks
+keplr-registry-pr:
+  name: Create Keplr Registry PR
+  runs-on: ubuntu-latest
+  needs: [deploy-founder-node, verify-constellation]
+  if: |
+    always() && 
+    needs.deploy-founder-node.result == 'success' && 
+    github.event.inputs.skip_keplr_pr != 'true'
+  outputs:
+    infrastructure_ip: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
     
-    steps:
-      - name: Checkout REPAR repository
-        uses: actions/checkout@v4
-        with:
-          path: repar-repo
-          fetch-depth: 0
-          lfs: true
-      
-      - name: Checkout LFS files
-        run: |
-          cd repar-repo
-          git lfs checkout
-      
-      - name: Verify logo files
-        run: |
-          echo "============================================================"
-          echo "   VERIFYING LOGO FILES IN CHECKOUT"
-          echo "============================================================"
-          echo "Working directory: $(pwd)"
-          echo ""
-          
-          echo "Repository structure:"
-          ls -la repar-repo/ || echo "repar-repo/ not found"
-          echo ""
-          
-          echo "Checking logo locations:"
-          if [ -f repar-repo/logo/REPAR_Coin_Logo.png ]; then
-            SIZE=$(stat -c%s repar-repo/logo/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z repar-repo/logo/REPAR_Coin_Logo.png)
-            echo "  FOUND: repar-repo/logo/REPAR_Coin_Logo.png ($SIZE bytes)"
-            if [ "$SIZE" -lt 200 ]; then
-              echo "  WARNING: File appears to be an LFS pointer (too small)"
-              cat repar-repo/logo/REPAR_Coin_Logo.png
-            fi
-          else
-            echo "  NOT FOUND: repar-repo/logo/REPAR_Coin_Logo.png"
+  steps:
+    - name: Checkout REPAR repository
+      uses: actions/checkout@v4
+      with:
+        path: repar-repo
+        fetch-depth: 0
+        lfs: true
+    
+    - name: Checkout LFS files
+      run: |
+        cd repar-repo
+        git lfs checkout
+    
+    - name: Verify logo files
+      run: |
+        echo "============================================================"
+        echo "   VERIFYING LOGO FILES IN CHECKOUT"
+        echo "============================================================"
+        echo "Working directory: $(pwd)"
+        echo ""
+        
+        echo "Repository structure:"
+        ls -la repar-repo/ || echo "repar-repo/ not found"
+        echo ""
+        
+        echo "Checking logo locations:"
+        if [ -f repar-repo/logo/REPAR_Coin_Logo.png ]; then
+          SIZE=$(stat -c%s repar-repo/logo/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z repar-repo/logo/REPAR_Coin_Logo.png)
+          echo "  FOUND: repar-repo/logo/REPAR_Coin_Logo.png ($SIZE bytes)"
+          if [ "$SIZE" -lt 200 ]; then
+            echo "  WARNING: File appears to be an LFS pointer (too small)"
+            cat repar-repo/logo/REPAR_Coin_Logo.png
           fi
-          
-          if [ -f repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ]; then
-            SIZE=$(stat -c%s repar-repo/frontend/public/assets/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z repar-repo/frontend/public/assets/REPAR_Coin_Logo.png)
-            echo "  FOUND: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ($SIZE bytes)"
-          else
-            echo "  NOT FOUND: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
-          fi
-          
-          if [ -f repar-repo/frontend/public/assets/repar-logo.svg ]; then
-            SIZE=$(stat -c%s repar-repo/frontend/public/assets/repar-logo.svg 2>/dev/null || stat -f%z repar-repo/frontend/public/assets/repar-logo.svg)
-            echo "  FOUND: repar-repo/frontend/public/assets/repar-logo.svg ($SIZE bytes)"
-          else
-            echo "  NOT FOUND: repar-repo/frontend/public/assets/repar-logo.svg"
-          fi
-          echo "============================================================"
-      
-      - name: Setup Git
-        run: |
-          git config --global user.name "Aequitas Protocol Bot"
-          git config --global user.email "bot@aequitasprotocol.zone"
-      
-      - name: Fork and clone Keplr registry
-        id: fork
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "GH_PAT not configured - skipping Keplr PR"
-            exit 0
-          fi
-          
-          echo "============================================================"
-          echo "   FORKING KEPLR CHAIN REGISTRY"
-          echo "============================================================"
-          
-          GITHUB_USER=$(gh api user --jq '.login')
-          echo "   Authenticated as: $GITHUB_USER"
-          echo "github_user=$GITHUB_USER" >> $GITHUB_OUTPUT
-          
-          echo "Forking chainapsis/keplr-chain-registry..."
-          gh repo fork chainapsis/keplr-chain-registry --clone=true --remote=true 2>/dev/null || {
-            echo "   Fork already exists, cloning..."
-            git clone "https://github.com/$GITHUB_USER/keplr-chain-registry.git" 2>/dev/null || echo "Clone failed"
-          }
-          
-          if [ -d keplr-chain-registry ]; then
-            cd keplr-chain-registry
-            
-            git remote -v
-            git remote set-url origin "https://github.com/$GITHUB_USER/keplr-chain-registry.git" || echo "Origin already correct"
-            git remote add upstream "https://github.com/chainapsis/keplr-chain-registry.git" 2>/dev/null || echo "Upstream exists"
-            
-            git fetch upstream main 2>/dev/null || echo "Fetch upstream"
-            git checkout main 2>/dev/null || git checkout -b main
-            git reset --hard upstream/main 2>/dev/null || echo "Reset to upstream"
-            
-            echo "   Fork configured successfully"
-          else
-            echo "   ERROR: Could not clone repository"
-          fi
-      
-      - name: Create chain configuration
-        env:
-          INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
-        run: |
-          if [ ! -d keplr-chain-registry ]; then
-            echo "Registry not cloned - skipping"
-            exit 0
-          fi
-          
+        else
+          echo "  NOT FOUND: repar-repo/logo/REPAR_Coin_Logo.png"
+        fi
+        
+        if [ -f repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ]; then
+          SIZE=$(stat -c%s repar-repo/frontend/public/assets/REPAR_Coin_Logo.png 2>/dev/null || stat -f%z repar-repo/frontend/public/assets/REPAR_Coin_Logo.png)
+          echo "  FOUND: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png ($SIZE bytes)"
+        else
+          echo "  NOT FOUND: repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
+        fi
+        
+        if [ -f repar-repo/frontend/public/assets/repar-logo.svg ]; then
+          SIZE=$(stat -c%s repar-repo/frontend/public/assets/repar-logo.svg 2>/dev/null || stat -f%z repar-repo/frontend/public/assets/repar-logo.svg)
+          echo "  FOUND: repar-repo/frontend/public/assets/repar-logo.svg ($SIZE bytes)"
+        else
+          echo "  NOT FOUND: repar-repo/frontend/public/assets/repar-logo.svg"
+        fi
+        echo "============================================================"
+    
+    - name: Setup Git
+      run: |
+        git config --global user.name "Aequitas Protocol Bot"
+        git config --global user.email "bot@aequitasprotocol.zone"
+    
+    - name: Fork and clone Keplr registry
+      id: fork
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT }}
+      run: |
+        if [ -z "$GH_TOKEN" ]; then
+          echo "GH_PAT not configured - skipping Keplr PR"
+          exit 0
+        fi
+        
+        echo "============================================================"
+        echo "   FORKING KEPLR CHAIN REGISTRY"
+        echo "============================================================"
+        
+        GITHUB_USER=$(gh api user --jq '.login')
+        echo "   Authenticated as: $GITHUB_USER"
+        echo "github_user=$GITHUB_USER" >> $GITHUB_OUTPUT
+        
+        echo "Forking chainapsis/keplr-chain-registry..."
+        gh repo fork chainapsis/keplr-chain-registry --clone=true --remote=true 2>/dev/null || {
+          echo "   Fork already exists, cloning..."
+          git clone "https://github.com/$GITHUB_USER/keplr-chain-registry.git" 2>/dev/null || echo "Clone failed"
+        }
+        
+        if [ -d keplr-chain-registry ]; then
           cd keplr-chain-registry
-          
-          mkdir -p cosmos
-          mkdir -p images/aequitas
-          
-          cat > cosmos/aequitas.json << 'EOF'
-          {
-            "chainId": "aequitas-1",
-            "chainName": "Aequitas Protocol",
-            "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
-            "rpc": "https://rpc.aequitasprotocol.zone",
-            "rest": "https://api.aequitasprotocol.zone",
-            "nodeProvider": {
-              "name": "Aequitas Foundation",
-              "email": "validators@aequitasprotocol.zone",
-              "website": "https://aequitasprotocol.zone"
-            },
-            "bip44": {
-              "coinType": 118
-            },
-            "bech32Config": {
-              "bech32PrefixAccAddr": "repar",
-              "bech32PrefixAccPub": "reparpub",
-              "bech32PrefixValAddr": "reparvaloper",
-              "bech32PrefixValPub": "reparvaloperpub",
-              "bech32PrefixConsAddr": "reparvalcons",
-              "bech32PrefixConsPub": "reparvalconspub"
-            },
-            "currencies": [
-              {
-                "coinDenom": "REPAR",
-                "coinMinimalDenom": "urepar",
-                "coinDecimals": 6,
-                "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
-              }
-            ],
-            "feeCurrencies": [
-              {
-                "coinDenom": "REPAR",
-                "coinMinimalDenom": "urepar",
-                "coinDecimals": 6,
-                "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
-                "gasPriceStep": {
-                  "low": 0.01,
-                  "average": 0.025,
-                  "high": 0.04
-                }
-              }
-            ],
-            "stakeCurrency": {
-              "coinDenom": "REPAR",
-              "coinMinimalDenom": "urepar",
-              "coinDecimals": 6,
-              "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
-            },
-            "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",
-            "features": ["ibc-transfer", "ibc-go"]
-          }
-          EOF
-          
-          echo "   DEBUG: Searching for logo files in repar-repo/..."
-          echo "   Checking ../repar-repo/logo/:"
-          ls -la "../repar-repo/logo/" 2>/dev/null || echo "     logo/ directory not found"
-          echo "   Checking ../repar-repo/frontend/public/assets/:"
-          ls -la "../repar-repo/frontend/public/assets/" 2>/dev/null | grep -i logo || echo "     No logo files found"
-          
-          LOGO_COPIED=false
-          
-          if [ -f "../repar-repo/logo/REPAR_Coin_Logo.png" ]; then
-            cp "../repar-repo/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
-            echo "   Logo copied from repar-repo/logo/REPAR_Coin_Logo.png"
-            LOGO_COPIED=true
-          elif [ -f "../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png" ]; then
-            cp "../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
-            echo "   Logo copied from repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
-            LOGO_COPIED=true
-          elif [ -f "../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png" ]; then
-            cp "../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
-            echo "   Logo copied from repar-repo/frontend/src/assets/REPAR_Coin_Logo.png"
-            LOGO_COPIED=true
-          fi
-          
-          if [ "$LOGO_COPIED" = "false" ]; then
-            if [ -f "../repar-repo/frontend/public/assets/repar-logo.svg" ]; then
-              echo "   Converting SVG to PNG (256x256)..."
-              if ! command -v convert >/dev/null 2>&1; then
-                echo "   Installing ImageMagick..."
-                sudo apt-get update -qq && sudo apt-get install -qq -y imagemagick
-              fi
-              if command -v rsvg-convert >/dev/null 2>&1; then
-                rsvg-convert -w 256 -h 256 "../repar-repo/frontend/public/assets/repar-logo.svg" -o images/aequitas/chain.png
-                echo "   Logo converted using rsvg-convert"
-                LOGO_COPIED=true
-              elif command -v convert >/dev/null 2>&1; then
-                convert -resize 256x256 -background none "../repar-repo/frontend/public/assets/repar-logo.svg" images/aequitas/chain.png
-                echo "   Logo converted using ImageMagick"
-                LOGO_COPIED=true
-              else
-                echo "   WARNING: No SVG converter available"
-              fi
+            
+          git remote -v
+          git remote set-url origin "https://github.com/$GITHUB_USER/keplr-chain-registry.git" || echo "Origin already correct"
+          git remote add upstream "https://github.com/chainapsis/keplr-chain-registry.git" 2>/dev/null || echo "Upstream exists"
+            
+          git fetch upstream main 2>/dev/null || echo "Fetch upstream"
+          git checkout main 2>/dev/null || git checkout -b main
+          git reset --hard upstream/main 2>/dev/null || echo "Reset to upstream"
+            
+          echo "   Fork configured successfully"
+        else
+          echo "   ERROR: Could not clone repository"
+        fi
+    
+    - name: Create chain configuration
+      env:
+        INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
+      run: |
+        if [ ! -d keplr-chain-registry ]; then
+          echo "Registry not cloned - skipping"
+          exit 0
+        fi
+        
+        cd keplr-chain-registry
+        
+        mkdir -p cosmos
+        mkdir -p images/aequitas
+        
+        # Use extracted infrastructure IP with fallback
+        INFRA_IP="${INFRASTRUCTURE_IP:-127.0.0.1}"
+        
+        # FIXED HEREDOC #1: Using <<-EOF (unquoted with dash)
+        # This prevents YAML parser issues with nested JSON quotes/braces
+        cat > cosmos/aequitas.json <<-EOF
+{
+  "chainId": "aequitas-1",
+  "chainName": "Aequitas Protocol",
+  "chainSymbolImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
+  "rpc": "https://rpc.aequitasprotocol.zone",
+  "rest": "https://api.aequitasprotocol.zone",
+  "nodeProvider": {
+    "name": "Aequitas Foundation",
+    "email": "validators@aequitasprotocol.zone",
+    "website": "https://aequitasprotocol.zone"
+  },
+  "bip44": { "coinType": 118 },
+  "bech32Config": {
+    "bech32PrefixAccAddr": "repar",
+    "bech32PrefixAccPub": "reparpub",
+    "bech32PrefixValAddr": "reparvaloper",
+    "bech32PrefixValPub": "reparvaloperpub",
+    "bech32PrefixConsAddr": "reparvalcons",
+    "bech32PrefixConsPub": "reparvalconspub"
+  },
+  "currencies": [{
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
+  }],
+  "feeCurrencies": [{
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png",
+    "gasPriceStep": { "low": 0.01, "average": 0.025, "high": 0.04 }
+  }],
+  "stakeCurrency": {
+    "coinDenom": "REPAR",
+    "coinMinimalDenom": "urepar",
+    "coinDecimals": 6,
+    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"
+  },
+  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",
+  "features": ["ibc-transfer", "ibc-go"]
+}
+EOF
+        
+        echo "   DEBUG: Searching for logo files in repar-repo/..."
+        echo "   Checking ../repar-repo/frontend/public/assets/:"
+        ls -la "../repar-repo/frontend/public/assets/" 2>/dev/null | grep -i logo || echo "     No logo files found"
+        
+        LOGO_COPIED=false
+        
+        # FIXED PATH: Check correct locations
+        if [ -f "../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png" ]; then
+          cp "../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+          echo "   Logo copied from repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
+          LOGO_COPIED=true
+        elif [ -f "../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png" ]; then
+          cp "../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png" images/aequitas/chain.png
+          echo "   Logo copied from repar-repo/frontend/src/assets/REPAR_Coin_Logo.png"
+          LOGO_COPIED=true
+        elif [ -f "../repar-repo/logo/REPAR_Coin_Logo.png" ]; then
+          cp "../repar-repo/logo/REPAR_Coin_Logo.png" images/aequitas/chain.png
+          echo "   Logo copied from repar-repo/logo/REPAR_Coin_Logo.png"
+          LOGO_COPIED=true
+        fi
+        
+        if [ "$LOGO_COPIED" = "false" ]; then
+          if [ -f "../repar-repo/frontend/public/assets/repar-logo.svg" ]; then
+            echo "   Converting SVG to PNG (256x256)..."
+            if ! command -v convert >/dev/null 2>&1; then
+              echo "   Installing ImageMagick..."
+              sudo apt-get update -qq && sudo apt-get install -qq -y imagemagick 2>/dev/null || sudo yum install -y ImageMagick 2>/dev/null || echo "Package manager not available"
+            fi
+            if command -v rsvg-convert >/dev/null 2>&1; then
+              rsvg-convert -w 256 -h 256 "../repar-repo/frontend/public/assets/repar-logo.svg" -o images/aequitas/chain.png
+              echo "   Logo converted using rsvg-convert"
+              LOGO_COPIED=true
+            elif command -v convert >/dev/null 2>&1; then
+              convert -resize 256x256 -background none "../repar-repo/frontend/public/assets/repar-logo.svg" images/aequitas/chain.png
+              echo "   Logo converted using ImageMagick"
+              LOGO_COPIED=true
+            else
+              echo "   WARNING: No SVG converter available"
             fi
           fi
-          
-          if [ "$LOGO_COPIED" = "false" ]; then
-            echo "ERROR: No logo found and no SVG converter available"
-            echo "   Checked: ../repar-repo/logo/REPAR_Coin_Logo.png"
-            echo "   Checked: ../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
-            echo "   Checked: ../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png"
-            echo "   Checked: ../repar-repo/frontend/public/assets/repar-logo.svg"
-            exit 1
-          fi
-          
-          if [ -f images/aequitas/chain.png ]; then
-            echo "   Logo ready: images/aequitas/chain.png ($(stat -c%s images/aequitas/chain.png) bytes)"
-          fi
-          
-          echo ""
-          echo "============================================================"
-          echo "   KEPLR CHAIN CONFIGURATION CREATED"
-          echo "============================================================"
-          echo "   File: cosmos/aequitas.json"
-          echo "   Chain ID: aequitas-1"
-          echo "   Decimals: 6 (urepar -> REPAR)"
-          echo "   Features: ibc-transfer, ibc-go"
-          echo "============================================================"
-          echo ""
-          
-          if command -v jq &> /dev/null; then
-            echo "Validating JSON..."
-            jq empty cosmos/aequitas.json && echo "   JSON valid" || echo "   JSON validation failed"
-          fi
-          
-          echo "Chain configuration created"
-      
-      - name: Create PR
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-        run: |
-          if [ ! -d keplr-chain-registry ]; then
-            echo "Registry not cloned - skipping"
-            exit 0
-          fi
-          
-          cd keplr-chain-registry
-          
-          BRANCH="add-aequitas-protocol-$(date +%Y%m%d)"
-          git checkout -b "$BRANCH"
-          
-          git add cosmos/aequitas.json
-          git add images/aequitas/ 2>/dev/null || echo "No images to add"
-          
-          cat > /tmp/commit_message.txt << 'COMMIT_MSG'
+        fi
+        
+        if [ "$LOGO_COPIED" = "false" ]; then
+          echo "ERROR: No logo found and no SVG converter available"
+          echo "   Checked: ../repar-repo/frontend/public/assets/REPAR_Coin_Logo.png"
+          echo "   Checked: ../repar-repo/frontend/src/assets/REPAR_Coin_Logo.png"
+          echo "   Checked: ../repar-repo/logo/REPAR_Coin_Logo.png"
+          echo "   Checked: ../repar-repo/frontend/public/assets/repar-logo.svg"
+          exit 1
+        fi
+        
+        if [ -f images/aequitas/chain.png ]; then
+          echo "   Logo ready: images/aequitas/chain.png ($(stat -c%s images/aequitas/chain.png 2>/dev/null || echo '0') bytes)"
+        fi
+        
+        echo ""
+        echo "============================================================"
+        echo "   KEPLR CHAIN CONFIGURATION CREATED"
+        echo "============================================================"
+        echo "   File: cosmos/aequitas.json"
+        echo "   Chain ID: aequitas-1"
+        echo "   Decimals: 6 (urepar -> REPAR)"
+        echo "   Features: ibc-transfer, ibc-go"
+        echo "   Logo: images/aequitas/chain.png"
+        echo "============================================================"
+        echo ""
+        
+        if command -v jq &> /dev/null; then
+          echo "Validating JSON..."
+          jq empty cosmos/aequitas.json && echo "   JSON valid" || echo "   JSON validation failed"
+        fi
+        
+        echo "Chain configuration created"
+    
+    - name: Create PR
+      env:
+        GH_TOKEN: ${{ secrets.GH_PAT }}
+      run: |
+        if [ ! -d keplr-chain-registry ]; then
+          echo "Registry not cloned - skipping"
+          exit 0
+        fi
+        
+        cd keplr-chain-registry
+        
+        # Get GitHub user from fork step
+        GITHUB_USER="${{ steps.fork.outputs.github_user }}"
+        
+        if [ -z "$GITHUB_USER" ]; then
+          echo "ERROR: GitHub user not determined from fork step"
+          exit 1
+        fi
+        
+        BRANCH="add-aequitas-protocol-$(date +%Y%m%d)"
+        git checkout -b "$BRANCH"
+        
+        git add cosmos/aequitas.json
+        git add images/aequitas/ 2>/dev/null || echo "No images to add"
+        
+        # Check if there's anything to commit
+        if git diff --cached --quiet; then
+          echo "Nothing to commit - configuration files already exist"
+        else
+          # FIXED HEREDOC #2: Using <<-EOF for commit message
+          # Unquoted delimiter allows clean parsing, dash allows flexible EOF indentation
+          cat > /tmp/commit_message.txt <<-EOF
 feat: Add Aequitas Protocol (aequitas-1)
 
 - Chain ID: aequitas-1
@@ -2802,24 +2815,26 @@ feat: Add Aequitas Protocol (aequitas-1)
 Deployed via APEX Autonomous System
 
 Signed-off-by: Aequitas Protocol Bot <bot@aequitasprotocol.zone>
-COMMIT_MSG
+EOF
           
-          git commit -F /tmp/commit_message.txt || echo "Nothing to commit"
-          
-          GITHUB_USER="${{ steps.fork.outputs.github_user }}"
+          git commit -F /tmp/commit_message.txt
           
           echo "Pushing to fork: $GITHUB_USER/keplr-chain-registry..."
           git push origin "$BRANCH" --force-with-lease || {
             git remote set-url origin "https://${GH_TOKEN}@github.com/$GITHUB_USER/keplr-chain-registry.git"
             git push origin "$BRANCH" --force-with-lease || echo "Push failed"
           }
-          
-          cat > /tmp/pr_body.txt << 'PR_BODY'
+        fi
+        
+        # FIXED HEREDOC #3: Using <<-EOF for PR body
+        # This long markdown block with tables is now safely parsed
+        cat > /tmp/pr_body.txt <<-EOF
 ## Aequitas Protocol Integration
 
 This PR adds Aequitas Protocol to the Keplr wallet registry.
 
 ### Chain Details
+
 | Field | Value |
 |-------|-------|
 | **Chain ID** | aequitas-1 |
@@ -2830,6 +2845,7 @@ This PR adds Aequitas Protocol to the Keplr wallet registry.
 | **BIP44 CoinType** | 118 |
 
 ### Endpoints
+
 | Endpoint | URL |
 |----------|-----|
 | **RPC** | https://rpc.aequitasprotocol.zone |
@@ -2846,6 +2862,7 @@ This PR adds Aequitas Protocol to the Keplr wallet registry.
 - ibc-go - IBC-Go protocol support
 
 ### Gas Price Steps
+
 | Level | Price |
 |-------|-------|
 | Low | 0.01 |
@@ -2861,30 +2878,28 @@ Aequitas Protocol is a sovereign Layer-1 blockchain focused on historical justic
 
 ---
 *This PR was automatically created by the APEX Autonomous Deployment System*
-PR_BODY
-          
-          GITHUB_USER="${{ steps.fork.outputs.github_user }}"
-          
-          echo "Creating PR from $GITHUB_USER:$BRANCH to chainapsis:main..."
-          
-          gh pr create \
-            --repo chainapsis/keplr-chain-registry \
-            --title "feat: Add Aequitas Protocol (aequitas-1)" \
-            --body-file /tmp/pr_body.txt \
-            --base main \
-            --head "$GITHUB_USER:$BRANCH" || echo "PR creation skipped (may already exist)"
-          
-          echo ""
-          echo "Checking for existing Aequitas PRs..."
-          gh pr list --repo chainapsis/keplr-chain-registry --search "Aequitas" --json number,title,state,url 2>/dev/null || echo "No PRs found"
-      
-      - name: Report
-        run: |
-          echo "### Keplr Registry PR" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** PR created for chainapsis/keplr-chain-registry" >> $GITHUB_STEP_SUMMARY
-          echo "**Chain ID:** aequitas-1" >> $GITHUB_STEP_SUMMARY
-          echo "**Infrastructure IP:** ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}" >> $GITHUB_STEP_SUMMARY
+EOF
+        
+        echo "Creating PR from $GITHUB_USER:$BRANCH to chainapsis:main..."
+        
+        gh pr create \
+          --repo chainapsis/keplr-chain-registry \
+          --title "feat: Add Aequitas Protocol (aequitas-1)" \
+          --body-file /tmp/pr_body.txt \
+          --base main \
+          --head "$GITHUB_USER:$BRANCH" || echo "PR creation skipped (may already exist)"
+        
+        echo ""
+        echo "Checking for existing Aequitas PRs..."
+        gh pr list --repo chainapsis/keplr-chain-registry --search "Aequitas" --json number,title,state,url 2>/dev/null || echo "No PRs found"
+    
+    - name: Report
+      run: |
+        echo "### Keplr Registry PR" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Status:** PR created for chainapsis/keplr-chain-registry" >> $GITHUB_STEP_SUMMARY
+        echo "**Chain ID:** aequitas-1" >> $GITHUB_STEP_SUMMARY
+        echo "**Infrastructure IP:** ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}" >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
   # PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
