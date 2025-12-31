@@ -2929,14 +2929,15 @@ keplr-registry-pr:
           echo "**Chain ID:** aequitas-1" >> $GITHUB_STEP_SUMMARY
           echo "**Infrastructure IP:** ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
-  # ============================================================
-  enable-cross-chain:
+# ============================================================
+# PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
+# ============================================================
+enable-cross-chain:
     name: Enable Cross-Chain Features
     runs-on: ubuntu-latest
-    needs: [deploy-founder-node, verify-constellation]
+    needs: [deployment-summary, deploy-founder-node]
     if: github.event.inputs.enable_cross_chain == 'true'
+    
     outputs:
       ibc_enabled: ${{ steps.ibc-setup.outputs.enabled }}
       channels_created: ${{ steps.channel-creation.outputs.channels }}
@@ -2951,6 +2952,7 @@ keplr-registry-pr:
           echo "   CROSS-CHAIN RELAYER SETUP"
           echo "============================================================"
           
+          # Install Hermes relayer (v1.10.0 - stable)
           wget -q https://github.com/informalsystems/hermes/releases/download/v1.10.0/hermes-v1.10.0-x86_64-unknown-linux-gnu.tar.gz
           tar -xzf hermes-v1.10.0-x86_64-unknown-linux-gnu.tar.gz
           chmod +x hermes
@@ -2965,143 +2967,147 @@ keplr-registry-pr:
         run: |
           mkdir -p ~/.hermes
           
-          cat > ~/.hermes/config.toml << 'HERMES_CONFIG'
-[global]
-log_level = 'info'
-
-[mode]
-[mode.clients]
-enabled = true
-refresh = true
-misbehaviour = true
-
-[mode.connections]
-enabled = true
-
-[mode.channels]
-enabled = true
-
-[mode.packets]
-enabled = true
-clear_interval = 100
-clear_on_start = true
-tx_confirmation = true
-
-[rest]
-enabled = true
-host = '127.0.0.1'
-port = 3000
-
-[telemetry]
-enabled = true
-host = '127.0.0.1'
-port = 3001
-
-[[chains]]
-id = 'aequitas-1'
-type = 'CosmosSdk'
-rpc_addr = 'https://rpc.aequitasprotocol.zone'
-grpc_addr = 'https://grpc.aequitasprotocol.zone'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'repar'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 1000000
-max_gas = 10000000
-gas_multiplier = 1.2
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
-
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
-
-[chains.gas_price]
-price = 0.025
-denom = 'urepar'
-
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
-
-[chains.address_type]
-derivation = 'cosmos'
-
-[[chains]]
-id = 'cosmoshub-4'
-type = 'CosmosSdk'
-rpc_addr = 'https://cosmos-rpc.polkachu.com'
-grpc_addr = 'https://cosmos-grpc.polkachu.com:14290'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'cosmos'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 200000
-max_gas = 3000000
-gas_multiplier = 1.1
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
-
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
-
-[chains.gas_price]
-price = 0.025
-denom = 'uatom'
-
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
-
-[chains.address_type]
-derivation = 'cosmos'
-
-[[chains]]
-id = 'osmosis-1'
-type = 'CosmosSdk'
-rpc_addr = 'https://osmosis-rpc.polkachu.com'
-grpc_addr = 'https://osmosis-grpc.polkachu.com:12590'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'osmo'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 500000
-max_gas = 20000000
-gas_multiplier = 1.5
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
-
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
-
-[chains.gas_price]
-price = 0.025
-denom = 'uosmo'
-
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
-
-[chains.address_type]
-derivation = 'cosmos'
-HERMES_CONFIG
+          # Create Hermes configuration for Aequitas cross-chain
+          cat > ~/.hermes/config.toml << 'HERMES_EOF'
+          [global]
+          log_level = 'info'
+          
+          [mode]
+          [mode.clients]
+          enabled = true
+          refresh = true
+          misbehaviour = true
+          
+          [mode.connections]
+          enabled = true
+          
+          [mode.channels]
+          enabled = true
+          
+          [mode.packets]
+          enabled = true
+          clear_interval = 100
+          clear_on_start = true
+          tx_confirmation = true
+          
+          [rest]
+          enabled = true
+          host = '127.0.0.1'
+          port = 3000
+          
+          [telemetry]
+          enabled = true
+          host = '127.0.0.1'
+          port = 3001
+          
+          # Aequitas Chain Configuration
+          [[chains]]
+          id = 'aequitas-1'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://rpc.aequitasprotocol.zone'
+          grpc_addr = 'https://grpc.aequitasprotocol.zone'
+          rpc_timeout = '10s'
+          trusted_node = true
+          account_prefix = 'repar'
+          key_name = 'relayer'
+          key_store_type = 'Test'
+          store_prefix = 'ibc'
+          default_gas = 1000000
+          max_gas = 10000000
+          gas_multiplier = 1.2
+          max_msg_num = 30
+          max_tx_size = 180000
+          clock_drift = '5s'
+          max_block_time = '30s'
+          memo_prefix = 'Aequitas IBC Relayer'
+          
+          [chains.trust_threshold]
+          numerator = '1'
+          denominator = '3'
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'urepar'
+          
+          [chains.packet_filter]
+          policy = 'allow'
+          list = [['transfer', '*']]
+          
+          [chains.address_type]
+          derivation = 'cosmos'
+          
+          # Cosmos Hub Configuration
+          [[chains]]
+          id = 'cosmoshub-4'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://cosmos-rpc.polkachu.com'
+          grpc_addr = 'https://cosmos-grpc.polkachu.com:14290'
+          rpc_timeout = '10s'
+          trusted_node = true
+          account_prefix = 'cosmos'
+          key_name = 'relayer'
+          key_store_type = 'Test'
+          store_prefix = 'ibc'
+          default_gas = 200000
+          max_gas = 3000000
+          gas_multiplier = 1.1
+          max_msg_num = 30
+          max_tx_size = 180000
+          clock_drift = '5s'
+          max_block_time = '30s'
+          memo_prefix = 'Aequitas IBC Relayer'
+          
+          [chains.trust_threshold]
+          numerator = '1'
+          denominator = '3'
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'uatom'
+          
+          [chains.packet_filter]
+          policy = 'allow'
+          list = [['transfer', '*']]
+          
+          [chains.address_type]
+          derivation = 'cosmos'
+          
+          # Osmosis Configuration
+          [[chains]]
+          id = 'osmosis-1'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://osmosis-rpc.polkachu.com'
+          grpc_addr = 'https://osmosis-grpc.polkachu.com:12590'
+          rpc_timeout = '10s'
+          trusted_node = true
+          account_prefix = 'osmo'
+          key_name = 'relayer'
+          key_store_type = 'Test'
+          store_prefix = 'ibc'
+          default_gas = 500000
+          max_gas = 20000000
+          gas_multiplier = 1.5
+          max_msg_num = 30
+          max_tx_size = 180000
+          clock_drift = '5s'
+          max_block_time = '30s'
+          memo_prefix = 'Aequitas IBC Relayer'
+          
+          [chains.trust_threshold]
+          numerator = '1'
+          denominator = '3'
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'uosmo'
+          
+          [chains.packet_filter]
+          policy = 'allow'
+          list = [['transfer', '*']]
+          
+          [chains.address_type]
+          derivation = 'cosmos'
+          HERMES_EOF
           
           echo "Hermes configuration created for Aequitas cross-chain operations"
       
@@ -3125,7 +3131,10 @@ HERMES_CONFIG
         run: |
           echo "Creating IBC light clients..."
           
+          # Create client on Aequitas for Cosmos Hub
           hermes create client --host-chain aequitas-1 --reference-chain cosmoshub-4 || echo "Aequitas->CosmosHub client pending"
+          
+          # Create client on Cosmos Hub for Aequitas
           hermes create client --host-chain cosmoshub-4 --reference-chain aequitas-1 || echo "CosmosHub->Aequitas client pending"
           
           echo "clients_created=true" >> $GITHUB_OUTPUT
@@ -3136,6 +3145,7 @@ HERMES_CONFIG
         run: |
           echo "Creating IBC connections..."
           
+          # Create connection between Aequitas and Cosmos Hub
           hermes create connection --a-chain aequitas-1 --b-chain cosmoshub-4 || echo "Connection creation pending"
           
           echo "connections_created=true" >> $GITHUB_OUTPUT
@@ -3146,6 +3156,7 @@ HERMES_CONFIG
         run: |
           echo "Creating IBC transfer channels..."
           
+          # Create transfer channel to Cosmos Hub
           hermes create channel \
             --a-chain aequitas-1 \
             --a-port transfer \
@@ -3153,6 +3164,7 @@ HERMES_CONFIG
             --a-connection connection-0 \
             --channel-version ics20-1 || echo "Channel creation pending"
           
+          # Query created channels
           CHANNELS=$(curl -s "https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels" 2>/dev/null | jq -r '.channels[].channel_id // empty' | tr '\n' ',' | sed 's/,$//')
           
           if [ -n "$CHANNELS" ]; then
@@ -3170,6 +3182,7 @@ HERMES_CONFIG
           
           hermes health-check || true
           
+          # Check if channels are open
           CHANNEL_STATUS=$(curl -s "https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels" 2>/dev/null || echo "{}")
           OPEN_COUNT=$(echo "$CHANNEL_STATUS" | jq '[.channels[] | select(.state == "STATE_OPEN")] | length' 2>/dev/null || echo "0")
           
@@ -3198,20 +3211,17 @@ HERMES_CONFIG
           echo "- Osmosis (osmosis-1) - DEX liquidity" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Circle CCTP:** Integrated via Backend API" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "*Cross-chain features enable $REPAR to flow across the Cosmos ecosystem*" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 9: SOVEREIGN SEAL
-  # ============================================================
-  sovereign-seal:
+# ============================================================
+# PHASE 9: SOVEREIGN SEAL
+# ============================================================
+sovereign-seal:
     name: Sovereign Infrastructure Seal
     runs-on: ubuntu-latest
-    needs: [
-      deploy-founder-node,
-      verify-constellation,
-      configure-dns,
-      build-mobile-apk,
-      build-adns-module
-    ]
+    needs: [deploy-founder-node, verify-constellation, configure-dns, build-mobile-apk]
     if: always() && needs.deploy-founder-node.result == 'success'
     outputs:
       seal_hash: ${{ steps.seal.outputs.hash }}
@@ -3229,10 +3239,12 @@ HERMES_CONFIG
           echo "   SOVEREIGN INFRASTRUCTURE SEAL"
           echo "============================================================"
           
+          # Collect all deployment artifacts for sealing
+          # Using printf to avoid YAML heredoc parsing issues
           VERSION="${{ needs.build-aequitasd.outputs.version || 'v1.0.0' }}"
           CHAIN_ID_VAL="${{ env.CHAIN_ID }}"
           NETWORK="${{ github.event.inputs.network || 'mainnet' }}"
-          DEPLOY_TARGET="${{ github.event.inputs.deployment_target || 'docker-compose' }}"
+          DEPLOY_TARGET="${{ github.event.inputs.deployment_target || 'bare-metal' }}"
           INFRA_IP="${{ needs.deploy-founder-node.outputs.infrastructure_ip }}"
           IP_SRC="${{ needs.deploy-founder-node.outputs.ip_source }}"
           FOUNDER="${{ needs.deploy-founder-node.outputs.founder_address }}"
@@ -3241,44 +3253,43 @@ HERMES_CONFIG
           COMMIT="${{ github.sha }}"
           RUN_ID="${{ github.run_id }}"
           DNS_OK="${{ needs.configure-dns.outputs.dns_updated == 'true' }}"
+          
+          # NEW: Mobile APK hash for complete sovereignty seal
           APK_HASH="${{ needs.build-mobile-apk.outputs.apk_hash }}"
           IPFS_HASH="${{ needs.build-mobile-apk.outputs.ipfs_hash }}"
           APK_SIGNED="${{ needs.build-mobile-apk.outputs.signed }}"
-          ADNS_HASH="${{ needs.build-adns-module.outputs.artifact_hash }}"
           
-          cat > /tmp/seal_manifest.json << EOF
-{
-  "protocol": "Aequitas Protocol",
-  "version": "$VERSION",
-  "chain_id": "$CHAIN_ID_VAL",
-  "network": "$NETWORK",
-  "deployment_target": "$DEPLOY_TARGET",
-  "infrastructure_ip": "$INFRA_IP",
-  "ip_source": "$IP_SRC",
-  "founder_address": "$FOUNDER",
-  "genesis_hash": "$GEN_HASH",
-  "binary_hash": "$BIN_HASH",
-  "mobile_apk_hash": "$APK_HASH",
-  "mobile_ipfs": "$IPFS_HASH",
-  "mobile_signed": $APK_SIGNED,
-  "adns_module_hash": "$ADNS_HASH",
-  "constellation_size": 7,
-  "timestamp": "$TIMESTAMP",
-  "commit": "$COMMIT",
-  "workflow_run": "$RUN_ID",
-  "apex_features": [
-    "self-healing",
-    "self-monitoring",
-    "self-scaling",
-    "constitutional-guard",
-    "satellite-routing",
-    "mobile-sovereignty",
-    "post-quantum-dns"
-  ],
-  "dns_configured": $DNS_OK
-}
-EOF
+          printf '%s\n' \
+            '{' \
+            "  \"protocol\": \"Aequitas Protocol\"," \
+            "  \"version\": \"$VERSION\"," \
+            "  \"chain_id\": \"$CHAIN_ID_VAL\"," \
+            "  \"network\": \"$NETWORK\"," \
+            "  \"deployment_target\": \"$DEPLOY_TARGET\"," \
+            "  \"infrastructure_ip\": \"$INFRA_IP\"," \
+            "  \"ip_source\": \"$IP_SRC\"," \
+            "  \"founder_address\": \"$FOUNDER\"," \
+            "  \"genesis_hash\": \"$GEN_HASH\"," \
+            "  \"binary_hash\": \"$BIN_HASH\"," \
+            "  \"mobile_apk_hash\": \"$APK_HASH\"," \
+            "  \"mobile_ipfs\": \"$IPFS_HASH\"," \
+            "  \"mobile_signed\": $APK_SIGNED," \
+            '  "constellation_size": 7,' \
+            "  \"timestamp\": \"$TIMESTAMP\"," \
+            "  \"commit\": \"$COMMIT\"," \
+            "  \"workflow_run\": \"$RUN_ID\"," \
+            '  "apex_features": [' \
+            '    "self-healing",' \
+            '    "self-monitoring",' \
+            '    "self-scaling",' \
+            '    "constitutional-guard",' \
+            '    "satellite-routing",' \
+            '    "mobile-sovereignty"' \
+            '  ],' \
+            "  \"dns_configured\": $DNS_OK" \
+            '}' > /tmp/seal_manifest.json
           
+          # Generate SHA-256 seal
           SEAL_HASH=$(sha256sum /tmp/seal_manifest.json | awk '{print $1}')
           
           echo "   Timestamp: $TIMESTAMP"
@@ -3310,9 +3321,9 @@ EOF
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "This cryptographic seal verifies the integrity of the entire deployment." >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 10: DEPLOYMENT SUMMARY
-  # ============================================================
+# ============================================================
+# PHASE 10: DEPLOYMENT SUMMARY
+# ============================================================
   deployment-summary:
     name: Deployment Summary
     runs-on: ubuntu-latest
