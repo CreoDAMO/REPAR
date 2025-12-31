@@ -1024,7 +1024,6 @@ jobs:
   # ============================================================
   # PHASE 5.6: BUILD ALL SERVICES (PARALLEL)
   # ============================================================
-  # ARCHITECT REVIEWED (December 8, 2025): Fixed Go build to target specific executable package
   build-ai-autonomous:
     name: Build AI Autonomous Agents (Go)
     runs-on: ubuntu-latest
@@ -1890,11 +1889,6 @@ jobs:
   # ============================================================
   # PHASE 5.13: BUILD MOBILE APK (SOVEREIGN DISTRIBUTION)
   # ============================================================
-  # CRITICAL SOVEREIGNTY ARCHITECTURE DECISION (December 8, 2025):
-  # Mobile app IS infrastructure (10,000+ mobile validators Year 1)
-  # APK must be in APEX deployment, NOT a separate workflow
-  # Without mobile, citizens cannot participate = incomplete sovereignty
-  # ============================================================
   build-mobile-apk:
     name: Build Mobile APK (Sovereign Distribution)
     runs-on: ubuntu-latest
@@ -2519,12 +2513,9 @@ jobs:
           echo "| vm | AVM interface | Yes |" >> $GITHUB_STEP_SUMMARY
           echo "| sovereign | Sovereign endpoint | Yes |" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
 # ============================================================
-# BUILD #43 FIX (December 9, 2025): Explicit checkout to named subdirectory
-# FIX (December 29, 2025): Switched heredocs from quoted <<'EOF' to <<-EOF
-# This eliminates YAML parser sensitivity to indentation in large content blocks
+# PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
+# ============================================================
  keplr-registry-pr:
     name: Create Keplr Registry PR
     runs-on: ubuntu-latest
