@@ -3323,7 +3323,7 @@ sovereign-seal:
 # ============================================================
 # PHASE 10: DEPLOYMENT SUMMARY
 # ============================================================
-  deployment-summary:
+ deployment-summary:
     name: Deployment Summary
     runs-on: ubuntu-latest
     needs: [
