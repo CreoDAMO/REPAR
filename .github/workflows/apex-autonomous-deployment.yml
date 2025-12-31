@@ -3320,7 +3320,6 @@ sovereign-seal:
           echo "**Timestamp:** ${{ steps.seal.outputs.timestamp }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "This cryptographic seal verifies the integrity of the entire deployment." >> $GITHUB_STEP_SUMMARY
-
 # ============================================================
 # PHASE 10: DEPLOYMENT SUMMARY
 # ============================================================
