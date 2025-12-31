@@ -2516,7 +2516,7 @@ jobs:
 # ============================================================
 # PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
 # ============================================================
- keplr-registry-pr:
+keplr-registry-pr:
     name: Create Keplr Registry PR
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, verify-constellation]
