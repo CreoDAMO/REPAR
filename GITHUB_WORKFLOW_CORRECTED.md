@@ -9137,3 +9137,10 @@ sovereign-seal:
         echo "This cryptographic seal verifies the integrity of the entire
         deployment." >> $GITHUB_STEP_SUMMARY
 ```
+
+## Current Issue:
+
+## Annotations
+1 error
+Invalid workflow file: .github/workflows/apex-autonomous-deployment.yml#L1
+(Line: 2519, Col: 1): Unexpected value 'keplr-registry-pr', (Line: 2935, Col: 1): Unexpected value 'enable-cross-chain', (Line: 3221, Col: 1): Unexpected value 'sovereign-seal', (Line: 3327, Col: 1): Unexpected value 'deployment-summary'
