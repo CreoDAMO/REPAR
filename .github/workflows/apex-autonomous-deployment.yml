@@ -2652,7 +2652,7 @@ keplr-registry-pr:
         
         # FIXED HEREDOC #1: Using <<-EOF (unquoted with dash)
         # This prevents YAML parser issues with nested JSON quotes/braces
-        cat > cosmos/aequitas.json <<-EOF
+        cat > cosmos/aequitas.json <<'EOF'
 {
   "chainId": "aequitas-1",
   "chainName": "Aequitas Protocol",
@@ -2802,7 +2802,7 @@ EOF
         else
           # FIXED HEREDOC #2: Using <<-EOF for commit message
           # Unquoted delimiter allows clean parsing, dash allows flexible EOF indentation
-          cat > /tmp/commit_message.txt <<-EOF
+          cat > /tmp/commit_message.txt <<'EOF'
 feat: Add Aequitas Protocol (aequitas-1)
 
 - Chain ID: aequitas-1
@@ -2828,7 +2828,7 @@ EOF
         
         # FIXED HEREDOC #3: Using <<-EOF for PR body
         # This long markdown block with tables is now safely parsed
-        cat > /tmp/pr_body.txt <<-EOF
+        cat > /tmp/pr_body.txt <<'EOF'
 ## Aequitas Protocol Integration
 
 This PR adds Aequitas Protocol to the Keplr wallet registry.
