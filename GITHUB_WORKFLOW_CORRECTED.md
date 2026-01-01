@@ -3700,7 +3700,7 @@ enable-cross-chain:
   if: 'github.event.inputs.enable_cross_chain == ''true'''
   name: 'Enable Cross-Chain Features'
   needs:
-    - 'deployment-summary'
+    - 'sovereign-seal'
     - 'deploy-founder-node'
   outputs:
     channels_created: '${{ steps.channel-creation.outputs.channels }}'
