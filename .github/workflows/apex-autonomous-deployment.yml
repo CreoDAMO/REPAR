@@ -320,7 +320,6 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-          cache-dependency-path: apex/requirements.txt
       
       - name: Install dependencies
         run: |
@@ -475,9 +474,6 @@ jobs:
           echo "   DEPLOYING FOUNDER NODE VIA: $DEPLOYMENT_TARGET"
           echo "============================================================"
           
-          # FIX: Ensure Docker network exists on THIS runner (Docker Network Race Condition)
-          docker network inspect aequitas-network >/dev/null 2>&1 || docker network create aequitas-network
-          
           case "$DEPLOYMENT_TARGET" in
             docker-compose)
               mkdir -p docker-data/founder
@@ -524,10 +520,6 @@ jobs:
                 mkdir -p ~/.ssh
                 echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
                 chmod 600 ~/.ssh/deploy_key
-                
-                # FIX: Add known_hosts for security
-                mkdir -p ~/.ssh
-                ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts 2>/dev/null || true
                 
                 SSH_USER="${SSH_USER:-root}"
                 
@@ -820,9 +812,6 @@ jobs:
         run: |
           NODE_NAME="aequitas-validator-$(printf '%02d' ${{ matrix.node_index }})"
           echo "Deploying $NODE_NAME via APEX..."
-          
-          # FIX: Ensure Docker network exists on THIS runner (Docker Network Race Condition)
-          docker network inspect aequitas-network >/dev/null 2>&1 || docker network create aequitas-network
           
           NODE_INDEX=${{ matrix.node_index }}
           P2P_PORT=$((26656 + NODE_INDEX * 10))
@@ -1461,8 +1450,8 @@ jobs:
               IN  NS  ns1.aequitas.
               IN  NS  ns2.aequitas.
           
-          ns1 IN  A   \$INFRA_IP
-          ns2 IN  A   \$INFRA_IP
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
           EOF
           
           cat > zones/db.repar << EOF
@@ -1477,8 +1466,8 @@ jobs:
               IN  NS  ns1.repar.
               IN  NS  ns2.repar.
           
-          ns1 IN  A   \$INFRA_IP
-          ns2 IN  A   \$INFRA_IP
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
           EOF
           
           cat > zones/db.sovereign << EOF
@@ -1493,13 +1482,13 @@ jobs:
               IN  NS  ns1.sovereign.
               IN  NS  ns2.sovereign.
           
-          ns1 IN  A   \$INFRA_IP
-          ns2 IN  A   \$INFRA_IP
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
           EOF
           
           ZONE_COUNT=$(ls zones/db.* 2>/dev/null | wc -l)
-          if [ "\$ZONE_COUNT" -ne 3 ]; then
-            echo "❌ FATAL: Zone file generation incomplete (found \$ZONE_COUNT, expected 3)"
+          if [ "$ZONE_COUNT" -ne 3 ]; then
+            echo "❌ FATAL: Zone file generation incomplete (found $ZONE_COUNT, expected 3)"
             exit 1
           fi
           
@@ -2066,68 +2055,28 @@ jobs:
             echo "apk_size=0" >> $GITHUB_OUTPUT
           fi
       
-      # FIX: Install IPFS (Kubo) before upload
-      - name: Install IPFS (Kubo)
-        if: always() && steps.hash.outputs.apk_hash != 'not-built'
-        run: |
-          echo "============================================================"
-          echo "   INSTALLING IPFS (KUBO) FOR DECENTRALIZED DISTRIBUTION"
-          echo "============================================================"
-          
-          # Download and install Kubo (IPFS implementation)
-          wget -q https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz
-          tar -xzf kubo_v0.26.0_linux-amd64.tar.gz
-          
-          # Install binaries
-          sudo mv kubo/ipfs /usr/local/bin/ 2>/dev/null || sudo mv ipfs /usr/local/bin/
-          sudo mv kubo/ipfs-cluster-service /usr/local/bin/ 2>/dev/null || true
-          sudo mv kubo/ipfs-cluster-ctl /usr/local/bin/ 2>/dev/null || true
-          
-          # Initialize IPFS as server
-          ipfs init --profile server
-          
-          echo "IPFS (Kubo) installed successfully"
-          ipfs version
-          echo "============================================================"
-      
-      - name: Upload to IPFS (Decentralized Distribution)
+      - name: Upload to IPFS (Optional - Decentralized Distribution)
         id: ipfs
         continue-on-error: true
         run: |
           cd mobile
           
           if [ -f build/aequitas-zone.apk ]; then
-            echo "============================================================"
-            echo "   UPLOADING APK TO IPFS"
-            echo "============================================================"
-            
-            # Start IPFS daemon in background
-            ipfs daemon &
-            IPFS_PID=$!
-            
-            # Wait for daemon to be ready
-            sleep 5
-            
-            # Upload to IPFS
-            echo "Uploading aequitas-zone.apk to IPFS..."
-            IPFS_HASH=$(ipfs add -Q build/aequitas-zone.apk 2>/dev/null || echo "")
-            
-            # Stop daemon
-            kill $IPFS_PID 2>/dev/null || true
-            
-            if [ -n "$IPFS_HASH" ]; then
-              echo "ipfs_hash=$IPFS_HASH" >> $GITHUB_OUTPUT
-              echo "✅ IPFS Upload Successful"
-              echo "   IPFS Hash: $IPFS_HASH"
-              echo "   IPFS Gateway: https://ipfs.io/ipfs/$IPFS_HASH"
+            if command -v ipfs &> /dev/null; then
+              IPFS_HASH=$(ipfs add -Q build/aequitas-zone.apk 2>/dev/null || echo "")
+              if [ -n "$IPFS_HASH" ]; then
+                echo "ipfs_hash=$IPFS_HASH" >> $GITHUB_OUTPUT
+                echo "IPFS Hash: $IPFS_HASH"
+                echo "IPFS Gateway: https://ipfs.io/ipfs/$IPFS_HASH"
+              else
+                echo "ipfs_hash=pending" >> $GITHUB_OUTPUT
+              fi
             else
-              echo "❌ IPFS upload failed"
-              echo "ipfs_hash=upload-failed" >> $GITHUB_OUTPUT
+              echo "ipfs_hash=ipfs-not-installed" >> $GITHUB_OUTPUT
+              echo "IPFS upload skipped (ipfs not installed on runner)"
             fi
-            echo "============================================================"
           else
             echo "ipfs_hash=no-apk" >> $GITHUB_OUTPUT
-            echo "No APK to upload"
           fi
       
       - name: Upload Artifact
@@ -2155,7 +2104,7 @@ jobs:
           echo "**Sovereignty Principle:** No app store gatekeepers required. Citizens can download directly." >> $GITHUB_STEP_SUMMARY
 
   # ============================================================
-  # PHASE 5.14: DEPLOY MOBILE DOWNLOAD PAGE
+  # PHASE 5.14: DEPLOY MOBILE DOWNLOAD PAGE (FIXED YAML)
   # ============================================================
   deploy-mobile-download:
     name: Deploy Mobile Download Page
@@ -2212,11 +2161,9 @@ jobs:
               echo "APK artifact not found - download page will show placeholder"
             fi
             
-            # FIX: Create mobile download HTML page with proper variable expansion
-            # Removed quotes around heredoc delimiter to enable $VAR expansion
-            # Removed backslashes before $VAR for proper shell expansion
+            # Create/update mobile download HTML page
             ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c "
-              cat > /var/www/app/mobile/index.html << MOBILE_PAGE
+              cat > /var/www/app/mobile/index.html << 'MOBILE_PAGE'
               <!DOCTYPE html>
               <html lang=\"en\">
               <head>
@@ -2295,7 +2242,6 @@ jobs:
           echo "- No app store approval delays" >> $GITHUB_STEP_SUMMARY
           echo "- Cryptographic hash verification" >> $GITHUB_STEP_SUMMARY
           echo "- IPFS backup for censorship resistance" >> $GITHUB_STEP_SUMMARY
-
   # ============================================================
   # PHASE 6: DNS CONFIGURATION (USES EXTRACTED IP)
   # ============================================================
@@ -2306,7 +2252,7 @@ jobs:
     if: |
       always() && 
       needs.deploy-founder-node.result == 'success' && 
-      github.event.inputs.skip_dns != true &&
+      github.event.inputs.skip_dns != 'true' &&
       needs.deploy-founder-node.outputs.infrastructure_ip != ''
     outputs:
       dns_updated: ${{ steps.update-dns.outputs.updated }}
@@ -2567,17 +2513,17 @@ jobs:
           echo "| vm | AVM interface | Yes |" >> $GITHUB_STEP_SUMMARY
           echo "| sovereign | Sovereign endpoint | Yes |" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 7: KEPLR REGISTRY PR
-  # ============================================================
-  keplr-registry-pr:
+# ============================================================
+# PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
+# ============================================================
+keplr-registry-pr:
     name: Create Keplr Registry PR
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, verify-constellation]
     if: |
       always() && 
       needs.deploy-founder-node.result == 'success' && 
-      github.event.inputs.skip_keplr_pr != true
+      github.event.inputs.skip_keplr_pr != 'true'
     
     steps:
       # ============================================================
@@ -2983,14 +2929,14 @@ jobs:
           echo "**Chain ID:** aequitas-1" >> $GITHUB_STEP_SUMMARY
           echo "**Infrastructure IP:** ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
-  # ============================================================
-  enable-cross-chain:
+# ============================================================
+# PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
+# ============================================================
+enable-cross-chain:
     name: Enable Cross-Chain Features
     runs-on: ubuntu-latest
-    needs: [deployment-summary, deploy-founder-node]
-    if: github.event.inputs.enable_cross_chain == true
+    needs: [deploy-founder-node, sovereign-seal]
+    if: github.event.inputs.enable_cross_chain == 'true'
     
     outputs:
       ibc_enabled: ${{ steps.ibc-setup.outputs.enabled }}
@@ -3269,10 +3215,10 @@ jobs:
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*Cross-chain features enable $REPAR to flow across the Cosmos ecosystem*" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 9: SOVEREIGN SEAL
-  # ============================================================
-  sovereign-seal:
+# ============================================================
+# PHASE 9: SOVEREIGN SEAL
+# ============================================================
+sovereign-seal:
     name: Sovereign Infrastructure Seal
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, verify-constellation, configure-dns, build-mobile-apk]
@@ -3375,10 +3321,10 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "This cryptographic seal verifies the integrity of the entire deployment." >> $GITHUB_STEP_SUMMARY
           
-  # ============================================================
-  # PHASE 10: DEPLOYMENT SUMMARY
-  # ============================================================
-  deployment-summary:
+# ============================================================
+# PHASE 10: DEPLOYMENT SUMMARY
+# ============================================================
+deployment-summary:
     name: Deployment Summary
     runs-on: ubuntu-latest
     needs: [
