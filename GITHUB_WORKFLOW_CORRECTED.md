@@ -2960,7 +2960,7 @@ keplr-registry-pr:
 enable-cross-chain:
     name: Enable Cross-Chain Features
     runs-on: ubuntu-latest
-    needs: [deployment-summary, deploy-founder-node]
+    needs: [deploy-founder-node, sovereign-seal]
     if: github.event.inputs.enable_cross_chain == 'true'
     
     outputs:
