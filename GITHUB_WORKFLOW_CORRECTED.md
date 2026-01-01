@@ -9148,97 +9148,273 @@ Invalid workflow file: .github/workflows/apex-autonomous-deployment.yml#L1
 
 ___________
 
-# Dependabot Alert
-Transitive dependency qs 6.13.0 is introduced via
-@docusaurus/core 2.4.0  ...  qs 6.13.0
-@docusaurus/plugin-client-redirects 2.4.0  ...  qs 6.13.0
-@docusaurus/plugin-google-gtag 2.4.0  ...  qs 6.13.0
-@docusaurus/preset-classic 2.4.0  ...  qs 6.13.0
-Package
-Affected versions
-Patched version
-qs
-(npm)
-< 6.14.1
-6.14.1
-Summary
-The arrayLimit option in qs does not enforce limits for bracket notation (a[]=1&a[]=2), allowing attackers to cause denial-of-service via memory exhaustion. Applications using arrayLimit for DoS protection are vulnerable.
+## APEX Autonomous Deployment Workflow - Complete Review
 
-Details
-The arrayLimit option only checks limits for indexed notation (a[0]=1&a[1]=2) but completely bypasses it for bracket notation (a[]=1&a[]=2).
+## Executive Summary
 
-Vulnerable code (lib/parse.js:159-162):
+**Status:** YAML has 1 critical syntax error + 3 runtime issues identified by Gemini  
+**Priority:** Fix syntax error first, then apply Gemini's runtime fixes  
+**Complexity:** Extremely high (3,396 lines, 10 deployment phases)  
+**Overall Assessment:** Architecturally excellent, needs tactical fixes
 
-if (root === '[]' && options.parseArrays) {
-    obj = utils.combine([], leaf);  // No arrayLimit check
-}
-Working code (lib/parse.js:175):
+---
 
-else if (index <= options.arrayLimit) {  // Limit checked here
-    obj = [];
-    obj[index] = leaf;
-}
-The bracket notation handler at line 159 uses utils.combine([], leaf) without validating against options.arrayLimit, while indexed notation at line 175 checks index <= options.arrayLimit before creating arrays.
+## Issues Breakdown
 
-PoC
-Test 1 - Basic bypass:
+### 🔴 CRITICAL - YAML Syntax Error (Blocks All Execution)
 
-npm install qs
-const qs = require('qs');
-const result = qs.parse('a[]=1&a[]=2&a[]=3&a[]=4&a[]=5&a[]=6', { arrayLimit: 5 });
-console.log(result.a.length);  // Output: 6 (should be max 5)
-Test 2 - DoS demonstration:
+**Problem:** 4 job keys indented at 4 spaces instead of 2 spaces
 
-const qs = require('qs');
-const attack = 'a[]=' + Array(10000).fill('x').join('&a[]=');
-const result = qs.parse(attack, { arrayLimit: 100 });
-console.log(result.a.length);  // Output: 10000 (should be max 100)
-Configuration:
+**Affected Jobs:**
+1. Line ~2519: `keplr-registry-pr`
+2. Line ~2935: `enable-cross-chain`
+3. Line ~3221: `sovereign-seal`
+4. Line ~3327: `deployment-summary`
 
-arrayLimit: 5 (test 1) or arrayLimit: 100 (test 2)
-Use bracket notation: a[]=value (not indexed a[0]=value)
-Impact
-Denial of Service via memory exhaustion. Affects applications using qs.parse() with user-controlled input and arrayLimit for protection.
+**Fix:** Remove 2 spaces from each job key name
 
-Attack scenario:
+---
 
-Attacker sends HTTP request: GET /api/search?filters[]=x&filters[]=x&...&filters[]=x (100,000+ times)
-Application parses with qs.parse(query, { arrayLimit: 100 })
-qs ignores limit, parses all 100,000 elements into array
-Server memory exhausted → application crashes or becomes unresponsive
-Service unavailable for all users
-Real-world impact:
+## Gemini 3 Pro Linting Report Summary
 
-Single malicious request can crash server
-No authentication required
-Easy to automate and scale
-Affects any endpoint parsing query strings with bracket notation
-Suggested Fix
-Add arrayLimit validation to the bracket notation handler. The code already calculates currentArrayLength at line 147-151, but it's not used in the bracket notation handler at line 159.
+### 🔴 CRITICAL #1: Heredoc Variable Expansion (Line ~1380)
 
-Current code (lib/parse.js:159-162):
+**Location:** `deploy-mobile-download` job
 
-if (root === '[]' && options.parseArrays) {
-    obj = options.allowEmptyArrays && (leaf === '' || (options.strictNullHandling && leaf === null))
-        ? []
-        : utils.combine([], leaf);  // No arrayLimit check
-}
-Fixed code:
+**Problem:**
+```yaml
+cat > /var/www/app/mobile/index.html << 'MOBILE_PAGE'
+<div class="hash-value">\$APK_HASH</div>
+<p>Version: \$APK_VERSION</p>
+```
 
-if (root === '[]' && options.parseArrays) {
-    // Use currentArrayLength already calculated at line 147-151
-    if (options.throwOnLimitExceeded && currentArrayLength >= options.arrayLimit) {
-        throw new RangeError('Array limit exceeded. Only ' + options.arrayLimit + ' element' + (options.arrayLimit === 1 ? '' : 's') + ' allowed in an array.');
-    }
+**Issue:** Single quotes around `'MOBILE_PAGE'` disable variable expansion
+
+**Impact:** Users see literal text "$APK_HASH" instead of actual hash
+
+**Fix:**
+- Remove quotes: `<< MOBILE_PAGE` (not `<< 'MOBILE_PAGE'`)
+- Remove backslashes: `$APK_HASH` (not `\$APK_HASH`)
+
+---
+
+### 🔴 CRITICAL #2: IPFS Not Installed (Line ~1280)
+
+**Location:** `build-mobile-apk` job
+
+**Problem:** GitHub runners don't have IPFS installed by default
+
+**Impact:** IPFS upload always returns `ipfs-not-installed`
+
+**Fix:** Add installation step BEFORE upload:
+
+```yaml
+- name: Install IPFS (Kubo)
+  run: |
+    wget -q https://dist.ipfs.tech/kubo/v0.26.0/kubo_v0.26.0_linux-amd64.tar.gz
+    tar -xzf kubo_v0.26.0_linux-amd64.tar.gz
+    sudo bash kubo/install.sh
+    ipfs init --profile server
+```
+
+Then modify upload step to start daemon:
+```yaml
+ipfs daemon &
+IPFS_PID=$!
+sleep 5
+IPFS_HASH=$(ipfs add -Q build/aequitas-zone.apk)
+kill $IPFS_PID
+```
+
+---
+
+### 🟡 MEDIUM #3: Docker Network Race Condition (Lines ~420, ~610)
+
+**Location:** `deploy-founder-node` and `deploy-constellation` jobs
+
+**Problem:** Each job runs on separate VM, network doesn't persist
+
+**Impact:** Will work on GitHub-hosted runners but conceptually flawed
+
+**Fix:** Add network creation to each deploy job:
+
+```yaml
+case "$DEPLOYMENT_TARGET" in
+  docker-compose)
+    # Ensure network exists on THIS runner
+    docker network create aequitas-network 2>/dev/null || true
     
-    // If limit exceeded and not throwing, convert to object (consistent with indexed notation behavior)
-    if (currentArrayLength >= options.arrayLimit) {
-        obj = options.plainObjects ? { __proto__: null } : {};
-        obj[currentArrayLength] = leaf;
-    } else {
-        obj = options.allowEmptyArrays && (leaf === '' || (options.strictNullHandling && leaf === null))
-            ? []
-            : utils.combine([], leaf);
-    }
-}
-This makes bracket notation behaviour consistent with indexed notation, enforcing arrayLimit and converting to object when limit is exceeded (per README documentation).
+    mkdir -p docker-data/founder
+    # ... rest of logic
+```
+
+---
+
+## Security Findings
+
+### 🟠 SECURITY #1: SSH StrictHostKeyChecking Disabled
+
+**Risk:** Man-in-the-middle attacks  
+**Current:** `ssh -o StrictHostKeyChecking=no`
+
+**Recommended Fix (if SSH_HOST is static):**
+```yaml
+mkdir -p ~/.ssh
+echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+chmod 600 ~/.ssh/deploy_key
+
+# Add host key to known_hosts
+ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+```
+
+**Status:** OPTIONAL - acceptable for dynamic IPs
+
+---
+
+### 🟢 SECURITY #2: GH_PAT Scope (Keplr PR)
+
+**Status:** ACCEPTABLE if scoped correctly
+
+**Verify:**
+- PAT should have **ONLY** `public_repo` scope
+- NOT full `repo` scope
+
+---
+
+### 🟢 SECURITY #3: Android Keystore
+
+**Status:** SECURE - correct implementation using base64
+
+---
+
+## Architectural Strengths
+
+### ✅ Excellent Design Elements
+
+1. **Autonomous IP Extraction** (6 fallback methods)
+   - SSH deployment host
+   - ACE API
+   - AVM metadata
+   - External IP services
+   - SSH_HOST variable
+   - Sovereign IP fallback
+
+2. **Sovereign Seal** (cryptographic deployment verification)
+   - SHA-256 manifest
+   - All deployment artifacts
+   - 365-day retention
+
+3. **Mobile Sovereignty**
+   - Direct APK distribution
+   - No app store gatekeepers
+   - IPFS backup
+
+4. **APEX Autonomous Features**
+   - Self-healing
+   - Self-monitoring
+   - Self-scaling
+   - Constitutional guard (25 axioms)
+
+5. **Comprehensive Deployment**
+   - 7-node constellation
+   - VM infrastructure (ACE/AVM)
+   - All services (AI, auditor, backend, frontend, explorer)
+   - DNS configuration
+   - Cross-chain IBC
+   - Keplr integration
+
+---
+
+## Performance Optimizations
+
+### 📊 Python Dependency Caching (validate-apex job)
+
+**Issue:** `torch` + `transformers` = 3-5GB, slow builds
+
+**Current:**
+```yaml
+- uses: actions/setup-python@v4
+  with:
+    python-version: '3.11'
+    cache: 'pip'
+```
+
+**Improvement:**
+```yaml
+- uses: actions/setup-python@v4
+  with:
+    python-version: '3.11'
+    cache: 'pip'
+    cache-dependency-path: apex/requirements.txt
+```
+
+**Status:** OPTIONAL enhancement
+
+---
+
+## Workflow Statistics
+
+**Total Lines:** 3,396  
+**Jobs:** 30  
+**Phases:** 10  
+**Artifacts:** 8  
+**Services Deployed:** 7  
+**Nodes:** 7 (1 founder + 6 validators)
+
+---
+
+## Priority Fix Order
+
+### Must Apply (Blocks Execution)
+1. ✅ **YAML Syntax:** Fix 4 job indentations (2 spaces)
+
+### Should Apply (Runtime Failures)
+2. ✅ **Heredoc Fix:** Remove quotes and backslashes (mobile download)
+3. ✅ **IPFS Install:** Add installation step (mobile APK)
+4. ✅ **Docker Network:** Add to deploy jobs (founder + constellation)
+
+### Optional (Improvements)
+5. ⚪ **SSH Known Hosts:** Add ssh-keyscan (security)
+6. ⚪ **Python Caching:** Add cache-dependency-path (performance)
+7. ⚪ **GPG Signing:** Add to sovereign seal (non-repudiation)
+
+---
+
+## Gemini's Final Verdict
+
+**Rating:** 92/100 → 98/100 (after fixes)  
+**Status:** Approved for deployment after critical fixes  
+**Assessment:** "Architecturally sound, demonstrates Sovereign Grade engineering"
+
+---
+
+## My Assessment
+
+**Architecture:** ⭐⭐⭐⭐⭐ Excellent  
+**Security:** ⭐⭐⭐⭐ Good (minor improvements available)  
+**Reliability:** ⭐⭐⭐ Needs fixes (3 critical runtime issues)  
+**Innovation:** ⭐⭐⭐⭐⭐ Outstanding (APEX autonomous systems)
+
+**After Fixes:** Production-ready sovereign blockchain deployment system
+
+---
+
+## Keplr Registry Note
+
+The image path issue Gemini mentioned is **INTENTIONAL and CORRECT**:
+- PR includes image at `images/aequitas/chain.png`
+- JSON references final merged URL
+- After merge, URL will work
+- **No change needed**
+
+---
+
+## Next Steps
+
+1. Apply 4 indentation fixes (YAML syntax)
+2. Apply 3 Gemini runtime fixes (heredoc, IPFS, Docker)
+3. Test with `workflow_dispatch` trigger
+4. Monitor first deployment
+5. Optional: Apply security/performance enhancements
+
+**Estimated Fix Time:** 20 minutes for critical issues
