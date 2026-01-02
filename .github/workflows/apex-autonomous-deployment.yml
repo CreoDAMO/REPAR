@@ -6,6 +6,10 @@ permissions:
   packages: write
   pull-requests: write
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   workflow_dispatch:
     inputs:
@@ -58,7 +62,7 @@ on:
       - 'v*-mainnet'
       - 'v*-constellation'
 
-env:
+    env:
   CHAIN_ID: aequitas-1
   GENESIS_TIME: "2025-12-03T00:00:00Z"
   TOTAL_REPARATIONS: "131000000000000000000"
@@ -71,7 +75,7 @@ jobs:
   # ============================================================
   setup-docker-environment:
     name: Phase 0 - Setup Docker Environment
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
   outputs:
       docker_host: ${{ steps.setup.outputs.docker_host }}
       registry_url: ${{ steps.registry.outputs.url }}
@@ -82,7 +86,7 @@ jobs:
       
       - name: Setup Docker Environment
         id: setup
-        run: |
+      run: |
           echo "============================================================"
           echo "   PHASE 0: DOCKER ENVIRONMENT SETUP"
           echo "============================================================"
@@ -108,7 +112,7 @@ jobs:
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
+      run: |
           if [ -n "$DOCKER_REGISTRY_URL" ] && [ -n "$DOCKER_REGISTRY_USERNAME" ] && [ -n "$DOCKER_REGISTRY_PASSWORD" ]; then
             echo "Logging into custom Docker registry: $DOCKER_REGISTRY_URL"
             echo "$DOCKER_REGISTRY_PASSWORD" | docker login "$DOCKER_REGISTRY_URL" -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
@@ -138,7 +142,7 @@ jobs:
           fi
       
       - name: Report
-        run: |
+      run: |
           echo "### Phase 0: Docker Environment Setup" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
@@ -152,7 +156,7 @@ jobs:
   # ============================================================
   build-aequitasd:
     name: Build Aequitas Blockchain Binary
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: setup-docker-environment
   outputs:
       binary_hash: ${{ steps.build.outputs.hash }}
@@ -163,7 +167,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Go
-        uses: actions/setup-go@v5
+      uses: actions/setup-go@v5
   with:
           go-version: '1.23.x'
           cache-dependency-path: |
@@ -177,7 +181,7 @@ jobs:
       # APEX VALIDATION: APPROVED - Lawful and functional
       
       - name: Verify Go environment
-        run: |
+      run: |
           echo "============================================================"
           echo "   GO ENVIRONMENT VERIFICATION (CERBERUS AUDIT)"
           echo "============================================================"
@@ -202,7 +206,7 @@ jobs:
       
       - name: Get version
         id: version
-        run: |
+      run: |
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
             VERSION="${{ github.ref_name }}"
           else
@@ -214,7 +218,7 @@ jobs:
       - name: Build binary
         id: build
         working-directory: ./aequitas
-        run: |
+      run: |
           echo "Building Aequitas Protocol blockchain..."
           go mod download
           
@@ -239,7 +243,7 @@ jobs:
         working-directory: ./aequitas
   env:
           REGISTRY_URL: ${{ needs.setup-docker-environment.outputs.registry_url }}
-        run: |
+      run: |
           VERSION="${{ steps.version.outputs.version }}"
           
           if [ "$REGISTRY_URL" = "local" ]; then
@@ -270,12 +274,12 @@ jobs:
           echo "skip_push=$SKIP_PUSH" >> $GITHUB_OUTPUT
       
       - name: Push Docker Image
-        if: steps.docker.outputs.skip_push != 'true'
+    if: steps.docker.outputs.skip_push != 'true'
         working-directory: ./aequitas
   env:
           IMAGE_TAG: ${{ steps.docker.outputs.image_tag }}
           LATEST_TAG: ${{ steps.docker.outputs.latest_tag }}
-        run: |
+      run: |
           echo "Pushing Docker images to registry..."
           
           if docker push "$IMAGE_TAG"; then
@@ -291,13 +295,13 @@ jobs:
           fi
       
       - name: Report Push Status
-        if: steps.docker.outputs.skip_push == 'true'
-        run: |
+    if: steps.docker.outputs.skip_push == 'true'
+      run: |
           echo "ℹ️  Image built locally only (no registry push)"
           echo "Image available locally as: ${{ steps.docker.outputs.image_tag }}"
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
   with:
           name: aequitasd-${{ steps.version.outputs.version }}
           path: aequitas/build/aequitasd
@@ -309,24 +313,24 @@ jobs:
   # ============================================================
   validate-apex:
     name: Validate APEX Autonomous Systems
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build-aequitasd
     
   steps:
       - uses: actions/checkout@v4
       
       - name: Setup Python
-        uses: actions/setup-python@v4
+      uses: actions/setup-python@v4
   with:
           python-version: '3.11'
           cache: 'pip'
       
       - name: Install dependencies
-        run: |
+      run: |
           pip install torch transformers web3 pytest numpy aiohttp
       
       - name: Verify APEX
-        run: |
+      run: |
           cd apex
           python -c "
           import asyncio
@@ -350,7 +354,7 @@ jobs:
           "
       
       - name: Verify ACE
-        run: |
+      run: |
           if [ -f ace/bin/ace-kernel ]; then
             chmod +x ace/bin/ace-kernel
             ./ace/bin/ace-kernel --version || echo "ACE Kernel version check"
@@ -361,7 +365,7 @@ jobs:
           fi
       
       - name: Report status
-        run: |
+      run: |
           echo "### APEX Autonomous Systems Ready" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Capabilities:**" >> $GITHUB_STEP_SUMMARY
@@ -377,7 +381,7 @@ jobs:
   # ============================================================
   deploy-founder-node:
     name: Deploy Founder Node
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-aequitasd, validate-apex, setup-docker-environment]
   outputs:
       founder_address: ${{ steps.genesis.outputs.founder_address }}
@@ -391,14 +395,14 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download binary
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
         continue-on-error: true
   with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
       
       - name: Ensure binary available
-        run: |
+      run: |
           if [ ! -f ./bin/aequitasd ]; then
             echo "Artifact not found, downloading from release..."
             mkdir -p ./bin
@@ -417,7 +421,7 @@ jobs:
           echo "aequitasd binary ready"
       
       - name: Configure founder
-        run: |
+      run: |
           chmod +x ./bin/aequitasd
           
           echo "Configuring Founder Node (Genesis Validator)..."
@@ -438,7 +442,7 @@ jobs:
       
       - name: Initialize genesis
         id: genesis
-        run: |
+      run: |
           echo "Initializing genesis for Founder Node..."
           
           ./bin/aequitasd init "aequitas-founder-01" --chain-id ${{ env.CHAIN_ID }} --home ./founder-node || echo "Init step"
@@ -467,7 +471,7 @@ jobs:
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
           IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
-        run: |
+      run: |
           DEPLOYMENT_TARGET="${{ github.event.inputs.deployment_target || 'docker-compose' }}"
           
           echo "============================================================"
@@ -584,7 +588,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
-        run: |
+      run: |
           echo "============================================================"
           echo "   AUTONOMOUS IP EXTRACTION"
           echo "   Priority: Deployment → ACE API → External → SSH Host"
@@ -724,7 +728,7 @@ jobs:
           echo "============================================================"
       
       - name: Verify node
-        run: |
+      run: |
           echo "Verifying Founder Node status..."
           sleep 5
           echo "   Node: aequitas-founder-01"
@@ -736,7 +740,7 @@ jobs:
           echo "Founder Node verification complete"
       
       - name: Report deployment
-        run: |
+      run: |
           echo "### Founder Node Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Node Details:**" >> $GITHUB_STEP_SUMMARY
@@ -762,7 +766,7 @@ jobs:
   # ============================================================
   deploy-constellation:
     name: Deploy Constellation Node
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-aequitasd, deploy-founder-node]
     if: ${{ github.event.inputs.founder_only != 'true' }}
     
@@ -776,14 +780,14 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download binary for node ${{ matrix.node_index }}
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
         continue-on-error: true
   with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
       
       - name: Ensure binary for node ${{ matrix.node_index }}
-        run: |
+      run: |
           if [ ! -f ./bin/aequitasd ]; then
             mkdir -p ./bin
             wget -q https://github.com/CreoDAMO/REPAR/releases/download/v0.1.0-build-114/aequitasd-linux-amd64.tar.gz -O ./bin/aequitasd.tar.gz
@@ -794,7 +798,7 @@ jobs:
           echo "$PWD/bin" >> $GITHUB_PATH
       
       - name: Configure validator ${{ matrix.node_index }}
-        run: |
+      run: |
           NODE_NAME="aequitas-validator-$(printf '%02d' ${{ matrix.node_index }})"
           
           echo "Configuring $NODE_NAME..."
@@ -809,7 +813,7 @@ jobs:
       - name: Deploy validator ${{ matrix.node_index }}
   env:
           IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
-        run: |
+      run: |
           NODE_NAME="aequitas-validator-$(printf '%02d' ${{ matrix.node_index }})"
           echo "Deploying $NODE_NAME via APEX..."
           
@@ -852,7 +856,7 @@ jobs:
   # ============================================================
   verify-constellation:
     name: Verify Constellation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-founder-node, deploy-constellation]
     if: always() && needs.deploy-founder-node.result == 'success'
     
@@ -860,15 +864,15 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Python for verification
-        uses: actions/setup-python@v4
+      uses: actions/setup-python@v4
   with:
           python-version: '3.11'
       
       - name: Install verification tools
-        run: pip install aiohttp requests
+      run: pip install aiohttp requests
       
       - name: Verify health
-        run: |
+      run: |
           echo "Verifying 7-Node Constellation..."
           echo ""
           echo "============================================================"
@@ -904,7 +908,7 @@ jobs:
           echo "============================================================"
       
       - name: Activate APEX
-        run: |
+      run: |
           echo "Activating APEX Autonomous Management..."
           
           cd apex
@@ -930,7 +934,7 @@ jobs:
           "
       
       - name: Generate report
-        run: |
+      run: |
           echo "### Constellation Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Deployment:** ${{ github.event.inputs.deployment_target || 'docker-compose' }}" >> $GITHUB_STEP_SUMMARY
@@ -953,7 +957,7 @@ jobs:
   # ============================================================
   deploy-vm-infrastructure:
     name: Deploy VM Infrastructure (ACE/AVM)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [verify-constellation, deploy-founder-node]
     if: always() && needs.verify-constellation.result == 'success'
   outputs:
@@ -964,7 +968,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Validate VM Infrastructure (ACE-Native)
-        run: |
+      run: |
           echo "============================================================"
           echo "   VM INFRASTRUCTURE DEPLOYMENT (ACE/AVM)"
           echo "   SOVEREIGNTY MODE: ACE-Native Only (No Terraform)"
@@ -989,7 +993,7 @@ jobs:
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
           INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
-        run: |
+      run: |
           echo "Deploying VM infrastructure layer..."
           
           ACE_ENDPOINT="https://ace.aequitasprotocol.zone"
@@ -1015,7 +1019,7 @@ jobs:
           echo "avm_endpoint=$AVM_ENDPOINT" >> $GITHUB_OUTPUT
       
       - name: Report
-        run: |
+      run: |
           echo "### VM Infrastructure Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**ACE Endpoint:** \`${{ steps.deploy.outputs.ace_endpoint }}\`" >> $GITHUB_STEP_SUMMARY
@@ -1026,7 +1030,7 @@ jobs:
   # ============================================================
   build-ai-autonomous:
     name: Build AI Autonomous Agents (Go)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-vm-infrastructure]
   outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
@@ -1035,13 +1039,13 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Go
-        uses: actions/setup-go@v5
+      uses: actions/setup-go@v5
   with:
           go-version: '1.23.x'
       
       - name: Build AI Autonomous Agent
         id: build
-        run: |
+      run: |
           echo "============================================================"
           echo "   BUILDING AI AUTONOMOUS AGENTS"
           echo "============================================================"
@@ -1093,7 +1097,7 @@ jobs:
           ls -lh ai/autonomous/build/
       
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
   with:
           name: ai-autonomous-agents
           path: ai/autonomous/build/
@@ -1102,7 +1106,7 @@ jobs:
 
   build-cerberus-auditor:
     name: Build Cerberus Security Auditor (Python)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-vm-infrastructure]
   outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
@@ -1111,19 +1115,19 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Python
-        uses: actions/setup-python@v4
+      uses: actions/setup-python@v4
   with:
           python-version: '3.11'
           cache: 'pip'
       
       - name: Install Dependencies
-        run: |
+      run: |
           cd auditor
           pip install -r requirements.txt || pip install flask sqlalchemy requests aiohttp
       
       - name: Validate Cerberus Auditor
         id: build
-        run: |
+      run: |
           echo "Validating Cerberus Security Auditor..."
           cd auditor
           
@@ -1149,12 +1153,12 @@ jobs:
           echo "Cerberus Auditor hash: $HASH"
       
       - name: Package Auditor
-        run: |
+      run: |
           cd auditor
           tar -czvf ../cerberus-auditor.tar.gz .
       
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
   with:
           name: cerberus-auditor
           path: cerberus-auditor.tar.gz
@@ -1162,7 +1166,7 @@ jobs:
 
   build-backend:
     name: Build Backend API (Node.js)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-vm-infrastructure]
   outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
@@ -1171,20 +1175,20 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+      uses: actions/setup-node@v4
   with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: backend/package.json
       
       - name: Install Dependencies
-        run: |
+      run: |
           cd backend
           npm install
       
       - name: Validate Backend
         id: build
-        run: |
+      run: |
           echo "Validating Backend API..."
           cd backend
           
@@ -1195,12 +1199,12 @@ jobs:
           echo "Backend API hash: $HASH"
       
       - name: Package Backend
-        run: |
+      run: |
           cd backend
           tar -czvf ../backend-api.tar.gz .
       
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
   with:
           name: backend-api
           path: backend-api.tar.gz
@@ -1208,7 +1212,7 @@ jobs:
 
   build-dexplorer:
     name: Build Dexplorer (React/TypeScript)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-vm-infrastructure]
   outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
@@ -1217,20 +1221,20 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+      uses: actions/setup-node@v4
   with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: dexplorer/package.json
       
       - name: Install Dependencies
-        run: |
+      run: |
           cd dexplorer
           npm install
       
       - name: Build Dexplorer
         id: build
-        run: |
+      run: |
           echo "Building Dexplorer..."
           cd dexplorer
           
@@ -1245,7 +1249,7 @@ jobs:
           echo "Dexplorer hash: $HASH"
       
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
         continue-on-error: true
   with:
           name: dexplorer-dist
@@ -1254,7 +1258,7 @@ jobs:
 
   build-frontend:
     name: Build Frontend (React/Vite)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-vm-infrastructure]
   outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
@@ -1263,20 +1267,20 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+      uses: actions/setup-node@v4
   with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package.json
       
       - name: Install Dependencies
-        run: |
+      run: |
           cd frontend
           npm install
       
       - name: Build Frontend
         id: build
-        run: |
+      run: |
           echo "Building Frontend..."
           cd frontend
           
@@ -1291,7 +1295,7 @@ jobs:
           echo "Frontend hash: $HASH"
       
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
         continue-on-error: true
   with:
           name: frontend-dist
@@ -1303,7 +1307,7 @@ jobs:
   # ============================================================
   build-adns-module:
     name: Build ADNS Module (Post-Quantum)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-vm-infrastructure]
   outputs:
       artifact_hash: ${{ steps.hash.outputs.hash }}
@@ -1312,12 +1316,12 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Go
-        uses: actions/setup-go@v5
+      uses: actions/setup-go@v5
   with:
           go-version: '1.23.x'
       
       - name: Install Post-Quantum Libraries
-        run: |
+      run: |
           echo "Installing post-quantum cryptographic libraries..."
           
           mkdir -p adns
@@ -1333,7 +1337,7 @@ jobs:
       
       - name: Build ADNS Resolver
         id: build
-        run: |
+      run: |
           cd adns
           
           cat > main.go << 'EOF'
@@ -1432,7 +1436,7 @@ jobs:
           echo "✅ ADNS resolver built"
       
       - name: Generate Zone Files
-        run: |
+      run: |
           cd adns
           mkdir -p zones
           
@@ -1497,13 +1501,13 @@ jobs:
       - name: Calculate Module Hash
         id: hash
         working-directory: ./adns
-        run: |
+      run: |
           HASH=$(find . -name "*.go" -o -name "db.*" | sort | xargs sha256sum | sha256sum | awk '{print $1}')
           echo "hash=$HASH" >> $GITHUB_OUTPUT
           echo "✅ ADNS Module Hash: $HASH"
       
       - name: Upload ADNS Artifacts
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
   with:
           name: adns-module-${{ github.sha }}
           path: |
@@ -1513,7 +1517,7 @@ jobs:
           if-no-files-found: error
       
       - name: Report
-        run: |
+      run: |
           echo "### ADNS Module Built" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Post-Quantum Features:**" >> $GITHUB_STEP_SUMMARY
@@ -1532,14 +1536,14 @@ jobs:
   # ============================================================
   deploy-ai-autonomous:
     name: Deploy AI Autonomous Agents
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-ai-autonomous, deploy-vm-infrastructure, deploy-founder-node]
     
   steps:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
         continue-on-error: true
   with:
           name: ai-autonomous-agents
@@ -1550,7 +1554,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
-        run: |
+      run: |
           echo "============================================================"
           echo "   DEPLOYING AI AUTONOMOUS AGENTS"
           echo "============================================================"
@@ -1570,7 +1574,7 @@ jobs:
           fi
       
       - name: Report
-        run: |
+      run: |
           echo "### AI Autonomous Agents Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Components:**" >> $GITHUB_STEP_SUMMARY
@@ -1579,7 +1583,7 @@ jobs:
 
   deploy-cerberus-auditor:
     name: Deploy Cerberus Security Auditor
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-cerberus-auditor, deploy-ai-autonomous, deploy-founder-node]
   outputs:
       auditor_endpoint: ${{ steps.deploy.outputs.endpoint }}
@@ -1588,7 +1592,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
   with:
           name: cerberus-auditor
           path: ./auditor-build
@@ -1599,7 +1603,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
-        run: |
+      run: |
           echo "============================================================"
           echo "   DEPLOYING CERBERUS SECURITY AUDITOR"
           echo "============================================================"
@@ -1631,7 +1635,7 @@ jobs:
           echo "endpoint=$AUDITOR_ENDPOINT" >> $GITHUB_OUTPUT
       
       - name: Report
-        run: |
+      run: |
           echo "### Cerberus Security Auditor Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Endpoint:** \`${{ steps.deploy.outputs.endpoint }}\`" >> $GITHUB_STEP_SUMMARY
@@ -1643,7 +1647,7 @@ jobs:
 
   deploy-backend:
     name: Deploy Backend API
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-backend, deploy-cerberus-auditor, deploy-founder-node]
   outputs:
       api_endpoint: ${{ steps.deploy.outputs.endpoint }}
@@ -1652,7 +1656,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
   with:
           name: backend-api
           path: ./backend-build
@@ -1663,7 +1667,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
-        run: |
+      run: |
           echo "============================================================"
           echo "   DEPLOYING BACKEND API"
           echo "============================================================"
@@ -1695,7 +1699,7 @@ jobs:
           echo "endpoint=$API_ENDPOINT" >> $GITHUB_OUTPUT
       
       - name: Report
-        run: |
+      run: |
           echo "### Backend API Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Endpoint:** \`${{ steps.deploy.outputs.endpoint }}\`" >> $GITHUB_STEP_SUMMARY
@@ -1708,7 +1712,7 @@ jobs:
 
   deploy-dexplorer:
     name: Deploy Dexplorer (Block Explorer)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-dexplorer, deploy-backend, deploy-founder-node]
   outputs:
       explorer_endpoint: ${{ steps.deploy.outputs.endpoint }}
@@ -1717,7 +1721,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
         continue-on-error: true
   with:
           name: dexplorer-dist
@@ -1729,7 +1733,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
-        run: |
+      run: |
           echo "============================================================"
           echo "   DEPLOYING DEXPLORER (BLOCK EXPLORER)"
           echo "============================================================"
@@ -1755,7 +1759,7 @@ jobs:
           echo "endpoint=$EXPLORER_ENDPOINT" >> $GITHUB_OUTPUT
       
       - name: Report
-        run: |
+      run: |
           echo "### Dexplorer (Block Explorer) Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Endpoint:** \`${{ steps.deploy.outputs.endpoint }}\`" >> $GITHUB_STEP_SUMMARY
@@ -1769,7 +1773,7 @@ jobs:
 
   deploy-frontend:
     name: Deploy Frontend Application
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-frontend, deploy-dexplorer, deploy-backend, deploy-founder-node]
   outputs:
       frontend_endpoint: ${{ steps.deploy.outputs.endpoint }}
@@ -1778,7 +1782,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
         continue-on-error: true
   with:
           name: frontend-dist
@@ -1790,7 +1794,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
-        run: |
+      run: |
           echo "============================================================"
           echo "   DEPLOYING FRONTEND APPLICATION"
           echo "============================================================"
@@ -1816,7 +1820,7 @@ jobs:
           echo "endpoint=$FRONTEND_ENDPOINT" >> $GITHUB_OUTPUT
       
       - name: Report
-        run: |
+      run: |
           echo "### Frontend Application Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Endpoint:** \`${{ steps.deploy.outputs.endpoint }}\`" >> $GITHUB_STEP_SUMMARY
@@ -1834,14 +1838,14 @@ jobs:
   # ============================================================
   verify-fhe-components:
     name: Verify FHE Components
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-frontend, deploy-vm-infrastructure]
     
   steps:
       - uses: actions/checkout@v4
       
       - name: Verify FHE Documentation
-        run: |
+      run: |
           echo "============================================================"
           echo "   VERIFYING FHE COMPONENTS"
           echo "============================================================"
@@ -1872,7 +1876,7 @@ jobs:
           echo "============================================================"
       
       - name: Report
-        run: |
+      run: |
           FHE_HASH=$(sha256sum ADVANCED_FHE_ENHANCEMENTS.md | awk '{print $1}' 2>/dev/null || echo "not-found")
           echo "### FHE Components Verified" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -1891,7 +1895,7 @@ jobs:
   # ============================================================
   build-mobile-apk:
     name: Build Mobile APK (Sovereign Distribution)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-vm-infrastructure, build-aequitasd]
   outputs:
       apk_hash: ${{ steps.hash.outputs.apk_hash }}
@@ -1903,19 +1907,19 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Java (for Android build)
-        uses: actions/setup-java@v4
+      uses: actions/setup-java@v4
   with:
           distribution: 'temurin'
           java-version: '17'
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+      uses: actions/setup-node@v4
   with:
           node-version: 20
       
       - name: Get version
         id: version
-        run: |
+      run: |
           VERSION="${{ needs.build-aequitasd.outputs.version }}"
           if [ -z "$VERSION" ]; then
             VERSION="v1.0.0-$(git rev-parse --short HEAD)"
@@ -1930,17 +1934,17 @@ jobs:
           echo "============================================================"
       
       - name: Install dependencies
-        run: |
+      run: |
           cd mobile
           npm ci || npm install
           echo "Mobile dependencies installed"
       
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      uses: android-actions/setup-android@v3
       
       - name: Build APK locally (No Expo Cloud - Full Sovereignty)
         id: build
-        run: |
+      run: |
           cd mobile
           
           echo "Building APK locally (sovereign - no cloud dependencies)..."
@@ -2003,7 +2007,7 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
+      run: |
           cd mobile
           
           if [ -f build/aequitas-zone.apk ] && [ -n "$ANDROID_KEYSTORE" ]; then
@@ -2035,7 +2039,7 @@ jobs:
       
       - name: Calculate SHA-256
         id: hash
-        run: |
+      run: |
           cd mobile
           
           if [ -f build/aequitas-zone.apk ]; then
@@ -2058,7 +2062,7 @@ jobs:
       - name: Upload to IPFS (Optional - Decentralized Distribution)
         id: ipfs
         continue-on-error: true
-        run: |
+      run: |
           cd mobile
           
           if [ -f build/aequitas-zone.apk ]; then
@@ -2080,7 +2084,7 @@ jobs:
           fi
       
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
   with:
           name: mobile-apk-${{ steps.version.outputs.version }}
           path: mobile/build/aequitas-zone.apk
@@ -2088,7 +2092,7 @@ jobs:
           if-no-files-found: error
       
       - name: Report
-        run: |
+      run: |
           echo "### Mobile APK Built (Sovereign Distribution)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Version:** ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
@@ -2108,7 +2112,7 @@ jobs:
   # ============================================================
   deploy-mobile-download:
     name: Deploy Mobile Download Page
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-mobile-apk, deploy-frontend, deploy-founder-node]
   outputs:
       download_url: ${{ steps.deploy.outputs.download_url }}
@@ -2117,7 +2121,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download APK Artifact
-        uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v4
         continue-on-error: true
   with:
           name: mobile-apk-${{ needs.build-mobile-apk.outputs.version }}
@@ -2131,7 +2135,7 @@ jobs:
           SSH_USER: ${{ vars.SSH_USER }}
           APK_HASH: ${{ needs.build-mobile-apk.outputs.apk_hash }}
           APK_VERSION: ${{ needs.build-mobile-apk.outputs.version }}
-        run: |
+      run: |
           echo "============================================================"
           echo "   DEPLOYING MOBILE DOWNLOAD PAGE"
           echo "============================================================"
@@ -2229,7 +2233,7 @@ jobs:
           echo "download_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
       
       - name: Report
-        run: |
+      run: |
           echo "### Mobile Download Page Deployed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Download URL:** https://aequitasprotocol.zone/mobile/download" >> $GITHUB_STEP_SUMMARY
@@ -2247,7 +2251,7 @@ jobs:
   # ============================================================
   configure-dns:
     name: Configure DNS (Sovereign Migration)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-founder-node, verify-constellation]
     if: |
       always() && 
@@ -2261,10 +2265,10 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Install tools
-        run: sudo apt-get update && sudo apt-get install -y jq dnsutils
+      run: sudo apt-get update && sudo apt-get install -y jq dnsutils
       
       - name: Display IP Information
-        run: |
+      run: |
           echo "============================================================"
           echo "   DNS CONFIGURATION - USING AUTO-EXTRACTED IP"
           echo "============================================================"
@@ -2278,7 +2282,7 @@ jobs:
   env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
-        run: |
+      run: |
           echo "Removing old DigitalOcean IP records..."
           
           if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
@@ -2358,7 +2362,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
           INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
-        run: |
+      run: |
           echo "Configuring DNS for aequitasprotocol.zone..."
           echo "Using auto-extracted IP: $INFRASTRUCTURE_IP"
           
@@ -2470,7 +2474,7 @@ jobs:
           echo "records_created=$CREATED" >> $GITHUB_OUTPUT
       
       - name: Verify DNS propagation
-        run: |
+      run: |
           echo "Verifying DNS propagation..."
           sleep 10
           
@@ -2491,7 +2495,7 @@ jobs:
           done
       
       - name: Generate DNS report
-        run: |
+      run: |
           echo "### DNS Migration Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Migration Details:**" >> $GITHUB_STEP_SUMMARY
@@ -2518,7 +2522,7 @@ jobs:
 # ============================================================
   keplr-registry-pr:
     name: Create Keplr Registry PR
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-founder-node, verify-constellation]
     if: |
       always() && 
@@ -2531,7 +2535,7 @@ jobs:
       # This avoids path confusion when we also clone keplr-chain-registry
       # ============================================================
       - name: Checkout REPAR repository
-        uses: actions/checkout@v4
+      uses: actions/checkout@v4
   with:
           path: repar-repo
           fetch-depth: 0
@@ -2539,7 +2543,7 @@ jobs:
       
       # FIX: Explicit LFS checkout (converts 133-byte pointers to actual files)
       - name: Checkout LFS files
-        run: |
+      run: |
           cd repar-repo
           git lfs checkout
       
@@ -2547,7 +2551,7 @@ jobs:
       # Verify logo files exist after checkout
       # ============================================================
       - name: Verify logo files
-        run: |
+      run: |
           echo "============================================================"
           echo "   VERIFYING LOGO FILES IN CHECKOUT"
           echo "============================================================"
@@ -2586,7 +2590,7 @@ jobs:
           echo "============================================================"
       
       - name: Setup Git
-        run: |
+      run: |
           git config --global user.name "Aequitas Protocol Bot"
           git config --global user.email "bot@aequitasprotocol.zone"
       
@@ -2594,7 +2598,7 @@ jobs:
         id: fork
   env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
-        run: |
+      run: |
           if [ -z "$GH_TOKEN" ]; then
             echo "GH_PAT not configured - skipping Keplr PR"
             exit 0
@@ -2645,7 +2649,7 @@ jobs:
       - name: Create chain configuration
   env:
           INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
-        run: |
+      run: |
           if [ ! -d keplr-chain-registry ]; then
             echo "Registry not cloned - skipping"
             exit 0
@@ -2806,7 +2810,7 @@ jobs:
       - name: Create PR
   env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
-        run: |
+      run: |
           if [ ! -d keplr-chain-registry ]; then
             echo "Registry not cloned - skipping"
             exit 0
@@ -2922,7 +2926,7 @@ jobs:
           gh pr list --repo chainapsis/keplr-chain-registry --search "Aequitas" --json number,title,state,url 2>/dev/null || echo "No PRs found"
       
       - name: Report
-        run: |
+      run: |
           echo "### Keplr Registry PR" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Status:** PR created for chainapsis/keplr-chain-registry" >> $GITHUB_STEP_SUMMARY
@@ -2934,7 +2938,7 @@ jobs:
 # ============================================================
   enable-cross-chain:
     name: Enable Cross-Chain Features
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-founder-node, sovereign-seal]
     if: github.event.inputs.enable_cross_chain == 'true'
     
@@ -2947,7 +2951,7 @@ jobs:
       
       - name: Setup Relayer Environment
         id: relayer-setup
-        run: |
+      run: |
           echo "============================================================"
           echo "   CROSS-CHAIN RELAYER SETUP"
           echo "============================================================"
@@ -2964,7 +2968,7 @@ jobs:
       - name: Configure Hermes
   env:
           RELAYER_MNEMONIC: ${{ secrets.RELAYER_MNEMONIC }}
-        run: |
+      run: |
           mkdir -p ~/.hermes
           
           # Create Hermes configuration for Aequitas cross-chain
@@ -3114,7 +3118,7 @@ jobs:
       - name: Import Relayer Keys
   env:
           RELAYER_MNEMONIC: ${{ secrets.RELAYER_MNEMONIC }}
-        run: |
+      run: |
           if [ -n "$RELAYER_MNEMONIC" ]; then
             echo "$RELAYER_MNEMONIC" | hermes keys add --chain aequitas-1 --mnemonic-file /dev/stdin
             echo "$RELAYER_MNEMONIC" | hermes keys add --chain cosmoshub-4 --mnemonic-file /dev/stdin
@@ -3128,7 +3132,7 @@ jobs:
       - name: Create IBC Clients
         id: ibc-clients
         continue-on-error: true
-        run: |
+      run: |
           echo "Creating IBC light clients..."
           
           # Create client on Aequitas for Cosmos Hub
@@ -3142,7 +3146,7 @@ jobs:
       - name: Create IBC Connections
         id: ibc-connections
         continue-on-error: true
-        run: |
+      run: |
           echo "Creating IBC connections..."
           
           # Create connection between Aequitas and Cosmos Hub
@@ -3153,7 +3157,7 @@ jobs:
       - name: Create IBC Channels
         id: channel-creation
         continue-on-error: true
-        run: |
+      run: |
           echo "Creating IBC transfer channels..."
           
           # Create transfer channel to Cosmos Hub
@@ -3177,7 +3181,7 @@ jobs:
       
       - name: Validate IBC Setup
         id: ibc-setup
-        run: |
+      run: |
           echo "Validating IBC configuration..."
           
           hermes health-check || true
@@ -3195,7 +3199,7 @@ jobs:
           fi
       
       - name: Report Cross-Chain Status
-        run: |
+      run: |
           echo "### Cross-Chain Enablement Status" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**IBC Relayer:**" >> $GITHUB_STEP_SUMMARY
@@ -3220,7 +3224,7 @@ jobs:
 # ============================================================
   sovereign-seal:
     name: Sovereign Infrastructure Seal
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [deploy-founder-node, verify-constellation, configure-dns, build-mobile-apk]
     if: always() && needs.deploy-founder-node.result == 'success'
   outputs:
@@ -3232,7 +3236,7 @@ jobs:
       
       - name: Generate Sovereign Seal
         id: seal
-        run: |
+      run: |
           TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           
           echo "============================================================"
@@ -3306,14 +3310,14 @@ jobs:
           echo "timestamp=$TIMESTAMP" >> $GITHUB_OUTPUT
       
       - name: Archive Seal
-        uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v4
   with:
           name: sovereign-seal-${{ github.run_id }}
           path: /tmp/seal_manifest.json
           retention-days: 365
       
       - name: Report
-        run: |
+      run: |
           echo "### Sovereign Infrastructure Seal" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Seal Hash:** \`${{ steps.seal.outputs.hash }}\`" >> $GITHUB_STEP_SUMMARY
@@ -3326,7 +3330,7 @@ jobs:
 # ============================================================
   deployment-summary:
     name: Deployment Summary
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [
       setup-docker-environment,
       build-aequitasd,
@@ -3358,7 +3362,7 @@ jobs:
     
   steps:
       - name: Generate Summary
-        run: |
+      run: |
           echo "# APEX Autonomous Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Core Infrastructure" >> $GITHUB_STEP_SUMMARY
