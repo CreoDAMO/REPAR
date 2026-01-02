@@ -3380,7 +3380,7 @@ deployment-summary:
       sovereign-seal
     ]
     if: always()
-    
+
     steps:
       - name: Generate Summary
         run: |
