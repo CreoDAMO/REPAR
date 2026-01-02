@@ -72,12 +72,12 @@ jobs:
   setup-docker-environment:
     name: Phase 0 - Setup Docker Environment
     runs-on: ubuntu-latest
-    outputs:
+  outputs:
       docker_host: ${{ steps.setup.outputs.docker_host }}
       registry_url: ${{ steps.registry.outputs.url }}
       registry_authenticated: ${{ steps.registry.outputs.authenticated }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Docker Environment
@@ -102,7 +102,7 @@ jobs:
       
       - name: Setup Docker Registry
         id: registry
-        env:
+  env:
           DOCKER_REGISTRY_URL: ${{ secrets.DOCKER_REGISTRY_URL }}
           DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
           DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
@@ -154,17 +154,17 @@ jobs:
     name: Build Aequitas Blockchain Binary
     runs-on: ubuntu-latest
     needs: setup-docker-environment
-    outputs:
+  outputs:
       binary_hash: ${{ steps.build.outputs.hash }}
       version: ${{ steps.version.outputs.version }}
       image_tag: ${{ steps.docker.outputs.image_tag }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Go
         uses: actions/setup-go@v5
-        with:
+  with:
           go-version: '1.23.x'
           cache-dependency-path: |
             aequitas/go.sum
@@ -237,7 +237,7 @@ jobs:
       - name: Build Docker Image
         id: docker
         working-directory: ./aequitas
-        env:
+  env:
           REGISTRY_URL: ${{ needs.setup-docker-environment.outputs.registry_url }}
         run: |
           VERSION="${{ steps.version.outputs.version }}"
@@ -272,7 +272,7 @@ jobs:
       - name: Push Docker Image
         if: steps.docker.outputs.skip_push != 'true'
         working-directory: ./aequitas
-        env:
+  env:
           IMAGE_TAG: ${{ steps.docker.outputs.image_tag }}
           LATEST_TAG: ${{ steps.docker.outputs.latest_tag }}
         run: |
@@ -298,7 +298,7 @@ jobs:
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
-        with:
+  with:
           name: aequitasd-${{ steps.version.outputs.version }}
           path: aequitas/build/aequitasd
           retention-days: 90
@@ -312,12 +312,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-aequitasd
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Python
         uses: actions/setup-python@v4
-        with:
+  with:
           python-version: '3.11'
           cache: 'pip'
       
@@ -379,7 +379,7 @@ jobs:
     name: Deploy Founder Node
     runs-on: ubuntu-latest
     needs: [build-aequitasd, validate-apex, setup-docker-environment]
-    outputs:
+  outputs:
       founder_address: ${{ steps.genesis.outputs.founder_address }}
       genesis_hash: ${{ steps.genesis.outputs.genesis_hash }}
       rpc_endpoint: ${{ steps.deploy.outputs.rpc_endpoint }}
@@ -387,13 +387,13 @@ jobs:
       ip_source: ${{ steps.extract-ip.outputs.source }}
       container_id: ${{ steps.deploy.outputs.container_id }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download binary
         uses: actions/download-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
       
@@ -462,7 +462,7 @@ jobs:
       
       - name: Deploy node
         id: deploy
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -481,28 +481,28 @@ jobs:
               
               cat > docker-compose.founder.yml << EOF
           version: '3.8'
-          services:
-            founder-node:
+  services:
+  founder-node:
               image: ${IMAGE_TAG}
               container_name: aequitas-founder-01
-              ports:
+  ports:
                 - "26656:26656"
                 - "26657:26657"
                 - "26660:26660"
                 - "9090:9090"
                 - "1317:1317"
-              volumes:
+  volumes:
                 - ./docker-data/founder:/root/.aequitas
               restart: unless-stopped
-              networks:
+  networks:
                 - aequitas-network
-              healthcheck:
+  healthcheck:
                 test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
                 interval: 30s
                 timeout: 10s
                 retries: 3
-          networks:
-            aequitas-network:
+  networks:
+  aequitas-network:
               external: true
           EOF
               
@@ -580,7 +580,7 @@ jobs:
       # ============================================================
       - name: Extract Infrastructure IP (Autonomous)
         id: extract-ip
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -766,19 +766,19 @@ jobs:
     needs: [build-aequitasd, deploy-founder-node]
     if: ${{ github.event.inputs.founder_only != 'true' }}
     
-    strategy:
-      matrix:
+  strategy:
+  matrix:
         node_index: [2, 3, 4, 5, 6, 7]
       max-parallel: 3
       fail-fast: false
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download binary for node ${{ matrix.node_index }}
         uses: actions/download-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: aequitasd-${{ needs.build-aequitasd.outputs.version }}
           path: ./bin
       
@@ -807,7 +807,7 @@ jobs:
           echo "Node ${{ matrix.node_index }} configured"
       
       - name: Deploy validator ${{ matrix.node_index }}
-        env:
+  env:
           IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
         run: |
           NODE_NAME="aequitas-validator-$(printf '%02d' ${{ matrix.node_index }})"
@@ -824,22 +824,22 @@ jobs:
           
           cat > docker-compose.validator-$NODE_INDEX.yml << EOF
           version: '3.8'
-          services:
+  services:
             validator-$NODE_INDEX:
               image: ${IMAGE_TAG}
               container_name: ${NODE_NAME}
-              ports:
+  ports:
                 - "${P2P_PORT}:26656"
                 - "${RPC_PORT}:26657"
                 - "${GRPC_PORT}:9090"
                 - "${REST_PORT}:1317"
-              volumes:
+  volumes:
                 - ./docker-data/validator-${NODE_INDEX}:/root/.aequitas
               restart: unless-stopped
-              networks:
+  networks:
                 - aequitas-network
-          networks:
-            aequitas-network:
+  networks:
+  aequitas-network:
               external: true
           EOF
           
@@ -856,12 +856,12 @@ jobs:
     needs: [deploy-founder-node, deploy-constellation]
     if: always() && needs.deploy-founder-node.result == 'success'
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Python for verification
         uses: actions/setup-python@v4
-        with:
+  with:
           python-version: '3.11'
       
       - name: Install verification tools
@@ -956,11 +956,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: [verify-constellation, deploy-founder-node]
     if: always() && needs.verify-constellation.result == 'success'
-    outputs:
+  outputs:
       ace_endpoint: ${{ steps.deploy.outputs.ace_endpoint }}
       avm_endpoint: ${{ steps.deploy.outputs.avm_endpoint }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Validate VM Infrastructure (ACE-Native)
@@ -984,7 +984,7 @@ jobs:
       
       - name: Deploy to ACE/AVM
         id: deploy
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -1028,15 +1028,15 @@ jobs:
     name: Build AI Autonomous Agents (Go)
     runs-on: ubuntu-latest
     needs: [deploy-vm-infrastructure]
-    outputs:
+  outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Go
         uses: actions/setup-go@v5
-        with:
+  with:
           go-version: '1.23.x'
       
       - name: Build AI Autonomous Agent
@@ -1094,7 +1094,7 @@ jobs:
       
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
-        with:
+  with:
           name: ai-autonomous-agents
           path: ai/autonomous/build/
           if-no-files-found: error
@@ -1104,15 +1104,15 @@ jobs:
     name: Build Cerberus Security Auditor (Python)
     runs-on: ubuntu-latest
     needs: [deploy-vm-infrastructure]
-    outputs:
+  outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Python
         uses: actions/setup-python@v4
-        with:
+  with:
           python-version: '3.11'
           cache: 'pip'
       
@@ -1129,13 +1129,13 @@ jobs:
           
           python -c "
           import sys
-          try:
+  try:
               from main import app
               print('   main.py: OK')
           except ImportError as e:
               print(f'   main.py: Import check (deps may be needed)')
           
-          try:
+  try:
               from orchestrator import ThreatOrchestrator
               print('   orchestrator.py: OK')
           except ImportError:
@@ -1155,7 +1155,7 @@ jobs:
       
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
-        with:
+  with:
           name: cerberus-auditor
           path: cerberus-auditor.tar.gz
           retention-days: 30
@@ -1164,15 +1164,15 @@ jobs:
     name: Build Backend API (Node.js)
     runs-on: ubuntu-latest
     needs: [deploy-vm-infrastructure]
-    outputs:
+  outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with:
+  with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: backend/package.json
@@ -1201,7 +1201,7 @@ jobs:
       
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
-        with:
+  with:
           name: backend-api
           path: backend-api.tar.gz
           retention-days: 30
@@ -1210,15 +1210,15 @@ jobs:
     name: Build Dexplorer (React/TypeScript)
     runs-on: ubuntu-latest
     needs: [deploy-vm-infrastructure]
-    outputs:
+  outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with:
+  with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: dexplorer/package.json
@@ -1247,7 +1247,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: dexplorer-dist
           path: dexplorer/dist/
           retention-days: 30
@@ -1256,15 +1256,15 @@ jobs:
     name: Build Frontend (React/Vite)
     runs-on: ubuntu-latest
     needs: [deploy-vm-infrastructure]
-    outputs:
+  outputs:
       artifact_hash: ${{ steps.build.outputs.hash }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with:
+  with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package.json
@@ -1293,7 +1293,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: frontend-dist
           path: frontend/dist/
           retention-days: 30
@@ -1305,15 +1305,15 @@ jobs:
     name: Build ADNS Module (Post-Quantum)
     runs-on: ubuntu-latest
     needs: [deploy-vm-infrastructure]
-    outputs:
+  outputs:
       artifact_hash: ${{ steps.hash.outputs.hash }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Go
         uses: actions/setup-go@v5
-        with:
+  with:
           go-version: '1.23.x'
       
       - name: Install Post-Quantum Libraries
@@ -1504,7 +1504,7 @@ jobs:
       
       - name: Upload ADNS Artifacts
         uses: actions/upload-artifact@v4
-        with:
+  with:
           name: adns-module-${{ github.sha }}
           path: |
             adns/build/
@@ -1535,18 +1535,18 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-ai-autonomous, deploy-vm-infrastructure, deploy-founder-node]
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: ai-autonomous-agents
           path: ./ai-build
       
       - name: Deploy to ACE/AVM
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -1581,21 +1581,21 @@ jobs:
     name: Deploy Cerberus Security Auditor
     runs-on: ubuntu-latest
     needs: [build-cerberus-auditor, deploy-ai-autonomous, deploy-founder-node]
-    outputs:
+  outputs:
       auditor_endpoint: ${{ steps.deploy.outputs.endpoint }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
         uses: actions/download-artifact@v4
-        with:
+  with:
           name: cerberus-auditor
           path: ./auditor-build
       
       - name: Deploy Cerberus Auditor
         id: deploy
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -1645,21 +1645,21 @@ jobs:
     name: Deploy Backend API
     runs-on: ubuntu-latest
     needs: [build-backend, deploy-cerberus-auditor, deploy-founder-node]
-    outputs:
+  outputs:
       api_endpoint: ${{ steps.deploy.outputs.endpoint }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
         uses: actions/download-artifact@v4
-        with:
+  with:
           name: backend-api
           path: ./backend-build
       
       - name: Deploy Backend API
         id: deploy
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -1710,22 +1710,22 @@ jobs:
     name: Deploy Dexplorer (Block Explorer)
     runs-on: ubuntu-latest
     needs: [build-dexplorer, deploy-backend, deploy-founder-node]
-    outputs:
+  outputs:
       explorer_endpoint: ${{ steps.deploy.outputs.endpoint }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: dexplorer-dist
           path: ./dexplorer-dist
       
       - name: Deploy Dexplorer
         id: deploy
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -1771,22 +1771,22 @@ jobs:
     name: Deploy Frontend Application
     runs-on: ubuntu-latest
     needs: [build-frontend, deploy-dexplorer, deploy-backend, deploy-founder-node]
-    outputs:
+  outputs:
       frontend_endpoint: ${{ steps.deploy.outputs.endpoint }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: frontend-dist
           path: ./frontend-dist
       
       - name: Deploy Frontend
         id: deploy
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -1837,7 +1837,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [deploy-frontend, deploy-vm-infrastructure]
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Verify FHE Documentation
@@ -1893,24 +1893,24 @@ jobs:
     name: Build Mobile APK (Sovereign Distribution)
     runs-on: ubuntu-latest
     needs: [deploy-vm-infrastructure, build-aequitasd]
-    outputs:
+  outputs:
       apk_hash: ${{ steps.hash.outputs.apk_hash }}
       ipfs_hash: ${{ steps.ipfs.outputs.ipfs_hash }}
       version: ${{ steps.version.outputs.version }}
       signed: ${{ steps.sign.outputs.signed }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Java (for Android build)
         uses: actions/setup-java@v4
-        with:
+  with:
           distribution: 'temurin'
           java-version: '17'
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with:
+  with:
           node-version: 20
       
       - name: Get version
@@ -1998,7 +1998,7 @@ jobs:
       
       - name: Sign APK
         id: sign
-        env:
+  env:
           ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -2081,7 +2081,7 @@ jobs:
       
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
-        with:
+  with:
           name: mobile-apk-${{ steps.version.outputs.version }}
           path: mobile/build/aequitas-zone.apk
           retention-days: 365
@@ -2110,22 +2110,22 @@ jobs:
     name: Deploy Mobile Download Page
     runs-on: ubuntu-latest
     needs: [build-mobile-apk, deploy-frontend, deploy-founder-node]
-    outputs:
+  outputs:
       download_url: ${{ steps.deploy.outputs.download_url }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Download APK Artifact
         uses: actions/download-artifact@v4
         continue-on-error: true
-        with:
+  with:
           name: mobile-apk-${{ needs.build-mobile-apk.outputs.version }}
           path: ./mobile-apk
       
       - name: Deploy to Sovereign Website
         id: deploy
-        env:
+  env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_HOST: ${{ vars.SSH_HOST }}
           SSH_USER: ${{ vars.SSH_USER }}
@@ -2254,10 +2254,10 @@ jobs:
       needs.deploy-founder-node.result == 'success' && 
       github.event.inputs.skip_dns != 'true' &&
       needs.deploy-founder-node.outputs.infrastructure_ip != ''
-    outputs:
+  outputs:
       dns_updated: ${{ steps.update-dns.outputs.updated }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Install tools
@@ -2275,7 +2275,7 @@ jobs:
       
       - name: Remove old DigitalOcean DNS records
         id: cleanup-old-dns
-        env:
+  env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
         run: |
@@ -2354,7 +2354,7 @@ jobs:
       
       - name: Update DNS to sovereign infrastructure
         id: update-dns
-        env:
+  env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
           INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
@@ -2516,7 +2516,7 @@ jobs:
 # ============================================================
 # PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
 # ============================================================
-keplr-registry-pr:
+  keplr-registry-pr:
     name: Create Keplr Registry PR
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, verify-constellation]
@@ -2525,14 +2525,14 @@ keplr-registry-pr:
       needs.deploy-founder-node.result == 'success' && 
       github.event.inputs.skip_keplr_pr != 'true'
     
-    steps:
+  steps:
       # ============================================================
       # CRITICAL: Checkout REPAR repo to named subdirectory
       # This avoids path confusion when we also clone keplr-chain-registry
       # ============================================================
       - name: Checkout REPAR repository
         uses: actions/checkout@v4
-        with:
+  with:
           path: repar-repo
           fetch-depth: 0
           lfs: true
@@ -2592,7 +2592,7 @@ keplr-registry-pr:
       
       - name: Fork and clone Keplr registry
         id: fork
-        env:
+  env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           if [ -z "$GH_TOKEN" ]; then
@@ -2643,7 +2643,7 @@ keplr-registry-pr:
           echo "============================================================"
       
       - name: Create chain configuration
-        env:
+  env:
           INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
         run: |
           if [ ! -d keplr-chain-registry ]; then
@@ -2804,7 +2804,7 @@ keplr-registry-pr:
           echo "Chain configuration created"
       
       - name: Create PR
-        env:
+  env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           if [ ! -d keplr-chain-registry ]; then
@@ -2932,17 +2932,17 @@ keplr-registry-pr:
 # ============================================================
 # PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
 # ============================================================
-enable-cross-chain:
+  enable-cross-chain:
     name: Enable Cross-Chain Features
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, sovereign-seal]
     if: github.event.inputs.enable_cross_chain == 'true'
     
-    outputs:
+  outputs:
       ibc_enabled: ${{ steps.ibc-setup.outputs.enabled }}
       channels_created: ${{ steps.channel-creation.outputs.channels }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Setup Relayer Environment
@@ -2962,7 +2962,7 @@ enable-cross-chain:
           echo "relayer_ready=true" >> $GITHUB_OUTPUT
       
       - name: Configure Hermes
-        env:
+  env:
           RELAYER_MNEMONIC: ${{ secrets.RELAYER_MNEMONIC }}
         run: |
           mkdir -p ~/.hermes
@@ -3112,7 +3112,7 @@ enable-cross-chain:
           echo "Hermes configuration created for Aequitas cross-chain operations"
       
       - name: Import Relayer Keys
-        env:
+  env:
           RELAYER_MNEMONIC: ${{ secrets.RELAYER_MNEMONIC }}
         run: |
           if [ -n "$RELAYER_MNEMONIC" ]; then
@@ -3218,16 +3218,16 @@ enable-cross-chain:
 # ============================================================
 # PHASE 9: SOVEREIGN SEAL
 # ============================================================
-sovereign-seal:
+  sovereign-seal:
     name: Sovereign Infrastructure Seal
     runs-on: ubuntu-latest
     needs: [deploy-founder-node, verify-constellation, configure-dns, build-mobile-apk]
     if: always() && needs.deploy-founder-node.result == 'success'
-    outputs:
+  outputs:
       seal_hash: ${{ steps.seal.outputs.hash }}
       seal_timestamp: ${{ steps.seal.outputs.timestamp }}
     
-    steps:
+  steps:
       - uses: actions/checkout@v4
       
       - name: Generate Sovereign Seal
@@ -3307,7 +3307,7 @@ sovereign-seal:
       
       - name: Archive Seal
         uses: actions/upload-artifact@v4
-        with:
+  with:
           name: sovereign-seal-${{ github.run_id }}
           path: /tmp/seal_manifest.json
           retention-days: 365
@@ -3324,7 +3324,7 @@ sovereign-seal:
 # ============================================================
 # PHASE 10: DEPLOYMENT SUMMARY
 # ============================================================
-deployment-summary:
+  deployment-summary:
     name: Deployment Summary
     runs-on: ubuntu-latest
     needs: [
@@ -3356,7 +3356,7 @@ deployment-summary:
     ]
     if: always()
     
-    steps:
+  steps:
       - name: Generate Summary
         run: |
           echo "# APEX Autonomous Deployment Complete" >> $GITHUB_STEP_SUMMARY
