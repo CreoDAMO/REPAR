@@ -3,7 +3,7 @@ module github.com/CreoDAMO/aequitas-cloud-engine
 go 1.24.0
 
 require (
-	github.com/cometbft/cometbft v0.38.19
+	github.com/cometbft/cometbft v0.38.21
 	github.com/cosmos/cosmos-sdk v0.50.14
 	github.com/ipfs/go-ipfs-api v0.7.0
 	github.com/prometheus/client_golang v1.21.0
