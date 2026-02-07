@@ -10,13 +10,6 @@ concurrency:
   group: \( {{ github.workflow }}- \){{ github.ref }}
   cancel-in-progress: true
 
-env:
-  CHAIN_ID: aequitas-1
-  GENESIS_TIME: "2025-12-03T00:00:00Z"
-  TOTAL_REPARATIONS: "131000000000000000000"
-  FOUNDER_VESTED: "15720000000000000000"
-  FOUNDER_ENDOWMENT: "7860000000000000000"
-
 on:
   workflow_dispatch:
     inputs:
@@ -68,6 +61,13 @@ on:
     tags:
       - 'v*-mainnet'
       - 'v*-constellation'
+
+env:
+  CHAIN_ID: aequitas-1
+  GENESIS_TIME: "2025-12-03T00:00:00Z"
+  TOTAL_REPARATIONS: "131000000000000000000"
+  FOUNDER_VESTED: "15720000000000000000"
+  FOUNDER_ENDOWMENT: "7860000000000000000"
 
 jobs:
   # ============================================================
@@ -257,14 +257,14 @@ jobs:
           fi
           
           cat > Dockerfile << 'EOF'
-          FROM alpine:latest
-          RUN apk add --no-cache ca-certificates
-          COPY build/aequitasd /usr/local/bin/aequitasd
-          RUN chmod +x /usr/local/bin/aequitasd
-          EXPOSE 26656 26657 26660 9090 1317
-          ENTRYPOINT ["/usr/local/bin/aequitasd"]
-          CMD ["start"]
-          EOF
+FROM alpine:latest
+RUN apk add --no-cache ca-certificates
+COPY build/aequitasd /usr/local/bin/aequitasd
+RUN chmod +x /usr/local/bin/aequitasd
+EXPOSE 26656 26657 26660 9090 1317
+ENTRYPOINT ["/usr/local/bin/aequitasd"]
+CMD ["start"]
+EOF
           
           docker build -t "$IMAGE_TAG" .
           docker tag "$IMAGE_TAG" "$LATEST_TAG"
