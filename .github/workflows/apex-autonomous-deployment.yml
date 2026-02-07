@@ -257,13 +257,13 @@ jobs:
           fi
           
           cat > Dockerfile << 'EOF'
-FROM alpine:latest
-RUN apk add --no-cache ca-certificates
-COPY build/aequitasd /usr/local/bin/aequitasd
-RUN chmod +x /usr/local/bin/aequitasd
-EXPOSE 26656 26657 26660 9090 1317
-ENTRYPOINT ["/usr/local/bin/aequitasd"]
-CMD ["start"]
+  FROM alpine:latest
+  RUN apk add --no-cache ca-certificates
+  COPY build/aequitasd /usr/local/bin/aequitasd
+  RUN chmod +x /usr/local/bin/aequitasd
+  EXPOSE 26656 26657 26660 9090 1317
+  ENTRYPOINT ["/usr/local/bin/aequitasd"]
+  CMD ["start"]
 EOF
           
           docker build -t "$IMAGE_TAG" .
@@ -484,30 +484,30 @@ EOF
               cp -r ./founder-node/* docker-data/founder/
               
               cat > docker-compose.founder.yml << EOF
-version: '3.8'
-services:
-  founder-node:
-    image: ${IMAGE_TAG}
-    container_name: aequitas-founder-01
-    ports:
-      - "26656:26656"
-      - "26657:26657"
-      - "26660:26660"
-      - "9090:9090"
-      - "1317:1317"
-    volumes:
-      - ./docker-data/founder:/root/.aequitas
-    restart: unless-stopped
-    networks:
-      - aequitas-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-networks:
-  aequitas-network:
-    external: true
+  version: '3.8'
+  services:
+    founder-node:
+      image: ${IMAGE_TAG}
+      container_name: aequitas-founder-01
+      ports:
+        - "26656:26656"
+        - "26657:26657"
+        - "26660:26660"
+        - "9090:9090"
+        - "1317:1317"
+      volumes:
+        - ./docker-data/founder:/root/.aequitas
+      restart: unless-stopped
+      networks:
+        - aequitas-network
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+  networks:
+    aequitas-network:
+      external: true
 EOF
               
               docker compose -f docker-compose.founder.yml up -d
@@ -827,24 +827,24 @@ EOF
           cp -r ./node-$NODE_INDEX/* docker-data/validator-$NODE_INDEX/
           
           cat > docker-compose.validator-$NODE_INDEX.yml << EOF
-version: '3.8'
-services:
-  validator-$NODE_INDEX:
-    image: ${IMAGE_TAG}
-    container_name: ${NODE_NAME}
-    ports:
-      - "${P2P_PORT}:26656"
-      - "${RPC_PORT}:26657"
-      - "${GRPC_PORT}:9090"
-      - "${REST_PORT}:1317"
-    volumes:
-      - ./docker-data/validator-${NODE_INDEX}:/root/.aequitas
-    restart: unless-stopped
-    networks:
-      - aequitas-network
-networks:
-  aequitas-network:
-    external: true
+  version: '3.8'
+  services:
+    validator-$NODE_INDEX:
+      image: ${IMAGE_TAG}
+      container_name: ${NODE_NAME}
+      ports:
+        - "${P2P_PORT}:26656"
+        - "${RPC_PORT}:26657"
+        - "${GRPC_PORT}:9090"
+        - "${REST_PORT}:1317"
+      volumes:
+        - ./docker-data/validator-${NODE_INDEX}:/root/.aequitas
+      restart: unless-stopped
+      networks:
+        - aequitas-network
+  networks:
+    aequitas-network:
+      external: true
 EOF
           
           docker compose -f docker-compose.validator-$NODE_INDEX.yml up -d
@@ -2973,144 +2973,144 @@ EOF
           
           # Create Hermes configuration for Aequitas cross-chain
           cat > \~/.hermes/config.toml << 'HERMES_EOF'
-[global]
-log_level = 'info'
+  [global]
+  log_level = 'info'
 
-[mode]
-[mode.clients]
-enabled = true
-refresh = true
-misbehaviour = true
+  [mode]
+  [mode.clients]
+  enabled = true
+  refresh = true
+  misbehaviour = true
 
-[mode.connections]
-enabled = true
+  [mode.connections]
+  enabled = true
 
-[mode.channels]
-enabled = true
+  [mode.channels]
+  enabled = true
 
-[mode.packets]
-enabled = true
-clear_interval = 100
-clear_on_start = true
-tx_confirmation = true
+  [mode.packets]
+  enabled = true
+  clear_interval = 100
+  clear_on_start = true
+  tx_confirmation = true
 
-[rest]
-enabled = true
-host = '127.0.0.1'
-port = 3000
+  [rest]
+  enabled = true
+  host = '127.0.0.1'
+  port = 3000
 
-[telemetry]
-enabled = true
-host = '127.0.0.1'
-port = 3001
+  [telemetry]
+  enabled = true
+  host = '127.0.0.1'
+  port = 3001
 
-# Aequitas Chain Configuration
-[[chains]]
-id = 'aequitas-1'
-type = 'CosmosSdk'
-rpc_addr = 'https://rpc.aequitasprotocol.zone'
-grpc_addr = 'https://grpc.aequitasprotocol.zone'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'repar'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 1000000
-max_gas = 10000000
-gas_multiplier = 1.2
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
+  # Aequitas Chain Configuration
+  [[chains]]
+  id = 'aequitas-1'
+  type = 'CosmosSdk'
+  rpc_addr = 'https://rpc.aequitasprotocol.zone'
+  grpc_addr = 'https://grpc.aequitasprotocol.zone'
+  rpc_timeout = '10s'
+  trusted_node = true
+  account_prefix = 'repar'
+  key_name = 'relayer'
+  key_store_type = 'Test'
+  store_prefix = 'ibc'
+  default_gas = 1000000
+  max_gas = 10000000
+  gas_multiplier = 1.2
+  max_msg_num = 30
+  max_tx_size = 180000
+  clock_drift = '5s'
+  max_block_time = '30s'
+  memo_prefix = 'Aequitas IBC Relayer'
 
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
+  [chains.trust_threshold]
+  numerator = '1'
+  denominator = '3'
 
-[chains.gas_price]
-price = 0.025
-denom = 'urepar'
+  [chains.gas_price]
+  price = 0.025
+  denom = 'urepar'
 
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
+  [chains.packet_filter]
+  policy = 'allow'
+  list = [['transfer', '*']]
 
-[chains.address_type]
-derivation = 'cosmos'
+  [chains.address_type]
+  derivation = 'cosmos'
 
-# Cosmos Hub Configuration
-[[chains]]
-id = 'cosmoshub-4'
-type = 'CosmosSdk'
-rpc_addr = 'https://cosmos-rpc.polkachu.com'
-grpc_addr = 'https://cosmos-grpc.polkachu.com:14290'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'cosmos'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 200000
-max_gas = 3000000
-gas_multiplier = 1.1
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
+  # Cosmos Hub Configuration
+  [[chains]]
+  id = 'cosmoshub-4'
+  type = 'CosmosSdk'
+  rpc_addr = 'https://cosmos-rpc.polkachu.com'
+  grpc_addr = 'https://cosmos-grpc.polkachu.com:14290'
+  rpc_timeout = '10s'
+  trusted_node = true
+  account_prefix = 'cosmos'
+  key_name = 'relayer'
+  key_store_type = 'Test'
+  store_prefix = 'ibc'
+  default_gas = 200000
+  max_gas = 3000000
+  gas_multiplier = 1.1
+  max_msg_num = 30
+  max_tx_size = 180000
+  clock_drift = '5s'
+  max_block_time = '30s'
+  memo_prefix = 'Aequitas IBC Relayer'
 
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
+  [chains.trust_threshold]
+  numerator = '1'
+  denominator = '3'
 
-[chains.gas_price]
-price = 0.025
-denom = 'uatom'
+  [chains.gas_price]
+  price = 0.025
+  denom = 'uatom'
 
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
+  [chains.packet_filter]
+  policy = 'allow'
+  list = [['transfer', '*']]
 
-[chains.address_type]
-derivation = 'cosmos'
+  [chains.address_type]
+  derivation = 'cosmos'
 
-# Osmosis Configuration
-[[chains]]
-id = 'osmosis-1'
-type = 'CosmosSdk'
-rpc_addr = 'https://osmosis-rpc.polkachu.com'
-grpc_addr = 'https://osmosis-grpc.polkachu.com:12590'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'osmo'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 500000
-max_gas = 20000000
-gas_multiplier = 1.5
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
+  # Osmosis Configuration
+  [[chains]]
+  id = 'osmosis-1'
+  type = 'CosmosSdk'
+  rpc_addr = 'https://osmosis-rpc.polkachu.com'
+  grpc_addr = 'https://osmosis-grpc.polkachu.com:12590'
+  rpc_timeout = '10s'
+  trusted_node = true
+  account_prefix = 'osmo'
+  key_name = 'relayer'
+  key_store_type = 'Test'
+  store_prefix = 'ibc'
+  default_gas = 500000
+  max_gas = 20000000
+  gas_multiplier = 1.5
+  max_msg_num = 30
+  max_tx_size = 180000
+  clock_drift = '5s'
+  max_block_time = '30s'
+  memo_prefix = 'Aequitas IBC Relayer'
 
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
+  [chains.trust_threshold]
+  numerator = '1'
+  denominator = '3'
 
-[chains.gas_price]
-price = 0.025
-denom = 'uosmo'
+  [chains.gas_price]
+  price = 0.025
+  denom = 'uosmo'
 
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
+  [chains.packet_filter]
+  policy = 'allow'
+  list = [['transfer', '*']]
 
-[chains.address_type]
-derivation = 'cosmos'
+  [chains.address_type]
+  derivation = 'cosmos'
 HERMES_EOF
           
           echo "Hermes configuration created for Aequitas cross-chain operations"
@@ -3437,3 +3437,10 @@ HERMES_EOF
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*Deployed by APEX Autonomous System - ${{ github.sha }}*" >> $GITHUB_STEP_SUMMARY
+"""
+
+try:
+    yaml.safe_load(yaml_content)
+    print("YAML is valid")
+except yaml.YAMLError as exc:
+    print(exc)
