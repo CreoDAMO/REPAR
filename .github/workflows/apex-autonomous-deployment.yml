@@ -7,7 +7,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: \( {{ github.workflow }}- \){{ github.ref }}
   cancel-in-progress: true
 
 on:
@@ -156,7 +156,7 @@ jobs:
   # ============================================================
   build-aequitasd:
     name: Build Aequitas Blockchain Binary
-    runs-on: ubuntu-22-04
+    runs-on: ubuntu-22.04
     needs: setup-docker-environment
     outputs:
       binary_hash: ${{ steps.build.outputs.hash }}
@@ -251,7 +251,7 @@ jobs:
             LATEST_TAG="aequitas-node:latest"
             SKIP_PUSH=true
           else
-            IMAGE_TAG="${REGISTRY_URL}/aequitas-node:${VERSION}"
+            IMAGE_TAG="\( {REGISTRY_URL}/aequitas-node: \){VERSION}"
             LATEST_TAG="${REGISTRY_URL}/aequitas-node:latest"
             SKIP_PUSH=false
           fi
@@ -484,32 +484,31 @@ jobs:
               cp -r ./founder-node/* docker-data/founder/
               
               cat > docker-compose.founder.yml << EOF
-version: '3.8'
-services:
+          version: '3.8'
+  services:
   founder-node:
-    image: ${IMAGE_TAG}
-    container_name: aequitas-founder-01
-    ports:
-      - "26656:26656"
-      - "26657:26657"
-      - "26660:26660"
-      - "9090:9090"
-      - "1317:1317"
-    volumes:
-      - ./docker-data/founder:/root/.aequitas
-    restart: unless-stopped
-    networks:
-      - aequitas-network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-networks:
+              image: ${IMAGE_TAG}
+              container_name: aequitas-founder-01
+  ports:
+                - "26656:26656"
+                - "26657:26657"
+                - "26660:26660"
+                - "9090:9090"
+                - "1317:1317"
+  volumes:
+                - ./docker-data/founder:/root/.aequitas
+              restart: unless-stopped
+  networks:
+                - aequitas-network
+  healthcheck:
+                test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
+                interval: 30s
+                timeout: 10s
+                retries: 3
+  networks:
   aequitas-network:
-    external: true
-EOF
+              external: true
+          EOF
               
               docker compose -f docker-compose.founder.yml up -d
               
@@ -522,16 +521,16 @@ EOF
               echo "Bare-metal deployment to sovereign ACE/AVM infrastructure..."
               
               if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-                mkdir -p ~/.ssh
-                echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-                chmod 600 ~/.ssh/deploy_key
+                mkdir -p \~/.ssh
+                echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+                chmod 600 \~/.ssh/deploy_key
                 
                 SSH_USER="${SSH_USER:-root}"
                 
                 echo "Deploying to $SSH_USER@$SSH_HOST..."
-                scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key ./bin/aequitasd $SSH_USER@$SSH_HOST:/usr/local/bin/ || echo "Binary transfer"
+                scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key ./bin/aequitasd $SSH_USER@$SSH_HOST:/usr/local/bin/ || echo "Binary transfer"
                 
-                ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
+                ssh -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
                   systemctl stop aequitasd 2>/dev/null || true
                   chmod +x /usr/local/bin/aequitasd
                   
@@ -605,17 +604,17 @@ EOF
           }
           
           # Method 1: Extract from SSH deployment host
-          if [ -n "$SSH_HOST" ] && [ "${{ steps.deploy.outputs.ssh_deployed }}" == "true" ]; then
+          if [ -n "\( SSH_HOST" ] && [ " \){{ steps.deploy.outputs.ssh_deployed }}" == "true" ]; then
             echo "Method 1: Extracting IP from SSH deployment host..."
             
             EXTRACTED_IP=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
-              -i ~/.ssh/deploy_key ${SSH_USER:-root}@$SSH_HOST \
+              -i \~/.ssh/deploy_key ${SSH_USER:-root}@$SSH_HOST \
               "curl -s --connect-timeout 5 ifconfig.me 2>/dev/null || \
                curl -s --connect-timeout 5 ipinfo.io/ip 2>/dev/null || \
                curl -s --connect-timeout 5 icanhazip.com 2>/dev/null || \
                hostname -I | awk '{print \$1}'" 2>/dev/null || echo "")
             
-            if [ -n "$EXTRACTED_IP" ] && [[ "$EXTRACTED_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [ -n "$EXTRACTED_IP" ] && [[ "\( EXTRACTED_IP" =\~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \) ]]; then
               INFRASTRUCTURE_IP="$EXTRACTED_IP"
               IP_SOURCE="deployment-ssh"
               echo "   SUCCESS: Extracted IP $INFRASTRUCTURE_IP from deployed server"
@@ -633,7 +632,7 @@ EOF
             
             EXTRACTED_IP=$(safe_jq "$ACE_RESPONSE" '.ip')
             
-            if [ -n "$EXTRACTED_IP" ] && [[ "$EXTRACTED_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [ -n "$EXTRACTED_IP" ] && [[ "\( EXTRACTED_IP" =\~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \) ]]; then
               INFRASTRUCTURE_IP="$EXTRACTED_IP"
               IP_SOURCE="ace-api"
               echo "   SUCCESS: Got IP $INFRASTRUCTURE_IP from ACE API"
@@ -651,7 +650,7 @@ EOF
             
             EXTRACTED_IP=$(safe_jq "$AVM_RESPONSE" '.public_ip')
             
-            if [ -n "$EXTRACTED_IP" ] && [[ "$EXTRACTED_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [ -n "$EXTRACTED_IP" ] && [[ "\( EXTRACTED_IP" =\~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \) ]]; then
               INFRASTRUCTURE_IP="$EXTRACTED_IP"
               IP_SOURCE="avm-metadata"
               echo "   SUCCESS: Got IP $INFRASTRUCTURE_IP from AVM metadata"
@@ -667,8 +666,8 @@ EOF
             for SERVICE in "ifconfig.me" "ipinfo.io/ip" "icanhazip.com" "api.ipify.org" "checkip.amazonaws.com"; do
               EXTRACTED_IP=$(curl -s --connect-timeout 5 "https://$SERVICE" 2>/dev/null | tr -d '[:space:]')
               
-              if [ -n "$EXTRACTED_IP" ] && [[ "$EXTRACTED_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                if [[ ! "$EXTRACTED_IP" =~ ^(20\.|52\.|54\.|13\.) ]]; then
+              if [ -n "$EXTRACTED_IP" ] && [[ "\( EXTRACTED_IP" =\~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \) ]]; then
+                if [[ ! "$EXTRACTED_IP" =\~ ^(20\.|52\.|54\.|13\.) ]]; then
                   INFRASTRUCTURE_IP="$EXTRACTED_IP"
                   IP_SOURCE="external-$SERVICE"
                   echo "   SUCCESS: Got IP $INFRASTRUCTURE_IP from $SERVICE"
@@ -684,13 +683,13 @@ EOF
           if [ -z "$INFRASTRUCTURE_IP" ] && [ -n "$SSH_HOST" ]; then
             echo "Method 5: Using SSH_HOST variable as fallback..."
             
-            if [[ "$SSH_HOST" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            if [[ "\( SSH_HOST" =\~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \) ]]; then
               INFRASTRUCTURE_IP="$SSH_HOST"
               IP_SOURCE="ssh-host-variable"
               echo "   SUCCESS: Using SSH_HOST IP directly: $INFRASTRUCTURE_IP"
             else
               RESOLVED_IP=$(dig +short "$SSH_HOST" | head -1 | tr -d '[:space:]')
-              if [ -n "$RESOLVED_IP" ] && [[ "$RESOLVED_IP" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              if [ -n "$RESOLVED_IP" ] && [[ "\( RESOLVED_IP" =\~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ \) ]]; then
                 INFRASTRUCTURE_IP="$RESOLVED_IP"
                 IP_SOURCE="ssh-host-resolved"
                 echo "   SUCCESS: Resolved $SSH_HOST to $INFRASTRUCTURE_IP"
@@ -806,7 +805,7 @@ EOF
           echo "   Role: Validator Node"
           echo "   Index: ${{ matrix.node_index }} of 7"
           
-          ./bin/aequitasd init "$NODE_NAME" --chain-id ${{ env.CHAIN_ID }} --home ./node-${{ matrix.node_index }} || echo "Init pending"
+          ./bin/aequitasd init "$NODE_NAME" --chain-id \( {{ env.CHAIN_ID }} --home ./node- \){{ matrix.node_index }} || echo "Init pending"
           ./bin/aequitasd keys add validator --keyring-backend test --home ./node-${{ matrix.node_index }} 2>&1 || echo "Key gen pending"
           
           echo "Node ${{ matrix.node_index }} configured"
@@ -828,26 +827,25 @@ EOF
           cp -r ./node-$NODE_INDEX/* docker-data/validator-$NODE_INDEX/
           
           cat > docker-compose.validator-$NODE_INDEX.yml << EOF
-version: '3.8'
-services:
-  validator-$NODE_INDEX:
-    image: ${IMAGE_TAG}
-    container_name: ${NODE_NAME}
-    ports:
-      - "${P2P_PORT}:26656"
-      - "${RPC_PORT}:26657"
-      - "${GRPC_PORT}:9090"
-      - "${REST_PORT}:1317"
-    volumes:
-      - ./docker-data/validator-${NODE_INDEX}:/root/.aequitas
-    restart: unless-stopped
-    networks:
-      - aequitas-network
-
-networks:
+          version: '3.8'
+  services:
+            validator-$NODE_INDEX:
+              image: ${IMAGE_TAG}
+              container_name: ${NODE_NAME}
+  ports:
+                - "${P2P_PORT}:26656"
+                - "${RPC_PORT}:26657"
+                - "${GRPC_PORT}:9090"
+                - "${REST_PORT}:1317"
+  volumes:
+                - ./docker-data/validator-${NODE_INDEX}:/root/.aequitas
+              restart: unless-stopped
+  networks:
+                - aequitas-network
+  networks:
   aequitas-network:
-    external: true
-EOF
+              external: true
+          EOF
           
           docker compose -f docker-compose.validator-$NODE_INDEX.yml up -d
           
@@ -1002,13 +1000,13 @@ EOF
           AVM_ENDPOINT="https://vm.aequitasprotocol.zone"
           
           if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+            mkdir -p \~/.ssh
+            echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+            chmod 600 \~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
             if [ -f vm-infrastructure/orchestrator.py ]; then
-              scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+              scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key \
                 vm-infrastructure/orchestrator.py $SSH_USER@$SSH_HOST:/opt/aequitas/ || echo "Orchestrator transfer"
             fi
             
@@ -1135,13 +1133,13 @@ EOF
           
           python -c "
           import sys
-          try:
+  try:
               from main import app
               print('   main.py: OK')
           except ImportError as e:
               print(f'   main.py: Import check (deps may be needed)')
           
-          try:
+  try:
               from orchestrator import ThreatOrchestrator
               print('   orchestrator.py: OK')
           except ImportError:
@@ -1406,7 +1404,7 @@ EOF
               m.SetReply(r)
               m.Authoritative = true
               
-              for _, q := range r.Question {
+              for _, q in r.Question {
                   switch q.Qtype {
                   case dns.TypeA:
                       rr := &dns.A{
@@ -1445,52 +1443,52 @@ EOF
           INFRA_IP="127.0.0.1"
           
           cat > zones/db.aequitas << EOF
-\$TTL 86400
-@   IN  SOA ns1.aequitas. admin.aequitas. (
-        2025121201
-        3600
-        1800
-        604800
-        86400 )
-
-    IN  NS  ns1.aequitas.
-    IN  NS  ns2.aequitas.
-
-ns1 IN  A   $INFRA_IP
-ns2 IN  A   $INFRA_IP
-EOF
+          \$TTL 86400
+          @   IN  SOA ns1.aequitas. admin.aequitas. (
+                  2025121201
+                  3600
+                  1800
+                  604800
+                  86400 )
+          
+              IN  NS  ns1.aequitas.
+              IN  NS  ns2.aequitas.
+          
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
+          EOF
           
           cat > zones/db.repar << EOF
-\$TTL 86400
-@   IN  SOA ns1.repar. admin.repar. (
-        2025121201
-        3600
-        1800
-        604800
-        86400 )
-
-    IN  NS  ns1.repar.
-    IN  NS  ns2.repar.
-
-ns1 IN  A   $INFRA_IP
-ns2 IN  A   $INFRA_IP
-EOF
+          \$TTL 86400
+          @   IN  SOA ns1.repar. admin.repar. (
+                  2025121201
+                  3600
+                  1800
+                  604800
+                  86400 )
+          
+              IN  NS  ns1.repar.
+              IN  NS  ns2.repar.
+          
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
+          EOF
           
           cat > zones/db.sovereign << EOF
-\$TTL 86400
-@   IN  SOA ns1.sovereign. admin.sovereign. (
-        2025121201
-        3600
-        1800
-        604800
-        86400 )
-
-    IN  NS  ns1.sovereign.
-    IN  NS  ns2.sovereign.
-
-ns1 IN  A   $INFRA_IP
-ns2 IN  A   $INFRA_IP
-EOF
+          \$TTL 86400
+          @   IN  SOA ns1.sovereign. admin.sovereign. (
+                  2025121201
+                  3600
+                  1800
+                  604800
+                  86400 )
+          
+              IN  NS  ns1.sovereign.
+              IN  NS  ns2.sovereign.
+          
+          ns1 IN  A   $INFRA_IP
+          ns2 IN  A   $INFRA_IP
+          EOF
           
           ZONE_COUNT=$(ls zones/db.* 2>/dev/null | wc -l)
           if [ "$ZONE_COUNT" -ne 3 ]; then
@@ -1562,12 +1560,12 @@ EOF
           echo "============================================================"
           
           if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+            mkdir -p \~/.ssh
+            echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+            chmod 600 \~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
-            scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+            scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key \
               -r ai/autonomous/* $SSH_USER@$SSH_HOST:/opt/aequitas/ai/ 2>/dev/null || echo "AI agents deployed"
             
             echo "AI Autonomous Agents deployed to ACE/AVM"
@@ -1613,15 +1611,15 @@ EOF
           AUDITOR_ENDPOINT="https://auditor.aequitasprotocol.zone"
           
           if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+            mkdir -p \~/.ssh
+            echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+            chmod 600 \~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
-            scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+            scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key \
               ./auditor-build/cerberus-auditor.tar.gz $SSH_USER@$SSH_HOST:/opt/aequitas/ 2>/dev/null || echo "Auditor transferred"
             
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
+            ssh -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
               mkdir -p /opt/aequitas/auditor
               tar -xzf /opt/aequitas/cerberus-auditor.tar.gz -C /opt/aequitas/auditor
               cd /opt/aequitas/auditor
@@ -1677,15 +1675,15 @@ EOF
           API_ENDPOINT="https://api.aequitasprotocol.zone"
           
           if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+            mkdir -p \~/.ssh
+            echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+            chmod 600 \~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
-            scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+            scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key \
               ./backend-build/backend-api.tar.gz $SSH_USER@$SSH_HOST:/opt/aequitas/ 2>/dev/null || echo "Backend transferred"
             
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
+            ssh -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
               mkdir -p /opt/aequitas/backend
               tar -xzf /opt/aequitas/backend-api.tar.gz -C /opt/aequitas/backend
               cd /opt/aequitas/backend
@@ -1743,13 +1741,13 @@ EOF
           EXPLORER_ENDPOINT="https://explorer.aequitasprotocol.zone"
           
           if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+            mkdir -p \~/.ssh
+            echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+            chmod 600 \~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
             if [ -d ./dexplorer-dist ]; then
-              scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+              scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key \
                 -r ./dexplorer-dist/* $SSH_USER@$SSH_HOST:/var/www/explorer/ 2>/dev/null || echo "Dexplorer transferred"
             fi
             
@@ -1804,13 +1802,13 @@ EOF
           FRONTEND_ENDPOINT="https://app.aequitasprotocol.zone"
           
           if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+            mkdir -p \~/.ssh
+            echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+            chmod 600 \~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
             if [ -d ./frontend-dist ]; then
-              scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+              scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key \
                 -r ./frontend-dist/* $SSH_USER@$SSH_HOST:/var/www/app/ 2>/dev/null || echo "Frontend transferred"
             fi
             
@@ -2145,20 +2143,20 @@ EOF
           DOWNLOAD_URL="https://aequitasprotocol.zone/mobile/download"
           
           if [ -n "$SSH_PRIVATE_KEY" ] && [ -n "$SSH_HOST" ]; then
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
+            mkdir -p \~/.ssh
+            echo "$SSH_PRIVATE_KEY" > \~/.ssh/deploy_key
+            chmod 600 \~/.ssh/deploy_key
             SSH_USER="${SSH_USER:-root}"
             
             # Create mobile download directory on server
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
+            ssh -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
               mkdir -p /var/www/mobile
               mkdir -p /var/www/app/mobile
             ' || echo "Directory creation"
             
             # Deploy APK to website
             if [ -f ./mobile-apk/aequitas-zone.apk ]; then
-              scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key \
+              scp -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key \
                 ./mobile-apk/aequitas-zone.apk \
                 $SSH_USER@$SSH_HOST:/var/www/mobile/aequitas-zone.apk || echo "APK transfer"
               
@@ -2168,7 +2166,7 @@ EOF
             fi
             
             # Create/update mobile download HTML page
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c "
+            ssh -o StrictHostKeyChecking=no -i \~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c "
               cat > /var/www/app/mobile/index.html << 'MOBILE_PAGE'
               <!DOCTYPE html>
               <html lang=\"en\">
@@ -2248,7 +2246,6 @@ EOF
           echo "- No app store approval delays" >> $GITHUB_STEP_SUMMARY
           echo "- Cryptographic hash verification" >> $GITHUB_STEP_SUMMARY
           echo "- IPFS backup for censorship resistance" >> $GITHUB_STEP_SUMMARY
-
   # ============================================================
   # PHASE 6: DNS CONFIGURATION (USES EXTRACTED IP)
   # ============================================================
@@ -2334,7 +2331,7 @@ EOF
               echo "   No records found with IP: $OLD_IP"
               continue
             fi
-            
+          
             for RECORD_ID in $RECORD_IDS; do
               if [ -n "$RECORD_ID" ] && [ "$RECORD_ID" != "null" ] && [ "$RECORD_ID" != "" ]; then
                 echo "   Deleting record: $RECORD_ID"
@@ -2520,9 +2517,9 @@ EOF
           echo "| vm | AVM interface | Yes |" >> $GITHUB_STEP_SUMMARY
           echo "| sovereign | Sovereign endpoint | Yes |" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
-  # ============================================================
+# ============================================================
+# PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
+# ============================================================
   keplr-registry-pr:
     name: Create Keplr Registry PR
     runs-on: ubuntu-22.04
@@ -2714,10 +2711,10 @@ EOF
             '    }' \
             '  ],' \
             '  "stakeCurrency": {' \
-            '    "coinDenom": "REPAR",' \
-            '    "coinMinimalDenom": "urepar",' \
-            '    "coinDecimals": 6,' \
-            '    "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
+            '      "coinDenom": "REPAR",' \
+            '      "coinMinimalDenom": "urepar",' \
+            '      "coinDecimals": 6,' \
+            '      "coinImageUrl": "https://raw.githubusercontent.com/chainapsis/keplr-chain-registry/main/images/aequitas/chain.png"' \
             '  },' \
             '  "walletUrlForStaking": "https://app.aequitasprotocol.zone/staking",' \
             '  "features": ["ibc-transfer", "ibc-go"]' \
@@ -2936,9 +2933,9 @@ EOF
           echo "**Chain ID:** aequitas-1" >> $GITHUB_STEP_SUMMARY
           echo "**Infrastructure IP:** ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
-  # ============================================================
+# ============================================================
+# PHASE 8: CROSS-CHAIN ENABLEMENT (IBC)
+# ============================================================
   enable-cross-chain:
     name: Enable Cross-Chain Features
     runs-on: ubuntu-22.04
@@ -2972,149 +2969,149 @@ EOF
         env:
           RELAYER_MNEMONIC: ${{ secrets.RELAYER_MNEMONIC }}
         run: |
-          mkdir -p ~/.hermes
+          mkdir -p \~/.hermes
           
           # Create Hermes configuration for Aequitas cross-chain
-          cat > ~/.hermes/config.toml << 'HERMES_EOF'
-[global]
-log_level = 'info'
-
-[mode]
-[mode.clients]
-enabled = true
-refresh = true
-misbehaviour = true
-
-[mode.connections]
-enabled = true
-
-[mode.channels]
-enabled = true
-
-[mode.packets]
-enabled = true
-clear_interval = 100
-clear_on_start = true
-tx_confirmation = true
-
-[rest]
-enabled = true
-host = '127.0.0.1'
-port = 3000
-
-[telemetry]
-enabled = true
-host = '127.0.0.1'
-port = 3001
-
-# Aequitas Chain Configuration
-[[chains]]
-id = 'aequitas-1'
-type = 'CosmosSdk'
-rpc_addr = 'https://rpc.aequitasprotocol.zone'
-grpc_addr = 'https://grpc.aequitasprotocol.zone'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'repar'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 1000000
-max_gas = 10000000
-gas_multiplier = 1.2
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
-
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
-
-[chains.gas_price]
-price = 0.025
-denom = 'urepar'
-
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
-
-[chains.address_type]
-derivation = 'cosmos'
-
-# Cosmos Hub Configuration
-[[chains]]
-id = 'cosmoshub-4'
-type = 'CosmosSdk'
-rpc_addr = 'https://cosmos-rpc.polkachu.com'
-grpc_addr = 'https://cosmos-grpc.polkachu.com:14290'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'cosmos'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 200000
-max_gas = 3000000
-gas_multiplier = 1.1
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
-
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
-
-[chains.gas_price]
-price = 0.025
-denom = 'uatom'
-
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
-
-[chains.address_type]
-derivation = 'cosmos'
-
-# Osmosis Configuration
-[[chains]]
-id = 'osmosis-1'
-type = 'CosmosSdk'
-rpc_addr = 'https://osmosis-rpc.polkachu.com'
-grpc_addr = 'https://osmosis-grpc.polkachu.com:12590'
-rpc_timeout = '10s'
-trusted_node = true
-account_prefix = 'osmo'
-key_name = 'relayer'
-key_store_type = 'Test'
-store_prefix = 'ibc'
-default_gas = 500000
-max_gas = 20000000
-gas_multiplier = 1.5
-max_msg_num = 30
-max_tx_size = 180000
-clock_drift = '5s'
-max_block_time = '30s'
-memo_prefix = 'Aequitas IBC Relayer'
-
-[chains.trust_threshold]
-numerator = '1'
-denominator = '3'
-
-[chains.gas_price]
-price = 0.025
-denom = 'uosmo'
-
-[chains.packet_filter]
-policy = 'allow'
-list = [['transfer', '*']]
-
-[chains.address_type]
-derivation = 'cosmos'
-HERMES_EOF
+          cat > \~/.hermes/config.toml << 'HERMES_EOF'
+          [global]
+          log_level = 'info'
+          
+          [mode]
+          [mode.clients]
+          enabled = true
+          refresh = true
+          misbehaviour = true
+          
+          [mode.connections]
+          enabled = true
+          
+          [mode.channels]
+          enabled = true
+          
+          [mode.packets]
+          enabled = true
+          clear_interval = 100
+          clear_on_start = true
+          tx_confirmation = true
+          
+          [rest]
+          enabled = true
+          host = '127.0.0.1'
+          port = 3000
+          
+          [telemetry]
+          enabled = true
+          host = '127.0.0.1'
+          port = 3001
+          
+          # Aequitas Chain Configuration
+          [[chains]]
+          id = 'aequitas-1'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://rpc.aequitasprotocol.zone'
+          grpc_addr = 'https://grpc.aequitasprotocol.zone'
+          rpc_timeout = '10s'
+          trusted_node = true
+          account_prefix = 'repar'
+          key_name = 'relayer'
+          key_store_type = 'Test'
+          store_prefix = 'ibc'
+          default_gas = 1000000
+          max_gas = 10000000
+          gas_multiplier = 1.2
+          max_msg_num = 30
+          max_tx_size = 180000
+          clock_drift = '5s'
+          max_block_time = '30s'
+          memo_prefix = 'Aequitas IBC Relayer'
+          
+          [chains.trust_threshold]
+          numerator = '1'
+          denominator = '3'
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'urepar'
+          
+          [chains.packet_filter]
+          policy = 'allow'
+          list = [['transfer', '*']]
+          
+          [chains.address_type]
+          derivation = 'cosmos'
+          
+          # Cosmos Hub Configuration
+          [[chains]]
+          id = 'cosmoshub-4'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://cosmos-rpc.polkachu.com'
+          grpc_addr = 'https://cosmos-grpc.polkachu.com:14290'
+          rpc_timeout = '10s'
+          trusted_node = true
+          account_prefix = 'cosmos'
+          key_name = 'relayer'
+          key_store_type = 'Test'
+          store_prefix = 'ibc'
+          default_gas = 200000
+          max_gas = 3000000
+          gas_multiplier = 1.1
+          max_msg_num = 30
+          max_tx_size = 180000
+          clock_drift = '5s'
+          max_block_time = '30s'
+          memo_prefix = 'Aequitas IBC Relayer'
+          
+          [chains.trust_threshold]
+          numerator = '1'
+          denominator = '3'
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'uatom'
+          
+          [chains.packet_filter]
+          policy = 'allow'
+          list = [['transfer', '*']]
+          
+          [chains.address_type]
+          derivation = 'cosmos'
+          
+          # Osmosis Configuration
+          [[chains]]
+          id = 'osmosis-1'
+          type = 'CosmosSdk'
+          rpc_addr = 'https://osmosis-rpc.polkachu.com'
+          grpc_addr = 'https://osmosis-grpc.polkachu.com:12590'
+          rpc_timeout = '10s'
+          trusted_node = true
+          account_prefix = 'osmo'
+          key_name = 'relayer'
+          key_store_type = 'Test'
+          store_prefix = 'ibc'
+          default_gas = 500000
+          max_gas = 20000000
+          gas_multiplier = 1.5
+          max_msg_num = 30
+          max_tx_size = 180000
+          clock_drift = '5s'
+          max_block_time = '30s'
+          memo_prefix = 'Aequitas IBC Relayer'
+          
+          [chains.trust_threshold]
+          numerator = '1'
+          denominator = '3'
+          
+          [chains.gas_price]
+          price = 0.025
+          denom = 'uosmo'
+          
+          [chains.packet_filter]
+          policy = 'allow'
+          list = [['transfer', '*']]
+          
+          [chains.address_type]
+          derivation = 'cosmos'
+          HERMES_EOF
           
           echo "Hermes configuration created for Aequitas cross-chain operations"
       
@@ -3172,7 +3169,7 @@ HERMES_EOF
             --channel-version ics20-1 || echo "Channel creation pending"
           
           # Query created channels
-          CHANNELS=$(curl -s "https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels" 2>/dev/null | jq -r '.channels[].channel_id // empty' | tr '\n' ',' | sed 's/,$//')
+          CHANNELS=\( (curl -s "https://rpc.aequitasprotocol.zone/ibc/core/channel/v1/channels" 2>/dev/null | jq -r '.channels[].channel_id // empty' | tr '\n' ',' | sed 's/, \)//')
           
           if [ -n "$CHANNELS" ]; then
             echo "channels=$CHANNELS" >> $GITHUB_OUTPUT
@@ -3222,9 +3219,9 @@ HERMES_EOF
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "*Cross-chain features enable $REPAR to flow across the Cosmos ecosystem*" >> $GITHUB_STEP_SUMMARY
 
-  # ============================================================
-  # PHASE 9: SOVEREIGN SEAL
-  # ============================================================
+# ============================================================
+# PHASE 9: SOVEREIGN SEAL
+# ============================================================
   sovereign-seal:
     name: Sovereign Infrastructure Seal
     runs-on: ubuntu-22.04
@@ -3327,10 +3324,10 @@ HERMES_EOF
           echo "**Timestamp:** ${{ steps.seal.outputs.timestamp }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "This cryptographic seal verifies the integrity of the entire deployment." >> $GITHUB_STEP_SUMMARY
-
-  # ============================================================
-  # PHASE 10: DEPLOYMENT SUMMARY
-  # ============================================================
+          
+# ============================================================
+# PHASE 10: DEPLOYMENT SUMMARY
+# ============================================================
   deployment-summary:
     name: Deployment Summary
     runs-on: ubuntu-22.04
