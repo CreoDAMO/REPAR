@@ -6,14 +6,14 @@ replace github.com/ignite/cli/v29 => ../../../../
 
 require (
 	github.com/Masterminds/semver/v3 v3.3.1
-	github.com/go-git/go-git/v5 v5.16.0
+	github.com/go-git/go-git/v5 v5.16.5
 	github.com/gobuffalo/genny/v2 v2.1.1
 	github.com/gobuffalo/plush/v4 v4.1.22
 	github.com/gobwas/glob v0.2.3
 	github.com/hexops/gotextdiff v1.0.3
 	github.com/ignite/cli/v29 v29.0.0-rc.1
 	github.com/spf13/cobra v1.9.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 )
 
 require (
