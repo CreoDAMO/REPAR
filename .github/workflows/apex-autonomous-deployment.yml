@@ -464,6 +464,23 @@ jobs:
           
           echo "Founder Node genesis initialized"
       
+      - name: Build local Docker image
+        env:
+          IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
+        run: |
+          cat > Dockerfile.node << 'DEOF'
+          FROM alpine:latest
+          RUN apk add --no-cache ca-certificates curl
+          COPY bin/aequitasd /usr/local/bin/aequitasd
+          RUN chmod +x /usr/local/bin/aequitasd
+          EXPOSE 26656 26657 26660 9090 1317
+          ENTRYPOINT ["/usr/local/bin/aequitasd"]
+          CMD ["start"]
+          DEOF
+          docker build -f Dockerfile.node -t "$IMAGE_TAG" .
+          docker network create aequitas-network 2>/dev/null || true
+          echo "Docker image built locally: $IMAGE_TAG"
+
       - name: Deploy node
         id: deploy
         env:
@@ -483,8 +500,7 @@ jobs:
               mkdir -p docker-data/founder
               cp -r ./founder-node/* docker-data/founder/
               
-              cat > docker-compose.founder.yml << 'DCEOF'
-          version: '3.8'
+              cat > docker-compose.founder.yml << DCEOF
           services:
             founder-node:
               image: ${IMAGE_TAG}
@@ -810,6 +826,23 @@ jobs:
           
           echo "Node ${{ matrix.node_index }} configured"
       
+      - name: Build local Docker image for validator ${{ matrix.node_index }}
+        env:
+          IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
+        run: |
+          cat > Dockerfile.node << 'DEOF'
+          FROM alpine:latest
+          RUN apk add --no-cache ca-certificates curl
+          COPY bin/aequitasd /usr/local/bin/aequitasd
+          RUN chmod +x /usr/local/bin/aequitasd
+          EXPOSE 26656 26657 26660 9090 1317
+          ENTRYPOINT ["/usr/local/bin/aequitasd"]
+          CMD ["start"]
+          DEOF
+          docker build -f Dockerfile.node -t "$IMAGE_TAG" .
+          docker network create aequitas-network 2>/dev/null || true
+          echo "Docker image built locally: $IMAGE_TAG"
+
       - name: Deploy validator ${{ matrix.node_index }}
         env:
           IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
@@ -826,8 +859,7 @@ jobs:
           mkdir -p docker-data/validator-$NODE_INDEX
           cp -r ./node-$NODE_INDEX/* docker-data/validator-$NODE_INDEX/
           
-          cat > docker-compose.validator-$NODE_INDEX.yml << 'DCEOF'
-          version: '3.8'
+          cat > docker-compose.validator-$NODE_INDEX.yml << DCEOF
           services:
             validator-$NODE_INDEX:
               image: ${IMAGE_TAG}
