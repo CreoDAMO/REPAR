@@ -464,23 +464,6 @@ jobs:
           
           echo "Founder Node genesis initialized"
       
-      - name: Build local Docker image
-        env:
-          IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
-        run: |
-          cat > Dockerfile.node << 'DEOF'
-          FROM alpine:latest
-          RUN apk add --no-cache ca-certificates curl
-          COPY bin/aequitasd /usr/local/bin/aequitasd
-          RUN chmod +x /usr/local/bin/aequitasd
-          EXPOSE 26656 26657 26660 9090 1317
-          ENTRYPOINT ["/usr/local/bin/aequitasd"]
-          CMD ["start"]
-          DEOF
-          docker build -f Dockerfile.node -t "$IMAGE_TAG" .
-          docker network create aequitas-network 2>/dev/null || true
-          echo "Docker image built locally: $IMAGE_TAG"
-
       - name: Deploy node
         id: deploy
         env:
@@ -501,30 +484,31 @@ jobs:
               cp -r ./founder-node/* docker-data/founder/
               
               cat > docker-compose.founder.yml << DCEOF
-          services:
-            founder-node:
-              image: ${IMAGE_TAG}
-              container_name: aequitas-founder-01
-              ports:
-                - "26656:26656"
-                - "26657:26657"
-                - "26660:26660"
-                - "9090:9090"
-                - "1317:1317"
-              volumes:
-                - ./docker-data/founder:/root/.aequitas
-              restart: unless-stopped
+              version: '3.8'
+              services:
+                founder-node:
+                  image: ${IMAGE_TAG}
+                  container_name: aequitas-founder-01
+                  ports:
+                    - "26656:26656"
+                    - "26657:26657"
+                    - "26660:26660"
+                    - "9090:9090"
+                    - "1317:1317"
+                  volumes:
+                    - ./docker-data/founder:/root/.aequitas
+                  restart: unless-stopped
+                  networks:
+                    - aequitas-network
+                  healthcheck:
+                    test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
+                    interval: 30s
+                    timeout: 10s
+                    retries: 3
               networks:
-                - aequitas-network
-              healthcheck:
-                test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
-                interval: 30s
-                timeout: 10s
-                retries: 3
-          networks:
-            aequitas-network:
-              external: true
-          DCEOF
+                aequitas-network:
+                  external: true
+              DCEOF
               
               docker compose -f docker-compose.founder.yml up -d
               
@@ -826,23 +810,6 @@ jobs:
           
           echo "Node ${{ matrix.node_index }} configured"
       
-      - name: Build local Docker image for validator ${{ matrix.node_index }}
-        env:
-          IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
-        run: |
-          cat > Dockerfile.node << 'DEOF'
-          FROM alpine:latest
-          RUN apk add --no-cache ca-certificates curl
-          COPY bin/aequitasd /usr/local/bin/aequitasd
-          RUN chmod +x /usr/local/bin/aequitasd
-          EXPOSE 26656 26657 26660 9090 1317
-          ENTRYPOINT ["/usr/local/bin/aequitasd"]
-          CMD ["start"]
-          DEOF
-          docker build -f Dockerfile.node -t "$IMAGE_TAG" .
-          docker network create aequitas-network 2>/dev/null || true
-          echo "Docker image built locally: $IMAGE_TAG"
-
       - name: Deploy validator ${{ matrix.node_index }}
         env:
           IMAGE_TAG: ${{ needs.build-aequitasd.outputs.image_tag }}
@@ -860,6 +827,7 @@ jobs:
           cp -r ./node-$NODE_INDEX/* docker-data/validator-$NODE_INDEX/
           
           cat > docker-compose.validator-$NODE_INDEX.yml << DCEOF
+          version: '3.8'
           services:
             validator-$NODE_INDEX:
               image: ${IMAGE_TAG}
@@ -1350,109 +1318,120 @@ jobs:
         with:
           go-version: '1.23.x'
       
-      - name: Build ADNS Resolver
-        id: build
+      - name: Install Post-Quantum Libraries
         run: |
+          echo "Installing post-quantum cryptographic libraries..."
+          
           mkdir -p adns
           cd adns
           
-          go mod init github.com/CreoDAMO/REPAR/adns || true
+          go mod init github.com/CreoDAMO/REPAR/adns
+          go get github.com/cloudflare/circl/sign/mldsa/mldsa87
+          go get github.com/tuneinsight/lattigo/v5/schemes/ckks
+          go get github.com/miekg/dns
+          go mod tidy
+          
+          echo "✅ Post-quantum libraries installed"
+      
+      - name: Build ADNS Resolver
+        id: build
+        run: |
+          cd adns
           
           cat > main.go << 'EOF'
           package main
-          
+
           import (
-                "flag"
-                "fmt"
-                "log"
-                "net"
-                "os"
-                "os/signal"
-                "syscall"
-          
-                "github.com/miekg/dns"
+          "flag"
+          "fmt"
+          "log"
+          "net"
+          "os"
+          "os/signal"
+          "syscall"
+
+          "github.com/miekg/dns"
           )
-          
+
           var (
-                configPath = flag.String("config", "/etc/adns/config.yaml", "Path to config file")
+          configPath = flag.String("config", "/etc/adns/config.yaml", "Path to config file")
           )
-          
+
           func main() {
-                flag.Parse()
-          
-                fmt.Println("ADNS Alternate Root Resolver")
-                fmt.Println("Post-Quantum: ML-DSA-87 + CKKS FHE")
-                fmt.Println("Alternate Roots: .aequitas, .repar, .sovereign")
-          
-                dns.HandleFunc("aequitas.", handleAequitas)
-                dns.HandleFunc("repar.", handleRepar)
-                dns.HandleFunc("sovereign.", handleSovereign)
-          
-                server := &dns.Server{Addr: ":5353", Net: "udp"}
-          
-                go func() {
-                        log.Printf("Starting ADNS on :5353")
-                        if err := server.ListenAndServe(); err != nil {
-                                log.Fatalf("Failed to start server: %s", err)
-                        }
-                }()
-          
-                sig := make(chan os.Signal, 1)
-                signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-                <-sig
-          
-                log.Println("Shutting down ADNS")
-                server.Shutdown()
+          flag.Parse()
+
+          fmt.Println("ADNS Alternate Root Resolver")
+          fmt.Println("Post-Quantum: ML-DSA-87 + CKKS FHE")
+          fmt.Println("Alternate Roots: .aequitas, .repar, .sovereign")
+
+          dns.HandleFunc("aequitas.", handleAequitas)
+          dns.HandleFunc("repar.", handleRepar)
+          dns.HandleFunc("sovereign.", handleSovereign)
+
+          server := &dns.Server{Addr: ":5353", Net: "udp"}
+
+          go func() {
+          log.Printf("Starting ADNS on :5353")
+          if err := server.ListenAndServe(); err != nil {
+          log.Fatalf("Failed to start server: %s", err)
           }
-          
+          }()
+
+          sig := make(chan os.Signal, 1)
+          signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+          <-sig
+
+          log.Println("Shutting down ADNS")
+          server.Shutdown()
+          }
+
           func handleAequitas(w dns.ResponseWriter, r *dns.Msg) {
-                handleZone(w, r, "aequitas.")
+          handleZone(w, r, "aequitas.")
           }
-          
+
           func handleRepar(w dns.ResponseWriter, r *dns.Msg) {
-                handleZone(w, r, "repar.")
+          handleZone(w, r, "repar.")
           }
-          
+
           func handleSovereign(w dns.ResponseWriter, r *dns.Msg) {
-                handleZone(w, r, "sovereign.")
+          handleZone(w, r, "sovereign.")
           }
-          
+
           func handleZone(w dns.ResponseWriter, r *dns.Msg, zone string) {
-                m := new(dns.Msg)
-                m.SetReply(r)
-                m.Authoritative = true
-          
-                for _, q := range r.Question {
-                        switch q.Qtype {
-                        case dns.TypeA:
-                                rr := &dns.A{
-                                        Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: 3600},
-                                        A:   net.ParseIP("127.0.0.1"),
-                                }
-                                m.Answer = append(m.Answer, rr)
-                        case dns.TypeNS:
-                                rr := &dns.NS{
-                                        Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeNS, Class: dns.ClassINET, Ttl: 3600},
-                                        Ns:  "ns1." + zone,
-                                }
-                                m.Answer = append(m.Answer, rr)
-                        }
-                }
-          
-                w.WriteMsg(m)
+          m := new(dns.Msg)
+          m.SetReply(r)
+          m.Authoritative = true
+
+          for _, q := range r.Question {
+          switch q.Qtype {
+          case dns.TypeA:
+          rr := &dns.A{
+          Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: 3600},
+          A:   net.ParseIP("127.0.0.1"),
+          }
+          m.Answer = append(m.Answer, rr)
+          case dns.TypeNS:
+          rr := &dns.NS{
+          Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeNS, Class: dns.ClassINET, Ttl: 3600},
+          Ns:  "ns1." + zone,
+          }
+          m.Answer = append(m.Answer, rr)
+          }
+          }
+
+          w.WriteMsg(m)
           }
           EOF
           
-          go mod tidy
           go build -v -o ./build/adns-resolver .
           
           if [ ! -f ./build/adns-resolver ]; then
-            echo "FATAL: ADNS resolver binary not created"
+            echo "❌ FATAL: ADNS resolver binary not created"
             exit 1
           fi
           
           chmod +x ./build/adns-resolver
-          echo "ADNS resolver built successfully"
+          echo "✅ ADNS resolver built"
       
       - name: Generate Zone Files
         run: |
@@ -2107,7 +2086,7 @@ jobs:
         with:
           name: mobile-apk-${{ steps.version.outputs.version }}
           path: mobile/build/aequitas-zone.apk
-          retention-days: 90
+          retention-days: 365
           if-no-files-found: error
       
       - name: Report
@@ -2535,286 +2514,6 @@ jobs:
           echo "| ace | ACE dashboard | Yes |" >> $GITHUB_STEP_SUMMARY
           echo "| vm | AVM interface | Yes |" >> $GITHUB_STEP_SUMMARY
           echo "| sovereign | Sovereign endpoint | Yes |" >> $GITHUB_STEP_SUMMARY
-
-# ============================================================
-# PHASE 6.5: DEPLOY REVERSE PROXY (CADDY)
-# ============================================================
-  deploy-reverse-proxy:
-    name: Deploy Reverse Proxy (Caddy)
-    runs-on: ubuntu-22.04
-    needs: [deploy-founder-node, deploy-vm-infrastructure, configure-dns]
-    if: |
-      always() && 
-      needs.deploy-founder-node.result == 'success'
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download service artifacts
-        uses: actions/download-artifact@v4
-        continue-on-error: true
-        with:
-          path: ./artifacts
-      
-      - name: Deploy Caddy reverse proxy to origin server
-        id: deploy-proxy
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ vars.SSH_HOST }}
-          SSH_USER: ${{ vars.SSH_USER }}
-          INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
-        run: |
-          echo "============================================================"
-          echo "   DEPLOYING REVERSE PROXY (CADDY)"
-          echo "   Origin server: $INFRASTRUCTURE_IP"
-          echo "============================================================"
-          
-          if [ -z "$SSH_PRIVATE_KEY" ] || [ -z "$SSH_HOST" ]; then
-            echo "No SSH credentials - generating Caddyfile for manual deployment"
-            
-            cat > Caddyfile << 'CEOF'
-          :80 {
-            respond /health "OK" 200
-          }
-          
-          aequitasprotocol.zone:80, www.aequitasprotocol.zone:80 {
-            root * /var/www/aequitas/frontend
-            file_server
-            try_files {path} /index.html
-            header Cache-Control "no-cache"
-          }
-          
-          app.aequitasprotocol.zone:80 {
-            root * /var/www/aequitas/frontend
-            file_server
-            try_files {path} /index.html
-            header Cache-Control "no-cache"
-          }
-          
-          api.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:3002
-          }
-          
-          explorer.aequitasprotocol.zone:80 {
-            root * /var/www/aequitas/dexplorer
-            file_server
-            try_files {path} /index.html
-            header Cache-Control "no-cache"
-          }
-          
-          rpc.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:26657
-          }
-          
-          grpc.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:9090
-          }
-          
-          ace.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:8080
-          }
-          
-          vm.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:8081
-          }
-          
-          sovereign.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:26657
-          }
-          
-          auditor.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:3003
-          }
-          CEOF
-            
-            echo "proxy_deployed=local" >> $GITHUB_OUTPUT
-            echo "Caddyfile generated for manual deployment"
-            cat Caddyfile
-          else
-            mkdir -p ~/.ssh
-            echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-            chmod 600 ~/.ssh/deploy_key
-            SSH_USER="${SSH_USER:-root}"
-            
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
-              echo "Installing Caddy..."
-              apt-get update -qq
-              apt-get install -y -qq debian-keyring debian-archive-keyring apt-transport-https curl 2>/dev/null
-              curl -1sLf "https://dl.cloudsmith.io/public/caddy/stable/gpg.key" | gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg 2>/dev/null || true
-              curl -1sLf "https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt" | tee /etc/apt/sources.list.d/caddy-stable.list > /dev/null
-              apt-get update -qq
-              apt-get install -y -qq caddy 2>/dev/null || {
-                echo "Apt install failed, downloading binary directly..."
-                curl -sL "https://caddyserver.com/api/download?os=linux&arch=amd64" -o /usr/bin/caddy
-                chmod +x /usr/bin/caddy
-              }
-              
-              mkdir -p /var/www/aequitas/frontend
-              mkdir -p /var/www/aequitas/dexplorer
-              mkdir -p /etc/caddy
-              
-              echo "Caddy installed: $(caddy version 2>/dev/null || echo unknown)"
-            '
-            
-            cat > /tmp/Caddyfile << 'CEOF'
-          {
-            auto_https off
-          }
-          
-          :80 {
-            respond /health "OK" 200
-          }
-          
-          aequitasprotocol.zone:80, www.aequitasprotocol.zone:80 {
-            root * /var/www/aequitas/frontend
-            file_server
-            try_files {path} /index.html
-            header Cache-Control "no-cache"
-          }
-          
-          app.aequitasprotocol.zone:80 {
-            root * /var/www/aequitas/frontend
-            file_server
-            try_files {path} /index.html
-            header Cache-Control "no-cache"
-          }
-          
-          api.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:3002
-          }
-          
-          explorer.aequitasprotocol.zone:80 {
-            root * /var/www/aequitas/dexplorer
-            file_server
-            try_files {path} /index.html
-            header Cache-Control "no-cache"
-          }
-          
-          rpc.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:26657
-          }
-          
-          grpc.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:9090
-          }
-          
-          ace.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:8080
-          }
-          
-          vm.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:8081
-          }
-          
-          sovereign.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:26657
-          }
-          
-          auditor.aequitasprotocol.zone:80 {
-            reverse_proxy localhost:3003
-          }
-          CEOF
-            
-            scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key /tmp/Caddyfile $SSH_USER@$SSH_HOST:/etc/caddy/Caddyfile
-            
-            ssh -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key $SSH_USER@$SSH_HOST /bin/bash -c '
-              caddy fmt --overwrite /etc/caddy/Caddyfile 2>/dev/null || true
-              
-              caddy validate --config /etc/caddy/Caddyfile 2>/dev/null && echo "Caddyfile valid" || echo "Caddyfile validation warning"
-              
-              systemctl stop caddy 2>/dev/null || true
-              
-              printf "%s\n" \
-                "[Unit]" \
-                "Description=Caddy Reverse Proxy" \
-                "After=network.target" \
-                "" \
-                "[Service]" \
-                "Type=simple" \
-                "User=root" \
-                "ExecStart=/usr/bin/caddy run --config /etc/caddy/Caddyfile" \
-                "Restart=always" \
-                "RestartSec=5" \
-                "" \
-                "[Install]" \
-                "WantedBy=multi-user.target" \
-                > /etc/systemd/system/caddy.service
-              
-              systemctl daemon-reload
-              systemctl enable caddy
-              systemctl start caddy
-              
-              sleep 3
-              
-              if curl -s -o /dev/null -w "%{http_code}" http://localhost:80/health | grep -q "200"; then
-                echo "Caddy is running and healthy"
-              else
-                echo "Caddy started but health check pending"
-                systemctl status caddy --no-pager || true
-              fi
-            '
-            
-            echo "proxy_deployed=ssh" >> $GITHUB_OUTPUT
-            echo "Reverse proxy deployed to $SSH_HOST"
-          fi
-      
-      - name: Deploy frontend files to origin
-        if: steps.deploy-proxy.outputs.proxy_deployed == 'ssh'
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ vars.SSH_HOST }}
-          SSH_USER: ${{ vars.SSH_USER }}
-        run: |
-          SSH_USER="${SSH_USER:-root}"
-          
-          if [ -d ./artifacts/frontend-dist ]; then
-            echo "Deploying frontend files..."
-            scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key -r ./artifacts/frontend-dist/* $SSH_USER@$SSH_HOST:/var/www/aequitas/frontend/ || echo "Frontend transfer pending"
-          fi
-          
-          if [ -d ./artifacts/dexplorer-dist ]; then
-            echo "Deploying dexplorer files..."
-            scp -o StrictHostKeyChecking=no -i ~/.ssh/deploy_key -r ./artifacts/dexplorer-dist/* $SSH_USER@$SSH_HOST:/var/www/aequitas/dexplorer/ || echo "Dexplorer transfer pending"
-          fi
-          
-          echo "Static files deployed to origin server"
-      
-      - name: Verify origin is reachable
-        env:
-          INFRASTRUCTURE_IP: ${{ needs.deploy-founder-node.outputs.infrastructure_ip }}
-        run: |
-          echo "Verifying origin server responds on port 80..."
-          
-          for i in 1 2 3 4 5; do
-            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 "http://$INFRASTRUCTURE_IP/health" 2>/dev/null || echo "000")
-            echo "Attempt $i: HTTP $HTTP_CODE"
-            if [ "$HTTP_CODE" = "200" ]; then
-              echo "Origin server is responding"
-              break
-            fi
-            sleep 5
-          done
-      
-      - name: Report
-        run: |
-          echo "### Reverse Proxy Deployed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Server:** Caddy" >> $GITHUB_STEP_SUMMARY
-          echo "**Mode:** HTTP on port 80 (Cloudflare handles SSL)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Routes:**" >> $GITHUB_STEP_SUMMARY
-          echo "| Domain | Routes To |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------|-----------|" >> $GITHUB_STEP_SUMMARY
-          echo "| aequitasprotocol.zone | Frontend (static files) |" >> $GITHUB_STEP_SUMMARY
-          echo "| app.* | Frontend (static files) |" >> $GITHUB_STEP_SUMMARY
-          echo "| api.* | Backend API (port 3002) |" >> $GITHUB_STEP_SUMMARY
-          echo "| explorer.* | Dexplorer (static files) |" >> $GITHUB_STEP_SUMMARY
-          echo "| rpc.* | Blockchain RPC (port 26657) |" >> $GITHUB_STEP_SUMMARY
-          echo "| grpc.* | gRPC (port 9090) |" >> $GITHUB_STEP_SUMMARY
-          echo "| ace.* | ACE Dashboard (port 8080) |" >> $GITHUB_STEP_SUMMARY
-          echo "| vm.* | AVM Interface (port 8081) |" >> $GITHUB_STEP_SUMMARY
-          echo "| sovereign.* | Sovereign RPC (port 26657) |" >> $GITHUB_STEP_SUMMARY
-          echo "| auditor.* | Security Auditor (port 3003) |" >> $GITHUB_STEP_SUMMARY
 
 # ============================================================
 # PHASE 7: KEPLR REGISTRY PR (WITH LOGO HANDLING)
@@ -3613,7 +3312,7 @@ jobs:
         with:
           name: sovereign-seal-${{ github.run_id }}
           path: /tmp/seal_manifest.json
-          retention-days: 90
+          retention-days: 365
       
       - name: Report
         run: |
@@ -3653,7 +3352,6 @@ jobs:
       build-mobile-apk,
       deploy-mobile-download,
       configure-dns,
-      deploy-reverse-proxy,
       keplr-registry-pr,
       enable-cross-chain,
       sovereign-seal
@@ -3706,7 +3404,6 @@ jobs:
           echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| DNS Configuration | ${{ needs.configure-dns.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Reverse Proxy (Caddy) | ${{ needs.deploy-reverse-proxy.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Keplr PR | ${{ needs.keplr-registry-pr.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Cross-Chain/IBC | ${{ needs.enable-cross-chain.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Sovereign Seal | ${{ needs.sovereign-seal.result }} |" >> $GITHUB_STEP_SUMMARY
