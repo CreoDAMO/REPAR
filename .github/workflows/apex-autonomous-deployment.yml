@@ -1350,31 +1350,17 @@ jobs:
         with:
           go-version: '1.23.x'
       
-      - name: Install Post-Quantum Libraries
-        run: |
-          echo "Installing post-quantum cryptographic libraries..."
-          
-          mkdir -p adns
-          cd adns
-          
-          go mod init github.com/CreoDAMO/REPAR/adns
-          go get github.com/cloudflare/circl/sign/mldsa/mldsa87
-          go get github.com/tuneinsight/lattigo/v5/schemes/ckks
-          go get github.com/miekg/dns
-          go mod tidy
-          
-          echo "✅ Post-quantum libraries installed"
-      
       - name: Build ADNS Resolver
         id: build
         run: |
+          mkdir -p adns
           cd adns
           
-          if [ ! -f go.mod ]; then
-            go mod init github.com/CreoDAMO/REPAR/adns
-            go get github.com/miekg/dns
-            go mod tidy
-          fi
+          go mod init github.com/CreoDAMO/REPAR/adns || true
+          go get github.com/miekg/dns
+          go get github.com/cloudflare/circl/sign/mldsa/mldsa87 || echo "circl optional - continuing"
+          go get github.com/tuneinsight/lattigo/v5/schemes/ckks || echo "lattigo optional - continuing"
+          go mod tidy
           
           cat > main.go << 'EOF'
           package main
