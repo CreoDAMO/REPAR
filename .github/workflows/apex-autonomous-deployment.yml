@@ -1357,10 +1357,6 @@ jobs:
           cd adns
           
           go mod init github.com/CreoDAMO/REPAR/adns || true
-          go get github.com/miekg/dns
-          go get github.com/cloudflare/circl/sign/mldsa/mldsa87 || echo "circl optional - continuing"
-          go get github.com/tuneinsight/lattigo/v5/schemes/ckks || echo "lattigo optional - continuing"
-          go mod tidy
           
           cat > main.go << 'EOF'
           package main
@@ -1447,6 +1443,7 @@ jobs:
           }
           EOF
           
+          go mod tidy
           go build -v -o ./build/adns-resolver .
           
           if [ ! -f ./build/adns-resolver ]; then
