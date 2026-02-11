@@ -1,16 +1,5 @@
 # ⚖️ AEQUITAS PROTOCOL ($REPAR) - The Justice Machine
 
-[![APEX Autonomous Constellation](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-autonomous-deployment.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-autonomous-deployment.yml)
-[![Deploy Frontend](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/deploy-frontend.yml)
-[![Production Ready](https://img.shields.io/badge/status-production%20ready-success)](https://github.com/CreoDAMO/REPAR)
-[![Mobile App](https://img.shields.io/badge/mobile%20app-complete-blue)](./mobile)
-[![License](https://img.shields.io/badge/license-MIT-green)](./docs/LICENSE.md)
-[![APEX Real Security Scan](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-security-scan.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-security-scan.yml)
-[![Cerberus Security Auditor](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/cerberus-audit.yml)
-[![Build and Deploy Aequitas Zone Blockchain](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/blockchain-build-and-deploy.yml)
-[![Sovereign Nation](https://img.shields.io/badge/53%20Days-Sovereign%20Nation%20Built-gold)](https://github.com/CreoDAMO/REPAR)
-[![Wiki Auto-Generation](https://github.com/CreoDAMO/REPAR/actions/workflows/wiki-publish.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/wiki-publish.yml)
-
 <img width="500" height="500" alt="REPAR_Coin_Logo-removebg-preview" src="https://github.com/user-attachments/assets/0e3f4da1-d4aa-45a8-99d0-eff29697eb85" />
 
 
