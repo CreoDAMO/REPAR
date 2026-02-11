@@ -1370,100 +1370,106 @@ jobs:
         run: |
           cd adns
           
+          if [ ! -f go.mod ]; then
+            go mod init github.com/CreoDAMO/REPAR/adns
+            go get github.com/miekg/dns
+            go mod tidy
+          fi
+          
           cat > main.go << 'EOF'
           package main
-
+          
           import (
-          "flag"
-          "fmt"
-          "log"
-          "net"
-          "os"
-          "os/signal"
-          "syscall"
-
-          "github.com/miekg/dns"
+                "flag"
+                "fmt"
+                "log"
+                "net"
+                "os"
+                "os/signal"
+                "syscall"
+          
+                "github.com/miekg/dns"
           )
-
+          
           var (
-          configPath = flag.String("config", "/etc/adns/config.yaml", "Path to config file")
+                configPath = flag.String("config", "/etc/adns/config.yaml", "Path to config file")
           )
-
+          
           func main() {
-          flag.Parse()
-
-          fmt.Println("ADNS Alternate Root Resolver")
-          fmt.Println("Post-Quantum: ML-DSA-87 + CKKS FHE")
-          fmt.Println("Alternate Roots: .aequitas, .repar, .sovereign")
-
-          dns.HandleFunc("aequitas.", handleAequitas)
-          dns.HandleFunc("repar.", handleRepar)
-          dns.HandleFunc("sovereign.", handleSovereign)
-
-          server := &dns.Server{Addr: ":5353", Net: "udp"}
-
-          go func() {
-          log.Printf("Starting ADNS on :5353")
-          if err := server.ListenAndServe(); err != nil {
-          log.Fatalf("Failed to start server: %s", err)
+                flag.Parse()
+          
+                fmt.Println("ADNS Alternate Root Resolver")
+                fmt.Println("Post-Quantum: ML-DSA-87 + CKKS FHE")
+                fmt.Println("Alternate Roots: .aequitas, .repar, .sovereign")
+          
+                dns.HandleFunc("aequitas.", handleAequitas)
+                dns.HandleFunc("repar.", handleRepar)
+                dns.HandleFunc("sovereign.", handleSovereign)
+          
+                server := &dns.Server{Addr: ":5353", Net: "udp"}
+          
+                go func() {
+                        log.Printf("Starting ADNS on :5353")
+                        if err := server.ListenAndServe(); err != nil {
+                                log.Fatalf("Failed to start server: %s", err)
+                        }
+                }()
+          
+                sig := make(chan os.Signal, 1)
+                signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+                <-sig
+          
+                log.Println("Shutting down ADNS")
+                server.Shutdown()
           }
-          }()
-
-          sig := make(chan os.Signal, 1)
-          signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-          <-sig
-
-          log.Println("Shutting down ADNS")
-          server.Shutdown()
-          }
-
+          
           func handleAequitas(w dns.ResponseWriter, r *dns.Msg) {
-          handleZone(w, r, "aequitas.")
+                handleZone(w, r, "aequitas.")
           }
-
+          
           func handleRepar(w dns.ResponseWriter, r *dns.Msg) {
-          handleZone(w, r, "repar.")
+                handleZone(w, r, "repar.")
           }
-
+          
           func handleSovereign(w dns.ResponseWriter, r *dns.Msg) {
-          handleZone(w, r, "sovereign.")
+                handleZone(w, r, "sovereign.")
           }
-
+          
           func handleZone(w dns.ResponseWriter, r *dns.Msg, zone string) {
-          m := new(dns.Msg)
-          m.SetReply(r)
-          m.Authoritative = true
-
-          for _, q := range r.Question {
-          switch q.Qtype {
-          case dns.TypeA:
-          rr := &dns.A{
-          Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: 3600},
-          A:   net.ParseIP("127.0.0.1"),
-          }
-          m.Answer = append(m.Answer, rr)
-          case dns.TypeNS:
-          rr := &dns.NS{
-          Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeNS, Class: dns.ClassINET, Ttl: 3600},
-          Ns:  "ns1." + zone,
-          }
-          m.Answer = append(m.Answer, rr)
-          }
-          }
-
-          w.WriteMsg(m)
+                m := new(dns.Msg)
+                m.SetReply(r)
+                m.Authoritative = true
+          
+                for _, q := range r.Question {
+                        switch q.Qtype {
+                        case dns.TypeA:
+                                rr := &dns.A{
+                                        Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeA, Class: dns.ClassINET, Ttl: 3600},
+                                        A:   net.ParseIP("127.0.0.1"),
+                                }
+                                m.Answer = append(m.Answer, rr)
+                        case dns.TypeNS:
+                                rr := &dns.NS{
+                                        Hdr: dns.RR_Header{Name: q.Name, Rrtype: dns.TypeNS, Class: dns.ClassINET, Ttl: 3600},
+                                        Ns:  "ns1." + zone,
+                                }
+                                m.Answer = append(m.Answer, rr)
+                        }
+                }
+          
+                w.WriteMsg(m)
           }
           EOF
           
           go build -v -o ./build/adns-resolver .
           
           if [ ! -f ./build/adns-resolver ]; then
-            echo "❌ FATAL: ADNS resolver binary not created"
+            echo "FATAL: ADNS resolver binary not created"
             exit 1
           fi
           
           chmod +x ./build/adns-resolver
-          echo "✅ ADNS resolver built"
+          echo "ADNS resolver built successfully"
       
       - name: Generate Zone Files
         run: |
@@ -2118,7 +2124,7 @@ jobs:
         with:
           name: mobile-apk-${{ steps.version.outputs.version }}
           path: mobile/build/aequitas-zone.apk
-          retention-days: 365
+          retention-days: 90
           if-no-files-found: error
       
       - name: Report
@@ -3344,7 +3350,7 @@ jobs:
         with:
           name: sovereign-seal-${{ github.run_id }}
           path: /tmp/seal_manifest.json
-          retention-days: 365
+          retention-days: 90
       
       - name: Report
         run: |
