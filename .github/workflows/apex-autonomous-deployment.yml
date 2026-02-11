@@ -483,32 +483,32 @@ jobs:
               mkdir -p docker-data/founder
               cp -r ./founder-node/* docker-data/founder/
               
-              cat > docker-compose.founder.yml << DCEOF
-              version: '3.8'
-              services:
-                founder-node:
-                  image: ${IMAGE_TAG}
-                  container_name: aequitas-founder-01
-                  ports:
-                    - "26656:26656"
-                    - "26657:26657"
-                    - "26660:26660"
-                    - "9090:9090"
-                    - "1317:1317"
-                  volumes:
-                    - ./docker-data/founder:/root/.aequitas
-                  restart: unless-stopped
-                  networks:
-                    - aequitas-network
-                  healthcheck:
-                    test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
-                    interval: 30s
-                    timeout: 10s
-                    retries: 3
+              cat > docker-compose.founder.yml << 'DCEOF'
+          version: '3.8'
+          services:
+            founder-node:
+              image: ${IMAGE_TAG}
+              container_name: aequitas-founder-01
+              ports:
+                - "26656:26656"
+                - "26657:26657"
+                - "26660:26660"
+                - "9090:9090"
+                - "1317:1317"
+              volumes:
+                - ./docker-data/founder:/root/.aequitas
+              restart: unless-stopped
               networks:
-                aequitas-network:
-                  external: true
-              DCEOF
+                - aequitas-network
+              healthcheck:
+                test: ["CMD", "curl", "-f", "http://localhost:26657/health"]
+                interval: 30s
+                timeout: 10s
+                retries: 3
+          networks:
+            aequitas-network:
+              external: true
+          DCEOF
               
               docker compose -f docker-compose.founder.yml up -d
               
@@ -826,7 +826,7 @@ jobs:
           mkdir -p docker-data/validator-$NODE_INDEX
           cp -r ./node-$NODE_INDEX/* docker-data/validator-$NODE_INDEX/
           
-          cat > docker-compose.validator-$NODE_INDEX.yml << DCEOF
+          cat > docker-compose.validator-$NODE_INDEX.yml << 'DCEOF'
           version: '3.8'
           services:
             validator-$NODE_INDEX:
