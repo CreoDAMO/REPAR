@@ -1,5 +1,7 @@
 # ⚖️ AEQUITAS PROTOCOL ($REPAR) - The Justice Machine
 
+[![APEX Autonomous Constellation Deployment](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-autonomous-deployment.yml/badge.svg)](https://github.com/CreoDAMO/REPAR/actions/workflows/apex-autonomous-deployment.yml)
+
 <img width="500" height="500" alt="REPAR_Coin_Logo-removebg-preview" src="https://github.com/user-attachments/assets/0e3f4da1-d4aa-45a8-99d0-eff29697eb85" />
 
 
