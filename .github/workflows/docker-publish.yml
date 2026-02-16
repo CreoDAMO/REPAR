@@ -1,0 +1,23 @@
+name: Publish Docker Image
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "creodamo" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t creodamo/repar:latest .
+
+      - name: Push Docker image
+        run: docker push creodamo/repar:latest
