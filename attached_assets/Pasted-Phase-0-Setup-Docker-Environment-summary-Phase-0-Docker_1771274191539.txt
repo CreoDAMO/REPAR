@@ -1,0 +1,338 @@
+Phase 0 - Setup Docker Environment summary
+Phase 0: Docker Environment Setup
+Component	Status
+Docker Host	local
+Registry	local
+Authenticated	false
+Job summary generated at run-time
+Validate APEX Autonomous Systems summary
+APEX Autonomous Systems Ready
+Capabilities:
+
+Self-Healing (auto-restart failed nodes)
+Self-Monitoring (health checks every 30s)
+Self-Scaling (auto-add validators)
+Satellite Routing (cross-node coordination)
+Binary Hash: 9273d6e319b6461b557a1c580883929d9d53813c5644c0b3b74ba461f38e54bd
+
+Job summary generated at run-time
+Deploy Founder Node summary
+Founder Node Deployed
+Node Details:
+
+Name: aequitas-founder-01
+Role: Genesis Validator (Founder)
+Chain ID: aequitas-1
+Network: mainnet
+Deployment: docker-compose
+Infrastructure:
+
+IP: 135.232.208.145
+Source: ssh-host-variable
+Genesis Allocations:
+
+Founder Vested: 15.72T REPAR (12%)
+Founder Endowment: 7.86T REPAR (6%, 8-year lock)
+Endpoints:
+
+RPC: http://localhost:26657
+Job summary generated at run-time
+Verify Constellation summary
+Constellation Deployed
+Deployment: docker-compose
+Network: mainnet
+Cluster Size: 7 nodes
+Infrastructure IP: 135.232.208.145
+
+Node	Role	Status
+aequitas-founder-01	Founder	Deployed
+aequitas-validator-02	Validator	Deployed
+aequitas-validator-03	Validator	Deployed
+aequitas-validator-04	Validator	Deployed
+aequitas-validator-05	Validator	Deployed
+aequitas-validator-06	Validator	Deployed
+aequitas-validator-07	Validator	Deployed
+Job summary generated at run-time
+Deploy VM Infrastructure (ACE/AVM) summary
+VM Infrastructure Deployed
+ACE Endpoint: https://ace.aequitasprotocol.zone
+AVM Endpoint: https://vm.aequitasprotocol.zone
+
+Job summary generated at run-time
+Configure DNS (Sovereign Migration) summary
+DNS Migration Complete
+Migration Details:
+
+Removed old DigitalOcean IPs: 159.203.92.230, 76.223.105.230
+Updated to sovereign IP: 135.232.208.145
+IP Source: ssh-host-variable
+Updated Subdomains:
+
+Subdomain	Purpose	Proxied
+@ (root)	Main website	Yes
+www	Website alias	Yes
+app	Web application	Yes
+rpc	Blockchain RPC	Yes
+api	REST API	Yes
+explorer	Block explorer	Yes
+grpc	gRPC endpoint	No
+ace	ACE dashboard	Yes
+vm	AVM interface	Yes
+sovereign	Sovereign endpoint	Yes
+Job summary generated at run-time
+Create Keplr Registry PR summary
+Keplr Registry PR
+Status: PR created for chainapsis/keplr-chain-registry
+Chain ID: aequitas-1
+Infrastructure IP: 135.232.208.145
+
+Job summary generated at run-time
+Build ADNS Module (Post-Quantum) summary
+ADNS Module Built
+Post-Quantum Features:
+
+ML-DSA-87 (CIRCL)
+CKKS FHE (Lattigo)
+Alternate Roots:
+
+.aequitas
+.repar
+.sovereign
+Module Hash: ed4b72bb98d384895b567c0817a5d70dc1ceea4bf21844d37431574c7c8f8d0b
+
+Job summary generated at run-time
+Build Mobile APK (Sovereign Distribution) summary
+Mobile APK Built (Sovereign Distribution)
+Version: v1.0.0-42e540a
+SHA-256: 9fa97d09727297c533343dbc98081bc8f473b16330e0f6934bb8b6141be13f53
+Signed: true
+IPFS: ipfs-not-installed
+
+Distribution Strategy:
+
+Primary: Direct APK download from https://aequitasprotocol.zone/mobile/download
+Secondary: IPFS decentralized distribution
+Optional: App stores (Google Play, etc.) as convenience, not requirement
+Sovereignty Principle: No app store gatekeepers required. Citizens can download directly.
+
+Job summary generated at run-time
+Verify Reverse Proxy (Nginx Proxy Manager) summary
+Reverse Proxy Verified
+Server: Nginx Proxy Manager (from docker-compose.yml)
+Mode: HTTP/HTTPS (Cloudflare handles external SSL)
+Admin UI: Port 81
+
+NPM is connected to both aequitas_net and ace-network.
+Use container names as Forward Hostname in NPM proxy hosts:
+
+Domain	NPM Forward Hostname	Forward Port
+aequitasprotocol.zone	frontend	5173
+app.*	frontend	5173
+api.*	backend	3000
+explorer.*	explorer	3002
+rpc.*	blockchain	26657
+grpc.*	blockchain	9090
+ace.*	ace-kernel	8080
+vm.*	ipfs	8080
+sovereign.*	blockchain	26657
+auditor.*	auditor	8000
+Job summary generated at run-time
+Deploy AI Autonomous Agents summary
+AI Autonomous Agents Deployed
+Components:
+
+Threat Orchestrator (Go)
+Autonomous Agent CLI
+Job summary generated at run-time
+Sovereign Infrastructure Seal summary
+Sovereign Infrastructure Seal
+Seal Hash: 6e9ee8f14a88c62be049ab12fbf94d209ca00f8178dbd1d77ff3e95097aa07e6
+Timestamp: 2026-02-11T17:28:24Z
+
+This cryptographic seal verifies the integrity of the entire deployment.
+
+Job summary generated at run-time
+Deploy Cerberus Security Auditor summary
+Cerberus Security Auditor Deployed
+Endpoint: https://auditor.aequitasprotocol.zone
+
+Capabilities:
+
+Vulnerability Detection
+Threat Analysis
+AI-Powered Security Scanning
+Job summary generated at run-time
+Enable Cross-Chain Features summary
+Cross-Chain Enablement Status
+IBC Relayer:
+
+Software: Hermes v1.10.0
+Status: true
+IBC Channels:
+
+Created: none
+IBC Enabled: false
+Target Chains:
+
+Cosmos Hub (cosmoshub-4) - ATOM liquidity
+Osmosis (osmosis-1) - DEX liquidity
+Circle CCTP: Integrated via Backend API
+
+Cross-chain features enable to flow across the Cosmos ecosystem
+
+Job summary generated at run-time
+Deploy Backend API summary
+Backend API Deployed
+Endpoint: https://api.aequitasprotocol.zone
+
+Routes:
+
+/api/circle - Circle Payment Integration
+/api/agentkit - AgentKit Integration
+/api/auditor - Security Auditor API
+/api/nvidia - NVIDIA AI Integration
+Job summary generated at run-time
+Deploy Dexplorer (Block Explorer) summary
+Dexplorer (Block Explorer) Deployed
+Endpoint: https://explorer.aequitasprotocol.zone
+
+Features:
+
+Block browsing
+Transaction history
+Account details
+Validator information
+Governance proposals
+Job summary generated at run-time
+Deploy Frontend Application summary
+Frontend Application Deployed
+Endpoint: https://app.aequitasprotocol.zone
+
+Pages:
+
+Dashboard
+AI Analytics
+DEX Interface
+Governance
+Defendants Database
+Concentrated Audit
+Job summary generated at run-time
+Verify FHE Components summary
+FHE Components Verified
+Documentation Hash: ``
+
+Features Documented:
+
+APEX-Level Vectorized FHE
+Sovereign Homomorphic Bootstrapping
+FHE + Constitutional AI Fusion
+Post-Quantum FHE (APEX Entanglement)
+FHE Self-Healing
+Distributed FHE Without Nodes
+Job summary generated at run-time
+Deploy Mobile Download Page summary
+Mobile Download Page Deployed
+Download URL: https://aequitasprotocol.zone/mobile/download
+APK Direct Link: https://aequitasprotocol.zone/mobile/aequitas-zone.apk
+APK Hash: 9fa97d09727297c533343dbc98081bc8f473b16330e0f6934bb8b6141be13f53
+IPFS Hash: ipfs-not-installed
+
+Sovereign Distribution Benefits:
+
+Direct download from protocol website
+No app store approval delays
+Cryptographic hash verification
+IPFS backup for censorship resistance
+Job summary generated at run-time
+Deployment Summary summary
+APEX Autonomous Deployment Complete
+Core Infrastructure
+Component	Status
+Docker Environment	success
+Binary Build	success
+APEX Validation	success
+Founder Node	success
+Constellation (6 nodes)	success
+Verification	success
+VM Infrastructure	success
+Services Build
+Service	Build Status
+AI Autonomous Agents	success
+Cerberus Security Auditor	success
+Backend API	success
+Dexplorer (Block Explorer)	success
+Frontend	success
+ADNS Module	success
+Mobile APK	success
+Services Deployment
+Service	Deploy Status	Endpoint
+AI Autonomous	success	ACE/AVM Internal
+Cerberus Auditor	success	https://auditor.aequitasprotocol.zone
+Backend API	success	https://api.aequitasprotocol.zone
+Dexplorer	success	https://explorer.aequitasprotocol.zone
+Frontend	success	https://app.aequitasprotocol.zone
+FHE Verification	success	Documentation Verified
+Mobile Download	success	https://aequitasprotocol.zone/mobile/download
+Network & Integration
+Component	Status
+DNS Configuration	success
+Reverse Proxy (NPM)	success
+Keplr PR	success
+Cross-Chain/IBC	success
+Sovereign Seal	success
+Infrastructure
+Chain ID: aequitas-1
+Network: mainnet
+Deployment: docker-compose
+Infrastructure IP: 135.232.208.145
+IP Source: ssh-host-variable
+Cryptographic Verification
+Binary Hash: 9273d6e319b6461b557a1c580883929d9d53813c5644c0b3b74ba461f38e54bd
+Genesis Hash: e45adc0d7642e32ee5df7af926b52b50d32e928fa93789c3bde1dd2202e33eda
+Mobile APK Hash: 9fa97d09727297c533343dbc98081bc8f473b16330e0f6934bb8b6141be13f53
+ADNS Module Hash: ed4b72bb98d384895b567c0817a5d70dc1ceea4bf21844d37431574c7c8f8d0b
+Sovereign Seal: 6e9ee8f14a88c62be049ab12fbf94d209ca00f8178dbd1d77ff3e95097aa07e6
+Sovereignty Features
+APEX Autonomous: Self-healing, self-monitoring, self-scaling
+Constitutional Guard: 25 axioms enforced
+Mobile Sovereignty: Direct APK distribution (no app stores)
+ADNS: Post-quantum DNS (.aequitas, .repar, .sovereign)
+IBC Enabled: Cross-chain with Cosmos Hub & Osmosis
+FHE: Advanced homomorphic encryption documented
+Deployed by APEX Autonomous System - 42e540af9bb1f6ce3cecd83d1fbf193cb0af7be7
+
+Job summary generated at run-time
+Annotations
+1 warning
+Build Aequitas Blockchain Binary
+Failed to restore: "/usr/bin/tar" failed with error: The process '/usr/bin/tar' failed with exit code 2
+Artifacts
+Produced during runtime
+Name	Size	Digest	
+adns-module-42e540af9bb1f6ce3cecd83d1fbf193cb0af7be7
+4.37 MB	
+sha256:b6047ea245abbf8cdc687d7686ae2cef551e705b7a2ce54156e95294accba064
+aequitasd-v1.0.0-42e540a
+60.8 MB	
+sha256:0f0d75ad1d791f47c42b8a1d05a7851f4192a1d14d249c2c8356795ca40a977d
+ai-autonomous-agents
+4.12 MB	
+sha256:adf09a874374d533a4575bf6d054d1c1833f32c3d347c5d963b30825263b0de8
+backend-api
+17.9 MB	
+sha256:b49219e1d1b804ffedef28924c54cb442e5adb75bec710eb087033c54ed413c6
+cerberus-auditor
+110 KB	
+sha256:7294d3fcfc4257f4ddc6a2fd2706aeefee82b0d31a7bbf384f9b7d2d69397d50
+dexplorer-dist
+1.5 MB	
+sha256:752116a4ec7246bdc77c29aeff3af2c1f213bf5c1887fcc995446969507512bd
+frontend-dist
+1.53 MB	
+sha256:8ec12122a697d17e200506770cafd6a56ab6c920fa605c120ef214077806bd88
+mobile-apk-v1.0.0-42e540a
+44.3 MB	
+sha256:e75903396216e35caaf752c9eccc6dfd35e7ba0b3299576f292e59401afbc072
+sovereign-seal-21914721757
+687 Bytes	
+sha256:713ba82f0f2fad01a87ed3f3b4725f7df425eca1d564634d1425b987705d2078
