@@ -22,12 +22,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PAT }}" | docker login -u "creodamo" --password-stdin
 
-      # ---------------------------------------------------------
-      # Blockchain Node (root Dockerfile)
-      # ---------------------------------------------------------
+      # Blockchain Node
       - name: Build Blockchain Node
         run: |
           docker build -t creodamo/repar:latest .
@@ -40,9 +41,7 @@ jobs:
           docker push creodamo/repar:${{ env.SHA }}
           docker push creodamo/repar:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # Backend API (Node.js)
-      # ---------------------------------------------------------
+      # Backend API
       - name: Build Backend API
         run: |
           docker build -t creodamo/backend:latest ./backend
@@ -55,9 +54,7 @@ jobs:
           docker push creodamo/backend:${{ env.SHA }}
           docker push creodamo/backend:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # Frontend (Vite/React)
-      # ---------------------------------------------------------
+      # Frontend
       - name: Build Frontend
         run: |
           docker build -t creodamo/frontend:latest ./frontend
@@ -70,9 +67,7 @@ jobs:
           docker push creodamo/frontend:${{ env.SHA }}
           docker push creodamo/frontend:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # Explorer (Node.js)
-      # ---------------------------------------------------------
+      # Explorer
       - name: Build Explorer
         run: |
           docker build -t creodamo/explorer:latest ./dexplorer
@@ -85,9 +80,7 @@ jobs:
           docker push creodamo/explorer:${{ env.SHA }}
           docker push creodamo/explorer:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # Auditor (Python)
-      # ---------------------------------------------------------
+      # Auditor
       - name: Build Auditor
         run: |
           docker build -t creodamo/auditor:latest ./auditor
@@ -100,12 +93,10 @@ jobs:
           docker push creodamo/auditor:${{ env.SHA }}
           docker push creodamo/auditor:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # Autonomous Agent (Go, built from repo root)
-      # ---------------------------------------------------------
+      # Autonomous Agent
       - name: Build Autonomous Agent
         run: |
-          docker build -f cmd/autonomous-agent/Dockerfile -t creodamo/autonomous-agent:latest .
+          docker build -f ai/autonomous/Dockerfile -t creodamo/autonomous-agent:latest .
           docker tag creodamo/autonomous-agent:latest creodamo/autonomous-agent:${{ env.SHA }}
           docker tag creodamo/autonomous-agent:latest creodamo/autonomous-agent:${{ env.VERSION }}
 
@@ -115,12 +106,10 @@ jobs:
           docker push creodamo/autonomous-agent:${{ env.SHA }}
           docker push creodamo/autonomous-agent:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # ADNS Server (Go, built from repo root)
-      # ---------------------------------------------------------
+      # ADNS Server
       - name: Build ADNS Server
         run: |
-          docker build -f aequitas/adns-server/Dockerfile -t creodamo/adns-server:latest .
+          docker build -f adns-server/Dockerfile -t creodamo/adns-server:latest .
           docker tag creodamo/adns-server:latest creodamo/adns-server:${{ env.SHA }}
           docker tag creodamo/adns-server:latest creodamo/adns-server:${{ env.VERSION }}
 
@@ -130,9 +119,7 @@ jobs:
           docker push creodamo/adns-server:${{ env.SHA }}
           docker push creodamo/adns-server:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # ACE Kernel (Go)
-      # ---------------------------------------------------------
+      # ACE Kernel
       - name: Build ACE Kernel
         run: |
           docker build -f ace/deployments/docker/Dockerfile -t creodamo/ace-kernel:latest ./ace
@@ -145,9 +132,7 @@ jobs:
           docker push creodamo/ace-kernel:${{ env.SHA }}
           docker push creodamo/ace-kernel:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
       # ACE Sidecar
-      # ---------------------------------------------------------
       - name: Build ACE Sidecar
         run: |
           docker build -f ace/deployments/docker/Dockerfile.sidecar -t creodamo/ace-sidecar:latest ./ace
@@ -160,12 +145,10 @@ jobs:
           docker push creodamo/ace-sidecar:${{ env.SHA }}
           docker push creodamo/ace-sidecar:${{ env.VERSION }}
 
-      # ---------------------------------------------------------
-      # Sovereign VM (Go, built from repo root)
-      # ---------------------------------------------------------
+      # Sovereign VM
       - name: Build Sovereign VM
         run: |
-          docker build -f vm-infrastructure/docker/Dockerfile -t creodamo/vm:latest .
+          docker build -f vm/Dockerfile -t creodamo/vm:latest .
           docker tag creodamo/vm:latest creodamo/vm:${{ env.SHA }}
           docker tag creodamo/vm:latest creodamo/vm:${{ env.VERSION }}
 
