@@ -46,6 +46,6 @@
     "coinDecimals": 6,
     "coinGeckoId": "repar"
   },
-  "features": ["ibc-transfer", "ibc-go", "cosmwasm"],
+  "features": ["cosmwasm"],
   "walletUrlForStaking": "https://aequitasprotocol.zone/stake"
 }
